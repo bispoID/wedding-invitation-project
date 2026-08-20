@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Convite virtual de casamento de Bruna e Diego." />
+    <meta name="theme-color" content="#687765" />
+    <title>Bruna &amp; Diego — Convite de casamento</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+
+  <body>
+    <main class="invitation-app">
+      <section class="welcome" aria-labelledby="welcome-title">
+        <div class="welcome__texture" aria-hidden="true"></div>
+        <div class="welcome__content">
+          <p class="eyebrow">Um convite especial</p>
+          <h1 id="welcome-title">Bruna <span>&amp;</span> Diego</h1>
+          <p class="welcome__intro">Dois corações que escolheram caminhar juntos.</p>
+
+          <div class="envelope" aria-label="Envelope do convite">
+            <div class="envelope__backdrop"></div>
+            <div class="envelope__card">
+              <img class="envelope__monogram" src="./images/monograma_bd.png" alt="Monograma dos noivos" />
+              <p class="envelope__names">Bruna &amp; Diego</p>
+            </div>
+            <div class="envelope__flap" aria-hidden="true"></div>
+            <div class="envelope__seal" aria-hidden="true">B&nbsp;D</div>
+          </div>
+
+          <button class="button button--primary open-invitation" type="button">
+            <span>Toque para abrir</span>
+            <span class="button__arrow" aria-hidden="true">↓</span>
+          </button>
+          <p class="welcome__hint">Uma experiência feita com carinho</p>
+        </div>
+      </section>
+
+      <section class="letter" aria-labelledby="letter-title" hidden>
+        <div class="letter__frame" aria-hidden="true">
+          <img src="./images/moldura_convite_12-17_Opaco_35-percentage.png" alt="" />
+        </div>
+
+        <div class="letter__content">
+          <header class="letter__header">
+            <p class="eyebrow">Com a bênção de nossas famílias</p>
+            <img class="letter__monogram" src="./images/monograma_bd.png" alt="Monograma B D" />
+            <h2 id="letter-title" tabindex="-1">Bruna <span>&amp;</span> Diego</h2>
+            <div class="ornament" aria-hidden="true"><span></span> ✦ <span></span></div>
+          </header>
+
+          <div class="letter__body">
+            <p class="letter__opening">
+              Convidam você para celebrar o amor, a união e o início de uma nova história.
+            </p>
+            <p class="letter__message">Será uma alegria ter você conosco neste dia tão importante.</p>
+
+            <div class="event-details" aria-label="Detalhes do casamento">
+              <div class="event-detail">
+                <p class="event-detail__label">Setembro</p>
+                <p class="event-detail__date">26</p>
+                <p class="event-detail__year">2026</p>
+              </div>
+              <div class="event-detail event-detail--time">
+                <p class="event-detail__label">Horário</p>
+                <p class="event-detail__value">12:30</p>
+              </div>
+            </div>
+
+            <div class="location-card" id="localizacao">
+              <p class="location-card__label">Local</p>
+              <h3>Espaço para celebrar</h3>
+              <p>Fortaleza · Ceará</p>
+              <a class="text-link" href="#localizacao">Ver localização <span>↗</span></a>
+            </div>
+
+            <div class="letter__divider" aria-hidden="true"></div>
+
+            <section class="rsvp" id="confirmacao" aria-labelledby="rsvp-title">
+              <p class="eyebrow">Sua presença é importante</p>
+              <h3 id="rsvp-title">Confirme sua presença</h3>
+              <p class="rsvp__description">Deixe seus dados para que possamos preparar tudo com carinho.</p>
+
+              <form class="rsvp-form">
+                <label for="guest-name">Nome completo</label>
+                <input id="guest-name" name="name" type="text" autocomplete="name" required />
+                <label for="guest-email">E-mail</label>
+                <input id="guest-email" name="email" type="email" autocomplete="email" required />
+                <label for="attendance">Você estará conosco?</label>
+                <select id="attendance" name="attendance" required>
+                  <option value="" selected disabled>Selecione uma opção</option>
+                  <option value="yes">Sim, estarei presente</option>
+                  <option value="no">Não poderei comparecer</option>
+                </select>
+                <button class="button button--secondary" type="submit">Enviar confirmação</button>
+                <p class="form-feedback" role="status" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
+
+          <footer class="letter__footer">
+            <p>Esperamos você para viver este momento conosco.</p>
+            <button class="text-button back-to-cover" type="button">Voltar para a capa</button>
+          </footer>
+        </div>
+      </section>
+    </main>
+
+    <script src="./scripts/main.js" defer></script>
+  </body>
+</html>
