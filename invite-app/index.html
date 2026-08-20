@@ -92,6 +92,18 @@
                   <option value="yes">Sim, estarei presente</option>
                   <option value="no">Não poderei comparecer</option>
                 </select>
+                <label for="companions">Quantidade de acompanhantes</label>
+                <input
+                  id="companions"
+                  name="companions"
+                  type="number"
+                  min="0"
+                  max="15"
+                  step="1"
+                  value="0"
+                  inputmode="numeric"
+                  required
+                />
                 <button class="button button--secondary" type="submit">Enviar confirmação</button>
                 <p class="form-feedback" role="status" aria-live="polite"></p>
               </form>
