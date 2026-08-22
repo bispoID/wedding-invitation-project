@@ -161,8 +161,7 @@ button {
     );
 
   transform:
-    rotate(90deg)
-    scale(2.2);
+    scale(3.2);
 
   background-image:
     url('../images/ramas_douradas_4k_fundo_transparente.png');
