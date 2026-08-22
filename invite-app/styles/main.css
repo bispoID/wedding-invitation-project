@@ -4,6 +4,7 @@
   --olive-800: #4f604f;
   --olive-700: #687765;
   --olive-500: #87927c;
+  --olive-400: #a8b69b;
 
   --paper: #f5f1e8;
   --paper-deep: #e8e1d3;
@@ -19,7 +20,7 @@
     0 2rem 5rem rgb(33 42 35 / 24%);
 
   --wallpaper-shadow:
-    rgba(255, 255, 255, 0.719);
+    rgba(31, 41, 4, 0.856);
 
   --card-shadow:
     rgba(0, 0, 0, 0.329);
@@ -138,39 +139,12 @@ button {
 
   inset: 0;
 
-  opacity: 0.92;
-
-  -webkit-mask-image:
-    radial-gradient(
-      ellipse at center,
-      rgb(0 0 0 / 50%) 0%,
-      rgb(0 0 0 / 16%) 10%,
-      rgb(0 0 0 / 62%) 58%,
-      #000 100%
-    );
-
-  mask-image:
-    radial-gradient(
-      ellipse at center,
-      rgb(0 0 0 / 50%) 0%,
-      rgb(0 0 0 / 16%) 10%,
-      rgb(0 0 0 / 62%) 58%,
-      #000 100%
-    );
-
-  filter:
-    drop-shadow(
-      0
-      0.35rem
-      0.55rem
-      rgb(40 52 44 / 20%)
-    );
-
+  opacity: 0.35;
   transform:
-    scale(3.2);
+    scale(2.1);
 
   background-image:
-    url('../images/ramas_douradas_4k_fundo_transparente.png');
+    url('../images/wallpaper_floral_vitoriano_vintage_5k.jpg');
 
   background-position: center;
 
@@ -221,8 +195,8 @@ button {
   filter:
     drop-shadow(
       0
-      0.2rem
-      0.3rem
+      0
+      3.0rem
       var(--wallpaper-shadow)
     );
 }
@@ -329,8 +303,8 @@ button {
   filter:
     drop-shadow(
       0
-      1.8rem
-      1.7rem
+      0
+      3.0rem
       var(--wallpaper-shadow)
     );
 
@@ -1986,6 +1960,16 @@ select:focus-visible {
 /* =========================================================
    DESKTOP
 ========================================================= */
+
+@media (max-width: 699px) {
+
+  .welcome__wallpaper {
+    background-size: cover;
+
+    transform: none;
+  }
+
+}
 
 @media (min-width: 700px) {
 
