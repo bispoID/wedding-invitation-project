@@ -28,11 +28,35 @@
   color: var(--ink);
 
   font-family:
-    Georgia,
     "Times New Roman",
+    Times,
     serif;
 
   font-synthesis: none;
+}
+
+@font-face {
+  font-family: "Edwardian Script ITC";
+  src: url("../fonts/EdwardianScriptITC.ttf") format("truetype");
+  font-display: swap;
+}
+
+.script-name {
+  font-family:
+    "Edwardian Script ITC",
+    "Times New Roman",
+    serif;
+
+  font-style: normal;
+  letter-spacing: 0;
+}
+
+.script-name.script-name--word {
+  color: var(--olive-900);
+}
+
+.script-name.script-name--amp {
+  color: var(--gold);
 }
 
 
@@ -202,7 +226,7 @@ button {
 }
 
 .eyebrow {
-  margin: 0 0 0.9rem;
+  margin: 0 0 0.3rem;
 
   color: var(--olive-900);
 
@@ -212,9 +236,9 @@ button {
 
   font-weight: 700;
 
-  letter-spacing: 0.28em;
+  letter-spacing: 0.81em;
 
-  line-height: 1.5;
+  line-height: 0.4;
 
   text-transform: uppercase;
 }
@@ -225,9 +249,9 @@ button {
 
   font-size:
     clamp(
-      2.5rem,
-      12vw,
-      4.8rem
+      3.4rem,
+      16vw,
+      6.8rem
     );
 
   font-weight: 400;
@@ -254,7 +278,7 @@ button {
 
   color: var(--olive-900);
 
-  font-size: 0.8rem;
+  font-size: 1.0rem;
 
   line-height: 1.6;
 }
@@ -304,7 +328,7 @@ button {
     drop-shadow(
       0
       0
-      3.0rem
+      2.0rem
       var(--wallpaper-shadow)
     );
 
@@ -480,7 +504,7 @@ button {
 
   z-index: 3;
 
-  width: 62%;
+  width: 52%;
 
   height: auto;
 
@@ -513,7 +537,7 @@ button {
 
   color: var(--gold);
 
-  font-size: 1.05rem;
+  font-size: 2.0rem;
 
   font-style: italic;
 
@@ -1461,9 +1485,9 @@ select:focus-visible {
 
   font-size:
     clamp(
-      2.4rem,
-      9vw,
-      4rem
+      2.8rem,
+      10vw,
+      4.8rem
     );
 }
 
@@ -2011,8 +2035,16 @@ select:focus-visible {
     width:
       min(
         100%,
-        34rem
+        38rem
       );
+  }
+
+  #welcome-title {
+    white-space: nowrap;
+  }
+
+  .welcome .eyebrow {
+    font-size: 0.75rem;
   }
 
   .letter {
