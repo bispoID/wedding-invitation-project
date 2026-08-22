@@ -225,7 +225,7 @@ button {
 .eyebrow {
   margin: 0 0 0.9rem;
 
-  color: var(--olive-700);
+  color: var(--olive-900);
 
   font-family: Arial, sans-serif;
 
@@ -273,8 +273,7 @@ button {
     0
     2rem;
 
-  color:
-    rgb(55 65 56 / 70%);
+  color: var(--olive-900);
 
   font-size: 1rem;
 
@@ -289,8 +288,7 @@ button {
 .welcome .eyebrow,
 .welcome h1,
 .welcome__intro,
-.open-invitation,
-.welcome__hint {
+.open-invitation {
   transition:
     opacity 450ms ease,
     transform 650ms ease;
@@ -1071,7 +1069,7 @@ select:focus-visible {
 
   font-family: Arial, sans-serif;
 
-  font-size: 0.64rem;
+  font-size: 0.8rem;
 
   font-weight: 700;
 
@@ -1110,23 +1108,6 @@ select:focus-visible {
     1.8rem
     rgb(0 0 0 / 22%);
 }
-
-.welcome__hint {
-  margin:
-    1rem
-    0
-    0;
-
-  color:
-    rgb(55 65 56 / 52%);
-
-  font-family: Arial, sans-serif;
-
-  font-size: 0.9rem;
-
-  letter-spacing: 0.12em;
-}
-
 
 /* =========================================================
    ETAPA 1 — ABERTURA DO ENVELOPE
@@ -1327,9 +1308,7 @@ select:focus-visible {
 .welcome.is-closing
   .welcome__intro,
 .welcome.is-closing
-  .open-invitation,
-.welcome.is-closing
-  .welcome__hint {
+  .open-invitation {
 
   opacity: 0;
 
@@ -1354,13 +1333,6 @@ select:focus-visible {
 
   transition-delay: 120ms;
 }
-
-.welcome.is-closing
-  .welcome__hint {
-
-  transition-delay: 160ms;
-}
-
 
 /* =========================================================
    CARTA
@@ -1456,7 +1428,7 @@ select:focus-visible {
 
 .letter__header .eyebrow {
   color:
-    var(--olive-700);
+    var(--olive-950);
 }
 
 .letter__monogram {
