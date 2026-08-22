@@ -18,6 +18,12 @@
   --shadow:
     0 2rem 5rem rgb(33 42 35 / 24%);
 
+  --wallpaper-shadow:
+    rgba(255, 255, 255, 0.719);
+
+  --card-shadow:
+    rgba(0, 0, 0, 0.329);
+
   color: var(--ink);
 
   font-family:
@@ -132,12 +138,12 @@ button {
 
   inset: 0;
 
-  opacity: 0.82;
+  opacity: 0.92;
 
   -webkit-mask-image:
     radial-gradient(
       ellipse at center,
-      rgb(0 0 0 / 10%) 10%,
+      rgb(0 0 0 / 50%) 0%,
       rgb(0 0 0 / 16%) 10%,
       rgb(0 0 0 / 62%) 58%,
       #000 100%
@@ -146,7 +152,7 @@ button {
   mask-image:
     radial-gradient(
       ellipse at center,
-      rgb(0 0 0 / 10%) 10%,
+      rgb(0 0 0 / 50%) 0%,
       rgb(0 0 0 / 16%) 10%,
       rgb(0 0 0 / 62%) 58%,
       #000 100%
@@ -217,7 +223,7 @@ button {
       0
       0.2rem
       0.3rem
-      rgb(40 52 44 / 28%)
+      var(--wallpaper-shadow)
     );
 }
 
@@ -325,7 +331,7 @@ button {
       0
       1.8rem
       1.7rem
-      rgb(0 0 0 / 42%)
+      var(--wallpaper-shadow)
     );
 
   transition:
@@ -1183,7 +1189,7 @@ select:focus-visible {
     0
     1.5rem
     2.5rem
-    rgb(38 46 39 / 28%),
+    var(--card-shadow),
 
     inset
     0
