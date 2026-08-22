@@ -125,6 +125,57 @@ button {
   bottom: -14rem;
 }
 
+.welcome__wallpaper {
+  position: absolute;
+
+  z-index: 0;
+
+  inset: 0;
+
+  opacity: 0.82;
+
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse at center,
+      rgb(0 0 0 / 10%) 10%,
+      rgb(0 0 0 / 16%) 10%,
+      rgb(0 0 0 / 62%) 58%,
+      #000 100%
+    );
+
+  mask-image:
+    radial-gradient(
+      ellipse at center,
+      rgb(0 0 0 / 10%) 10%,
+      rgb(0 0 0 / 16%) 10%,
+      rgb(0 0 0 / 62%) 58%,
+      #000 100%
+    );
+
+  filter:
+    drop-shadow(
+      0
+      0.35rem
+      0.55rem
+      rgb(40 52 44 / 20%)
+    );
+
+  transform:
+    rotate(90deg)
+    scale(2.2);
+
+  background-image:
+    url('../images/ramas_douradas_4k_fundo_transparente.png');
+
+  background-position: center;
+
+  background-repeat: no-repeat;
+
+  background-size: auto 100%;
+
+  pointer-events: none;
+}
+
 .welcome__texture {
   position: absolute;
   inset: 0;
@@ -156,6 +207,19 @@ button {
   align-items: center;
 
   text-align: center;
+
+  transform:
+    translateY(-2rem);
+}
+
+.welcome__content > :not(.envelope) {
+  filter:
+    drop-shadow(
+      0
+      0.2rem
+      0.3rem
+      rgb(40 52 44 / 28%)
+    );
 }
 
 .eyebrow {
@@ -262,9 +326,9 @@ button {
   filter:
     drop-shadow(
       0
-      1.6rem
-      1.5rem
-      rgb(0 0 0 / 34%)
+      1.8rem
+      1.7rem
+      rgb(0 0 0 / 42%)
     );
 
   transition:
@@ -844,13 +908,13 @@ button {
 
   z-index: 8;
 
-  top: 65%;
+  top: 66%;
 
   left: 50%;
 
   display: block;
 
-  width: 5.4rem;
+  width: 6.0rem;
 
   height: auto;
 
@@ -861,9 +925,9 @@ button {
   filter:
     drop-shadow(
       0
-      0.2rem
       0.25rem
-      rgb(40 35 24 / 24%)
+      0.32rem
+      rgb(40 35 24 / 32%)
     );
 
   transform:
@@ -906,9 +970,9 @@ button {
   filter:
     drop-shadow(
       0
-      0.25rem
       0.3rem
-      rgb(40 35 24 / 30%)
+      0.36rem
+      rgb(40 35 24 / 38%)
     );
 
   transform:
@@ -1058,7 +1122,7 @@ select:focus-visible {
 
   font-family: Arial, sans-serif;
 
-  font-size: 0.63rem;
+  font-size: 0.9rem;
 
   letter-spacing: 0.12em;
 }
