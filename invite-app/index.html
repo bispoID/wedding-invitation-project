@@ -45,6 +45,8 @@
           <div
             class="envelope"
             aria-label="Envelope do convite"
+            role="button"
+            tabindex="0"
           >
 
             <!-- Corpo traseiro do envelope -->
@@ -130,19 +132,13 @@
           <!-- =====================================================
                BOTÃO
           ====================================================== -->
-          <button
-            class="button button--primary open-invitation"
-            type="button"
+          <p
+            class="open-invitation"
+            aria-hidden="true"
           >
-            <span>Toque para abrir</span>
+            <span>Toque no envelope para abrir</span>
 
-            <span
-              class="button__arrow"
-              aria-hidden="true"
-            >
-              ↓
-            </span>
-          </button>
+          </p>
 
 
           <p class="welcome__hint">

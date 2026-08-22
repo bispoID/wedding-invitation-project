@@ -240,6 +240,9 @@ button {
 .envelope {
   position: relative;
 
+  cursor: pointer;
+  touch-action: manipulation;
+
   width: min(78vw, 18rem);
 
   aspect-ratio: 0.72;
@@ -935,6 +938,39 @@ select:focus-visible {
   outline-offset: 4px;
 }
 
+.open-invitation {
+  display: inline-block;
+
+  margin:
+    0.9rem
+    0
+    0;
+
+  padding:
+    0
+    0
+    0.45rem;
+
+  border-bottom:
+    1px solid
+    var(--gold);
+
+  color:
+    var(--olive-900);
+
+  font-family: Arial, sans-serif;
+
+  font-size: 0.64rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.14em;
+
+  text-transform: uppercase;
+
+  pointer-events: none;
+}
+
 .button--primary {
   padding:
     0.2rem
@@ -962,26 +998,6 @@ select:focus-visible {
     1rem
     1.8rem
     rgb(0 0 0 / 22%);
-}
-
-.button__arrow {
-  display: grid;
-
-  width: 2.5rem;
-
-  height: 2.5rem;
-
-  place-items: center;
-
-  border-radius: 50%;
-
-  background:
-    var(--gold);
-
-  color:
-    var(--paper);
-
-  font-size: 1.1rem;
 }
 
 .welcome__hint {

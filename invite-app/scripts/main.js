@@ -3,7 +3,6 @@ const letter = document.querySelector('.letter');
 
 const envelope = document.querySelector('.envelope');
 
-const openButton = document.querySelector('.open-invitation');
 const backButton = document.querySelector('.back-to-cover');
 
 const rsvpForm = document.querySelector('.rsvp-form');
@@ -121,7 +120,7 @@ function returnToCover() {
     behavior: 'smooth'
   });
 
-  openButton.focus({
+  envelope.focus({
     preventScroll: true
   });
 
@@ -132,9 +131,19 @@ function returnToCover() {
    EVENTOS
 ========================================================= */
 
-openButton.addEventListener(
+envelope.addEventListener(
   'click',
   openInvitation
+);
+
+envelope.addEventListener(
+  'keydown',
+  (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openInvitation();
+    }
+  }
 );
 
 backButton.addEventListener(
