@@ -786,6 +786,29 @@ button {
 }
 
 
+/* =========================================================
+   FUNDO INTERNO DO ENVELOPE
+========================================================= */
+
+.envelope__inner-back {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  background:
+    #28342c;
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(255 255 255 / 8%);
+}
+
 /*
  * Moldura interna da aba
  */
