@@ -248,13 +248,13 @@ button {
   max-width: 19rem;
 
   margin:
-    1.25rem
+    0.5rem
     0
     2rem;
 
   color: var(--olive-900);
 
-  font-size: 1rem;
+  font-size: 0.8rem;
 
   line-height: 1.6;
 }
@@ -914,6 +914,8 @@ button {
     )
     rotate(40deg);
 
+  --floral-rotation: 40deg;
+
   opacity: 0.92;
 
   transition:
@@ -958,6 +960,8 @@ button {
       -50%
     )
     scale(1);
+
+  --floral-rotation: 0deg;
 
   opacity: 1;
 
@@ -1115,34 +1119,58 @@ select:focus-visible {
 
 
 /* =========================================================
-   SELO DESAPARECE
+   FLOR + SELO SAEM JUNTOS
 ========================================================= */
 
 .welcome.is-opening-envelope
+  .envelope__flowers,
+.welcome.is-opening-envelope
   .envelope__seal {
 
-  opacity: 0;
-
-  transform:
-    translate(
-      -50%,
-      -50%
+  animation:
+    floral-seal-exit
+    1800ms
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
     )
-    scale(1.25);
+    both;
 }
 
-.welcome.is-opening-envelope
-  .envelope__flowers {
+@keyframes floral-seal-exit {
 
-  opacity: 0;
+  0%,
+  18% {
+    transform:
+      translate(
+        -50%,
+        -50%
+      )
+      rotate(var(--floral-rotation))
+      scale(1);
+  }
 
-  transform:
-    translate(
-      -50%,
-      -50%
-    )
-    rotate(26deg)
-    scale(1.25);
+  34% {
+    transform:
+      translate(
+        -50%,
+        -50%
+      )
+      rotate(var(--floral-rotation))
+      scale(1.16);
+  }
+
+  100% {
+    transform:
+      translate(
+        calc(-50% + 8rem),
+        calc(-50% + 8rem)
+      )
+      rotate(var(--floral-rotation))
+      scale(1.16);
+  }
 }
 
 
