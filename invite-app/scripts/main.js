@@ -42,7 +42,7 @@ function openInvitation() {
 
     welcome.classList.add('is-opening-card');
 
-  }, 3100);
+  }, 5700);
 
 
   /*
@@ -55,7 +55,7 @@ function openInvitation() {
 
     welcome.classList.add('is-closing');
 
-  }, 4100);
+  }, 7700);
 
 
   /*
@@ -81,7 +81,7 @@ function openInvitation() {
 
     isOpening = false;
 
-  }, 4750);
+  }, 6850);
 
 }
 
