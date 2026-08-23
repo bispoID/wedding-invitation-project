@@ -274,7 +274,7 @@ button {
     0
     1rem;
 
-  color: var(--olive-900);
+  color: var(--olive-800);
 
   font-size: 1.0rem;
 
@@ -1079,7 +1079,7 @@ select:focus-visible {
     var(--gold);
 
   color:
-    var(--olive-900);
+    var(--olive-800);
 
   font-family: Arial, sans-serif;
 
@@ -2066,6 +2066,11 @@ select:focus-visible {
 
   .open-invitation {
     font-size: 0.9rem;
+
+    margin:
+      1.9rem
+      0
+      0;
   }
 
   .letter {
