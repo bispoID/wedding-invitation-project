@@ -216,13 +216,11 @@ button {
 }
 
 .welcome__content > :not(.envelope) {
-  filter:
-    drop-shadow(
-      0
-      0
-      3.0rem
-      var(--wallpaper-shadow)
-    );
+  text-shadow:
+    0
+    0.05rem
+    3.0rem
+    var(--wallpaper-shadow);
 }
 
 .eyebrow {
@@ -232,13 +230,13 @@ button {
 
   font-family: Arial, sans-serif;
 
-  font-size: 0.62rem;
+  font-size: 0.45rem;
 
   font-weight: 700;
 
   letter-spacing: 0.81em;
 
-  line-height: 0.4;
+  line-height: 1.4;
 
   text-transform: uppercase;
 }
@@ -310,7 +308,7 @@ button {
 
   width: min(78vw, 18rem);
 
-  aspect-ratio: 0.72;
+  aspect-ratio: 7 / 10;
 
   margin:
     0.5rem
@@ -1058,7 +1056,7 @@ select:focus-visible {
   display: inline-block;
 
   margin:
-    0.9rem
+    0.4rem
     0
     0;
 
@@ -1076,7 +1074,7 @@ select:focus-visible {
 
   font-family: Arial, sans-serif;
 
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 
   font-weight: 700;
 
@@ -2021,14 +2019,20 @@ select:focus-visible {
     transform: none;
   }
 
+  .letter .eyebrow {
+    letter-spacing: 0.24em;
+    line-height: 1.4;
+  }
+
 }
 
 @media (min-width: 700px) {
 
   .welcome {
     padding:
-      5rem
-      2rem;
+      7rem
+      2rem
+      5rem;
   }
 
   .welcome__content {
@@ -2045,6 +2049,14 @@ select:focus-visible {
 
   .welcome .eyebrow {
     font-size: 0.75rem;
+  }
+
+  .welcome__intro {
+    font-size: 1.15rem;
+  }
+
+  .open-invitation {
+    font-size: 0.9rem;
   }
 
   .letter {
