@@ -1,3 +1,30 @@
+/* =========================================================
+   MAPA DOS COMPONENTES
+=========================================================
+
+   Ordem estrutural do arquivo:
+
+   1. Variáveis e fontes
+   2. Reset e regras globais
+   3. Welcome / capa
+   4. Envelope
+      - corpo
+      - cartão
+      - abas
+      - aba superior
+      - fundo interno
+      - elementos decorativos
+   5. Controles e estados da abertura
+   6. Carta / conteúdo interno
+   7. Detalhes do evento, local e links
+   8. RSVP e rodapé
+   9. Animações finais
+   10. Utilitários e responsividade
+
+   A ordem física das regras abaixo foi preservada para não alterar
+   a cascata, especificidade ou comportamento existente.
+========================================================= */
+
 :root {
   --olive-950: #28342c;
   --olive-900: #344337;
@@ -24,6 +51,12 @@
 
   --card-shadow:
     rgba(0, 0, 0, 0.329);
+
+  --ease-smooth:
+    cubic-bezier(0.22, 1, 0.36, 1);
+
+  --grain-size:
+    180px 180px;
 
   color: var(--ink);
 
@@ -68,6 +101,7 @@
   box-sizing: border-box;
 }
 
+/* Rolagem suave para navegação interna da página. */
 html {
   scroll-behavior: smooth;
 }
@@ -156,6 +190,7 @@ button {
   bottom: -14rem;
 }
 
+/* Camada decorativa de fundo; não participa das interações do convite. */
 .welcome__wallpaper {
   position: absolute;
 
@@ -168,7 +203,7 @@ button {
     scale(2.1);
 
   background-image:
-    url('../images/wallpaper_floral_vitoriano_vintage_5k.jpg');
+    url('../images/wallpaper_floral_vitoriano_vintage_2508x2508.jpg');
 
   background-position: center;
 
@@ -179,6 +214,7 @@ button {
   pointer-events: none;
 }
 
+/* Textura sutil sobre o fundo para reforçar o aspecto de papel. */
 .welcome__texture {
   position: absolute;
   inset: 0;
@@ -196,6 +232,7 @@ button {
   pointer-events: none;
 }
 
+/* Conteúdo fica acima das camadas decorativas do fundo. */
 .welcome__content {
   position: relative;
 
@@ -300,6 +337,7 @@ button {
    ENVELOPE
 ========================================================= */
 
+/* Container 3D principal do envelope; os elementos internos são posicionados em relação a ele. */
 .envelope {
   position: relative;
 
@@ -332,12 +370,7 @@ button {
 
   transition:
     transform 900ms
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    );
+    var(--ease-smooth);
 }
 
 
@@ -361,7 +394,7 @@ button {
     url("../images/paper-grain.svg");
 
   background-size:
-    180px 180px;
+    var(--grain-size);
 
   box-shadow:
     inset
@@ -392,6 +425,7 @@ button {
    CARTÃO INTERNO
 ========================================================= */
 
+/* Cartão fica dentro do envelope e é elevado durante a etapa de abertura. */
 .envelope__card {
   position: absolute;
 
@@ -451,16 +485,12 @@ button {
 
   transition:
     transform 850ms
-      cubic-bezier(
-        0.22,
-        1,
-        0.36,
-        1
-      ),
+      var(--ease-smooth),
     box-shadow 700ms ease;
 }
 
 
+/* Camada de sombra sobre o cartão; sua opacidade é animada durante a abertura da aba. */
 .envelope__card::after {
   position: absolute;
 
@@ -570,6 +600,7 @@ button {
   IMAGEM DA ARTE MANGA
 ========================================================= */
 
+/* Arte principal do cartão; o mix-blend-mode preserva a integração com a textura do papel. */
 .envelope__manga {
   position: relative;
 
@@ -586,12 +617,7 @@ button {
 
   transition:
     transform 700ms
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    );
+    var(--ease-smooth);
 }
 
 
@@ -896,24 +922,9 @@ button {
 ========================================================= */
 
 .envelope__flap-front {
-  position:
-    absolute;
+  z-index: 1;
 
-  inset:
-    0;
-
-  z-index:
-    1;
-
-  clip-path:
-    polygon(
-      0 0,
-      100% 0,
-      50% 70%
-    );
-
-  background-color:
-    #30483b;
+  background-color: #30483b;
 
   background-image:
     url("../images/paper-grain.svg"),
@@ -925,25 +936,8 @@ button {
     );
 
   background-size:
-    180px 180px,
+    var(--grain-size),
     100% 100%;
-
-  box-shadow:
-    inset
-    0
-    0
-    0
-    1px
-    rgb(213 181 121 / 18%),
-
-    inset
-    0
-    -0.22rem
-    0.3rem
-    rgb(7 18 13 / 22%);
-
-  backface-visibility:
-    hidden;
 
   transform:
     translateZ(0.5px);
@@ -955,47 +949,15 @@ button {
 ========================================================= */
 
 .envelope__flap-back {
-  position:
-    absolute;
+  z-index: 0;
 
-  inset:
-    0;
-
-  z-index:
-    0;
-
-  clip-path:
-    polygon(
-      0 0,
-      100% 0,
-      50% 70%
-    );
-
-  background-color:
-    #1b2922;
+  background-color: #1b2922;
 
   background-image:
     url("../images/paper-grain.svg");
 
   background-size:
-    180px 180px;
-
-  box-shadow:
-    inset
-    0
-    0
-    0
-    1px
-    rgb(213 181 121 / 18%),
-
-    inset
-    0
-    -0.22rem
-    0.3rem
-    rgb(7 18 13 / 22%);
-
-  backface-visibility:
-    hidden;
+    var(--grain-size);
 
   transform:
     rotateY(180deg)
@@ -1020,7 +982,7 @@ button {
     url("../images/paper-grain.svg");
 
   background-size:
-    180px 180px;
+    var(--grain-size);
 
   box-shadow:
     inset
@@ -1137,6 +1099,7 @@ button {
    FLOR SEMPRE VIVA
 ========================================================= */
 
+/* Elemento decorativo independente do selo; permanece sobre as demais partes do envelope. */
 .envelope__flowers {
   position: absolute;
 
@@ -1178,12 +1141,7 @@ button {
   transition:
     opacity 350ms ease,
     transform 500ms
-      cubic-bezier(
-        0.22,
-        1,
-        0.36,
-        1
-      );
+      var(--ease-smooth);
 }
 
 
@@ -1191,6 +1149,7 @@ button {
    SELO DE CERA
 ========================================================= */
 
+/* Selo centralizado visualmente no envelope e controlado pela sequência de abertura. */
 .envelope__seal {
   position: absolute;
 
@@ -1230,12 +1189,7 @@ button {
   transition:
     opacity 350ms ease,
     transform 500ms
-      cubic-bezier(
-        0.22,
-        1,
-        0.36,
-        1
-      );
+      var(--ease-smooth);
 }
 
 
@@ -1325,35 +1279,6 @@ select:focus-visible {
   pointer-events: none;
 }
 
-.button--primary {
-  padding:
-    0.2rem
-    0.45rem
-    0.2rem
-    1.35rem;
-
-  background:
-    var(--olive-900);
-
-  box-shadow:
-    0
-    0.7rem
-    1.4rem
-    rgb(33 42 35 / 20%);
-
-  color:
-    var(--paper);
-}
-
-.button--primary:hover,
-.button--primary:focus-visible {
-  box-shadow:
-    0
-    1rem
-    1.8rem
-    rgb(0 0 0 / 22%);
-}
-
 /* =========================================================
    ETAPA 1 — ABERTURA DO ENVELOPE
 =========================================================
@@ -1372,12 +1297,7 @@ select:focus-visible {
   animation:
     flap-open
     8000ms
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    )
+    var(--ease-smooth)
     1500ms
     both;
 
@@ -1408,12 +1328,7 @@ select:focus-visible {
   animation:
     card-flap-shadow
     8000ms
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    )
+    var(--ease-smooth)
     1500ms
     both;
 }
@@ -1461,12 +1376,7 @@ select:focus-visible {
 
   animation:
     card-content-open
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    )
+    var(--ease-smooth)
     both;
 }
 
@@ -1492,14 +1402,6 @@ select:focus-visible {
 
 }
 
-.welcome.is-opening-card
-  .envelope__names {
-
-  transform:
-    translateY(0.1rem);
-}
-
-
 /* =========================================================
    ETAPA 3 — CAPA DESAPARECE
 ========================================================= */
@@ -1514,12 +1416,7 @@ select:focus-visible {
 
   transition:
     transform 650ms
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    );
+    var(--ease-smooth);
 }
 
 .welcome.is-closing
@@ -1534,12 +1431,7 @@ select:focus-visible {
 
   transition:
     transform 650ms
-      cubic-bezier(
-        0.22,
-        1,
-        0.36,
-        1
-      ),
+      var(--ease-smooth),
     opacity 550ms ease;
 }
 
@@ -1577,7 +1469,10 @@ select:focus-visible {
 }
 
 /* =========================================================
-   CARTA
+   ESTRUTURA E CONTEÚDO DA CARTA
+========================================================= */
+
+/* Carta
 ========================================================= */
 
 .letter {
@@ -1603,6 +1498,7 @@ select:focus-visible {
     );
 }
 
+/* Moldura ocupa toda a carta como camada visual, sem interferir no conteúdo. */
 .letter__frame {
   position: absolute;
 
@@ -1812,6 +1708,7 @@ select:focus-visible {
     0.75rem;
 }
 
+/* Separador vertical entre os blocos de data, horário e demais detalhes do evento. */
 .event-detail + .event-detail {
   border-left:
     1px solid
@@ -1938,6 +1835,7 @@ select:focus-visible {
    LINKS
 ========================================================= */
 
+/* Links e botões textuais compartilham a mesma tipografia e aparência institucional. */
 .text-link,
 .text-button {
   color:
@@ -2179,16 +2077,13 @@ select:focus-visible {
    ANIMAÇÃO DA CARTA
 ========================================================= */
 
+/* Entrada da carta após a transição da capa. */
+
 .letter.is-entering {
   animation:
     reveal-letter
     900ms
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    )
+    var(--ease-smooth)
     both;
 }
 
@@ -2239,6 +2134,7 @@ select:focus-visible {
 
 }
 
+/* Ajustes para telas maiores, preservando a composição central do convite. */
 @media (min-width: 700px) {
 
   .welcome {
@@ -2290,6 +2186,9 @@ select:focus-visible {
    REDUÇÃO DE MOVIMENTO
 ========================================================= */
 
+/* Respeita a preferência do sistema por menos movimento,
+   reduzindo animações e transições sem alterar o layout. */
+
 @media (prefers-reduced-motion: reduce) {
 
   *,
@@ -2311,6 +2210,3 @@ select:focus-visible {
 
 }
 
-.moldura {
-  opacity: 0.5;
-}

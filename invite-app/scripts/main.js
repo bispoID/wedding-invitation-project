@@ -12,9 +12,24 @@ const flowers = document.querySelector('.envelope__flowers');
 const seal = document.querySelector('.envelope__seal');
 
 let isOpening = false;
-let flapTurnFrame;
+let flapTurnFrame = null;
 let floralSealAnimations = [];
 
+
+/* =========================================================
+   TEMPOS DA ANIMAÇÃO
+========================================================= */
+
+const ANIMATION_TIMING = {
+  cardStart: 5800,
+  coverClose: 8500,
+  letterEnter: 8050,
+};
+
+
+/* =========================================================
+   ANIMAÇÃO DOS ELEMENTOS DECORATIVOS
+========================================================= */
 
 function animateFloralSealExit() {
 
@@ -49,6 +64,10 @@ function animateFloralSealExit() {
 }
 
 
+/* =========================================================
+   MONITORAMENTO DA ABA SUPERIOR
+========================================================= */
+
 function watchFlapTurn() {
 
   const flapStyle =
@@ -75,10 +94,8 @@ function watchFlapTurn() {
         : angle;
 
     /*
-     * A animação agora gira para o lado negativo.
-     *
-     * Quando passa aproximadamente dos 65 graus,
-     * consideramos que a aba já virou.
+     * A aba é considerada virada quando a rotação
+     * entra na faixa monitorada abaixo.
      */
     if (
       normalizedAngle >= 90 &&
@@ -113,6 +130,7 @@ function openInvitation() {
 
   isOpening = true;
 
+
   /*
    * ETAPA 1
    *
@@ -142,7 +160,7 @@ function openInvitation() {
       'is-opening-card'
     );
 
-  }, 5800);
+  }, ANIMATION_TIMING.cardStart);
 
 
   /*
@@ -157,7 +175,7 @@ function openInvitation() {
       'is-closing'
     );
 
-  }, 8500);
+  }, ANIMATION_TIMING.coverClose);
 
 
   /*
@@ -190,7 +208,7 @@ function openInvitation() {
 
     isOpening = false;
 
-  }, 8050);
+  }, ANIMATION_TIMING.letterEnter);
 
 }
 
@@ -209,6 +227,7 @@ function returnToCover() {
 
   welcome.hidden = false;
 
+
   /*
    * Remove todas as etapas da animação.
    *
@@ -226,22 +245,28 @@ function returnToCover() {
     'is-flap-turned'
   );
 
+
   floralSealAnimations.forEach(
     (animation) => animation.cancel()
   );
 
   floralSealAnimations = [];
 
+
   window.cancelAnimationFrame(
     flapTurnFrame
   );
 
+  flapTurnFrame = null;
+
   isOpening = false;
+
 
   window.scrollTo({
     top: 0,
     behavior: 'smooth'
   });
+
 
   envelope.focus({
     preventScroll: true
@@ -258,6 +283,7 @@ envelope.addEventListener(
   'click',
   openInvitation
 );
+
 
 envelope.addEventListener(
   'keydown',
@@ -276,6 +302,7 @@ envelope.addEventListener(
 
   }
 );
+
 
 backButton.addEventListener(
   'click',
