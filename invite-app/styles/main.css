@@ -1369,57 +1369,6 @@ select:focus-visible {
    FLOR + SELO SAEM JUNTOS
 ========================================================= */
 
-.welcome.is-opening-envelope
-  .envelope__flowers,
-.welcome.is-opening-envelope
-  .envelope__seal {
-
-  animation:
-    floral-seal-exit
-    1500ms
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    )
-    both;
-}
-
-@keyframes floral-seal-exit {
-
-  0% {
-    transform:
-      translate(
-        -50%,
-        -50%
-      )
-      rotate(var(--floral-rotation))
-      scale(1);
-  }
-
-  70% {
-    transform:
-      translate(
-        -50%,
-        -50%
-      )
-      rotate(var(--floral-rotation))
-      scale(1.1);
-  }
-
-  100% {
-    transform:
-      translate(
-        calc(-50% + 8rem),
-        calc(-50% + 8rem)
-      )
-      rotate(var(--floral-rotation))
-      scale(1.16);
-  }
-}
-
-
 /* =========================================================
    ETAPA 2 — CARTÃO COMEÇA A SAIR
 ========================================================= */
