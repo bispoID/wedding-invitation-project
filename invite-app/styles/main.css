@@ -397,10 +397,7 @@ button {
 
   z-index: 1;
 
-  inset:
-    4%
-    4%
-    4%;
+  inset: 4% 4% 4%;
 
   display: flex;
 
@@ -410,13 +407,9 @@ button {
 
   overflow: hidden;
 
-  border:
-    0rem
-    solid
-    var(--paper);
+  border: 0 solid var(--paper);
 
-  background-color:
-    var(--paper);
+  background-color: var(--paper);
 
   background-image:
     radial-gradient(
@@ -434,6 +427,7 @@ button {
     4px 4px,
     100% 100%;
 
+  /* sombra normal do cartão */
   box-shadow:
     0
     0.8rem
@@ -453,8 +447,7 @@ button {
     translateY(0)
     scale(0.96);
 
-  transform-origin:
-    center bottom;
+  transform-origin: center bottom;
 
   transition:
     transform 850ms
@@ -464,8 +457,33 @@ button {
         0.36,
         1
       ),
-
     box-shadow 700ms ease;
+}
+
+
+.envelope__card::after {
+  position: absolute;
+
+  z-index: 4;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 68%),
+      rgb(0 0 0 / 38%) 45%,
+      transparent 80%
+    );
+
+  content: "";
+
+  pointer-events: none;
+
+  opacity: 1;
+
+  transition:
+    opacity 900ms ease;
 }
 
 
@@ -484,6 +502,33 @@ button {
     rgb(172 136 80 / 48%);
 
   content: "";
+}
+
+@keyframes card-flap-shadow {
+
+  0% {
+    opacity: 1;
+  }
+
+  22% {
+    opacity: 1;
+  }
+
+  35% {
+    opacity: 0.72;
+  }
+
+  55% {
+    opacity: 0.35;
+  }
+
+  75% {
+    opacity: 0.12;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 
@@ -517,7 +562,6 @@ button {
   justify-content: center;
 
   transform:
-    rotateX(180deg)
     translateZ(1px);
 }
 
@@ -854,9 +898,40 @@ button {
 .envelope__flap {
   position: absolute;
 
-  inset: 0;
+  top: 1px;
+  right: 0;
+  bottom: 0;
+  left: 0;
 
   z-index: 6;
+
+  background: transparent;
+
+  transform-origin: center top;
+
+  transform: rotateX(0deg);
+
+  transform-style: preserve-3d;
+
+  backface-visibility: visible;
+
+  transition: none;
+}
+
+
+/* =========================================================
+   FRENTE DA ABA
+========================================================= */
+
+.envelope__flap-front {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  z-index:
+    1;
 
   clip-path:
     polygon(
@@ -865,43 +940,95 @@ button {
       50% 70%
     );
 
-  background:
-    transparent;
+  background-color:
+    #30483b;
 
-  filter:
-    drop-shadow(
-      0
-      0.08rem
-      0.16rem
-      rgb(7 18 13 / 20%)
+  background-image:
+    url("../images/paper-grain.svg"),
+    linear-gradient(
+      155deg,
+      #3d5547,
+      #253b30 62%,
+      #1a2c24
     );
 
-  transform-origin:
-    center top;
+  background-size:
+    180px 180px,
+    100% 100%;
 
-  transform:
-    rotateX(0deg);
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(213 181 121 / 18%),
+
+    inset
+    0
+    -0.22rem
+    0.3rem
+    rgb(7 18 13 / 22%);
 
   backface-visibility:
-    visible;
+    hidden;
 
-  transform-style:
-    preserve-3d;
-
-  transition:
-    transform 10000ms
-    cubic-bezier(
-      0.22,
-      1,
-      0.36,
-      1
-    ),
-
-    box-shadow 10000ms ease;
-
-  transition-delay: 1500ms;
+  transform:
+    translateZ(0.5px);
 }
 
+
+/* =========================================================
+   VERSO DA ABA
+========================================================= */
+
+.envelope__flap-back {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  z-index:
+    0;
+
+  clip-path:
+    polygon(
+      0 0,
+      100% 0,
+      50% 70%
+    );
+
+  background-color:
+    #1b2922;
+
+  background-image:
+    url("../images/paper-grain.svg");
+
+  background-size:
+    180px 180px;
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(213 181 121 / 18%),
+
+    inset
+    0
+    -0.22rem
+    0.3rem
+    rgb(7 18 13 / 22%);
+
+  backface-visibility:
+    hidden;
+
+  transform:
+    rotateY(180deg)
+    translateZ(0.5px);
+}
 
 /* =========================================================
    FUNDO INTERNO DO ENVELOPE
@@ -1018,9 +1145,6 @@ button {
   backface-visibility:
     hidden;
 
-  transition:
-    opacity 480ms ease;
-
   box-shadow:
     inset
     0
@@ -1036,46 +1160,6 @@ button {
     rgb(7 18 13 / 22%);
 }
 
-.envelope__flap-front {
-  z-index: 0;
-
-  background-color:
-    #30483b;
-
-  background-image:
-    url("../images/paper-grain.svg"),
-    linear-gradient(
-      155deg,
-      #3d5547,
-      #253b30 62%,
-      #1a2c24
-    );
-
-  background-size:
-    180px 180px,
-    100% 100%;
-
-  transform:
-    translateZ(1px);
-}
-
-.envelope__flap-back {
-  z-index: 1;
-
-  background-color:
-    #28342c;
-
-  background-image:
-    none;
-
-  transform:
-    translateZ(1px);
-
-  backface-visibility:
-    hidden;
-
-  content: "";
-}
 
 /* =========================================================
    FLOR SEMPRE VIVA
@@ -1327,24 +1411,6 @@ select:focus-visible {
 
 }
 
-.welcome.is-opening-envelope
-  .envelope__flap-front {
-  opacity: 1;
-}
-
-.envelope__flap-back {
-  opacity: 0;
-}
-
-.welcome.is-flap-turned
-  .envelope__flap-front {
-  opacity: 0;
-}
-
-.welcome.is-flap-turned
-  .envelope__flap-back {
-  opacity: 1;
-}
 
 @keyframes flap-open {
 
@@ -1355,15 +1421,30 @@ select:focus-visible {
 
   22% {
     transform:
-      rotateX(28deg);
+      rotateX(-50deg);
   }
 
   100% {
     transform:
-      rotateX(165deg);
+      rotateX(-165deg);
   }
 }
 
+.welcome.is-opening-envelope
+  .envelope__card::after {
+
+  animation:
+    card-flap-shadow
+    8000ms
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    )
+    1500ms
+    both;
+}
 
 /* =========================================================
    FLOR + SELO SAEM JUNTOS

@@ -2,6 +2,7 @@ const welcome = document.querySelector('.welcome');
 const letter = document.querySelector('.letter');
 
 const envelope = document.querySelector('.envelope');
+const flap = document.querySelector('.envelope__flap');
 
 const backButton = document.querySelector('.back-to-cover');
 
@@ -13,6 +14,7 @@ const seal = document.querySelector('.envelope__seal');
 let isOpening = false;
 let flapTurnFrame;
 let floralSealAnimations = [];
+
 
 function animateFloralSealExit() {
 
@@ -27,45 +29,74 @@ function animateFloralSealExit() {
     [seal, '0deg']
   ].map(([element, rotation]) => element.animate([
     {
-      transform: `translate(-50%, -50%) rotate(${rotation}) scale(1)`
+      transform:
+        `translate(-50%, -50%) rotate(${rotation}) scale(1)`
     },
+
     {
-      transform: `translate(-50%, -50%) rotate(${rotation}) scale(1.1)`,
+      transform:
+        `translate(-50%, -50%) rotate(${rotation}) scale(1.1)`,
       offset: 0.7
     },
+
     {
-      transform: `translate(calc(-50% + 8rem), calc(-50% + 8rem)) rotate(${rotation}) scale(1.16)`
+      transform:
+        `translate(calc(-50% + 8rem), calc(-50% + 8rem)) rotate(${rotation}) scale(1.16)`
     }
+
   ], animationOptions));
+
 }
+
 
 function watchFlapTurn() {
 
-  const flapStyle = window.getComputedStyle(
-    document.querySelector('.envelope__flap')
-  );
+  const flapStyle =
+    window.getComputedStyle(flap);
 
-  const transformValues = flapStyle.transform
-    .replace('matrix3d(', '')
-    .replace(')', '')
-    .split(',')
-    .map(Number);
+  const transformValues =
+    flapStyle.transform
+      .replace('matrix3d(', '')
+      .replace(')', '')
+      .split(',')
+      .map(Number);
 
   if (transformValues.length === 16) {
-    const angle = Math.atan2(
-      transformValues[6],
-      transformValues[5]
-    ) * 180 / Math.PI;
 
-    const normalizedAngle = angle < 0 ? angle + 360 : angle;
+    const angle =
+      Math.atan2(
+        transformValues[6],
+        transformValues[5]
+      ) * 180 / Math.PI;
 
-    if (normalizedAngle >= 65 && normalizedAngle <= 270) {
-      welcome.classList.add('is-flap-turned');
+    const normalizedAngle =
+      angle < 0
+        ? angle + 360
+        : angle;
+
+    /*
+     * A animação agora gira para o lado negativo.
+     *
+     * Quando passa aproximadamente dos 65 graus,
+     * consideramos que a aba já virou.
+     */
+    if (
+      normalizedAngle >= 90 &&
+      normalizedAngle <= 295
+    ) {
+
+      welcome.classList.add(
+        'is-flap-turned'
+      );
+
       return;
     }
   }
 
-  flapTurnFrame = window.requestAnimationFrame(watchFlapTurn);
+  flapTurnFrame =
+    window.requestAnimationFrame(
+      watchFlapTurn
+    );
 }
 
 
@@ -75,7 +106,7 @@ function watchFlapTurn() {
 
 function openInvitation() {
 
-  // Evita múltiplos cliques durante a animação
+  // Evita múltiplos cliques durante a animação.
   if (isOpening) {
     return;
   }
@@ -87,11 +118,16 @@ function openInvitation() {
    *
    * Abre somente a aba superior.
    */
-  welcome.classList.add('is-opening-envelope');
+  welcome.classList.add(
+    'is-opening-envelope'
+  );
 
   animateFloralSealExit();
 
-  flapTurnFrame = window.requestAnimationFrame(watchFlapTurn);
+  flapTurnFrame =
+    window.requestAnimationFrame(
+      watchFlapTurn
+    );
 
 
   /*
@@ -102,9 +138,11 @@ function openInvitation() {
    */
   window.setTimeout(() => {
 
-    welcome.classList.add('is-opening-card');
+    welcome.classList.add(
+      'is-opening-card'
+    );
 
-  }, 5200);
+  }, 5800);
 
 
   /*
@@ -115,7 +153,9 @@ function openInvitation() {
    */
   window.setTimeout(() => {
 
-    welcome.classList.add('is-closing');
+    welcome.classList.add(
+      'is-closing'
+    );
 
   }, 7700);
 
@@ -131,14 +171,21 @@ function openInvitation() {
 
     letter.hidden = false;
 
-    letter.classList.add('is-entering');
+    letter.classList.add(
+      'is-entering'
+    );
 
-    const letterTitle = letter.querySelector('#letter-title');
+    const letterTitle =
+      letter.querySelector(
+        '#letter-title'
+      );
 
     if (letterTitle) {
+
       letterTitle.focus({
         preventScroll: true
       });
+
     }
 
     isOpening = false;
@@ -156,14 +203,17 @@ function returnToCover() {
 
   letter.hidden = true;
 
-  letter.classList.remove('is-entering');
+  letter.classList.remove(
+    'is-entering'
+  );
 
   welcome.hidden = false;
 
   /*
    * Remove todas as etapas da animação.
    *
-   * O envelope volta automaticamente para o estado inicial:
+   * O envelope volta automaticamente
+   * para o estado inicial:
    *
    * - aba fechada
    * - cartão dentro
@@ -176,10 +226,15 @@ function returnToCover() {
     'is-flap-turned'
   );
 
-  floralSealAnimations.forEach((animation) => animation.cancel());
+  floralSealAnimations.forEach(
+    (animation) => animation.cancel()
+  );
+
   floralSealAnimations = [];
 
-  window.cancelAnimationFrame(flapTurnFrame);
+  window.cancelAnimationFrame(
+    flapTurnFrame
+  );
 
   isOpening = false;
 
@@ -207,10 +262,18 @@ envelope.addEventListener(
 envelope.addEventListener(
   'keydown',
   (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+
+    if (
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
+
       event.preventDefault();
+
       openInvitation();
+
     }
+
   }
 );
 
