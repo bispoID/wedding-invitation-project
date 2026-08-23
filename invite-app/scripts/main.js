@@ -9,6 +9,36 @@ const rsvpForm = document.querySelector('.rsvp-form');
 const feedback = document.querySelector('.form-feedback');
 
 let isOpening = false;
+let flapTurnFrame;
+
+function watchFlapTurn() {
+
+  const flapStyle = window.getComputedStyle(
+    document.querySelector('.envelope__flap')
+  );
+
+  const transformValues = flapStyle.transform
+    .replace('matrix3d(', '')
+    .replace(')', '')
+    .split(',')
+    .map(Number);
+
+  if (transformValues.length === 16) {
+    const angle = Math.atan2(
+      transformValues[6],
+      transformValues[5]
+    ) * 180 / Math.PI;
+
+    const normalizedAngle = angle < 0 ? angle + 360 : angle;
+
+    if (normalizedAngle >= 65 && normalizedAngle <= 270) {
+      welcome.classList.add('is-flap-turned');
+      return;
+    }
+  }
+
+  flapTurnFrame = window.requestAnimationFrame(watchFlapTurn);
+}
 
 
 /* =========================================================
@@ -30,6 +60,8 @@ function openInvitation() {
    * Abre somente a aba superior.
    */
   welcome.classList.add('is-opening-envelope');
+
+  flapTurnFrame = window.requestAnimationFrame(watchFlapTurn);
 
 
   /*
@@ -110,8 +142,11 @@ function returnToCover() {
   welcome.classList.remove(
     'is-opening-envelope',
     'is-opening-card',
-    'is-closing'
+    'is-closing',
+    'is-flap-turned'
   );
+
+  window.cancelAnimationFrame(flapTurnFrame);
 
   isOpening = false;
 

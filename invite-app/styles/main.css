@@ -369,7 +369,19 @@ button {
     0
     0
     1px
-    rgb(255 255 255 / 8%);
+    rgb(255 255 255 / 12%),
+
+    inset
+    0
+    0
+    0
+    0.18rem
+    rgb(7 18 13 / 20%),
+
+    0
+    0.35rem
+    0.5rem
+    rgb(7 18 13 / 30%);
 
   transform:
     rotate(-2deg);
@@ -505,6 +517,7 @@ button {
   justify-content: center;
 
   transform:
+    rotateX(180deg)
     translateZ(1px);
 }
 
@@ -623,6 +636,20 @@ button {
       0.22rem
       rgb(7 18 13 / 24%)
     );
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(213 181 121 / 16%),
+
+    inset
+    0
+    -0.18rem
+    0.24rem
+    rgb(7 18 13 / 18%);
 }
 
 .envelope__side-fold::after {
@@ -689,6 +716,20 @@ button {
       0.22rem
       rgb(7 18 13 / 24%)
     );
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(213 181 121 / 14%),
+
+    inset
+    0
+    -0.18rem
+    0.24rem
+    rgb(7 18 13 / 18%);
 }
 
 .envelope__right-fold::after {
@@ -760,7 +801,14 @@ button {
     0
     0.42rem
     0.42rem
-    rgb(7 18 13 / 26%);
+    rgb(7 18 13 / 26%),
+
+    inset
+    0
+    0
+    0
+    1px
+    rgb(213 181 121 / 12%);
 }
 
 .envelope__bottom-fold::after {
@@ -817,21 +865,8 @@ button {
       50% 70%
     );
 
-  background-color:
-    #30483b;
-
-  background-image:
-    url("../images/paper-grain.svg"),
-    linear-gradient(
-      155deg,
-      #3d5547,
-      #253b30 62%,
-      #1a2c24
-    );
-
-  background-size:
-    180px 180px,
-    100% 100%;
+  background:
+    transparent;
 
   filter:
     drop-shadow(
@@ -897,6 +932,54 @@ button {
     rgb(255 255 255 / 8%);
 }
 
+.welcome.is-opening-envelope
+  .envelope__inner-back {
+
+  animation:
+    interior-flap-shadow
+    8000ms
+    ease-out
+    1500ms
+    both;
+}
+
+@keyframes interior-flap-shadow {
+
+  0% {
+    box-shadow:
+      inset
+      0
+      6rem
+      5.5rem
+      -2rem
+      #28342c,
+
+      inset
+      0
+      0
+      0
+      1px
+      rgb(255 255 255 / 8%);
+  }
+
+  100% {
+    box-shadow:
+      inset
+      0
+      1.5rem
+      2.5rem
+      -1.5rem
+      #28342c,
+
+      inset
+      0
+      0
+      0
+      1px
+      rgb(255 255 255 / 8%);
+  }
+}
+
 /*
  * Moldura interna da aba
  */
@@ -919,6 +1002,80 @@ button {
   content: "";
 }
 
+.envelope__flap-front,
+.envelope__flap-back {
+  position: absolute;
+
+  inset: 0;
+
+  clip-path:
+    polygon(
+      0 0,
+      100% 0,
+      50% 70%
+    );
+
+  backface-visibility:
+    hidden;
+
+  transition:
+    opacity 480ms ease;
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(213 181 121 / 18%),
+
+    inset
+    0
+    -0.22rem
+    0.3rem
+    rgb(7 18 13 / 22%);
+}
+
+.envelope__flap-front {
+  z-index: 0;
+
+  background-color:
+    #30483b;
+
+  background-image:
+    url("../images/paper-grain.svg"),
+    linear-gradient(
+      155deg,
+      #3d5547,
+      #253b30 62%,
+      #1a2c24
+    );
+
+  background-size:
+    180px 180px,
+    100% 100%;
+
+  transform:
+    translateZ(1px);
+}
+
+.envelope__flap-back {
+  z-index: 1;
+
+  background-color:
+    #28342c;
+
+  background-image:
+    none;
+
+  transform:
+    translateZ(1px);
+
+  backface-visibility:
+    hidden;
+
+  content: "";
+}
 
 /* =========================================================
    FLOR SEMPRE VIVA
@@ -1170,57 +1327,40 @@ select:focus-visible {
 
 }
 
+.welcome.is-opening-envelope
+  .envelope__flap-front {
+  opacity: 1;
+}
+
+.envelope__flap-back {
+  opacity: 0;
+}
+
+.welcome.is-flap-turned
+  .envelope__flap-front {
+  opacity: 0;
+}
+
+.welcome.is-flap-turned
+  .envelope__flap-back {
+  opacity: 1;
+}
+
 @keyframes flap-open {
 
   0% {
     transform:
       rotateX(0deg);
-
-    filter:
-      drop-shadow(
-        0
-        0.08rem
-        0.16rem
-        rgb(7 18 13 / 20%)
-      );
   }
 
   22% {
     transform:
       rotateX(28deg);
-
-    filter:
-      drop-shadow(
-        0
-        0.65rem
-        0.52rem
-        rgb(7 18 13 / 34%)
-      )
-      drop-shadow(
-        0
-        0.05rem
-        0
-        rgb(213 181 121 / 24%)
-      );
   }
 
   100% {
     transform:
       rotateX(165deg);
-
-    filter:
-      drop-shadow(
-        0
-        0.25rem
-        0.3rem
-        rgb(7 18 13 / 28%)
-      )
-      drop-shadow(
-        0
-        0.04rem
-        0
-        rgb(213 181 121 / 18%)
-      );
   }
 }
 
