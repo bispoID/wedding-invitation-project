@@ -482,6 +482,7 @@ button {
   width: 100%;
   height: 100%;
 
+  /* Moldura floral aplicada ao cartão interno. */
   background-image:
     url("../images/moldura_ramas_1344x1920.png");
 
@@ -503,7 +504,7 @@ button {
 
 
 /* =========================================================
-   MONOGRAMA
+  IMAGEM DA IGREJA
 ========================================================= */
 
 .envelope__monogram {
@@ -908,7 +909,7 @@ button {
 
 
 /* =========================================================
-   SELO DE CERA
+   FLOR SEMPRE VIVA
 ========================================================= */
 
 .envelope__flowers {
@@ -959,6 +960,11 @@ button {
         1
       );
 }
+
+
+/* =========================================================
+   SELO DE CERA
+========================================================= */
 
 .envelope__seal {
   position: absolute;
@@ -1278,7 +1284,7 @@ select:focus-visible {
 
 
 /* =========================================================
-   MONOGRAMA DO CARTÃO
+  IMAGEM PRINCIPAL DO CARTÃO
 ========================================================= */
 
 .welcome.is-opening-card
