@@ -157,7 +157,7 @@ function openInvitation() {
       'is-closing'
     );
 
-  }, 7700);
+  }, 8500);
 
 
   /*
@@ -190,7 +190,7 @@ function openInvitation() {
 
     isOpening = false;
 
-  }, 6850);
+  }, 8050);
 
 }
 
