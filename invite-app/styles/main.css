@@ -86,20 +86,21 @@
    * Tons estruturais. Cada variável preserva uma cor distinta
    * já utilizada no envelope; nenhuma tonalidade foi fundida.
    */
+  --envelope-bottom: #22382e;
+  --envelope-bottom-dark: #1f352a;
+  --envelope-bottom-light: #2d4537;
+  --envelope-deep: #1c3128;
   --envelope-darkest: #172921;
-  --envelope-deep: #182b23;
+  --envelope-flap-light: #263f31;
+  --envelope-fold: #30483b;
+  --envelope-fold-dark: #253b30;
+  --envelope-fold-left-dark: #1f362c;
+  --envelope-fold-left-light: #30473a;
+  --envelope-fold-right-dark: #22362b;
+  --envelope-fold-right-light: #284133;
   --envelope-shadow-dark: #1a2c24;
   --envelope-side-left: #263a30;
-  --envelope-side-right: #20352b;
-  --envelope-bottom: #22382e;
-  --envelope-fold-dark: #253b30;
-  --envelope-fold-left-dark: #1c3027;
-  --envelope-fold-right-dark: #2b4336;
-  --envelope-bottom-dark: #1b2d25;
-  --envelope-fold: #30483b;
-  --envelope-fold-left-light: #30473a;
-  --envelope-bottom-light: #2d4537;
-  --envelope-flap-light: #3d5547;
+  --envelope-side-right: #3b6350;
 
   /* Cor-base compartilhada pelas sombras internas do envelope. */
   --envelope-shadow-rgb: 7 18 13;
@@ -399,6 +400,461 @@ button {
     2.25rem;
 }
 
+/* Segundo envelope.
+   Permanece completamente estático durante toda a animação. */
+.envelope__backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 0;
+
+  width: 100%;
+  height: 100%;
+
+  pointer-events: none;
+
+  transform: rotate(-3deg);
+
+  /*
+   * Sombra externa do envelope traseiro.
+   */
+  filter:
+    drop-shadow(
+      0
+      0.35rem
+      0.3rem
+      rgb(var(--envelope-shadow-rgb) / 30%)
+    );
+}
+
+/* =========================================================
+   ABAS DO ENVELOPE TRASEIRO
+   MESMA APARÊNCIA DAS ABAS ORIGINAIS
+========================================================= */
+
+.envelope__backdrop-left,
+.envelope__backdrop-right,
+.envelope__backdrop-bottom {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* =========================================================
+   ABA SUPERIOR — BACKDROP
+
+   A aba existe visualmente, mas é completamente estática.
+   Não recebe nenhuma animação.
+   ========================================================= */
+
+.envelope__backdrop-flap {
+  position: absolute;
+
+  top: 1px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  z-index: 4;
+
+  pointer-events: none;
+
+  background-color:
+    var(--envelope-fold);
+
+  background-image:
+    url("../images/paper-grain.svg"),
+    linear-gradient(
+      100deg,
+      var(--envelope-flap-light),
+      var(--envelope-fold-dark) 62%,
+      var(--envelope-shadow-dark)
+    );
+
+  background-size:
+    var(--grain-size),
+    100% 100%;
+
+  clip-path:
+    polygon(
+      0 0,
+      100% 0,
+      50% 70%
+    );
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(var(--envelope-edge-rgb) / 18%),
+
+    inset
+    0
+    -0.22rem
+    0.3rem
+    rgb(var(--envelope-shadow-rgb) / 22%);
+}
+
+
+/* Moldura interna da aba superior */
+
+.envelope__backdrop-flap::after {
+  position: absolute;
+
+  inset: 0.5rem;
+
+  border:
+    1px solid
+    rgb(var(--envelope-edge-rgb) / 30%);
+
+  clip-path:
+    polygon(
+      0 0,
+      100% 0,
+      50% 68%
+    );
+
+  content: "";
+}
+
+/* =========================================================
+   ABA ESQUERDA
+   ========================================================= */
+
+.envelope__backdrop-left {
+  inset:
+    0
+    auto
+    0
+    0;
+
+  z-index: 3;
+
+  width: var(--envelope-fold-width);
+
+  clip-path:
+    polygon(
+      0 0,
+      100% var(--envelope-fold-center),
+      0 100%
+    );
+
+  background-color:
+    var(--envelope-side-left);
+
+  background-image:
+    url("../images/paper-grain.svg"),
+    linear-gradient(
+      80deg,
+      var(--envelope-fold-left-light),
+      var(--envelope-fold-left-dark) 70%
+    );
+
+  background-size:
+    var(--envelope-grain-size),
+    100% 100%;
+
+  filter:
+    drop-shadow(
+      0
+      0
+      0.22rem
+      rgb(var(--envelope-shadow-rgb) / 24%)
+    );
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(var(--envelope-edge-rgb) / 16%),
+
+    inset
+    0
+    -0.18rem
+    0.24rem
+    rgb(var(--envelope-shadow-rgb) / 18%);
+}
+
+.envelope__backdrop-left::after {
+  position: absolute;
+
+  inset: 0;
+
+  clip-path:
+    polygon(
+      0 0,
+      100% var(--envelope-fold-center),
+      0 100%
+    );
+
+  border-right:
+    1px solid
+    rgb(var(--envelope-fold-line-rgb) / 30%);
+
+  content: "";
+}
+
+
+/* =========================================================
+   ABA DIREITA
+   ========================================================= */
+
+.envelope__backdrop-right {
+  inset:
+    0
+    0
+    0
+    auto;
+
+  z-index: 3;
+
+  width: var(--envelope-fold-width);
+
+  clip-path:
+    polygon(
+      100% 0,
+      0 var(--envelope-fold-center),
+      100% 100%
+    );
+
+  background-color:
+    var(--envelope-side-right);
+
+  background-image:
+    url("../images/paper-grain.svg"),
+    linear-gradient(
+      320deg,
+      var(--envelope-fold-right-light),
+      var(--envelope-fold-right-dark) 70%
+    );
+
+  background-size:
+    var(--envelope-grain-size),
+    100% 100%;
+
+  filter:
+    drop-shadow(
+      0
+      0
+      0.22rem
+      rgb(var(--envelope-shadow-rgb) / 24%)
+    );
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(var(--envelope-edge-rgb) / 14%),
+
+    inset
+    0
+    -0.18rem
+    0.24rem
+    rgb(var(--envelope-shadow-rgb) / 18%);
+}
+
+.envelope__backdrop-right::after {
+  position: absolute;
+
+  inset: 0;
+
+  clip-path:
+    polygon(
+      100% 0,
+      0 var(--envelope-fold-center),
+      100% 100%
+    );
+
+  border-left:
+    1px solid
+    rgb(var(--envelope-fold-line-rgb) / 26%);
+
+  content: "";
+}
+
+
+/* =========================================================
+   ABA INFERIOR
+   ========================================================= */
+
+.envelope__backdrop-bottom {
+  inset:
+    auto
+    0
+    0;
+
+  z-index: 2;
+
+  width: 100%;
+  height: var(--envelope-bottom-height);
+
+  clip-path:
+    polygon(
+      0 100%,
+      50% var(--envelope-bottom-tip),
+      100% 100%
+    );
+
+  background-color:
+    var(--envelope-bottom);
+
+  background-image:
+    url("../images/paper-grain.svg"),
+    linear-gradient(
+      -5deg,
+      var(--envelope-bottom-light),
+      var(--envelope-bottom-dark) 72%
+    );
+
+  background-size:
+    var(--envelope-grain-size),
+    100% 100%;
+
+  filter:
+    drop-shadow(
+      0
+      0.16rem
+      0.22rem
+      rgb(var(--envelope-shadow-rgb) / 22%)
+    );
+
+  box-shadow:
+    inset
+    0
+    0.42rem
+    0.42rem
+    rgb(var(--envelope-shadow-rgb) / 26%),
+
+    inset
+    0
+    0
+    0
+    1px
+    rgb(var(--envelope-edge-rgb) / 12%);
+}
+
+.envelope__backdrop-bottom::after {
+  position: absolute;
+
+  inset: 0;
+
+  clip-path:
+    polygon(
+      0 100%,
+      50% var(--envelope-bottom-tip),
+      100% 100%
+    );
+
+  border-top:
+    1px solid
+    rgb(var(--envelope-fold-line-rgb) / 30%);
+
+  box-shadow:
+    inset
+    0
+    0.2rem
+    0.22rem
+    rgb(var(--envelope-shadow-rgb) / 18%);
+
+  content: "";
+}
+
+/* =========================================================
+   LINHAS E SOMBRAS DAS DOBRAS — BACKDROP
+   ========================================================= */
+
+
+/* =========================================================
+   DOBRA DA ABA ESQUERDA
+   ========================================================= */
+
+.envelope__backdrop-left::after {
+  position: absolute;
+
+  inset: 0;
+
+  clip-path:
+    polygon(
+      0 0,
+      100% var(--envelope-fold-center),
+      0 100%
+    );
+
+  border-right:
+    1px solid
+    rgb(var(--envelope-fold-line-rgb) / 26%);
+
+  content: "";
+
+  box-shadow:
+    inset
+    0
+    -0.18rem
+    0.24rem
+    rgb(var(--envelope-shadow-rgb) / 18%);
+}
+
+
+/* =========================================================
+   DOBRA DA ABA DIREITA
+   ========================================================= */
+
+.envelope__backdrop-right::after {
+  position: absolute;
+
+  inset: 0;
+
+  clip-path:
+    polygon(
+      100% 0,
+      0 var(--envelope-fold-center),
+      100% 100%
+    );
+
+  border-left:
+    1px solid
+    rgb(var(--envelope-fold-line-rgb) / 26%);
+
+  content: "";
+}
+
+
+/* =========================================================
+   DOBRA DA ABA INFERIOR
+   ========================================================= */
+
+.envelope__backdrop-bottom::after {
+  position: absolute;
+
+  inset: 0;
+
+  clip-path:
+    polygon(
+      0 100%,
+      50% var(--envelope-bottom-tip),
+      100% 100%
+    );
+
+  border-top:
+    1px solid
+    rgb(var(--envelope-fold-line-rgb) / 30%);
+
+  box-shadow:
+    inset
+    0
+    0.2rem
+    0.22rem
+    rgb(var(--envelope-shadow-rgb) / 18%);
+
+  content: "";
+}
+
 
 /* =========================================================
    ENVELOPE
@@ -416,69 +872,6 @@ button {
   touch-action: manipulation;
 
   perspective: 1200px;
-
-  transform:
-    rotate(7deg);
-
-  transform-style: preserve-3d;
-
-  filter:
-    drop-shadow(
-      0
-      0
-      2.0rem
-      var(--envelope-deep)
-    );
-
-  transition:
-    transform 900ms
-    var(--ease-smooth);
-}
-
-/* Segundo envelope.
-   Permanece completamente estático durante toda a animação. */
-.envelope__backdrop {
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 0;
-
-  width: 100%;
-  height: 100%;
-
-  border-radius: 0.08rem;
-
-  pointer-events: none;
-
-  background:
-    var(--envelope-deep);
-
-  background-image:
-    url("../images/paper-grain.svg");
-
-  background-size:
-    var(--grain-size);
-
-  box-shadow:
-    inset
-    0
-    0
-    0
-    1px
-    rgb(255 255 255 / 12%),
-
-    inset
-    0
-    0
-    0
-    0.18rem
-    rgb(var(--envelope-shadow-rgb) / 20%),
-
-    0
-    0.35rem
-    0.5rem
-    rgb(var(--envelope-shadow-rgb) / 30%);
 
   transform:
     rotate(3deg);
@@ -730,7 +1123,7 @@ button {
   background-image:
     url("../images/paper-grain.svg"),
     linear-gradient(
-      120deg,
+      70deg,
       var(--envelope-fold-left-light),
       var(--envelope-fold-left-dark) 70%
     );
@@ -810,9 +1203,9 @@ button {
   background-image:
     url("../images/paper-grain.svg"),
     linear-gradient(
-      240deg,
-      var(--envelope-fold-right-dark),
-      var(--envelope-deep) 70%
+      320deg,
+      var(--envelope-fold-right-light),
+      var(--envelope-fold-right-dark) 70%
     );
 
   background-size:
@@ -889,7 +1282,7 @@ button {
   background-image:
     url("../images/paper-grain.svg"),
     linear-gradient(
-      135deg,
+      -5deg,
       var(--envelope-bottom-light),
       var(--envelope-bottom-dark) 72%
     );
@@ -997,7 +1390,7 @@ button {
   background-image:
     url("../images/paper-grain.svg"),
     linear-gradient(
-      155deg,
+      100deg,
       var(--envelope-flap-light),
       var(--envelope-fold-dark) 62%,
       var(--envelope-shadow-dark)
