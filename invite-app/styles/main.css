@@ -26,6 +26,17 @@
 ========================================================= */
 
 :root {
+
+  /* =========================================================
+     VALORES COMPARTILHADOS DO ENVELOPE
+  ========================================================== */
+
+  --envelope-fold-width: 52%;
+  --envelope-fold-center: 58%;
+  --envelope-bottom-height: 48%;
+  --envelope-bottom-tip: 2%;
+  --envelope-grain-size: 180px 180px;
+
   --olive-950: #28342c;
   --olive-900: #344337;
   --olive-800: #4f604f;
@@ -66,6 +77,36 @@
     serif;
 
   font-synthesis: none;
+
+  /* =========================================================
+     PALETA DO ENVELOPE
+  ========================================================== */
+
+  /*
+   * Tons estruturais. Cada variável preserva uma cor distinta
+   * já utilizada no envelope; nenhuma tonalidade foi fundida.
+   */
+  --envelope-darkest: #172921;
+  --envelope-deep: #182b23;
+  --envelope-shadow-dark: #1a2c24;
+  --envelope-side-left: #263a30;
+  --envelope-side-right: #20352b;
+  --envelope-bottom: #22382e;
+  --envelope-fold-dark: #253b30;
+  --envelope-fold-left-dark: #1c3027;
+  --envelope-fold-right-dark: #2b4336;
+  --envelope-bottom-dark: #1b2d25;
+  --envelope-fold: #30483b;
+  --envelope-fold-left-light: #30473a;
+  --envelope-bottom-light: #2d4537;
+  --envelope-flap-light: #3d5547;
+
+  /* Cor-base compartilhada pelas sombras internas do envelope. */
+  --envelope-shadow-rgb: 7 18 13;
+
+  /* Detalhes e linhas de acabamento do envelope. */
+  --envelope-edge-rgb: 213 181 121;
+  --envelope-fold-line-rgb: 79 96 79;
 }
 
 @font-face {
@@ -334,24 +375,45 @@ button {
 
 
 /* =========================================================
-   ENVELOPE
+   ÁREA DOS ENVELOPES
 ========================================================= */
 
-/* Container 3D principal do envelope; os elementos internos são posicionados em relação a ele. */
-.envelope {
+/*
+ * Container compartilhado pelos dois envelopes.
+ *
+ * O stage mantém a mesma área física que o envelope
+ * principal possuía originalmente.
+ *
+ * O envelope traseiro e o principal permanecem
+ * independentes e podem receber transformações próprias.
+ */
+.envelope-stage {
   position: relative;
 
-  cursor: pointer;
-  touch-action: manipulation;
-
   width: min(78vw, 18rem);
-
   aspect-ratio: 7 / 10;
 
   margin:
     0.5rem
     0
     2.25rem;
+}
+
+
+/* =========================================================
+   ENVELOPE
+========================================================= */
+
+/* Container 3D principal do envelope; os elementos internos são posicionados em relação a ele. */
+.envelope {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  cursor: pointer;
+  touch-action: manipulation;
 
   perspective: 1200px;
 
@@ -365,7 +427,7 @@ button {
       0
       0
       2.0rem
-      var(--wallpaper-shadow)
+      var(--envelope-deep)
     );
 
   transition:
@@ -373,11 +435,8 @@ button {
     var(--ease-smooth);
 }
 
-
-/* =========================================================
-   CORPO DO ENVELOPE
-========================================================= */
-
+/* Segundo envelope.
+   Permanece completamente estático durante toda a animação. */
 .envelope__backdrop {
   position: absolute;
 
@@ -385,10 +444,15 @@ button {
 
   z-index: 0;
 
+  width: 100%;
+  height: 100%;
+
   border-radius: 0.08rem;
 
+  pointer-events: none;
+
   background:
-    #172921;
+    var(--envelope-deep);
 
   background-image:
     url("../images/paper-grain.svg");
@@ -409,15 +473,15 @@ button {
     0
     0
     0.18rem
-    rgb(7 18 13 / 20%),
+    rgb(var(--envelope-shadow-rgb) / 20%),
 
     0
     0.35rem
     0.5rem
-    rgb(7 18 13 / 30%);
+    rgb(var(--envelope-shadow-rgb) / 30%);
 
   transform:
-    rotate(-2deg);
+    rotate(3deg);
 }
 
 
@@ -638,6 +702,10 @@ button {
   pointer-events: none;
 }
 
+/* =========================================================
+   ABA ESQUERDA
+========================================================= */
+
 .envelope__side-fold {
   inset:
     0
@@ -652,23 +720,23 @@ button {
   clip-path:
     polygon(
       0 0,
-      100% 58%,
+      100% var(--envelope-fold-center),
       0 100%
     );
 
   background-color:
-    #263a30;
+    var(--envelope-side-left);
 
   background-image:
     url("../images/paper-grain.svg"),
     linear-gradient(
       120deg,
-      #30473a,
-      #1c3027 70%
+      var(--envelope-fold-left-light),
+      var(--envelope-fold-left-dark) 70%
     );
 
   background-size:
-    180px 180px,
+    var(--envelope-grain-size),
     100% 100%;
 
   filter:
@@ -676,7 +744,7 @@ button {
       0
       0
       0.22rem
-      rgb(7 18 13 / 24%)
+      rgb(var(--envelope-shadow-rgb) / 24%)
     );
 
   box-shadow:
@@ -685,13 +753,13 @@ button {
     0
     0
     1px
-    rgb(213 181 121 / 16%),
+    rgb(var(--envelope-edge-rgb) / 16%),
 
     inset
     0
     -0.18rem
     0.24rem
-    rgb(7 18 13 / 18%);
+    rgb(var(--envelope-shadow-rgb) / 18%);
 }
 
 .envelope__side-fold::after {
@@ -702,13 +770,13 @@ button {
   clip-path:
     polygon(
       0 0,
-      100% 58%,
+      100% var(--envelope-fold-center),
       0 100%
     );
 
   border-right:
     1px solid
-    rgb(79 96 79 / 30%);
+    rgb(var(--envelope-fold-line-rgb) / 30%);
 
   content: "";
 }
@@ -732,23 +800,23 @@ button {
   clip-path:
     polygon(
       100% 0,
-      0 58%,
+      0 var(--envelope-fold-center),
       100% 100%
     );
 
   background-color:
-    #20352b;
+    var(--envelope-side-right);
 
   background-image:
     url("../images/paper-grain.svg"),
     linear-gradient(
       240deg,
-      #2b4336,
-      #182b23 70%
+      var(--envelope-fold-right-dark),
+      var(--envelope-deep) 70%
     );
 
   background-size:
-    180px 180px,
+    var(--envelope-grain-size),
     100% 100%;
 
   filter:
@@ -756,7 +824,7 @@ button {
       0
       0
       0.22rem
-      rgb(7 18 13 / 24%)
+      rgb(var(--envelope-shadow-rgb) / 24%)
     );
 
   box-shadow:
@@ -765,13 +833,13 @@ button {
     0
     0
     1px
-    rgb(213 181 121 / 14%),
+    rgb(var(--envelope-edge-rgb) / 14%),
 
     inset
     0
     -0.18rem
     0.24rem
-    rgb(7 18 13 / 18%);
+    rgb(var(--envelope-shadow-rgb) / 18%);
 }
 
 .envelope__right-fold::after {
@@ -782,13 +850,13 @@ button {
   clip-path:
     polygon(
       100% 0,
-      0 58%,
+      0 var(--envelope-fold-center),
       100% 100%
     );
 
   border-left:
     1px solid
-    rgb(79 96 79 / 26%);
+    rgb(var(--envelope-fold-line-rgb) / 26%);
 
   content: "";
 }
@@ -811,23 +879,23 @@ button {
   clip-path:
     polygon(
       0 100%,
-      50% 2%,
+      50% var(--envelope-bottom-tip),
       100% 100%
     );
 
   background-color:
-    #22382e;
+    var(--envelope-bottom);
 
   background-image:
     url("../images/paper-grain.svg"),
     linear-gradient(
       135deg,
-      #2d4537,
-      #1b2d25 72%
+      var(--envelope-bottom-light),
+      var(--envelope-bottom-dark) 72%
     );
 
   background-size:
-    180px 180px,
+    var(--envelope-grain-size),
     100% 100%;
 
   filter:
@@ -835,7 +903,7 @@ button {
       0
       0.16rem
       0.22rem
-      rgb(7 18 13 / 22%)
+      rgb(var(--envelope-shadow-rgb) / 22%)
     );
 
   box-shadow:
@@ -843,14 +911,14 @@ button {
     0
     0.42rem
     0.42rem
-    rgb(7 18 13 / 26%),
+    rgb(var(--envelope-shadow-rgb) / 26%),
 
     inset
     0
     0
     0
     1px
-    rgb(213 181 121 / 12%);
+    rgb(var(--envelope-edge-rgb) / 12%);
 }
 
 .envelope__bottom-fold::after {
@@ -861,20 +929,20 @@ button {
   clip-path:
     polygon(
       0 100%,
-      50% 2%,
+      50% var(--envelope-bottom-tip),
       100% 100%
     );
 
   border-top:
     1px solid
-    rgb(79 96 79 / 30%);
+    rgb(var(--envelope-fold-line-rgb) / 30%);
 
   box-shadow:
     inset
     0
     0.2rem
     0.22rem
-    rgb(7 18 13 / 18%);
+    rgb(var(--envelope-shadow-rgb) / 18%);
 
   content: "";
 }
@@ -924,15 +992,15 @@ button {
 .envelope__flap-front {
   z-index: 1;
 
-  background-color: #30483b;
+  background-color: var(--envelope-fold);
 
   background-image:
     url("../images/paper-grain.svg"),
     linear-gradient(
       155deg,
-      #3d5547,
-      #253b30 62%,
-      #1a2c24
+      var(--envelope-flap-light),
+      var(--envelope-fold-dark) 62%,
+      var(--envelope-shadow-dark)
     );
 
   background-size:
@@ -940,7 +1008,8 @@ button {
     100% 100%;
 
   transform:
-    translateZ(0.5px);
+    translateZ(-0.8px)
+    translateY(-1.29px);
 }
 
 
@@ -951,7 +1020,7 @@ button {
 .envelope__flap-back {
   z-index: 0;
 
-  background-color: #1b2922;
+  background-color: var(--envelope-deep);
 
   background-image:
     url("../images/paper-grain.svg");
@@ -961,7 +1030,7 @@ button {
 
   transform:
     rotateY(180deg)
-    translateZ(0.5px);
+    translateZ(0.6px);
 }
 
 /* =========================================================
@@ -976,7 +1045,7 @@ button {
   z-index: 1;
 
   background:
-    #28342c;
+    var(--envelope-deep);
 
   background-image:
     url("../images/paper-grain.svg");
@@ -1013,7 +1082,7 @@ button {
       6rem
       5.5rem
       -2rem
-      #28342c,
+      var(--envelope-deep),
 
       inset
       0
@@ -1030,7 +1099,7 @@ button {
       1.5rem
       2.5rem
       -1.5rem
-      #28342c,
+      var(--envelope-deep),
 
       inset
       0
@@ -1051,7 +1120,7 @@ button {
 
   border:
     1px solid
-    rgb(213 181 121 / 30%);
+    rgb(var(--envelope-edge-rgb) / 30%);
 
   clip-path:
     polygon(
@@ -1085,13 +1154,13 @@ button {
     0
     0
     1px
-    rgb(213 181 121 / 18%),
+    rgb(var(--envelope-edge-rgb) / 18%),
 
     inset
     0
     -0.22rem
     0.3rem
-    rgb(7 18 13 / 22%);
+    rgb(var(--envelope-shadow-rgb) / 22%);
 }
 
 
