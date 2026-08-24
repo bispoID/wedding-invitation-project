@@ -450,7 +450,7 @@ button {
 .envelope__backdrop-flap {
   position: absolute;
 
-  top: 1px;
+  top: 0px;
   right: 0;
   bottom: 0;
   left: 0;
@@ -1398,7 +1398,7 @@ button {
     100% 100%;
 
   transform:
-    translateZ(-0.8px)
+    translateZ(-0.9px)
     translateY(-1.29px);
 }
 
@@ -1420,7 +1420,7 @@ button {
 
   transform:
     rotateY(180deg)
-    translateZ(0.6px);
+    translateZ(0.99px);
 }
 
 /* =========================================================
