@@ -1556,6 +1556,18 @@ button {
     rgb(var(--envelope-shadow-rgb) / 22%);
 }
 
+.envelope__decorations {
+  position: absolute;
+
+  z-index: 10;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  transition:
+    transform 500ms var(--ease-smooth);
+}
 
 /* =========================================================
    FLOR SEMPRE VIVA
@@ -1565,47 +1577,28 @@ button {
 .envelope__flowers {
   position: absolute;
 
-  z-index: 8;
+  top: 66%;
+  left: 51%;
 
-  top: 67%;
-
-  left: 50%;
-
-  display: block;
-
-  width: 6.0rem;
-
+  width: 6rem;
   height: auto;
 
   object-fit: contain;
 
-  pointer-events: none;
-
   filter:
     drop-shadow(
-      0
-      0.25rem
+      -0.15rem
+      0.45rem
       0.32rem
-      rgb(40 35 24 / 32%)
+      rgb(31 27 18 / 80%)
     );
 
   transform:
-    translate(
-      -50%,
-      -50%
-    )
+    translate(-50%, -50%)
     rotate(40deg);
 
-  --floral-rotation: 40deg;
-
   opacity: 0.92;
-
-  transition:
-    opacity 350ms ease,
-    transform 500ms
-      var(--ease-smooth);
 }
-
 
 /* =========================================================
    SELO DE CERA
@@ -1615,16 +1608,10 @@ button {
 .envelope__seal {
   position: absolute;
 
-  z-index: 10;
-
   top: 69%;
-
   left: 50%;
 
-  display: block;
-
   width: 3.6rem;
-
   height: 3.6rem;
 
   object-fit: contain;
@@ -1638,22 +1625,10 @@ button {
     );
 
   transform:
-    translate(
-      -50%,
-      -50%
-    )
-    scale(1);
-
-  --floral-rotation: 0deg;
+    translate(-50%, -50%);
 
   opacity: 1;
-
-  transition:
-    opacity 350ms ease,
-    transform 500ms
-      var(--ease-smooth);
 }
-
 
 /* =========================================================
    BOTÕES
