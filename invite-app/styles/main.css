@@ -294,7 +294,42 @@ button {
     translateY(-2rem);
 }
 
-.welcome__content > :not(.envelope) {
+/*
+ * Agrupamentos da capa.
+ *
+ * No mobile, permanecem empilhados como no layout original.
+ * No desktop, a composição passa a usar duas áreas:
+ * textos à esquerda e envelope à direita.
+ */
+.welcome__copy {
+  display: flex;
+
+  width: 100%;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  text-align: center;
+
+  text-shadow:
+    0
+    0.05rem
+    3.0rem
+    var(--wallpaper-shadow);
+}
+
+.envelope-area {
+  display: flex;
+
+  width: 100%;
+
+  flex-direction: column;
+
+  align-items: center;
+}
+
+.envelope-area .open-invitation {
   text-shadow:
     0
     0.05rem
@@ -313,11 +348,17 @@ button {
 
   font-weight: 700;
 
-  letter-spacing: 0.81em;
+  letter-spacing: normal;
 
   line-height: 1.4;
 
   text-transform: uppercase;
+}
+
+.eyebrow span {
+  display: inline-block;
+
+  letter-spacing: 0.80em;  
 }
 
 .welcome h1,
@@ -2155,7 +2196,7 @@ select:focus-visible {
   }
 
   .letter .eyebrow {
-    letter-spacing: 0.24em;
+    letter-spacing: 0.80em;
     line-height: 1.4;
   }
 
@@ -2177,28 +2218,35 @@ select:focus-visible {
         100%,
         38rem
       );
+
+    transform: translateY(1rem);
   }
 
+  /* 1. "UM CONVITE ESPECIAL" */
+  .welcome .eyebrow {
+    font-size: 1.4rem;
+    text-indent: 0.80em;
+  }
+
+  /* 2. "Bruna & Diego" */
   #welcome-title {
     white-space: nowrap;
+    font-size: 12.5rem;
+    text-indent: -0.18em;
   }
 
-  .welcome .eyebrow {
-    font-size: 0.75rem;
-  }
-
+  /* 3. "Dois corações que escolheram caminhar juntos." */
   .welcome__intro {
     margin:
       1rem
       0
       2rem;
-      
-    font-size: 1.35rem;
-    white-space: nowrap;
+
+    font-size: 2.9rem;
   }
 
   .open-invitation {
-    font-size: 1.0rem;
+    font-size: 1.25rem;
 
     margin:
       1.9rem
@@ -2210,6 +2258,82 @@ select:focus-visible {
     padding:
       7rem
       2rem;
+  }
+
+}
+
+
+/* =========================================================
+   DESKTOP — COMPOSIÇÃO HORIZONTAL DA CAPA
+========================================================= */
+
+/*
+ * A partir de 1000px, a capa assume a distribuição da
+ * referência visual:
+ *
+ * - textos concentrados à esquerda;
+ * - envelope e instrução concentrados à direita;
+ * - o mobile e tablets abaixo deste breakpoint permanecem
+ *   com a distribuição original.
+ */
+@media (min-width: 1000px) {
+
+  .welcome {
+    padding:
+      4rem
+      3rem;
+  }
+
+  .welcome__content {
+    display: grid;
+
+    width:
+      min(
+        100%,
+        114rem
+      );
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(20rem, 0.62fr);
+
+    column-gap:
+      clamp(
+        1rem,
+        1vw,
+        6rem
+      );
+
+    align-items: center;
+
+    text-align: left;
+  }
+
+  .welcome__copy {
+    width: 100%;
+
+    align-items: center;
+
+    text-align: center;
+  }
+
+  .welcome__copy .welcome__intro {
+    white-space: nowrap;
+  }
+
+  .envelope-area {
+    width: 100%;
+
+    align-items: center;
+  }
+
+  .envelope-stage {
+    width:
+      clamp(
+        20rem,
+        34vw,
+        30rem
+      );
   }
 
 }
