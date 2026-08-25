@@ -468,7 +468,7 @@ button {
   perspective: 1200px;
 
   transform:
-    rotate(1deg);
+    rotate(0deg);
 
   transform-style: preserve-3d;
 
