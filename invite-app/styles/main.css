@@ -431,7 +431,7 @@ button {
 .envelope-stage {
   position: relative;
 
-  width: min(85vw, 22rem);
+  width: min(87vw, 24rem);
   aspect-ratio: 7 / 10;
 
   margin:
@@ -1318,7 +1318,7 @@ select:focus-visible {
   display: inline-block;
 
   margin:
-    0.4rem
+    0.9rem
     0
     0;
 
