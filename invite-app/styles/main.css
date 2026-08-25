@@ -245,7 +245,7 @@ button {
     scale(2.1);
 
   background-image:
-    url('../images/wallpaper_floral_vitoriano_vintage_2508x2508.jpg');
+    url('../images/wallpaper_floral_vitoriano_vintage_2508x2508.webp');
 
   background-position: center;
 
@@ -1031,7 +1031,7 @@ button {
 
   /* Moldura floral aplicada ao cartão interno. */
   background-image:
-    url("../images/moldura_ramas_1004x1442_50pct.png");
+    url("../images/moldura_ramas_1004x1442_50pct.webp");
 
   background-position: center;
 
