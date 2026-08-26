@@ -148,11 +148,13 @@
 .envelope-area {
   display: flex;
 
-  width: 100%;
-
   flex-direction: column;
 
   align-items: center;
+
+  justify-content: center;
+
+  width: 100%;
 }
 
 .envelope-area .open-invitation {
@@ -248,10 +250,29 @@
  * O envelope traseiro e o principal permanecem
  * independentes e podem receber transformações próprias.
  */
+/* Container de escala compartilhado pelo envelope e pela instrução. */
+.envelope-unit {
+  container-type: inline-size;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  width:
+    clamp(
+      20rem,
+      34vw,
+      30rem
+    );
+}
+
+
 .envelope-stage {
   position: relative;
 
-  width: min(85vw, 22rem);
+  width: 100%;
   aspect-ratio: 7 / 10;
 
   margin:
@@ -314,7 +335,7 @@
   display: inline-block;
 
   margin:
-    0.4rem
+    0.7rem
     0
     0;
 
@@ -332,9 +353,11 @@
 
   font-family: Arial, sans-serif;
 
-  font-size: 0.9rem;
+  font-size: 4.0cqi;
 
   font-weight: 700;
+
+  text-align: center;
 
   letter-spacing: 0.14em;
 

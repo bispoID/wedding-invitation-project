@@ -41,7 +41,7 @@
 
   /* 1. "UM CONVITE ESPECIAL" */
   .welcome .eyebrow {
-    font-size: 1.6rem;
+    font-size: 1.25rem;
   }
 
   /* 2. "Bruna & Diego" */
@@ -61,7 +61,6 @@
   }
 
   .open-invitation {
-    font-size: 1.25rem;
 
     margin:
       1.9rem
@@ -140,16 +139,11 @@
   .envelope-area {
     width: 100%;
 
-    align-items: center;
-  }
+    display: flex;
 
-  .envelope-stage {
-    width:
-      clamp(
-        20rem,
-        34vw,
-        30rem
-      );
+    justify-content: center;
+
+    align-items: center;
   }
 
 }

@@ -49,125 +49,127 @@
 
           <div class="envelope-area">
 
-            <div class="envelope-stage">
+            <div class="envelope-unit">
 
-              <!-- Segundo envelope, posicionado atrás e sem animação. -->
-              <div
-                class="envelope__backdrop"
-                aria-hidden="true"
-              ></div>
+              <div class="envelope-stage">
 
-              <!-- =====================================================
-                  ENVELOPE PRINCIPAL
-              ====================================================== -->
-              <div
-                class="envelope"
-                aria-label="Envelope do convite"
-                role="button"
-                tabindex="0"
-              >
-
+                <!-- Segundo envelope, posicionado atrás e sem animação. -->
                 <div
-                  class="envelope__inner-back"
+                  class="envelope__backdrop"
                   aria-hidden="true"
                 ></div>
 
-                <!-- ===================================================
-                    CARTÃO INTERNO DO ENVELOPE
-                ==================================================== -->
-                <div class="envelope__card">
+                <!-- =====================================================
+                    ENVELOPE PRINCIPAL
+                ====================================================== -->
+                <div
+                  class="envelope"
+                  aria-label="Envelope do convite"
+                  role="button"
+                  tabindex="0"
+                >
 
-                  <div class="envelope__card-inner">
+                  <div
+                    class="envelope__inner-back"
+                    aria-hidden="true"
+                  ></div>
+
+                  <!-- ===================================================
+                      CARTÃO INTERNO DO ENVELOPE
+                  ==================================================== -->
+                  <div class="envelope__card">
+
+                    <div class="envelope__card-inner">
+
+                      <img
+                        class="envelope__manga"
+                        src="./images/arte_manga_transparente_oval.webp"
+                        alt="Arte dos noivos"
+                      />
+
+                    </div>
+
+                  </div>
+
+
+                  <!-- ===================================================
+                      ABAS FIXAS DO ENVELOPE
+
+                      Essas abas não são animadas e permanecem no lugar
+                      durante a abertura.
+                  ==================================================== -->
+
+                  <div
+                    class="envelope__side-fold envelope__fold envelope__fold--left"
+                    aria-hidden="true"
+                  ></div>
+
+                  <div
+                    class="envelope__right-fold envelope__fold envelope__fold--right"
+                    aria-hidden="true"
+                  ></div>
+
+                  <div
+                    class="envelope__bottom-fold envelope__fold envelope__fold--bottom"
+                    aria-hidden="true"
+                  ></div>
+
+
+                  <!-- ===================================================
+                      ABA SUPERIOR
+
+                      É a única aba do envelope que se movimenta.
+                  ==================================================== -->
+                  <div
+                    class="envelope__flap envelope__fold envelope__fold--top"
+                    aria-hidden="true"
+                  >
+
+                    <span
+                      class="envelope__flap-front"
+                      aria-hidden="true"
+                    ></span>
+
+                    <span
+                      class="envelope__flap-back"
+                      aria-hidden="true"
+                    ></span>
+
+                  </div>
+
+
+                  <!-- Elementos decorativos do envelope. -->
+                  <div
+                    class="envelope__decorations"
+                    aria-hidden="true"
+                  >
 
                     <img
-                      class="envelope__manga"
-                      src="./images/arte_manga_transparente_oval.webp"
-                      alt="Arte dos noivos"
+                      class="envelope__flowers"
+                      src="./images/flores_sempre_vivas.webp"
+                      alt=""
                     />
 
+                    <img
+                      class="envelope__seal"
+                      src="./images/selo_de_cera_carta_786x780.webp"
+                      alt=""
+                    />
+                    
                   </div>
 
                 </div>
 
-
-                <!-- ===================================================
-                    ABAS FIXAS DO ENVELOPE
-
-                    Essas abas não são animadas e permanecem no lugar
-                    durante a abertura.
-                ==================================================== -->
-
-                <div
-                  class="envelope__side-fold envelope__fold envelope__fold--left"
-                  aria-hidden="true"
-                ></div>
-
-                <div
-                  class="envelope__right-fold envelope__fold envelope__fold--right"
-                  aria-hidden="true"
-                ></div>
-
-                <div
-                  class="envelope__bottom-fold envelope__fold envelope__fold--bottom"
-                  aria-hidden="true"
-                ></div>
-
-
-                <!-- ===================================================
-                    ABA SUPERIOR
-
-                    É a única aba do envelope que se movimenta.
-                ==================================================== -->
-                <div
-                  class="envelope__flap envelope__fold envelope__fold--top"
-                  aria-hidden="true"
-                >
-
-                  <span
-                    class="envelope__flap-front"
-                    aria-hidden="true"
-                  ></span>
-
-                  <span
-                    class="envelope__flap-back"
-                    aria-hidden="true"
-                  ></span>
-
-                </div>
-
-
-                <!-- Elementos decorativos do envelope. -->
-                <div
-                  class="envelope__decorations"
-                  aria-hidden="true"
-                >
-
-                  <img
-                    class="envelope__flowers"
-                    src="./images/flores_sempre_vivas.webp"
-                    alt=""
-                  />
-
-                  <img
-                    class="envelope__seal"
-                    src="./images/selo_de_cera_carta_786x780.webp"
-                    alt=""
-                  />
-                  
-                </div>
-
               </div>
 
+              <p
+                class="open-invitation"
+                aria-hidden="true"
+              >
+                <span>Toque no envelope para abrir</span>
+              </p>
+
             </div>
-
-
-            <!-- Instrução visual para a abertura do envelope. -->
-            <p
-              class="open-invitation"
-              aria-hidden="true"
-            >
-              <span>Toque no envelope para abrir</span>
-            </p>
 
           </div>
 
