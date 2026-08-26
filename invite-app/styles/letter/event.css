@@ -1,0 +1,206 @@
+/* Detalhes do evento, localização e links. */
+
+/* =========================================================
+   EVENT DETAILS
+========================================================= */
+
+.event-details {
+  display:
+    flex;
+
+  width:
+    min(
+      100%,
+      23rem
+    );
+
+  align-items:
+    stretch;
+
+  justify-content:
+    center;
+
+  margin:
+    2.8rem
+    auto
+    2rem;
+
+  border-top:
+    1px solid
+    var(--gold-light);
+
+  border-bottom:
+    1px solid
+    var(--gold-light);
+}
+
+.event-detail {
+  flex: 1;
+
+  padding:
+    1.2rem
+    0.75rem;
+}
+
+/* Separador vertical entre os blocos de data, horário e demais detalhes do evento. */
+.event-detail + .event-detail {
+  border-left:
+    1px solid
+    var(--gold-light);
+}
+
+.event-detail__label,
+.event-detail__year {
+  margin: 0;
+
+  color:
+    var(--olive-700);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size:
+    0.62rem;
+
+  letter-spacing:
+    0.16em;
+
+  text-transform:
+    uppercase;
+}
+
+.event-detail__date {
+  margin:
+    0.2rem
+    0;
+
+  color:
+    var(--olive-900);
+
+  font-size:
+    3.2rem;
+
+  line-height:
+    1;
+}
+
+.event-detail__value {
+  margin:
+    0.8rem
+    0
+    0;
+
+  color:
+    var(--olive-900);
+
+  font-size:
+    1.8rem;
+}
+
+
+/* =========================================================
+   LOCAL
+========================================================= */
+
+.location-card {
+  margin:
+    2rem
+    auto;
+
+  padding:
+    1.5rem;
+
+  background:
+    rgb(135 146 124 / 12%);
+}
+
+.location-card__label {
+  margin:
+    0
+    0
+    0.5rem;
+
+  color:
+    var(--olive-700);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size:
+    0.62rem;
+
+  font-weight:
+    700;
+
+  letter-spacing:
+    0.22em;
+
+  text-transform:
+    uppercase;
+}
+
+.location-card h3 {
+  margin: 0;
+
+  color:
+    var(--olive-900);
+
+  font-size:
+    1.5rem;
+
+  font-weight:
+    400;
+}
+
+.location-card p:not(.location-card__label) {
+  margin:
+    0.45rem
+    0
+    1rem;
+
+  color:
+    var(--olive-800);
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+/* Links e botões textuais compartilham a mesma tipografia e aparência institucional. */
+.text-link,
+.text-button {
+  color:
+    var(--olive-900);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size:
+    0.65rem;
+
+  font-weight:
+    700;
+
+  letter-spacing:
+    0.1em;
+
+  text-decoration:
+    none;
+
+  text-transform:
+    uppercase;
+}
+
+.text-link span {
+  color:
+    var(--gold);
+
+  font-size:
+    0.95rem;
+}
+
+

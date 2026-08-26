@@ -1,0 +1,97 @@
+/* Regras globais, utilitários e acessibilidade. */
+
+.invitation-app {
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.button {
+  display: inline-flex;
+
+  min-height: 3rem;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 1rem;
+
+  border: 0;
+
+  border-radius: 999px;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 0.68rem;
+
+  font-weight: 700;
+
+  letter-spacing: 0.15em;
+
+  text-transform: uppercase;
+
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    background 200ms ease;
+}
+
+.button:hover,
+.button:focus-visible {
+  transform:
+    translateY(-2px);
+}
+
+.button:focus-visible,
+.text-button:focus-visible,
+.text-link:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline:
+    2px solid
+    var(--gold-light);
+
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   HIDDEN
+========================================================= */
+
+[hidden] {
+  display: none !important;
+}
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+/* Respeita a preferência do sistema por menos movimento,
+   reduzindo animações e transições sem alterar o layout. */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+
+    scroll-behavior:
+      auto !important;
+
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      0.01ms !important;
+  }
+
+}
+

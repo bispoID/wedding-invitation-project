@@ -1,0 +1,111 @@
+/* Variáveis e tokens visuais do projeto. */
+
+:root {
+
+  /* =========================================================
+     VALORES COMPARTILHADOS DO ENVELOPE
+  ========================================================== */
+
+  --envelope-fold-width: 52%;
+  --envelope-fold-center: 58%;
+  --envelope-bottom-height: 48%;
+  --envelope-bottom-tip: 2%;
+  --envelope-grain-size: 180px 180px;
+
+  --olive-950: #28342c;
+  --olive-900: #344337;
+  --olive-800: #4f604f;
+  --olive-700: #687765;
+  --olive-500: #87927c;
+  --olive-400: #a8b69b;
+
+  --paper: #f5f1e8;
+  --paper-deep: #e8e1d3;
+
+  --ink: #374138;
+
+  --gold: #ac8850;
+  --gold-light: #d5b579;
+
+  --white: #fffdf8;
+
+  --shadow:
+    0 2rem 5rem rgb(33 42 35 / 24%);
+
+  --wallpaper-shadow:
+    rgba(31, 41, 4, 0.856);
+
+  --card-shadow:
+    rgba(0, 0, 0, 0.329);
+
+  --ease-smooth:
+    cubic-bezier(0.22, 1, 0.36, 1);
+
+  --grain-size:
+    180px 180px;
+
+  color: var(--ink);
+
+  font-family:
+    "Times New Roman",
+    Times,
+    serif;
+
+  font-synthesis: none;
+
+  /* =========================================================
+     PALETA DO ENVELOPE
+  ========================================================== */
+
+  /*
+   * Tons estruturais. Cada variável preserva uma cor distinta
+   * já utilizada no envelope; nenhuma tonalidade foi fundida.
+   */
+  --envelope-bottom: #22382e;
+  --envelope-bottom-dark: #1f352a;
+  --envelope-bottom-light: #2d4537;
+  --envelope-deep: #1c3128;
+  --envelope-darkest: #172921;
+  --envelope-flap-light: #263f31;
+  --envelope-fold: #30483b;
+  --envelope-fold-dark: #253b30;
+  --envelope-fold-left-dark: #1f362c;
+  --envelope-fold-left-light: #30473a;
+  --envelope-fold-right-dark: #22362b;
+  --envelope-fold-right-light: #284133;
+  --envelope-shadow-dark: #1a2c24;
+  --envelope-side-left: #263a30;
+  --envelope-side-right: #3b6350;
+
+  /* Cor-base compartilhada pelas sombras internas do envelope. */
+  --envelope-shadow-rgb: 7 18 13;
+
+  /* Detalhes e linhas de acabamento do envelope. */
+  --envelope-edge-rgb: 213 181 121;
+  --envelope-fold-line-rgb: 79 96 79;
+}
+
+@font-face {
+  font-family: "Edwardian Script ITC";
+  src: url("../../fonts/EdwardianScriptITC.ttf") format("truetype");
+  font-display: swap;
+}
+
+.script-name {
+  font-family:
+    "Edwardian Script ITC",
+    "Times New Roman",
+    serif;
+
+  font-style: normal;
+  letter-spacing: 0;
+}
+
+.script-name.script-name--word {
+  color: var(--olive-900);
+}
+
+.script-name.script-name--amp {
+  color: var(--gold);
+}
+

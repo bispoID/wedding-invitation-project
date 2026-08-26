@@ -1,0 +1,164 @@
+/* Responsividade por breakpoint. Regras específicas permanecem agrupadas aqui. */
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (max-width: 699px) {
+
+  .welcome__wallpaper {
+    background-size: cover;
+
+    transform: none;
+  }
+
+  .letter .eyebrow {
+    letter-spacing: 0.24em;
+    line-height: 1.4;
+  }
+
+}
+
+/* Ajustes para telas maiores, preservando a composição central do convite. */
+@media (min-width: 700px) {
+
+  .welcome {
+    padding:
+      7rem
+      2rem
+      5rem;
+  }
+
+  .welcome__content {
+    width:
+      min(
+        100%,
+        38rem
+      );
+
+    transform: translateY(1rem);
+  }
+
+  /* 1. "UM CONVITE ESPECIAL" */
+  .welcome .eyebrow {
+    font-size: 1.6rem;
+  }
+
+  /* 2. "Bruna & Diego" */
+  #welcome-title {
+    white-space: nowrap;
+    font-size: 10.2rem;
+  }
+
+  /* 3. "Dois corações que escolheram caminhar juntos." */
+  .welcome__intro {
+    margin:
+      1rem
+      0
+      2rem;
+
+    font-size: 3.1rem;
+  }
+
+  .open-invitation {
+    font-size: 1.25rem;
+
+    margin:
+      1.9rem
+      0
+      0;
+  }
+
+  .letter {
+    padding:
+      7rem
+      2rem;
+  }
+
+}
+
+
+/* =========================================================
+   DESKTOP — COMPOSIÇÃO HORIZONTAL DA CAPA
+========================================================= */
+
+/*
+ * A partir de 1000px, a capa assume a distribuição da
+ * referência visual:
+ *
+ * - textos concentrados à esquerda;
+ * - envelope e instrução concentrados à direita;
+ * - o mobile e tablets abaixo deste breakpoint permanecem
+ *   com a distribuição original.
+ */
+@media (min-width: 1000px) {
+
+  .welcome {
+    padding:
+      4rem
+      3rem;
+  }
+
+  .welcome__content {
+    display: grid;
+
+    width:
+      min(
+        100%,
+        96rem
+      );
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(24rem, 0.9fr);
+
+    column-gap:
+      clamp(
+        2rem,
+        5vw,
+        6rem
+      );
+
+    align-items: center;
+
+    text-align: left;
+  }
+
+  .welcome__copy {
+    width: 100%;
+
+    align-items: center;
+
+    text-align: center;
+  }
+
+  .welcome__copy .welcome__intro {
+    max-width: 32rem;
+    white-space: normal;
+  }
+
+  .envelope-area {
+    width: 100%;
+
+    align-items: center;
+  }
+
+  .envelope-stage {
+    width:
+      clamp(
+        20rem,
+        34vw,
+        30rem
+      );
+  }
+
+}
+
+
+/* =========================================================
+   REDUÇÃO DE MOVIMENTO
+========================================================= */
+
+/* Respeita a preferência do sistema por menos movimento,
+   reduzindo animações e transições sem alterar o layout. */
+

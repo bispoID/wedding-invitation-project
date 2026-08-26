@@ -1,0 +1,161 @@
+/* Formulário e confirmação de presença (RSVP). */
+
+/* =========================================================
+   RSVP
+========================================================= */
+
+.letter__divider {
+  width:
+    4rem;
+
+  height:
+    1px;
+
+  margin:
+    2.8rem
+    auto;
+
+  background:
+    var(--gold-light);
+}
+
+.rsvp h3 {
+  margin:
+    0.35rem
+    0
+    0.65rem;
+
+  color:
+    var(--olive-900);
+
+  font-size:
+    clamp(
+      1.8rem,
+      7vw,
+      2.5rem
+    );
+
+  font-weight:
+    400;
+}
+
+.rsvp__description {
+  max-width:
+    22rem;
+
+  margin:
+    0
+    auto
+    1.5rem;
+
+  color:
+    var(--olive-800);
+
+  line-height:
+    1.6;
+}
+
+.rsvp-form {
+  display:
+    grid;
+
+  max-width:
+    25rem;
+
+  margin:
+    0 auto;
+
+  text-align:
+    left;
+}
+
+.rsvp-form label {
+  margin:
+    0.9rem
+    0
+    0.4rem;
+
+  color:
+    var(--olive-800);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size:
+    0.68rem;
+
+  font-weight:
+    700;
+
+  letter-spacing:
+    0.06em;
+}
+
+.rsvp-form input,
+.rsvp-form select {
+  width:
+    100%;
+
+  min-height:
+    2.9rem;
+
+  border:
+    1px solid
+    rgb(104 119 101 / 35%);
+
+  border-radius:
+    0.15rem;
+
+  padding:
+    0.7rem
+    0.8rem;
+
+  background:
+    rgb(255 253 248 / 70%);
+
+  color:
+    var(--ink);
+
+  outline:
+    0;
+}
+
+.rsvp-form .button {
+  margin-top:
+    1.4rem;
+
+  background:
+    var(--olive-800);
+
+  color:
+    var(--white);
+}
+
+.form-feedback {
+  min-height:
+    1.2rem;
+
+  margin:
+    0.9rem
+    0
+    0;
+
+  color:
+    var(--olive-800);
+
+  font-family:
+    Arial,
+    sans-serif;
+
+  font-size:
+    0.72rem;
+
+  line-height:
+    1.4;
+
+  text-align:
+    center;
+}
+
+

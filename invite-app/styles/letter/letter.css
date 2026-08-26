@@ -1,0 +1,244 @@
+/* Estrutura principal da carta. */
+
+/* =========================================================
+   ESTRUTURA E CONTEÚDO DA CARTA
+========================================================= */
+
+/* Carta
+========================================================= */
+
+.letter {
+  position: relative;
+
+  min-height: 100svh;
+
+  padding:
+    clamp(
+      2rem,
+      6vw,
+      5rem
+    )
+    1rem;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      #dfe2d5,
+      #c5cec0
+    );
+}
+
+/* Moldura ocupa toda a carta como camada visual, sem interferir no conteúdo. */
+.letter__frame {
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0.4;
+
+  pointer-events: none;
+}
+
+.letter__frame img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.letter__content {
+  position: relative;
+
+  z-index: 1;
+
+  width:
+    min(
+      100%,
+      39rem
+    );
+
+  margin:
+    0 auto;
+
+  padding:
+    clamp(
+      3.5rem,
+      9vw,
+      6rem
+    )
+    clamp(
+      1.35rem,
+      7vw,
+      4.5rem
+    );
+
+  border:
+    1px solid
+    rgb(172 136 80 / 40%);
+
+  background:
+    rgb(245 241 232 / 92%);
+
+  box-shadow:
+    var(--shadow);
+
+  text-align:
+    center;
+}
+
+.letter__header {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+}
+
+.letter__header .eyebrow {
+  color:
+    var(--olive-950);
+}
+
+.letter__monogram {
+  width:
+    clamp(
+      5rem,
+      25vw,
+      8rem
+    );
+
+  margin:
+    0.35rem
+    auto
+    1.2rem;
+
+  mix-blend-mode:
+    multiply;
+}
+
+.letter h2 {
+  color:
+    var(--olive-900);
+
+  font-size:
+    clamp(
+      2.8rem,
+      10vw,
+      4.8rem
+    );
+}
+
+.ornament {
+  display: flex;
+
+  width:
+    min(
+      100%,
+      15rem
+    );
+
+  align-items:
+    center;
+
+  gap:
+    0.65rem;
+
+  margin:
+    1.5rem
+    0
+    2rem;
+
+  color:
+    var(--gold);
+
+  font-size:
+    0.8rem;
+}
+
+.ornament span {
+  height: 1px;
+
+  flex: 1;
+
+  background:
+    var(--gold-light);
+}
+
+
+/* =========================================================
+   CONTEÚDO DA CARTA
+========================================================= */
+
+.letter__opening,
+.letter__message {
+  max-width:
+    28rem;
+
+  margin:
+    0 auto;
+
+  font-size:
+    1.05rem;
+
+  line-height:
+    1.75;
+}
+
+.letter__message {
+  margin-top:
+    0.6rem;
+
+  color:
+    var(--olive-800);
+
+  font-style:
+    italic;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.letter__footer {
+  margin-top:
+    3rem;
+
+  padding-top:
+    1.5rem;
+
+  border-top:
+    1px solid
+    rgb(172 136 80 / 35%);
+}
+
+.letter__footer p {
+  margin:
+    0
+    0
+    1rem;
+
+  color:
+    var(--olive-800);
+
+  font-style:
+    italic;
+}
+
+.text-button {
+  border:
+    0;
+
+  padding:
+    0;
+
+  background:
+    transparent;
+
+  cursor:
+    pointer;
+}
+
+
