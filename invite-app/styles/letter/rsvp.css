@@ -20,6 +20,7 @@
 }
 
 .rsvp h3 {
+  font-family: "Liberation Serif Local", serif;
   margin:
     0.35rem
     0
@@ -40,6 +41,7 @@
 }
 
 .rsvp__description {
+  font-family: "Liberation Serif Local", serif;
   max-width:
     22rem;
 
@@ -78,9 +80,7 @@
   color:
     var(--olive-800);
 
-  font-family:
-    Arial,
-    sans-serif;
+  font-family: "Liberation Sans Local", sans-serif;
 
   font-size:
     0.68rem;
@@ -94,6 +94,7 @@
 
 .rsvp-form input,
 .rsvp-form select {
+  font-family: "Liberation Serif Local", serif;
   width:
     100%;
 
@@ -144,9 +145,7 @@
   color:
     var(--olive-800);
 
-  font-family:
-    Arial,
-    sans-serif;
+  font-family: "Liberation Sans Local", sans-serif;
 
   font-size:
     0.72rem;

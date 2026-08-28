@@ -119,6 +119,7 @@
 }
 
 .letter h2 {
+  font-family: "Liberation Serif Local", serif;
   color:
     var(--olive-900);
 
@@ -173,6 +174,7 @@
 
 .letter__opening,
 .letter__message {
+  font-family: "Liberation Serif Local", serif;
   max-width:
     28rem;
 
@@ -187,6 +189,7 @@
 }
 
 .letter__message {
+  font-family: "Liberation Sans Local", sans-serif;
   margin-top:
     0.6rem;
 
@@ -215,6 +218,7 @@
 }
 
 .letter__footer p {
+  font-family: "Liberation Serif Local", serif;
   margin:
     0
     0

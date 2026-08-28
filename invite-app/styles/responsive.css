@@ -14,7 +14,6 @@
 
   .letter .eyebrow {
     letter-spacing: 0.24em;
-    line-height: 1.4;
   }
 
 }
@@ -36,7 +35,7 @@
         38rem
       );
 
-    transform: translateY(1rem);
+    transform: translateY(1.5rem);
   }
 
   /* 1. "UM CONVITE ESPECIAL" */
@@ -46,12 +45,13 @@
 
   /* 2. "Bruna & Diego" */
   #welcome-title {
-    white-space: nowrap;
+    font-family: "Liberation Serif Local", serif;
     font-size: 10.2rem;
   }
 
   /* 3. "Dois corações que escolheram caminhar juntos." */
   .welcome__intro {
+    font-family: "Liberation Serif Local", serif;
     margin:
       1rem
       0
