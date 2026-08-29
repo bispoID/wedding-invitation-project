@@ -16,9 +16,23 @@
     letter-spacing: 0.24em;
   }
 
-  /* "Bruna & Diego" */
+  /* 1. "UM CONVITE ESPECIAL" */
+  .eyebrow {
+    transform: translateX(2px);
+  }
+
+  /* 2. "Bruna & Diego" */
   #welcome-title {
       white-space: nowrap;
+
+      transform: translateX(
+          calc(-1.2vw - 2.008px)
+      );
+  }
+
+  /* 3. "Dois corações que escolheram caminhar juntos." */
+  .welcome__intro {
+    transform: translateX(-1.4px);
   }
 
 }
@@ -46,12 +60,15 @@
   /* 1. "UM CONVITE ESPECIAL" */
   .welcome .eyebrow {
     font-size: 1.25rem;
+    transform: translateX(4px);
   }
 
   /* 2. "Bruna & Diego" */
   #welcome-title {
     font-family: "Liberation Serif Local", serif;
     font-size: 10.2rem;
+
+    transform: translateX(-11.5px);
   }
 
   /* 3. "Dois corações que escolheram caminhar juntos." */
@@ -63,6 +80,7 @@
       2rem;
 
     font-size: 3.1rem;
+    transform: translateX(-6.8px);
   }
 
   .open-invitation {
