@@ -16,6 +16,11 @@
     letter-spacing: 0.24em;
   }
 
+  /* "Bruna & Diego" */
+  #welcome-title {
+      white-space: nowrap;
+  }
+
 }
 
 /* Ajustes para telas maiores, preservando a composição central do convite. */
@@ -32,7 +37,7 @@
     width:
       min(
         100%,
-        38rem
+        45rem
       );
 
     transform: translateY(1.5rem);
@@ -104,18 +109,18 @@
     width:
       min(
         100%,
-        96rem
+        116rem
       );
 
     grid-template-columns:
-      minmax(0, 1fr)
-      minmax(24rem, 0.9fr);
+      minmax(0, 8fr)
+      minmax(33rem, 5.5fr);
 
     column-gap:
       clamp(
         2rem,
         5vw,
-        6rem
+        1rem
       );
 
     align-items: center;
