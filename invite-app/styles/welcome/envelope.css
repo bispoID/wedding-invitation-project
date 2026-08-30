@@ -706,8 +706,12 @@
 
   pointer-events: none;
 
-  transition:
-    transform 500ms var(--ease-smooth);
+  /*
+   * O deslocamento dos elementos decorativos é aplicado
+   * ao contêiner para que flores e selo percorram exatamente
+   * a mesma distância, independentemente do elemento.
+   */
+  transform: translate(0, 0);
 }
 
 /* =========================================================

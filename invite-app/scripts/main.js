@@ -8,8 +8,7 @@ const backButton = document.querySelector('.back-to-cover');
 
 const rsvpForm = document.querySelector('.rsvp-form');
 const feedback = document.querySelector('.form-feedback');
-const flowers = document.querySelector('.envelope__flowers');
-const seal = document.querySelector('.envelope__seal');
+const decorations = document.querySelector('.envelope__decorations');
 
 let isOpening = false;
 let flapTurnFrame = null;
@@ -34,32 +33,44 @@ const ANIMATION_TIMING = {
 function animateFloralSealExit() {
 
   const animationOptions = {
-    duration: 900,
+    duration: 1100,
     easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
     fill: 'both'
   };
 
+  /*
+   * O movimento pertence ao contêiner pai.
+   *
+   * Assim, flores e selo herdam o mesmo deslocamento
+   * e percorrem exatamente a mesma distância até o canto
+   * do envelope, tanto no mobile quanto no desktop.
+   */
   floralSealAnimations = [
-    [flowers, '40deg'],
-    [seal, '0deg']
-  ].map(([element, rotation]) => element.animate([
-    {
-      transform:
-        `translate(-50%, -50%) rotate(${rotation}) scale(1)`
-    },
+    decorations.animate([
+      {
+        transform:
+          'translate(0, 0)'
+      },
 
-    {
-      transform:
-        `translate(-50%, -50%) rotate(${rotation}) scale(1.1)`,
-      offset: 0.7
-    },
+      {
+        transform:
+          'translate(0, 0) scale(1.1)',
+        offset: 0.7
+      },
 
-    {
-      transform:
-        `translate(calc(-50% + 8rem), calc(-50% + 8rem)) rotate(${rotation}) scale(1.16)`
-    }
+      {
+        transform:
+          'translate(32.5%, 22.5%) scale(1.16)',
+        offset: 0.99  
+      },
 
-  ], animationOptions));
+      {
+        transform:
+          'translate(32.5%, 27.5%) scale(1)'
+      }
+
+    ], animationOptions)
+  ];
 
 }
 
