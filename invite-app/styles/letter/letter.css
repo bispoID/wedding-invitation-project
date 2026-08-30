@@ -1,12 +1,10 @@
-/* Estrutura principal da carta. */
+/* Estrutura principal, cabeçalho e conteúdo textual da carta. */
 
 /* =========================================================
-   ESTRUTURA E CONTEÚDO DA CARTA
+   CARTA
 ========================================================= */
 
-/* Carta
-========================================================= */
-
+/* Superfície principal que contém moldura, conteúdo e áreas internas. */
 .letter {
   position: relative;
 
@@ -30,6 +28,11 @@
     );
 }
 
+
+/* =========================================================
+   MOLDURA DA CARTA
+========================================================= */
+
 /* Moldura ocupa toda a carta como camada visual, sem interferir no conteúdo. */
 .letter__frame {
   position: absolute;
@@ -47,6 +50,11 @@
 
   object-fit: cover;
 }
+
+
+/* =========================================================
+   CONTEÚDO DA CARTA
+========================================================= */
 
 .letter__content {
   position: relative;
@@ -87,6 +95,11 @@
   text-align:
     center;
 }
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
 
 .letter__header {
   display: flex;
@@ -131,6 +144,7 @@
     );
 }
 
+/* Ornamento horizontal que encerra visualmente o cabeçalho. */
 .ornament {
   display: flex;
 
@@ -169,7 +183,7 @@
 
 
 /* =========================================================
-   CONTEÚDO DA CARTA
+   CORPO DA CARTA
 ========================================================= */
 
 .letter__opening,
@@ -202,7 +216,7 @@
 
 
 /* =========================================================
-   FOOTER
+   RODAPÉ
 ========================================================= */
 
 .letter__footer {
@@ -231,6 +245,7 @@
     italic;
 }
 
+/* Botão textual usado no retorno para a capa. */
 .text-button {
   border:
     0;
@@ -244,5 +259,3 @@
   cursor:
     pointer;
 }
-
-

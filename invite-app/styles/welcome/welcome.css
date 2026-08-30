@@ -1,7 +1,7 @@
-/* Estrutura e conteúdo da capa (welcome). */
+/* Estrutura, fundo e conteúdo da capa (welcome). */
 
 /* =========================================================
-   WELCOME
+   CAPA
 ========================================================= */
 
 .welcome {
@@ -32,6 +32,7 @@
   color: var(--olive-900);
 }
 
+/* Elementos circulares decorativos posicionados nas extremidades da capa. */
 .welcome::before,
 .welcome::after {
   position: absolute;
@@ -58,7 +59,12 @@
   bottom: -14rem;
 }
 
-/* Camada decorativa de fundo; não participa das interações do convite. */
+
+/* =========================================================
+   CAMADAS DECORATIVAS DO FUNDO
+========================================================= */
+
+/* Wallpaper ocupa toda a capa e não participa das interações. */
 .welcome__wallpaper {
   position: absolute;
 
@@ -100,6 +106,11 @@
   pointer-events: none;
 }
 
+
+/* =========================================================
+   CONTEÚDO DA CAPA
+========================================================= */
+
 /* Conteúdo fica acima das camadas decorativas do fundo. */
 .welcome__content {
   position: relative;
@@ -120,13 +131,7 @@
     translateY(-2rem);
 }
 
-/*
- * Agrupamentos da capa.
- *
- * No mobile, permanecem empilhados como no layout original.
- * No desktop, a composição passa a usar duas áreas:
- * textos à esquerda e envelope à direita.
- */
+/* Bloco que reúne chamada, nomes e frase introdutória. */
 .welcome__copy {
   display: flex;
 
@@ -138,26 +143,6 @@
 
   text-align: center;
 
-  text-shadow:
-    0
-    0.05rem
-    3.0rem
-    var(--wallpaper-shadow);
-}
-
-.envelope-area {
-  display: flex;
-
-  flex-direction: column;
-
-  align-items: center;
-
-  justify-content: center;
-
-  width: 100%;
-}
-
-.envelope-area .open-invitation {
   text-shadow:
     0
     0.05rem
@@ -183,6 +168,7 @@
   text-transform: uppercase;
 }
 
+/* Títulos principais da capa e da carta compartilham a tipografia-base. */
 .welcome h1,
 .letter h2 {
   font-family: "Liberation Serif Local", serif;
@@ -194,7 +180,7 @@
       16vw,
       6.8rem
     );
-    
+
   font-weight: 400;
 
   line-height: 0.9;
@@ -223,32 +209,30 @@
 
 
 /* =========================================================
-   TRANSIÇÕES DO CONTEÚDO DA CAPA
+   ÁREA DO ENVELOPE
 ========================================================= */
 
-.welcome .eyebrow,
-.welcome h1,
-.welcome__intro,
-.open-invitation {
-  transition:
-    opacity 450ms ease,
-    transform 650ms ease;
+.envelope-area {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  width: 100%;
 }
 
+/* O texto de instrução acompanha visualmente a área do envelope. */
+.envelope-area .open-invitation {
+  text-shadow:
+    0
+    0.05rem
+    3.0rem
+    var(--wallpaper-shadow);
+}
 
-/* =========================================================
-   ÁREA DOS ENVELOPES
-========================================================= */
-
-/*
- * Container compartilhado pelos dois envelopes.
- *
- * O stage mantém a mesma área física que o envelope
- * principal possuía originalmente.
- *
- * O envelope traseiro e o principal permanecem
- * independentes e podem receber transformações próprias.
- */
 /* Container de escala compartilhado pelo envelope e pela instrução. */
 .envelope-unit {
   container-type: inline-size;
@@ -267,7 +251,6 @@
     );
 }
 
-
 .envelope-stage {
   position: relative;
 
@@ -280,8 +263,7 @@
     1.3rem;
 }
 
-/* Segundo envelope.
-   Permanece completamente estático durante toda a animação. */
+/* Segundo envelope, posicionado atrás e sem animação. */
 .envelope__backdrop {
   position: absolute;
 
@@ -329,7 +311,7 @@
     rotate(-3deg);
 }
 
-
+/* Instrução de abertura posicionada abaixo do envelope. */
 .open-invitation {
   display: inline-block;
 
@@ -369,3 +351,17 @@
   pointer-events: none;
 }
 
+
+/* =========================================================
+   TRANSIÇÕES DA CAPA
+========================================================= */
+
+/* Os elementos de texto e a instrução compartilham a transição de saída. */
+.welcome .eyebrow,
+.welcome h1,
+.welcome__intro,
+.open-invitation {
+  transition:
+    opacity 450ms ease,
+    transform 650ms ease;
+}

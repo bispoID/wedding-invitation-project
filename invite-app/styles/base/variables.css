@@ -1,14 +1,10 @@
-/* Variáveis e tokens visuais do projeto. */
+/* Variáveis, tokens visuais e fontes locais do projeto. */
 
 :root {
 
   /* =========================================================
-     VALORES COMPARTILHADOS DO ENVELOPE
+     PALETA GERAL
   ========================================================== */
-
-  --envelope-fold-center: 50%;
-  --envelope-bottom-tip: 2%;
-  --envelope-grain-size: 180px 180px;
 
   --olive-950: #28342c;
   --olive-900: #344337;
@@ -39,6 +35,26 @@
   --grain-size:
     180px 180px;
 
+
+  /* =========================================================
+     TOKENS DO ENVELOPE
+  ========================================================== */
+
+  --envelope-fold-center: 50%;
+  --envelope-bottom-tip: 2%;
+  --envelope-grain-size: 180px 180px;
+
+  /* Tons estruturais distintos usados pelas partes do envelope. */
+  --envelope-bottom: #21352b;
+  --envelope-deep: #1c3128;
+  --envelope-fold: #253b30;
+  --envelope-side-left: #22372c;
+  --envelope-side-right: #22372c;
+
+  /* Cores compartilhadas por sombras e linhas de acabamento. */
+  --envelope-shadow-rgb: 7 18 13;
+  --envelope-edge-rgb: 213 181 121;
+
   color: var(--ink);
 
   font-family:
@@ -47,27 +63,12 @@
     serif;
 
   font-synthesis: none;
-
-  /* =========================================================
-     PALETA DO ENVELOPE
-  ========================================================== */
-
-  /*
-   * Tons estruturais. Cada variável preserva uma cor distinta
-   * já utilizada no envelope; nenhuma tonalidade foi fundida.
-   */
-  --envelope-bottom: #21352b;
-  --envelope-deep: #1c3128;
-  --envelope-fold: #253b30;
-  --envelope-side-left: #22372c;
-  --envelope-side-right: #22372c;
-
-  /* Cor-base compartilhada pelas sombras internas do envelope. */
-  --envelope-shadow-rgb: 7 18 13;
-
-  /* Detalhes e linhas de acabamento do envelope. */
-  --envelope-edge-rgb: 213 181 121;
 }
+
+
+/* =========================================================
+   FONTES LOCAIS
+========================================================= */
 
 @font-face {
   font-family: "Edwardian Script ITC";
@@ -99,6 +100,11 @@
   font-display: swap;
 }
 
+
+/* =========================================================
+   NOMES EM SCRIPT
+========================================================= */
+
 .script-name {
   font-family:
     "Edwardian Script ITC",
@@ -116,4 +122,3 @@
 .script-name.script-name--amp {
   color: var(--gold);
 }
-

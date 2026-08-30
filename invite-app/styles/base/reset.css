@@ -1,7 +1,7 @@
-/* Reset e normalização estrutural. */
+/* Reset e normalização estrutural do projeto. */
 
 /* =========================================================
-   RESET
+   RESET GLOBAL
 ========================================================= */
 
 * {
@@ -18,12 +18,14 @@ body {
   background: var(--olive-950);
 }
 
+/* Mantém os controles de formulário com a tipografia herdada. */
 button,
 input,
 select {
   font: inherit;
 }
 
+/* Remove o destaque de toque padrão em elementos interativos. */
 button,
 a {
   -webkit-tap-highlight-color: transparent;
@@ -32,4 +34,3 @@ a {
 button {
   cursor: pointer;
 }
-

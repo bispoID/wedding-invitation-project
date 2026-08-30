@@ -1,7 +1,7 @@
-/* Detalhes do evento, localização e links. */
+/* Dados do evento, local e links da carta. */
 
 /* =========================================================
-   EVENT DETAILS
+   DETALHES DO EVENTO
 ========================================================= */
 
 .event-details {
@@ -42,7 +42,7 @@
     0.75rem;
 }
 
-/* Separador vertical entre os blocos de data, horário e demais detalhes do evento. */
+/* Separador vertical entre os blocos de data e horário. */
 .event-detail + .event-detail {
   border-left:
     1px solid
@@ -100,7 +100,7 @@
 
 
 /* =========================================================
-   LOCAL
+   LOCALIZAÇÃO
 ========================================================= */
 
 .location-card {
@@ -166,10 +166,10 @@
 
 
 /* =========================================================
-   LINKS
+   LINKS E BOTÕES TEXTUAIS
 ========================================================= */
 
-/* Links e botões textuais compartilham a mesma tipografia e aparência institucional. */
+/* Links e botões textuais compartilham a tipografia institucional. */
 .text-link,
 .text-button {
   color:
@@ -201,5 +201,3 @@
   font-size:
     0.95rem;
 }
-
-
