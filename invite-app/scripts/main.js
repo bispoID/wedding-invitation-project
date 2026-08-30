@@ -20,9 +20,9 @@ let floralSealAnimations = [];
 ========================================================= */
 
 const ANIMATION_TIMING = {
-  cardStart: 5800,
-  coverClose: 8500,
-  letterEnter: 8050,
+  cardStart: 4800,
+  coverClose: 7500,
+  letterEnter: 7050,
 };
 
 
@@ -170,6 +170,10 @@ function openInvitation() {
     welcome.classList.add(
       'is-opening-card'
     );
+
+    envelope.querySelector(
+      '.envelope__card'
+    ).style.zIndex = '11';
 
   }, ANIMATION_TIMING.cardStart);
 
