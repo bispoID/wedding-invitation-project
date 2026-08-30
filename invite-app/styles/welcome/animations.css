@@ -1,15 +1,13 @@
-/* Animações e estados de transição do convite. */
+/* Estados e transições que coordenam a abertura da capa e a entrada da carta. */
 
 /* =========================================================
-   ETAPA 1 — ABERTURA DO ENVELOPE
-=========================================================
-
-   SOMENTE A ABA SUPERIOR SE MOVIMENTA.
-
-   As abas laterais e inferior continuam exatamente
-   no mesmo lugar.
+   ETAPA 1 — ABERTURA DA ABA SUPERIOR
 ========================================================= */
 
+/*
+ * Somente a aba superior se movimenta.
+ * As abas laterais e inferior permanecem fixas.
+ */
 .welcome.is-opening-envelope
   .envelope__flap {
 
@@ -21,9 +19,7 @@
     var(--ease-smooth)
     1500ms
     both;
-
 }
-
 
 @keyframes flap-open {
 
@@ -43,6 +39,7 @@
   }
 }
 
+/* A sombra do cartão desaparece junto com a abertura da aba. */
 .welcome.is-opening-envelope
   .envelope__card::after {
 
@@ -54,14 +51,12 @@
     both;
 }
 
-/* =========================================================
-   FLOR + SELO SAEM JUNTOS
-========================================================= */
 
 /* =========================================================
    ETAPA 2 — CARTÃO COMEÇA A SAIR
 ========================================================= */
 
+/* Eleva o cartão acima do corpo do envelope. */
 .welcome.is-opening-card
   .envelope__card {
 
@@ -85,13 +80,7 @@
     rgb(255 255 255 / 72%);
 }
 
-
-/*
- * Pequena expansão do conteúdo do cartão.
- *
- * Isso dá a sensação de que ele está se abrindo
- * enquanto sai do envelope.
- */
+/* Pequena expansão do conteúdo para reforçar a sensação de abertura. */
 .welcome.is-opening-card
   .envelope__card-inner {
 
@@ -120,18 +109,19 @@
       translateZ(1px)
       scale(1);
   }
-
 }
 
+
 /* =========================================================
-   ETAPA 3 — CAPA DESAPARECE
+   ETAPA 3 — SAÍDA DA CAPA
 ========================================================= */
 
+/* Bloqueia novas interações enquanto a capa desaparece. */
 .welcome.is-closing {
-
   pointer-events: none;
 }
 
+/* Move o conjunto de conteúdo durante a saída da capa. */
 .welcome.is-closing
   .welcome__content {
 
@@ -140,6 +130,7 @@
     var(--ease-smooth);
 }
 
+/* O envelope gira, sobe levemente e desaparece. */
 .welcome.is-closing
   .envelope {
 
@@ -156,6 +147,7 @@
     opacity 550ms ease;
 }
 
+/* Textos da capa saem para cima com pequenos atrasos entre si. */
 .welcome.is-closing
   .eyebrow,
 .welcome.is-closing
@@ -189,12 +181,12 @@
   transition-delay: 120ms;
 }
 
+
 /* =========================================================
-   ANIMAÇÃO DA CARTA
+   ETAPA 4 — ENTRADA DA CARTA
 ========================================================= */
 
 /* Entrada da carta após a transição da capa. */
-
 .letter.is-entering {
   animation:
     reveal-letter
@@ -218,7 +210,4 @@
     transform:
       translateY(0);
   }
-
 }
-
-

@@ -1,55 +1,72 @@
-/* Responsividade por breakpoint. Regras específicas permanecem agrupadas aqui. */
+/* Ajustes específicos por faixa de viewport. */
 
 /* =========================================================
-   DESKTOP
+   MOBILE — ATÉ 699PX
 ========================================================= */
 
 @media (max-width: 699px) {
 
+  /* Fundo da capa. */
   .welcome__wallpaper {
     background-size: cover;
 
     transform: none;
   }
 
+  /* Ajuste da tipografia secundária da carta. */
   .letter .eyebrow {
     letter-spacing: 0.24em;
   }
 
-  /* 1. "UM CONVITE ESPECIAL" */
+  /* Chamada superior da capa. */
   .eyebrow {
     transform: translateX(2px);
   }
 
-  /* 2. "Bruna & Diego" */
+  /*
+   * O título permanece em uma única linha.
+   * O tamanho da fonte é ajustado pelo JavaScript quando necessário
+   * para evitar que o texto ultrapasse a viewport.
+   */
   #welcome-title {
-      white-space: nowrap;
+    white-space: nowrap;
 
-      transform: translateX(
-          calc(-1.2vw - 2.008px)
-      );
+    transform: translateX(
+      calc(-1.2vw - 2.008px)
+    );
   }
 
-  /* 3. "Dois corações que escolheram caminhar juntos." */
+  /* Frase introdutória da capa. */
   .welcome__intro {
     transform: translateX(-1.4px);
   }
 
+  /*
+   * Centraliza o conteúdo da capa na largura útil do mobile,
+   * compensando o espaço lateral definido pela capa.
+   */
   .welcome__content {
     width: calc(100vw - 4.5rem);
     margin-inline: auto;
   }
 
+  /*
+   * O envelope pode crescer no mobile, mas nunca ultrapassa
+   * 2px de cada lado da viewport.
+   */
   .envelope-unit {
     width: min(
       24rem,
       calc(100vw - 2rem)
     );
   }
-
 }
 
-/* Ajustes para telas maiores, preservando a composição central do convite. */
+
+/* =========================================================
+   TABLET E DESKTOP — A PARTIR DE 700PX
+========================================================= */
+
 @media (min-width: 700px) {
 
   .welcome {
@@ -59,6 +76,7 @@
       5rem;
   }
 
+  /* Área central da composição em telas maiores. */
   .welcome__content {
     width:
       min(
@@ -69,13 +87,13 @@
     transform: translateY(1.5rem);
   }
 
-  /* 1. "UM CONVITE ESPECIAL" */
+  /* Chamada superior da capa. */
   .welcome .eyebrow {
     font-size: 1.25rem;
     transform: translateX(4px);
   }
 
-  /* 2. "Bruna & Diego" */
+  /* Nome dos noivos. */
   #welcome-title {
     font-family: "Liberation Serif Local", serif;
     font-size: 10.2rem;
@@ -83,7 +101,7 @@
     transform: translateX(-11.5px);
   }
 
-  /* 3. "Dois corações que escolheram caminhar juntos." */
+  /* Frase introdutória da capa. */
   .welcome__intro {
     font-family: "Liberation Serif Local", serif;
     margin:
@@ -95,8 +113,8 @@
     transform: translateX(-6.8px);
   }
 
+  /* Espaçamento da instrução abaixo do envelope. */
   .open-invitation {
-
     margin:
       1.9rem
       0
@@ -108,22 +126,17 @@
       7rem
       2rem;
   }
-
 }
 
 
 /* =========================================================
-   DESKTOP — COMPOSIÇÃO HORIZONTAL DA CAPA
+   DESKTOP GRANDE — A PARTIR DE 1000PX
 ========================================================= */
 
 /*
- * A partir de 1000px, a capa assume a distribuição da
- * referência visual:
- *
- * - textos concentrados à esquerda;
- * - envelope e instrução concentrados à direita;
- * - o mobile e tablets abaixo deste breakpoint permanecem
- *   com a distribuição original.
+ * A partir de 1000px, a capa assume uma composição horizontal:
+ * textos à esquerda e envelope com instrução à direita.
+ * A distribuição vertical permanece nos breakpoints menores.
  */
 @media (min-width: 1000px) {
 
@@ -158,6 +171,7 @@
     text-align: left;
   }
 
+  /* Bloco textual permanece centralizado dentro da coluna esquerda. */
   .welcome__copy {
     width: 100%;
 
@@ -171,6 +185,7 @@
     white-space: normal;
   }
 
+  /* Envelope permanece centralizado dentro da coluna direita. */
   .envelope-area {
     width: 100%;
 
@@ -180,7 +195,6 @@
 
     align-items: center;
   }
-
 }
 
 
@@ -188,6 +202,4 @@
    REDUÇÃO DE MOVIMENTO
 ========================================================= */
 
-/* Respeita a preferência do sistema por menos movimento,
-   reduzindo animações e transições sem alterar o layout. */
-
+/* A preferência do usuário é aplicada globalmente em base/global.css. */

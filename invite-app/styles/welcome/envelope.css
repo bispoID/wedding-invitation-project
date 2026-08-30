@@ -1,5 +1,3 @@
-/* Estrutura visual e física do envelope. */
-
 /* =========================================================
    ENVELOPE
 ========================================================= */
@@ -35,6 +33,82 @@
     var(--ease-smooth);
 }
 
+/* =========================================================
+   FUNDO INTERNO DO ENVELOPE
+========================================================= */
+
+.envelope__inner-back {
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 1;
+
+  background:
+    var(--envelope-deep);
+
+  background-image:
+    url("../../images/paper-grain.svg");
+
+  background-size:
+    var(--grain-size);
+
+  box-shadow:
+    inset
+    0
+    0
+    0
+    1px
+    rgb(255 255 255 / 8%);
+}
+
+.welcome.is-opening-envelope
+  .envelope__inner-back {
+
+  animation:
+    interior-flap-shadow
+    8000ms
+    ease-out
+    1500ms
+    both;
+}
+
+@keyframes interior-flap-shadow {
+
+  0% {
+    box-shadow:
+      inset
+      0
+      6rem
+      5.5rem
+      -2rem
+      var(--envelope-deep),
+
+      inset
+      0
+      0
+      0
+      1px
+      rgb(255 255 255 / 8%);
+  }
+
+  100% {
+    box-shadow:
+      inset
+      0
+      1.5rem
+      2.5rem
+      -1.5rem
+      var(--envelope-deep),
+
+      inset
+      0
+      0
+      0
+      1px
+      rgb(255 255 255 / 8%);
+  }
+}
 
 /* =========================================================
    CARTÃO INTERNO
@@ -56,7 +130,7 @@
 
   overflow: hidden;
 
-  border: 0 solid var(--paper);
+  border: 0;
 
   background-color: var(--paper);
 
@@ -193,7 +267,6 @@
     translateZ(1px);
 }
 
-
 /* =========================================================
   IMAGEM DA ARTE MANGA
 ========================================================= */
@@ -217,7 +290,6 @@
     transform 700ms
     var(--ease-smooth);
 }
-
 
 /* =========================================================
    ABAS LATERAIS
@@ -285,20 +357,6 @@
     rgb(var(--envelope-edge-rgb) / 16%);
 }
 
-.envelope__side-fold::after {
-  position: absolute;
-
-  inset: 0;
-
-  clip-path:
-    polygon(
-      0 0,
-      100% var(--envelope-fold-center),
-      0 100%
-    );
-
-  content: "";
-}
 
 
 /* =========================================================
@@ -560,81 +618,8 @@
 }
 
 /* =========================================================
-   FUNDO INTERNO DO ENVELOPE
+   DECORAÇÕES
 ========================================================= */
-
-.envelope__inner-back {
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 1;
-
-  background:
-    var(--envelope-deep);
-
-  background-image:
-    url("../../images/paper-grain.svg");
-
-  background-size:
-    var(--grain-size);
-
-  box-shadow:
-    inset
-    0
-    0
-    0
-    1px
-    rgb(255 255 255 / 8%);
-}
-
-.welcome.is-opening-envelope
-  .envelope__inner-back {
-
-  animation:
-    interior-flap-shadow
-    8000ms
-    ease-out
-    1500ms
-    both;
-}
-
-@keyframes interior-flap-shadow {
-
-  0% {
-    box-shadow:
-      inset
-      0
-      6rem
-      5.5rem
-      -2rem
-      var(--envelope-deep),
-
-      inset
-      0
-      0
-      0
-      1px
-      rgb(255 255 255 / 8%);
-  }
-
-  100% {
-    box-shadow:
-      inset
-      0
-      1.5rem
-      2.5rem
-      -1.5rem
-      var(--envelope-deep),
-
-      inset
-      0
-      0
-      0
-      1px
-      rgb(255 255 255 / 8%);
-  }
-}
 
 .envelope__decorations {
   position: absolute;
@@ -667,8 +652,6 @@
   width: 34%;
   height: auto;
 
-  object-fit: contain;
-
   filter:
     drop-shadow(
       -0.15rem
@@ -698,8 +681,6 @@
   width: 23%;
   height: auto;
 
-  object-fit: contain;
-
   filter:
     drop-shadow(
       0
@@ -713,4 +694,3 @@
 
   opacity: 1;
 }
-

@@ -1,4 +1,8 @@
-/* Regras globais, utilitários e acessibilidade. */
+/* Regras globais, componentes reutilizáveis e acessibilidade. */
+
+/* =========================================================
+   APLICAÇÃO
+========================================================= */
 
 .invitation-app {
   min-height: 100svh;
@@ -47,6 +51,11 @@
     translateY(-2px);
 }
 
+
+/* =========================================================
+   FOCO ACESSÍVEL
+========================================================= */
+
 .button:focus-visible,
 .text-button:focus-visible,
 .text-link:focus-visible,
@@ -59,13 +68,15 @@ select:focus-visible {
   outline-offset: 4px;
 }
 
+
 /* =========================================================
-   HIDDEN
+   ELEMENTOS OCULTOS
 ========================================================= */
 
 [hidden] {
   display: none !important;
 }
+
 
 /* =========================================================
    REDUÇÃO DE MOVIMENTO
@@ -73,7 +84,6 @@ select:focus-visible {
 
 /* Respeita a preferência do sistema por menos movimento,
    reduzindo animações e transições sem alterar o layout. */
-
 @media (prefers-reduced-motion: reduce) {
 
   *,
@@ -94,4 +104,3 @@ select:focus-visible {
   }
 
 }
-
