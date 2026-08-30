@@ -7,7 +7,7 @@
   ========================================================== */
 
   --envelope-fold-width: 52%;
-  --envelope-fold-center: 58%;
+  --envelope-fold-center: 50%;
   --envelope-bottom-height: 48%;
   --envelope-bottom-tip: 2%;
   --envelope-grain-size: 180px 180px;
@@ -61,21 +61,13 @@
    * Tons estruturais. Cada variável preserva uma cor distinta
    * já utilizada no envelope; nenhuma tonalidade foi fundida.
    */
-  --envelope-bottom: #22382e;
-  --envelope-bottom-dark: #1f352a;
-  --envelope-bottom-light: #2d4537;
+  --envelope-bottom: #21352b;
   --envelope-deep: #1c3128;
   --envelope-darkest: #172921;
-  --envelope-flap-light: #263f31;
-  --envelope-fold: #30483b;
-  --envelope-fold-dark: #253b30;
-  --envelope-fold-left-dark: #1f362c;
-  --envelope-fold-left-light: #30473a;
-  --envelope-fold-right-dark: #22362b;
-  --envelope-fold-right-light: #284133;
-  --envelope-shadow-dark: #1a2c24;
-  --envelope-side-left: #263a30;
-  --envelope-side-right: #3b6350;
+  --envelope-flap: #21352b;
+  --envelope-fold: #253b30;
+  --envelope-side-left: #22372c;
+  --envelope-side-right: #22372c;
 
   /* Cor-base compartilhada pelas sombras internas do envelope. */
   --envelope-shadow-rgb: 7 18 13;
