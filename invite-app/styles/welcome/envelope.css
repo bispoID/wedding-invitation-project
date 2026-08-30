@@ -630,8 +630,8 @@
     );
 
   transform:
-    translate(-50%, -50%)
-    rotate(40deg);
+    translate(-53%, -38%)
+    rotate(20deg);
 
   opacity: 0.92;
 }
@@ -644,10 +644,10 @@
 .envelope__seal {
   position: absolute;
 
-  top: 63%;
+  top: 65%;
   left: 50%;
 
-  width: 23%;
+  width: 22%;
   height: auto;
 
   filter:
