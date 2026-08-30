@@ -15,7 +15,7 @@
   cursor: pointer;
   touch-action: manipulation;
 
-  perspective: 1200px;
+  perspective: 2100px;
 
   transform:
     rotate(0deg);

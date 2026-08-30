@@ -34,12 +34,12 @@
 
   22% {
     transform:
-      rotateX(-50deg);
+      rotateX(60deg);
   }
 
   100% {
     transform:
-      rotateX(-165deg);
+      rotateX(185deg);
   }
 }
 
