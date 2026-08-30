@@ -95,7 +95,7 @@
 
   /* Nome dos noivos. */
   #welcome-title {
-    font-family: "Liberation Serif Local", serif;
+    font-family: var(--font-serif);
     font-size: 10.2rem;
 
     transform: translateX(-11.5px);
@@ -103,7 +103,7 @@
 
   /* Frase introdutória da capa. */
   .welcome__intro {
-    font-family: "Liberation Serif Local", serif;
+    font-family: var(--font-serif);
     margin:
       1rem
       0

@@ -27,11 +27,11 @@
 
   border-top:
     1px solid
-    var(--gold-light);
+    var(--color-accent-light);
 
   border-bottom:
     1px solid
-    var(--gold-light);
+    var(--color-accent-light);
 }
 
 .event-detail {
@@ -46,7 +46,7 @@
 .event-detail + .event-detail {
   border-left:
     1px solid
-    var(--gold-light);
+    var(--color-accent-light);
 }
 
 .event-detail__label,
@@ -54,9 +54,9 @@
   margin: 0;
 
   color:
-    var(--olive-700);
+    var(--color-text-muted);
 
-  font-family: "Liberation Sans Local", sans-serif;
+  font-family: var(--font-sans);
 
   font-size:
     0.62rem;
@@ -69,13 +69,13 @@
 }
 
 .event-detail__date {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   margin:
     0.2rem
     0;
 
   color:
-    var(--olive-900);
+    var(--color-heading);
 
   font-size:
     3.2rem;
@@ -85,14 +85,14 @@
 }
 
 .event-detail__value {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   margin:
     0.8rem
     0
     0;
 
   color:
-    var(--olive-900);
+    var(--color-heading);
 
   font-size:
     1.8rem;
@@ -112,7 +112,7 @@
     1.5rem;
 
   background:
-    rgb(135 146 124 / 12%);
+    rgb(var(--color-location-surface-rgb) / 12%);
 }
 
 .location-card__label {
@@ -122,9 +122,9 @@
     0.5rem;
 
   color:
-    var(--olive-700);
+    var(--color-text-muted);
 
-  font-family: "Liberation Sans Local", sans-serif;
+  font-family: var(--font-sans);
 
   font-size:
     0.62rem;
@@ -140,11 +140,11 @@
 }
 
 .location-card h3 {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   margin: 0;
 
   color:
-    var(--olive-900);
+    var(--color-heading);
 
   font-size:
     1.5rem;
@@ -154,14 +154,14 @@
 }
 
 .location-card p:not(.location-card__label) {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   margin:
     0.45rem
     0
     1rem;
 
   color:
-    var(--olive-800);
+    var(--color-text-secondary);
 }
 
 
@@ -173,9 +173,9 @@
 .text-link,
 .text-button {
   color:
-    var(--olive-900);
+    var(--color-heading);
 
-  font-family: "Liberation Sans Local", sans-serif;
+  font-family: var(--font-sans);
 
   font-size:
     0.65rem;
@@ -194,9 +194,9 @@
 }
 
 .text-link span {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   color:
-    var(--gold);
+    var(--color-accent);
 
   font-size:
     0.95rem;

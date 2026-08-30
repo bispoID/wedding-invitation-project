@@ -16,7 +16,7 @@
     auto;
 
   background:
-    var(--gold-light);
+    var(--color-accent-light);
 }
 
 
@@ -25,14 +25,14 @@
 ========================================================= */
 
 .rsvp h3 {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   margin:
     0.35rem
     0
     0.65rem;
 
   color:
-    var(--olive-900);
+    var(--color-heading);
 
   font-size:
     clamp(
@@ -46,7 +46,7 @@
 }
 
 .rsvp__description {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   max-width:
     22rem;
 
@@ -56,7 +56,7 @@
     1.5rem;
 
   color:
-    var(--olive-800);
+    var(--color-text-secondary);
 
   line-height:
     1.6;
@@ -88,9 +88,9 @@
     0.4rem;
 
   color:
-    var(--olive-800);
+    var(--color-text-secondary);
 
-  font-family: "Liberation Sans Local", sans-serif;
+  font-family: var(--font-sans);
 
   font-size:
     0.68rem;
@@ -104,7 +104,7 @@
 
 .rsvp-form input,
 .rsvp-form select {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   width:
     100%;
 
@@ -113,7 +113,7 @@
 
   border:
     1px solid
-    rgb(104 119 101 / 35%);
+    rgb(var(--color-text-muted-rgb) / 35%);
 
   border-radius:
     0.15rem;
@@ -123,10 +123,10 @@
     0.8rem;
 
   background:
-    rgb(255 253 248 / 70%);
+    rgb(var(--color-surface-light-rgb) / 70%);
 
   color:
-    var(--ink);
+    var(--color-ink);
 
   outline:
     0;
@@ -137,10 +137,10 @@
     1.4rem;
 
   background:
-    var(--olive-800);
+    var(--color-text-secondary);
 
   color:
-    var(--white);
+    var(--color-surface-light);
 }
 
 
@@ -158,9 +158,9 @@
     0;
 
   color:
-    var(--olive-800);
+    var(--color-text-secondary);
 
-  font-family: "Liberation Sans Local", sans-serif;
+  font-family: var(--font-sans);
 
   font-size:
     0.72rem;

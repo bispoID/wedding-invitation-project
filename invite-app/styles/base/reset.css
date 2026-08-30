@@ -15,7 +15,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--olive-950);
+  background: var(--color-page-background);
 }
 
 /* Mantém os controles de formulário com a tipografia herdada. */
