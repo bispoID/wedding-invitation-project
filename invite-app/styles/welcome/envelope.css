@@ -661,8 +661,8 @@
 .envelope__flowers {
   position: absolute;
 
-  top: 66%;
-  left: 51%;
+  top: 60%;
+  left: 52%;
 
   width: 34%;
   height: auto;
@@ -692,10 +692,10 @@
 .envelope__seal {
   position: absolute;
 
-  top: 69%;
+  top: 63%;
   left: 50%;
 
-  width: 24%;
+  width: 23%;
   height: auto;
 
   object-fit: contain;
