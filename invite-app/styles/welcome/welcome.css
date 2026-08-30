@@ -190,7 +190,7 @@
 
   font-size:
     clamp(
-      3.4rem,
+      4.0rem,
       16vw,
       6.8rem
     );
@@ -216,7 +216,7 @@
 
   color: var(--olive-800);
 
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 
   line-height: 1.6;
 }

@@ -13,6 +13,80 @@ const decorations = document.querySelector('.envelope__decorations');
 let isOpening = false;
 let flapTurnFrame = null;
 let floralSealAnimations = [];
+let welcomeTitleResizeFrame = null;
+
+
+/* =========================================================
+   AJUSTE RESPONSIVO DO TÍTULO
+========================================================= */
+
+function fitWelcomeTitle() {
+
+  const title =
+    document.querySelector('#welcome-title');
+
+  if (!title) {
+    return;
+  }
+
+  const isMobile =
+    window.matchMedia('(max-width: 699px)').matches;
+
+  if (!isMobile) {
+    return;
+  }
+
+  /*
+   * Guarda o tamanho original apenas uma vez.
+   */
+  if (!title.dataset.originalFontSize) {
+
+    title.dataset.originalFontSize =
+      parseFloat(
+        window.getComputedStyle(title).fontSize
+      );
+
+  }
+
+  const originalFontSize =
+    parseFloat(
+      title.dataset.originalFontSize
+    );
+
+  /*
+   * Volta ao tamanho original antes
+   * de fazer uma nova medição.
+   */
+  title.style.fontSize =
+    `${originalFontSize}px`;
+
+  /*
+   * Mantém pelo menos 2px de distância
+   * de cada lado da viewport.
+   */
+  const availableWidth =
+    window.innerWidth - 30;
+
+  const titleWidth =
+    title.scrollWidth;
+
+  /*
+   * Se já couber, mantém o tamanho original.
+   */
+  if (titleWidth <= availableWidth) {
+    return;
+  }
+
+  /*
+   * Reduz proporcionalmente a fonte até
+   * o título caber na largura disponível.
+   */
+  const scale =
+    availableWidth / titleWidth;
+
+  title.style.fontSize =
+    `${originalFontSize * scale}px`;
+}
 
 
 /* =========================================================
@@ -61,7 +135,7 @@ function animateFloralSealExit() {
       {
         transform:
           'translate(32.5%, 22.5%) scale(1.16)',
-        offset: 0.99  
+        offset: 0.99
       },
 
       {
@@ -322,6 +396,29 @@ envelope.addEventListener(
 backButton.addEventListener(
   'click',
   returnToCover
+);
+
+
+/* =========================================================
+   AJUSTE DO TÍTULO AO REDIMENSIONAR A TELA
+========================================================= */
+
+fitWelcomeTitle();
+
+window.addEventListener(
+  'resize',
+  () => {
+
+    window.cancelAnimationFrame(
+      welcomeTitleResizeFrame
+    );
+
+    welcomeTitleResizeFrame =
+      window.requestAnimationFrame(
+        fitWelcomeTitle
+      );
+
+  }
 );
 
 
