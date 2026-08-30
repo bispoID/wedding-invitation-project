@@ -35,6 +35,18 @@
     transform: translateX(-1.4px);
   }
 
+  .welcome__content {
+    width: calc(100vw - 4.5rem);
+    margin-inline: auto;
+  }
+
+  .envelope-unit {
+    width: min(
+      24rem,
+      calc(100vw - 2rem)
+    );
+  }
+
 }
 
 /* Ajustes para telas maiores, preservando a composição central do convite. */
