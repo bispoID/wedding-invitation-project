@@ -124,13 +124,7 @@
   background-color: var(--color-paper);
 
   background-image:
-    url("../../images/paper-grain.svg"),
-    linear-gradient(
-      112deg,
-      rgb(var(--color-white-rgb) / 46%),
-      transparent 42%,
-      rgb(var(--color-paper-highlight-rgb) / 14%)
-    );
+    url("../../images/paper-grain-card.svg");
 
   background-size:
     180px 180px,
@@ -139,20 +133,6 @@
   background-repeat:
     repeat,
     no-repeat;
-
-  /* sombra normal do cartão */
-  box-shadow:
-    0
-    0.8rem
-    1.2rem
-    rgb(var(--color-card-shadow-rgb) / 22%),
-
-    inset
-    0
-    0
-    0
-    1px
-    rgb(var(--color-white-rgb) / 72%);
 
   color: var(--color-ink);
 
