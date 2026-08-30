@@ -20,16 +20,16 @@
   background:
     radial-gradient(
       circle at 50% 42%,
-      rgb(255 255 255 / 80%),
+      rgb(var(--color-white-rgb) / 80%),
       transparent 27rem
     ),
     linear-gradient(
       135deg,
-      #f7f3eb,
-      #e7e1d5
+      var(--color-welcome-background-start),
+      var(--color-welcome-background-end)
     );
 
-  color: var(--olive-900);
+  color: var(--color-heading);
 }
 
 /* Elementos circulares decorativos posicionados nas extremidades da capa. */
@@ -42,7 +42,7 @@
 
   border:
     1px solid
-    rgb(172 136 80 / 20%);
+    rgb(var(--color-accent-rgb) / 20%);
 
   border-radius: 50%;
 
@@ -97,7 +97,7 @@
 
   background-image:
     radial-gradient(
-      rgb(82 95 78 / 30%) 0.7px,
+      rgb(var(--color-text-secondary-rgb) / 30%) 0.7px,
       transparent 0.7px
     );
 
@@ -147,15 +147,15 @@
     0
     0.05rem
     3.0rem
-    var(--wallpaper-shadow);
+    var(--shadow-welcome-text);
 }
 
 .eyebrow {
   margin: 0 0 0.3rem;
 
-  color: var(--olive-900);
+  color: var(--color-heading);
 
-  font-family: "Liberation Sans Local", sans-serif;
+  font-family: var(--font-sans);
 
   font-size: 0.6rem;
 
@@ -171,7 +171,7 @@
 /* Títulos principais da capa e da carta compartilham a tipografia-base. */
 .welcome h1,
 .letter h2 {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   margin: 0;
 
   font-size:
@@ -188,19 +188,19 @@
 
 .welcome h1 span,
 .letter h2 span {
-  color: var(--gold);
+  color: var(--color-accent);
 
   font-style: italic;
 }
 
 .welcome__intro {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   margin:
     0.5rem
     0
     1rem;
 
-  color: var(--olive-800);
+  color: var(--color-text-secondary);
 
   font-size: 1.1rem;
 
@@ -230,7 +230,7 @@
     0
     0.05rem
     3.0rem
-    var(--wallpaper-shadow);
+    var(--shadow-welcome-text);
 }
 
 /* Container de escala compartilhado pelo envelope e pela instrução. */
@@ -279,13 +279,13 @@
   pointer-events: none;
 
   background:
-    var(--envelope-deep);
+    var(--color-envelope-deep);
 
   background-image:
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--grain-size);
+    var(--texture-grain-size);
 
   box-shadow:
     inset
@@ -293,19 +293,19 @@
     0
     0
     1px
-    rgb(255 255 255 / 12%),
+    rgb(var(--color-white-rgb) / 12%),
 
     inset
     0
     0
     0
     0.18rem
-    rgb(var(--envelope-shadow-rgb) / 20%),
+    rgb(var(--color-envelope-shadow-rgb) / 20%),
 
     0
     0.35rem
     0.5rem
-    rgb(var(--envelope-shadow-rgb) / 30%);
+    rgb(var(--color-envelope-shadow-rgb) / 30%);
 
   transform:
     rotate(-3deg);
@@ -327,14 +327,12 @@
 
   border-bottom:
     1px solid
-    var(--gold);
+    var(--color-accent);
 
   color:
-    var(--olive-800);
+    var(--color-text-secondary);
 
-  font-family:
-    "Liberation Sans Local",
-    sans-serif;
+  font-family: var(--font-sans);
 
   font-size: 4.0cqi;
 

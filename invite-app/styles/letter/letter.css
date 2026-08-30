@@ -23,8 +23,8 @@
   background:
     linear-gradient(
       145deg,
-      #dfe2d5,
-      #c5cec0
+      var(--color-letter-background-start),
+      var(--color-letter-background-end)
     );
 }
 
@@ -84,13 +84,13 @@
 
   border:
     1px solid
-    rgb(172 136 80 / 40%);
+    rgb(var(--color-accent-rgb) / 40%);
 
   background:
-    rgb(245 241 232 / 92%);
+    rgb(var(--color-paper-rgb) / 92%);
 
   box-shadow:
-    var(--shadow);
+    var(--shadow-letter);
 
   text-align:
     center;
@@ -111,7 +111,7 @@
 
 .letter__header .eyebrow {
   color:
-    var(--olive-950);
+    var(--color-page-background);
 }
 
 .letter__monogram {
@@ -132,9 +132,9 @@
 }
 
 .letter h2 {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   color:
-    var(--olive-900);
+    var(--color-heading);
 
   font-size:
     clamp(
@@ -166,7 +166,7 @@
     2rem;
 
   color:
-    var(--gold);
+    var(--color-accent);
 
   font-size:
     0.8rem;
@@ -178,7 +178,7 @@
   flex: 1;
 
   background:
-    var(--gold-light);
+    var(--color-accent-light);
 }
 
 
@@ -188,7 +188,7 @@
 
 .letter__opening,
 .letter__message {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   max-width:
     28rem;
 
@@ -203,12 +203,12 @@
 }
 
 .letter__message {
-  font-family: "Liberation Sans Local", sans-serif;
+  font-family: var(--font-sans);
   margin-top:
     0.6rem;
 
   color:
-    var(--olive-800);
+    var(--color-text-secondary);
 
   font-style:
     italic;
@@ -228,18 +228,18 @@
 
   border-top:
     1px solid
-    rgb(172 136 80 / 35%);
+    rgb(var(--color-accent-rgb) / 35%);
 }
 
 .letter__footer p {
-  font-family: "Liberation Serif Local", serif;
+  font-family: var(--font-serif);
   margin:
     0
     0
     1rem;
 
   color:
-    var(--olive-800);
+    var(--color-text-secondary);
 
   font-style:
     italic;

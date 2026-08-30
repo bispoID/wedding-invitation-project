@@ -1,66 +1,110 @@
-/* Variáveis, tokens visuais e fontes locais do projeto. */
+/* Tokens visuais, tipográficos e fontes locais do projeto. */
 
 :root {
 
   /* =========================================================
-     PALETA GERAL
+     CORES
   ========================================================== */
 
-  --olive-950: #28342c;
-  --olive-900: #344337;
-  --olive-800: #4f604f;
-  --olive-700: #687765;
+  --color-page-background: #28342c;
+  --color-heading: #344337;
+  --color-text-secondary: #4f604f;
+  --color-text-muted: #687765;
+  --color-ink: #374138;
 
-  --paper: #f5f1e8;
+  --color-paper: #f5f1e8;
+  --color-surface-light: #fffdf8;
 
-  --ink: #374138;
+  --color-accent: #ac8850;
+  --color-accent-light: #d5b579;
 
-  --gold: #ac8850;
-  --gold-light: #d5b579;
+  /* Canais RGB permitem reutilizar a mesma cor com diferentes opacidades. */
+  --color-white-rgb: 255 255 255;
+  --color-surface-light-rgb: 255 253 248;
+  --color-paper-rgb: 245 241 232;
+  --color-accent-rgb: 172 136 80;
+  --color-text-secondary-rgb: 82 95 78;
+  --color-text-muted-rgb: 104 119 101;
+  --color-location-surface-rgb: 135 146 124;
+  --color-paper-highlight-rgb: 213 196 167;
+  --color-black-rgb: 0 0 0;
 
-  --white: #fffdf8;
+  /* Sombras com cores próprias, preservadas como tokens para ajuste centralizado. */
+  --color-envelope-shadow-rgb: 7 18 13;
+  --color-card-shadow-rgb: 38 46 39;
+  --color-flower-shadow-rgb: 31 27 18;
+  --color-seal-shadow-rgb: 40 35 24;
 
-  --shadow:
+  /* =========================================================
+     FUNDOS
+  ========================================================== */
+
+  --color-welcome-background-start: #f7f3eb;
+  --color-welcome-background-end: #e7e1d5;
+
+  --color-letter-background-start: #dfe2d5;
+  --color-letter-background-end: #c5cec0;
+
+  /* =========================================================
+     SOMBRAS E TRANSIÇÕES
+  ========================================================== */
+
+  --shadow-letter:
     0 2rem 5rem rgb(33 42 35 / 24%);
 
-  --wallpaper-shadow:
-    rgba(31, 41, 4, 0.856);
+  --shadow-welcome-text:
+    rgb(31 41 4 / 85.6%);
 
-  --card-shadow:
-    rgba(0, 0, 0, 0.329);
+  --shadow-card:
+    rgb(0 0 0 / 32.9%);
 
   --ease-smooth:
     cubic-bezier(0.22, 1, 0.36, 1);
 
-  --grain-size:
+  /* =========================================================
+     TEXTURAS
+  ========================================================== */
+
+  --texture-grain-size:
     180px 180px;
 
-
   /* =========================================================
-     TOKENS DO ENVELOPE
+     ENVELOPE — GEOMETRIA E CORES ESTRUTURAIS
   ========================================================== */
 
   --envelope-fold-center: 50%;
   --envelope-bottom-tip: 2%;
-  --envelope-grain-size: 180px 180px;
 
-  /* Tons estruturais distintos usados pelas partes do envelope. */
-  --envelope-bottom: #21352b;
-  --envelope-deep: #1c3128;
-  --envelope-fold: #253b30;
-  --envelope-side-left: #22372c;
-  --envelope-side-right: #22372c;
+  --color-envelope-bottom: #21352b;
+  --color-envelope-deep: #1c3128;
+  --color-envelope-fold: #253b30;
+  --color-envelope-side: #22372c;
 
-  /* Cores compartilhadas por sombras e linhas de acabamento. */
-  --envelope-shadow-rgb: 7 18 13;
-  --envelope-edge-rgb: 213 181 121;
+  /* =========================================================
+     TIPOGRAFIA
+  ========================================================== */
 
-  color: var(--ink);
+  --font-script:
+    "Edwardian Script ITC",
+    "Times New Roman",
+    serif;
 
-  font-family:
+  --font-sans:
+    "Liberation Sans Local",
+    sans-serif;
+
+  --font-serif:
+    "Liberation Serif Local",
+    serif;
+
+  --font-base:
     "Times New Roman",
     Times,
     serif;
+
+  color: var(--color-ink);
+
+  font-family: var(--font-base);
 
   font-synthesis: none;
 }
@@ -106,19 +150,16 @@
 ========================================================= */
 
 .script-name {
-  font-family:
-    "Edwardian Script ITC",
-    "Times New Roman",
-    serif;
+  font-family: var(--font-script);
 
   font-style: normal;
   letter-spacing: 0;
 }
 
 .script-name.script-name--word {
-  color: var(--olive-900);
+  color: var(--color-heading);
 }
 
 .script-name.script-name--amp {
-  color: var(--gold);
+  color: var(--color-accent);
 }

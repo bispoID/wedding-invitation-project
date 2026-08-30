@@ -25,7 +25,7 @@
       0
       0
       2.0rem
-      var(--envelope-deep)
+      var(--color-envelope-deep)
     );
 
   transition:
@@ -45,13 +45,13 @@
   z-index: 1;
 
   background:
-    var(--envelope-deep);
+    var(--color-envelope-deep);
 
   background-image:
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--grain-size);
+    var(--texture-grain-size);
 
   box-shadow:
     inset
@@ -59,7 +59,7 @@
     0
     0
     1px
-    rgb(255 255 255 / 8%);
+    rgb(var(--color-white-rgb) / 8%);
 }
 
 .welcome.is-opening-envelope
@@ -82,14 +82,14 @@
       6rem
       5.5rem
       -2rem
-      var(--envelope-deep),
+      var(--color-envelope-deep),
 
       inset
       0
       0
       0
       1px
-      rgb(255 255 255 / 8%);
+      rgb(var(--color-white-rgb) / 8%);
   }
 
   100% {
@@ -99,14 +99,14 @@
       1.5rem
       2.5rem
       -1.5rem
-      var(--envelope-deep),
+      var(--color-envelope-deep),
 
       inset
       0
       0
       0
       1px
-      rgb(255 255 255 / 8%);
+      rgb(var(--color-white-rgb) / 8%);
   }
 }
 
@@ -132,15 +132,15 @@
 
   border: 0;
 
-  background-color: var(--paper);
+  background-color: var(--color-paper);
 
   background-image:
     url("../../images/paper-grain.svg"),
     linear-gradient(
       112deg,
-      rgb(255 255 255 / 46%),
+      rgb(var(--color-white-rgb) / 46%),
       transparent 42%,
-      rgb(213 196 167 / 14%)
+      rgb(var(--color-paper-highlight-rgb) / 14%)
     );
 
   background-size:
@@ -156,16 +156,16 @@
     0
     0.8rem
     1.2rem
-    rgb(38 46 39 / 22%),
+    rgb(var(--color-card-shadow-rgb) / 22%),
 
     inset
     0
     0
     0
     1px
-    rgb(255 255 255 / 72%);
+    rgb(var(--color-white-rgb) / 72%);
 
-  color: var(--ink);
+  color: var(--color-ink);
 
   transform:
     translateY(0)
@@ -190,8 +190,8 @@
   background:
     linear-gradient(
       to bottom,
-      rgb(0 0 0 / 68%),
-      rgb(0 0 0 / 38%) 45%,
+      rgb(var(--color-black-rgb) / 68%),
+      rgb(var(--color-black-rgb) / 38%) 45%,
       transparent 80%
     );
 
@@ -331,13 +331,13 @@
     );
 
   background-color:
-    var(--envelope-side-left);
+    var(--color-envelope-side);
 
   background-image:
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--envelope-grain-size),
+    var(--texture-grain-size),
     100% 100%;
 
   filter:
@@ -345,7 +345,7 @@
       0
       0
       0.22rem
-      rgb(var(--envelope-shadow-rgb) / 24%)
+      rgb(var(--color-envelope-shadow-rgb) / 24%)
     );
 
   box-shadow:
@@ -354,7 +354,7 @@
     0
     0
     1px
-    rgb(var(--envelope-edge-rgb) / 16%);
+    rgb(var(--color-accent-rgb) / 16%);
 }
 
 
@@ -383,13 +383,13 @@
     );
 
   background-color:
-    var(--envelope-side-right);
+    var(--color-envelope-side);
 
   background-image:
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--envelope-grain-size),
+    var(--texture-grain-size),
     100% 100%;
 
   filter:
@@ -397,7 +397,7 @@
       0
       0
       0.22rem
-      rgb(var(--envelope-shadow-rgb) / 24%)
+      rgb(var(--color-envelope-shadow-rgb) / 24%)
     );
 
   box-shadow:
@@ -406,7 +406,7 @@
     0
     0
     1px
-    rgb(var(--envelope-edge-rgb) / 14%);
+    rgb(var(--color-accent-rgb) / 14%);
 }
 
 
@@ -435,13 +435,13 @@
     );
 
   background-color:
-    var(--envelope-bottom);
+    var(--color-envelope-bottom);
 
   background-image:
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--envelope-grain-size),
+    var(--texture-grain-size),
     100% 100%;
 
   box-shadow:
@@ -450,7 +450,7 @@
     0
     0
     1px
-    rgb(var(--envelope-edge-rgb) / 14%);
+    rgb(var(--color-accent-rgb) / 14%);
 }
 
 .envelope__bottom-shadow {
@@ -475,7 +475,7 @@
     );
 
   background:
-    rgb(var(--envelope-shadow-rgb) / 10%);
+    rgb(var(--color-envelope-shadow-rgb) / 10%);
 
   transform:
     translateY(-0.25rem);
@@ -530,13 +530,13 @@
 .envelope__flap-front {
   z-index: 1;
 
-  background-color: var(--envelope-fold);
+  background-color: var(--color-envelope-fold);
 
   background-image:
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--grain-size),
+    var(--texture-grain-size),
     100% 100%;
 
   transform:
@@ -552,13 +552,13 @@
 .envelope__flap-back {
   z-index: 0;
 
-  background-color: var(--envelope-deep);
+  background-color: var(--color-envelope-deep);
 
   background-image:
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--grain-size);
+    var(--texture-grain-size);
 
   transform:
     rotateY(180deg)
@@ -589,7 +589,7 @@
     0
     0
     1px
-    rgb(var(--envelope-edge-rgb) / 18%);
+    rgb(var(--color-accent-rgb) / 18%);
 }
 
 .envelope__flap::before {
@@ -609,7 +609,7 @@
     );
 
   background:
-    rgb(var(--envelope-shadow-rgb) / 12%);
+    rgb(var(--color-envelope-shadow-rgb) / 12%);
 
   transform:
     translateY(0.10rem);
@@ -657,7 +657,7 @@
       -0.15rem
       0.45rem
       0.32rem
-      rgb(31 27 18 / 80%)
+      rgb(var(--color-flower-shadow-rgb) / 80%)
     );
 
   transform:
@@ -686,7 +686,7 @@
       0
       0.3rem
       0.36rem
-      rgb(40 35 24 / 38%)
+      rgb(var(--color-seal-shadow-rgb) / 38%)
     );
 
   transform:

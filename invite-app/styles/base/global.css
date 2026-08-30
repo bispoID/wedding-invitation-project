@@ -29,7 +29,7 @@
 
   border-radius: 999px;
 
-  font-family: "Liberation Sans Local", sans-serif;
+  font-family: var(--font-sans);
 
   font-size: 0.68rem;
 
@@ -63,7 +63,7 @@ input:focus-visible,
 select:focus-visible {
   outline:
     2px solid
-    var(--gold-light);
+    var(--color-accent-light);
 
   outline-offset: 4px;
 }

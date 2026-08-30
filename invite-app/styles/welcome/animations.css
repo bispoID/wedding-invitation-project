@@ -70,14 +70,14 @@
     0
     1.5rem
     2.5rem
-    var(--card-shadow),
+    var(--shadow-card),
 
     inset
     0
     0
     0
     1px
-    rgb(255 255 255 / 72%);
+    rgb(var(--color-white-rgb) / 72%);
 }
 
 /* Pequena expansão do conteúdo para reforçar a sensação de abertura. */
