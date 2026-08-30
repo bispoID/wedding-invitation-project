@@ -1,5 +1,5 @@
 /* =========================================================
-   RSVP
+   INICIALIZAÇÃO DO RSVP
 ========================================================= */
 
 export function initRsvp() {
@@ -14,6 +14,10 @@ export function initRsvp() {
     return;
   }
 
+  /*
+   * O formulário permanece apenas como interface local
+   * até que a integração com a API e o Supabase seja feita.
+   */
   rsvpForm.addEventListener(
     'submit',
     (event) => {
@@ -22,7 +26,6 @@ export function initRsvp() {
 
       feedback.textContent =
         'A confirmação será conectada ao RSVP quando a API e o Supabase forem configurados.';
-
     }
   );
 }

@@ -1,3 +1,7 @@
+/* =========================================================
+   DEPENDÊNCIAS
+========================================================= */
+
 import {
   animateFloralSealExit,
   resetFloralSealAnimations
@@ -15,7 +19,7 @@ import {
 
 
 /* =========================================================
-   TEMPOS DA ANIMAÇÃO
+   CONFIGURAÇÃO DA ANIMAÇÃO
 ========================================================= */
 
 const ANIMATION_TIMING = {
@@ -26,7 +30,7 @@ const ANIMATION_TIMING = {
 
 
 /* =========================================================
-   ABRIR CONVITE
+   CONTROLE DO ENVELOPE
 ========================================================= */
 
 function createInvitationController({
@@ -41,6 +45,10 @@ function createInvitationController({
   let isOpening = false;
 
 
+  /* -------------------------------------------------------
+     ABRIR CONVITE
+  ------------------------------------------------------- */
+
   function openInvitation() {
 
     // Evita múltiplos cliques durante a animação.
@@ -54,7 +62,8 @@ function createInvitationController({
     /*
      * ETAPA 1
      *
-     * Abre somente a aba superior.
+     * Abre a aba superior e inicia o movimento
+     * das decorações.
      */
     welcome.classList.add(
       'is-opening-envelope'
@@ -91,7 +100,7 @@ function createInvitationController({
      * ETAPA 3
      *
      * Depois que o cartão se movimenta,
-     * fazemos a transição para a carta.
+     * a capa começa a fechar.
      */
     window.setTimeout(() => {
 
@@ -105,7 +114,7 @@ function createInvitationController({
     /*
      * ETAPA 4
      *
-     * A capa desaparece e a carta entra.
+     * A capa desaparece e a carta entra em cena.
      */
     window.setTimeout(() => {
 
@@ -119,9 +128,9 @@ function createInvitationController({
   }
 
 
-  /* =======================================================
+  /* -------------------------------------------------------
      VOLTAR PARA A CAPA
-  ======================================================= */
+  ------------------------------------------------------- */
 
   function returnToCover() {
 
@@ -133,9 +142,7 @@ function createInvitationController({
     /*
      * Remove todas as etapas da animação.
      *
-     * O envelope volta automaticamente
-     * para o estado inicial:
-     *
+     * O envelope volta automaticamente para o estado inicial:
      * - aba fechada
      * - cartão dentro
      * - selo visível
@@ -167,15 +174,14 @@ function createInvitationController({
   }
 
 
-  /* =======================================================
-     EVENTOS
-  ======================================================= */
+  /* -------------------------------------------------------
+     EVENTOS DO ENVELOPE
+  ------------------------------------------------------- */
 
   envelope.addEventListener(
     'click',
     openInvitation
   );
-
 
   envelope.addEventListener(
     'keydown',
@@ -189,12 +195,9 @@ function createInvitationController({
         event.preventDefault();
 
         openInvitation();
-
       }
-
     }
   );
-
 
   backButton.addEventListener(
     'click',

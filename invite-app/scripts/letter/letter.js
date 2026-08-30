@@ -1,5 +1,5 @@
 /* =========================================================
-   CONTROLE DA CARTA
+   EXIBIR CARTA
 ========================================================= */
 
 export function showLetter(letter) {
@@ -20,10 +20,13 @@ export function showLetter(letter) {
     letterTitle.focus({
       preventScroll: true
     });
-
   }
 }
 
+
+/* =========================================================
+   OCULTAR CARTA
+========================================================= */
 
 export function hideLetter(letter) {
 

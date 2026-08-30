@@ -1,8 +1,12 @@
+/* =========================================================
+   ESTADO
+========================================================= */
+
 let floralSealAnimations = [];
 
 
 /* =========================================================
-   ANIMAÇÃO DOS ELEMENTOS DECORATIVOS
+   ANIMAÇÃO DAS DECORAÇÕES
 ========================================================= */
 
 export function animateFloralSealExit(decorations) {
@@ -48,6 +52,10 @@ export function animateFloralSealExit(decorations) {
   ];
 }
 
+
+/* =========================================================
+   RESET DAS ANIMAÇÕES
+========================================================= */
 
 export function resetFloralSealAnimations() {
 

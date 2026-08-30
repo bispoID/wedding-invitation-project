@@ -1,3 +1,7 @@
+/* =========================================================
+   ESTADO
+========================================================= */
+
 let flapTurnFrame = null;
 
 
@@ -54,6 +58,10 @@ export function watchFlapTurn(welcome, flap) {
 }
 
 
+/* =========================================================
+   INICIAR MONITORAMENTO
+========================================================= */
+
 export function startFlapWatch(welcome, flap) {
 
   flapTurnFrame =
@@ -62,6 +70,10 @@ export function startFlapWatch(welcome, flap) {
     );
 }
 
+
+/* =========================================================
+   PARAR MONITORAMENTO
+========================================================= */
 
 export function stopFlapWatch() {
 

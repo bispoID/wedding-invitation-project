@@ -1,3 +1,7 @@
+/* =========================================================
+   ESTADO
+========================================================= */
+
 let welcomeTitleResizeFrame = null;
 
 
@@ -30,7 +34,6 @@ function fitWelcomeTitle() {
       parseFloat(
         window.getComputedStyle(title).fontSize
       );
-
   }
 
   const originalFontSize =
@@ -39,8 +42,8 @@ function fitWelcomeTitle() {
     );
 
   /*
-   * Volta ao tamanho original antes
-   * de fazer uma nova medição.
+   * Volta ao tamanho original antes de medir.
+   * Isso permite recalcular corretamente após um resize.
    */
   title.style.fontSize =
     `${originalFontSize}px`;
@@ -63,8 +66,8 @@ function fitWelcomeTitle() {
   }
 
   /*
-   * Reduz proporcionalmente a fonte até
-   * o título caber na largura disponível.
+   * Reduz proporcionalmente a fonte até o título caber
+   * na largura disponível, sem permitir quebra de linha.
    */
   const scale =
     availableWidth / titleWidth;
@@ -75,7 +78,7 @@ function fitWelcomeTitle() {
 
 
 /* =========================================================
-   INICIALIZAÇÃO
+   INICIALIZAÇÃO E RESIZE
 ========================================================= */
 
 export function initWelcomeTitle() {
@@ -94,7 +97,6 @@ export function initWelcomeTitle() {
         window.requestAnimationFrame(
           fitWelcomeTitle
         );
-
     }
   );
 }
