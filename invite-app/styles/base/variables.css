@@ -7,32 +7,51 @@
   ========================================================== */
 
   --color-page-background: #28342c;
+
   --color-heading: #344337;
+
   --color-text-secondary: #4f604f;
+
   --color-text-muted: #687765;
+
   --color-ink: #374138;
 
   --color-paper: #f5f1e8;
+
   --color-surface-light: #fffdf8;
 
   --color-accent: #ac8850;
+
   --color-accent-light: #d5b579;
 
   /* Canais RGB permitem reutilizar a mesma cor com diferentes opacidades. */
+
   --color-white-rgb: 255 255 255;
+
   --color-surface-light-rgb: 255 253 248;
+
   --color-paper-rgb: 245 241 232;
+
   --color-accent-rgb: 172 136 80;
+
   --color-text-secondary-rgb: 82 95 78;
+
   --color-text-muted-rgb: 104 119 101;
+
   --color-location-surface-rgb: 135 146 124;
+
   --color-paper-highlight-rgb: 213 196 167;
+
   --color-black-rgb: 0 0 0;
 
   /* Sombras com cores próprias, preservadas como tokens para ajuste centralizado. */
-  --color-envelope-shadow-rgb: 7 18 13;
+
+  --color-envelope-shadow-rgb: 58 54 29;
+
   --color-card-shadow-rgb: 38 46 39;
+
   --color-flower-shadow-rgb: 31 27 18;
+
   --color-seal-shadow-rgb: 40 35 24;
 
   /* =========================================================
@@ -40,9 +59,11 @@
   ========================================================== */
 
   --color-welcome-background-start: #f7f3eb;
+
   --color-welcome-background-end: #e7e1d5;
 
   --color-letter-background-start: #dfe2d5;
+
   --color-letter-background-end: #c5cec0;
 
   /* =========================================================
@@ -73,12 +94,16 @@
   ========================================================== */
 
   --envelope-fold-center: 50%;
+
   --envelope-bottom-tip: 2%;
 
-  --color-envelope-bottom: #21352b;
-  --color-envelope-deep: #1c3128;
-  --color-envelope-fold: #253b30;
-  --color-envelope-side: #22372c;
+  --color-envelope-bottom: #525539;
+
+  --color-envelope-deep: #4B4E31;
+
+  --color-envelope-fold: #575b3e;
+
+  --color-envelope-side: #505338;
 
   /* =========================================================
      TIPOGRAFIA
@@ -115,32 +140,53 @@
 ========================================================= */
 
 @font-face {
+
   font-family: "Edwardian Script ITC";
+
   src: url("../../fonts/EdwardianScriptITC.ttf") format("truetype");
+
   font-display: swap;
 }
 
+
 @font-face {
+
   font-family: "Liberation Sans Local";
+
   src: url("../../fonts/LiberationSans-Regular.ttf") format("truetype");
+
   font-weight: 400;
+
   font-style: normal;
+
   font-display: swap;
 }
 
+
 @font-face {
+
   font-family: "Liberation Sans Local";
+
   src: url("../../fonts/LiberationSans-Bold.ttf") format("truetype");
+
   font-weight: 700;
+
   font-style: normal;
+
   font-display: swap;
 }
 
+
 @font-face {
+
   font-family: "Liberation Serif Local";
+
   src: url("../../fonts/LiberationSerif-Regular.ttf") format("truetype");
+
   font-weight: 400;
+
   font-style: normal;
+
   font-display: swap;
 }
 
@@ -150,16 +196,24 @@
 ========================================================= */
 
 .script-name {
+
   font-family: var(--font-script);
 
   font-style: normal;
+
   letter-spacing: 0;
 }
 
+
 .script-name.script-name--word {
+
   color: var(--color-heading);
+
 }
 
+
 .script-name.script-name--amp {
+
   color: var(--color-accent);
+
 }
