@@ -144,9 +144,9 @@
   text-align: center;
 
   text-shadow:
-    0
-    0.05rem
-    3.0rem
+    -1rem
+    0.9rem
+    4.0rem
     var(--shadow-welcome-text);
 }
 
@@ -227,9 +227,9 @@
 /* O texto de instrução acompanha visualmente a área do envelope. */
 .envelope-area .open-invitation {
   text-shadow:
-    0
-    0.05rem
-    3.0rem
+    -1rem
+    0.9rem
+    2.0rem
     var(--shadow-welcome-text);
 }
 

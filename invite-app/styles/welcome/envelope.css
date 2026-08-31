@@ -22,8 +22,8 @@
 
   filter:
     drop-shadow(
-      0
-      0
+      -0.5rem
+      0.7rem
       2.0rem
       var(--color-envelope-deep)
     );
@@ -623,8 +623,8 @@
 
   filter:
     drop-shadow(
-      -0.15rem
-      0.45rem
+      -0.1rem
+      0.4rem
       0.32rem
       rgb(var(--color-flower-shadow-rgb) / 80%)
     );
@@ -652,10 +652,10 @@
 
   filter:
     drop-shadow(
-      0
-      0.3rem
-      0.36rem
-      rgb(var(--color-seal-shadow-rgb) / 38%)
+      -0.1rem
+      0.2rem
+      0.2rem
+      rgb(var(--color-flower-shadow-rgb) / 80%)
     );
 
   transform:
