@@ -91,7 +91,7 @@ function createInvitationController({
 
       envelope.querySelector(
         '.envelope__card'
-      ).style.zIndex = '11';
+      );
 
     }, ANIMATION_TIMING.cardStart);
 

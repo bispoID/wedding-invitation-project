@@ -60,7 +60,7 @@
 .welcome.is-opening-card
   .envelope__card {
 
-  z-index: 5;
+  z-index: 11;
 
   transform:
     translateY(-5rem)
