@@ -13,6 +13,20 @@
     transform: none;
   }
 
+  .letter__monogram {
+  width:
+    clamp(
+      5rem,
+      25vw,
+      8rem
+    );
+
+  margin:
+    0.95rem
+    auto
+    1.4rem;
+}
+
   /* Ajuste da tipografia secundária da carta. */
   .letter .eyebrow {
     letter-spacing: 0.24em;

@@ -117,15 +117,15 @@
 .letter__monogram {
   width:
     clamp(
-      5rem,
+      9rem,
       25vw,
       8rem
     );
 
   margin:
-    0.35rem
+    3.1rem
     auto
-    1.2rem;
+    3.1rem;
 
   mix-blend-mode:
     multiply;
