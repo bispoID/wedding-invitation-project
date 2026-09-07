@@ -29,7 +29,7 @@
 
   /* Ajuste da tipografia secundária da carta. */
   .letter .eyebrow {
-    letter-spacing: 0.24em;
+    font-size: 0.5rem;
   }
 
   /* Chamada superior da capa. */
@@ -99,6 +99,11 @@
       );
 
     transform: translateY(1.5rem);
+  }
+
+  /* Ajuste da tipografia secundária da carta. */
+  .letter .eyebrow {
+    font-size: 0.9rem;
   }
 
   /* Chamada superior da capa. */
