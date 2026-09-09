@@ -210,7 +210,7 @@ function createInvitationController({
    INICIALIZAÇÃO
 ========================================================= */
 
-export function initEnvelope() {
+export function initEnvelope({ devSkipWelcome = false } = {}) {
 
   const welcome =
     document.querySelector('.welcome');
@@ -249,4 +249,18 @@ export function initEnvelope() {
     backButton,
     decorations
   });
+
+
+  /* -------------------------------------------------------
+     MODO DESENVOLVEDOR
+  ------------------------------------------------------- */
+
+  if (devSkipWelcome) {
+
+    // Inicia diretamente na carta, sem executar a animação
+    // de abertura do envelope.
+    welcome.hidden = true;
+    letter.hidden = false;
+    letter.classList.remove('is-entering');
+  }
 }
