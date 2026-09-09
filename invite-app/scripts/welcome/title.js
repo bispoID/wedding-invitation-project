@@ -21,10 +21,6 @@ function fitWelcomeTitle() {
   const isMobile =
     window.matchMedia('(max-width: 699px)').matches;
 
-  if (!isMobile) {
-    return;
-  }
-
   /*
    * Guarda o tamanho original apenas uma vez.
    */
@@ -40,6 +36,18 @@ function fitWelcomeTitle() {
     parseFloat(
       title.dataset.originalFontSize
     );
+
+  /*
+   * Se estiver no desktop, restaura o tamanho original
+   * e não aplica nenhum ajuste automático.
+   */
+  if (!isMobile) {
+
+    title.style.fontSize =
+      `${originalFontSize}px`;
+
+    return;
+  }
 
   /*
    * Volta ao tamanho original antes de medir.
