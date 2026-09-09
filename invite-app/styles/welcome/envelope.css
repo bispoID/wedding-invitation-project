@@ -471,7 +471,7 @@
 .envelope__flap {
   position: absolute;
 
-  top: 1px;
+  top: 0px;
   right: 0;
   bottom: 0;
   left: 0;
@@ -507,10 +507,6 @@
   background-size:
     var(--texture-grain-size),
     100% 100%;
-
-  transform:
-    translateZ(-0.9px)
-    translateY(-1.29px);
 }
 
 
@@ -544,9 +540,9 @@
     polygon(
       0 0,
       100% 0,
-      100% 5%,
-      50% 70%,
-      0 5%
+      100% 4.9%,
+      50% 69.5%,
+      0 4.9%
     );
 
   backface-visibility:
