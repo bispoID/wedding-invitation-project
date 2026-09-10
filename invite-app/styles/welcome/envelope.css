@@ -554,6 +554,13 @@
    * a mesma distância, independentemente do elemento.
    */
   transform: translate(0, 0);
+
+  /*
+   * O grupo visual fica abaixo do centro geométrico do envelope.
+   * Este pivô mantém selo e flores crescendo a partir do próprio centro,
+   * em vez de deslocar o selo para baixo durante o scale().
+   */
+  transform-origin: 50% 65%;
 }
 
 /* =========================================================

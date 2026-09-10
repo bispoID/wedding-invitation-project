@@ -12,7 +12,7 @@ let floralSealAnimations = [];
 export function animateFloralSealExit(decorations) {
 
   const animationOptions = {
-    duration: 1500,
+    duration: 1200,
     easing: 'cubic-bezier(0.33, 0, 0.67, 1)',
     fill: 'both'
   };
@@ -24,34 +24,27 @@ export function animateFloralSealExit(decorations) {
   * e percorrem exatamente a mesma distância até o canto
   * do envelope, tanto no mobile quanto no desktop.
   */
-floralSealAnimations = [
-  decorations.animate([
-    {
-      transform:
-        `${getDiagonalTranslate(0)} scale(1)`
-    },
+  floralSealAnimations = [
+    decorations.animate([
+      {
+        transform:
+          `${getDiagonalTranslate(0)} scale(1)`
+      },
 
-    {
-      transform:
-        `${getDiagonalTranslate(0)} scale(1.09)`,
-      offset: 0.2
-    },
+      {
+        transform:
+          `${getDiagonalTranslate(0)} scale(1.11)`,
+        offset: 0.3
+      },
 
+      {
+        transform:
+          `${getDiagonalTranslate(100)} scale(1)`,
+          offset: 1
+      }
 
-    {
-      transform:
-        `${getDiagonalTranslate(72)} scale(1.045)`,
-      offset: 0.75
-    },
-
-    {
-      transform:
-        `${getDiagonalTranslate(100)} scale(1)`,
-        offset: 1
-    }
-
-  ], animationOptions)
-];
+    ], animationOptions)
+  ];
 }
 
 
