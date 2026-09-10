@@ -11,11 +11,11 @@
 .welcome.is-opening-envelope
   .envelope__flap {
 
-  z-index: 4;
+  
 
   animation:
     flap-open
-    8000ms
+    6500ms
     var(--ease-smooth)
     1500ms
     both;
@@ -26,16 +26,23 @@
   0% {
     transform:
       rotateX(0deg);
+    z-index: 4;
   }
 
   22% {
     transform:
       rotateX(60deg);
+    z-index: 4;
+  }
+
+  50% {
+    z-index: 0;
   }
 
   100% {
     transform:
       rotateX(185deg);
+    z-index: 0;
   }
 }
 
@@ -51,66 +58,55 @@
     both;
 }
 
-
 /* =========================================================
    ETAPA 2 — CARTÃO COMEÇA A SAIR
 ========================================================= */
 
-/* Eleva o cartão acima do corpo do envelope. */
 .welcome.is-opening-card
-  .envelope__card {
+  .envelope__card {  
 
-  z-index: 11;
-
-  transform:
-    translateY(-5rem)
-    scale(1);
+  animation:
+    card-open
+    3.3s
+    cubic-bezier(.45, 0, .55, 1)
+    both;
 
   box-shadow:
     0
     1.5rem
     2.5rem
-    var(--shadow-card),
-
-    inset
-    0
-    0
-    0
-    1px
-    rgb(var(--color-white-rgb) / 72%);
+    var(--shadow-card);
 }
 
-/* Pequena expansão do conteúdo para reforçar a sensação de abertura. */
-.welcome.is-opening-card
-  .envelope__card-inner {
 
-  animation:
-    card-content-open
-    var(--ease-smooth)
-    both;
-}
-
-@keyframes card-content-open {
+@keyframes card-open {
 
   0% {
     transform:
-      translateZ(1px)
-      scale(0.94);
+      translateY(0rem)
+      scale(1);
+    z-index: 1;
   }
 
-  55% {
+  48% {
     transform:
-      translateZ(1px)
-      scale(1.02);
+      translateY(calc(-2rem - 100%))
+      scale(1.01);
+    z-index: 1;
+  }
+
+  50% {
+    z-index: 11;
   }
 
   100% {
     transform:
-      translateZ(1px)
-      scale(1);
+      translateY(-2rem)
+      scale(1.03);
+    z-index: 11;
   }
-}
 
+}
 
 /* =========================================================
    ETAPA 3 — SAÍDA DA CAPA

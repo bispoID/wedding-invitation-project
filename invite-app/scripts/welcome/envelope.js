@@ -23,9 +23,9 @@ import {
 ========================================================= */
 
 const ANIMATION_TIMING = {
-  cardStart: 4800,
-  coverClose: 7500,
-  letterEnter: 7050,
+  cardStart: 4700,
+  coverClose: 8650,
+  letterEnter: 8650,
 };
 
 
