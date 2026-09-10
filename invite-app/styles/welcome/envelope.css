@@ -10,9 +10,6 @@
 
   z-index: 1;
 
-  cursor: pointer;
-  touch-action: manipulation;
-
   perspective: 2100px;
 
   transform:
@@ -614,4 +611,15 @@
     translate(-50%, -50%);
 
   opacity: 1;
+
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+
+  outline: none;
+}
+
+.envelope__seal:focus-visible {
+  outline: 0.18rem solid var(--color-accent);
+  outline-offset: 0.3rem;
 }

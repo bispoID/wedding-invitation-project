@@ -149,14 +149,9 @@
 .welcome.is-closing
   h1,
 .welcome.is-closing
-  .welcome__intro,
-.welcome.is-closing
-  .open-invitation {
+  .welcome__intro {
 
   opacity: 0;
-
-  transform:
-    translateY(-1rem);
 }
 
 .welcome.is-closing
@@ -169,12 +164,6 @@
   .welcome__intro {
 
   transition-delay: 80ms;
-}
-
-.welcome.is-closing
-  .open-invitation {
-
-  transition-delay: 120ms;
 }
 
 

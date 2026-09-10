@@ -37,6 +37,7 @@ function createInvitationController({
   welcome,
   letter,
   envelope,
+  seal,
   flap,
   backButton,
   decorations
@@ -168,7 +169,7 @@ function createInvitationController({
     });
 
 
-    envelope.focus({
+    seal.focus({
       preventScroll: true
     });
   }
@@ -178,12 +179,12 @@ function createInvitationController({
      EVENTOS DO ENVELOPE
   ------------------------------------------------------- */
 
-  envelope.addEventListener(
+  seal.addEventListener(
     'click',
     openInvitation
   );
 
-  envelope.addEventListener(
+  seal.addEventListener(
     'keydown',
     (event) => {
 
@@ -221,6 +222,9 @@ export function initEnvelope({ devSkipWelcome = false } = {}) {
   const envelope =
     document.querySelector('.envelope');
 
+  const seal =
+    document.querySelector('.envelope__seal');
+
   const flap =
     document.querySelector('.envelope__flap');
 
@@ -234,6 +238,7 @@ export function initEnvelope({ devSkipWelcome = false } = {}) {
     !welcome ||
     !letter ||
     !envelope ||
+    !seal ||
     !flap ||
     !backButton ||
     !decorations
@@ -245,6 +250,7 @@ export function initEnvelope({ devSkipWelcome = false } = {}) {
     welcome,
     letter,
     envelope,
+    seal,
     flap,
     backButton,
     decorations

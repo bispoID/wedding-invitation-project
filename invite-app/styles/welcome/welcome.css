@@ -316,7 +316,7 @@
   display: inline-block;
 
   margin:
-    0.7rem
+    0.8rem
     0
     0;
 
@@ -334,7 +334,7 @@
 
   font-family: var(--font-sans);
 
-  font-size: 4.0cqi;
+  font-size: 3.5cqi;
 
   font-weight: 700;
 
@@ -357,8 +357,7 @@
 /* Os elementos de texto e a instrução compartilham a transição de saída. */
 .welcome .eyebrow,
 .welcome h1,
-.welcome__intro,
-.open-invitation {
+.welcome__intro {
   transition:
     opacity 450ms ease,
     transform 650ms ease;
