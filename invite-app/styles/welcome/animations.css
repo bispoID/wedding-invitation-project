@@ -52,7 +52,7 @@
 
   animation:
     card-flap-shadow
-    8000ms
+    7000ms
     var(--ease-smooth)
     1500ms
     both;
@@ -126,12 +126,11 @@
     var(--ease-smooth);
 }
 
-/* O envelope gira, sobe levemente e desaparece. */
+/* O envelope sobe levemente e desaparece. */
 .welcome.is-closing
   .envelope {
 
   transform:
-    rotate(7deg)
     translateY(-2rem)
     scale(1.04);
 
@@ -141,29 +140,6 @@
     transform 650ms
       var(--ease-smooth),
     opacity 550ms ease;
-}
-
-/* Textos da capa saem para cima com pequenos atrasos entre si. */
-.welcome.is-closing
-  .eyebrow,
-.welcome.is-closing
-  h1,
-.welcome.is-closing
-  .welcome__intro {
-
-  opacity: 0;
-}
-
-.welcome.is-closing
-  h1 {
-
-  transition-delay: 40ms;
-}
-
-.welcome.is-closing
-  .welcome__intro {
-
-  transition-delay: 80ms;
 }
 
 
