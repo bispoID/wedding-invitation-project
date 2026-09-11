@@ -219,6 +219,14 @@
 
   opacity: 0.72;
 
+  filter:
+    drop-shadow(
+      -1rem
+      0.9rem
+      2.0rem
+      var(--shadow-welcome-text)
+    );
+
   pointer-events: none;
 }
 
