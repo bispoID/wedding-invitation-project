@@ -61,7 +61,7 @@ function fitWelcomeTitle() {
    * utilizada pelo título no mobile.
    */
   const availableWidth =
-    window.innerWidth - 32;
+    window.innerWidth - 34;
 
   const titleWidth =
     title.scrollWidth;
