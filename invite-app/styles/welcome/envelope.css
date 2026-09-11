@@ -623,6 +623,9 @@
   pointer-events: auto;
   touch-action: manipulation;
 
+  /* Remove o quadrado azul de destaque gerado pelo toque no celular. */
+  -webkit-tap-highlight-color: transparent;
+
   outline: none;
 }
 
