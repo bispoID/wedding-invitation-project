@@ -8,11 +8,6 @@ import {
 } from './decorations.js';
 
 import {
-  startFlapWatch,
-  stopFlapWatch
-} from './flap.js';
-
-import {
   showLetter,
   hideLetter
 } from '../letter/letter.js';
@@ -24,7 +19,6 @@ import {
 
 const ANIMATION_TIMING = {
   cardStart: 4700,
-  coverClose: 8650,
   letterEnter: 8650,
 };
 
@@ -36,9 +30,7 @@ const ANIMATION_TIMING = {
 function createInvitationController({
   welcome,
   letter,
-  envelope,
   seal,
-  flap,
   backButton,
   decorations
 }) {
@@ -72,12 +64,6 @@ function createInvitationController({
 
     animateFloralSealExit(decorations);
 
-    startFlapWatch(
-      welcome,
-      flap
-    );
-
-
     /*
      * ETAPA 2
      *
@@ -90,30 +76,11 @@ function createInvitationController({
         'is-opening-card'
       );
 
-      envelope.querySelector(
-        '.envelope__card'
-      );
-
     }, ANIMATION_TIMING.cardStart);
 
 
     /*
      * ETAPA 3
-     *
-     * Depois que o cartão se movimenta,
-     * a capa começa a fechar.
-     */
-    window.setTimeout(() => {
-
-      welcome.classList.add(
-        'is-closing'
-      );
-
-    }, ANIMATION_TIMING.coverClose);
-
-
-    /*
-     * ETAPA 4
      *
      * A capa desaparece e a carta entra em cena.
      */
@@ -150,15 +117,11 @@ function createInvitationController({
      */
     welcome.classList.remove(
       'is-opening-envelope',
-      'is-opening-card',
-      'is-closing',
-      'is-flap-turned'
+      'is-opening-card'
     );
 
 
     resetFloralSealAnimations();
-
-    stopFlapWatch();
 
     isOpening = false;
 
@@ -219,14 +182,8 @@ export function initEnvelope({ devSkipWelcome = false } = {}) {
   const letter =
     document.querySelector('.letter');
 
-  const envelope =
-    document.querySelector('.envelope');
-
   const seal =
     document.querySelector('.envelope__seal');
-
-  const flap =
-    document.querySelector('.envelope__flap');
 
   const backButton =
     document.querySelector('.back-to-cover');
@@ -237,9 +194,7 @@ export function initEnvelope({ devSkipWelcome = false } = {}) {
   if (
     !welcome ||
     !letter ||
-    !envelope ||
     !seal ||
-    !flap ||
     !backButton ||
     !decorations
   ) {
@@ -249,9 +204,7 @@ export function initEnvelope({ devSkipWelcome = false } = {}) {
   createInvitationController({
     welcome,
     letter,
-    envelope,
     seal,
-    flap,
     backButton,
     decorations
   });

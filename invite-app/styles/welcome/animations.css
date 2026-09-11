@@ -10,9 +10,6 @@
  */
 .welcome.is-opening-envelope
   .envelope__flap {
-
-  
-
   animation:
     flap-open
     6500ms
@@ -103,42 +100,7 @@
 }
 
 /* =========================================================
-   ETAPA 3 — SAÍDA DA CAPA
-========================================================= */
-
-/* Bloqueia novas interações enquanto a capa desaparece. */
-.welcome.is-closing {
-  pointer-events: none;
-}
-
-/* Move o conjunto de conteúdo durante a saída da capa. */
-.welcome.is-closing
-  .welcome__content {
-
-  transition:
-    transform 650ms
-    var(--ease-smooth);
-}
-
-/* O envelope sobe levemente e desaparece. */
-.welcome.is-closing
-  .envelope {
-
-  transform:
-    translateY(-2rem)
-    scale(1.04);
-
-  opacity: 0;
-
-  transition:
-    transform 650ms
-      var(--ease-smooth),
-    opacity 550ms ease;
-}
-
-
-/* =========================================================
-   ETAPA 4 — ENTRADA DA CARTA
+   ETAPA 3 — ENTRADA DA CARTA
 ========================================================= */
 
 /* Entrada da carta após a transição da capa. */

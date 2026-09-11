@@ -12,9 +12,6 @@
 
   perspective: 2100px;
 
-  transform:
-    rotate(0deg);
-
   transform-style: preserve-3d;
 
   filter:
@@ -25,9 +22,6 @@
       var(--color-envelope-deep)
     );
 
-  transition:
-    transform 900ms
-    var(--ease-smooth);
 }
 
 /* =========================================================
@@ -48,8 +42,7 @@
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--texture-grain-size),
-    100% 100%;
+    var(--texture-grain-size);
 }
 
 /* =========================================================
@@ -72,18 +65,11 @@
 
   overflow: hidden;
 
-  border: 0;
-
   background-color: var(--color-paper);
 
   background-image:
     url("../../images/paper-grain-card.svg");
 
-  background-repeat:
-    repeat,
-    no-repeat;
-
-  transform-origin: center center;
 }
 
 /* Camada de sombra sobre o cartão; sua opacidade é animada durante a abertura da aba. */
@@ -108,17 +94,12 @@
 
   opacity: 1;
 
-  transition:
-    opacity 900ms ease;
 }
 
 
 @keyframes card-flap-shadow {
 
-  0% {
-    opacity: 1;
-  }
-
+  0%,
   22% {
     opacity: 1;
   }
@@ -193,9 +174,6 @@
 
   mix-blend-mode: multiply;
 
-  transition:
-    transform 700ms
-    var(--ease-smooth);
 }
 
 /* =========================================================
@@ -244,8 +222,7 @@
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--texture-grain-size),
-    100% 100%;
+    var(--texture-grain-size);
 
   filter:
     drop-shadow(
@@ -296,8 +273,7 @@
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--texture-grain-size),
-    100% 100%;
+    var(--texture-grain-size);
 
   filter:
     drop-shadow(
@@ -348,8 +324,7 @@
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--texture-grain-size),
-    100% 100%;
+    var(--texture-grain-size);
 
   box-shadow:
     inset
@@ -407,16 +382,9 @@
 ========================================================= */
 
 .envelope__flap {
-  position: absolute;
-
-  top: 0px;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
 
   z-index: 6;
-
-  background: transparent;
 
   transform-origin: center top;
 
@@ -426,7 +394,6 @@
 
   backface-visibility: visible;
 
-  transition: none;
 }
 
 
@@ -443,8 +410,7 @@
     url("../../images/paper-grain.svg");
 
   background-size:
-    var(--texture-grain-size),
-    100% 100%;
+    var(--texture-grain-size);
 }
 
 
@@ -538,8 +504,6 @@
    * ao contêiner para que flores e selo percorram exatamente
    * a mesma distância, independentemente do elemento.
    */
-  transform: translate(0, 0);
-
   /*
    * O grupo visual fica abaixo do centro geométrico do envelope.
    * Este pivô mantém selo e flores crescendo a partir do próprio centro,
@@ -601,8 +565,6 @@
 
   transform:
     translate(-50%, -50%);
-
-  opacity: 1;
 
   cursor: pointer;
   pointer-events: auto;
