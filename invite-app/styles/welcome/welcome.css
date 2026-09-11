@@ -193,6 +193,35 @@
   font-style: italic;
 }
 
+.welcome__ramas {
+  width:
+    min(
+      88%,
+      18rem
+    );
+
+  aspect-ratio: 2162 / 213;
+
+  margin:
+    0.45rem
+    auto
+    0.55rem;
+
+  background-image:
+    url("../../images/ornamento_ramas_welcome.webp");
+
+  background-position:
+    center top;
+
+  background-repeat: no-repeat;
+
+  background-size: 100% 100%;
+
+  opacity: 0.72;
+
+  pointer-events: none;
+}
+
 .welcome__intro {
   font-family: var(--font-serif);
   margin:
