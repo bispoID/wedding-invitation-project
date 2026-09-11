@@ -40,20 +40,28 @@
   #welcome-title {
     white-space: nowrap;
 
-    transform: translateX(
-      calc(-1.2vw - 2.008px)
-    );
+    transform: translateX(-6.5px);
+
   }
 
   /* Frase introdutória da capa. */
-  .welcome__intro {
-    transform: translateX(-1.4px);
-  }
 
   /*
    * Centraliza o conteúdo da capa na largura útil do mobile,
    * compensando o espaço lateral definido pela capa.
    */
+  .welcome__intro {
+    transform: translateX(-1.4px);
+
+    margin:
+      -0.8rem
+      0
+      0.7rem;
+
+    font-size: 0.8rem;
+
+  }
+
   .welcome__content {
     width: calc(100vw - 4.5rem);
     margin-inline: auto;
@@ -68,6 +76,14 @@
       24rem,
       calc(100vw - 2rem)
     );
+  }
+
+  /* Espaçamento da instrução abaixo do envelope. */
+  .open-invitation {
+    margin:
+      1rem
+      0
+      0;
   }
 }
 
@@ -195,7 +211,7 @@
   }
 
   .welcome__copy .welcome__intro {
-    max-width: 32rem;
+    max-width: 42rem;
     white-space: normal;
   }
 

@@ -151,7 +151,7 @@
 }
 
 .eyebrow {
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.8rem;
 
   color: var(--color-heading);
 
@@ -161,7 +161,7 @@
 
   font-weight: 700;
 
-  letter-spacing: 0.81em;
+  letter-spacing: 0.85em;
 
   line-height: 1.4;
 
@@ -227,11 +227,11 @@
   margin:
     0.5rem
     0
-    1rem;
+    0.7rem;
 
   color: var(--color-text-secondary);
 
-  font-size: 1.1rem;
+  font-size: 1rem;
 
   line-height: 1.6;
 }
@@ -275,7 +275,7 @@
   width:
     clamp(
       20rem,
-      34vw,
+      23vw,
       30rem
     );
 }
@@ -342,28 +342,28 @@
 
 /* Instrução de abertura posicionada abaixo do envelope. */
 .open-invitation {
-  display: inline-block;
+  display: flex;
+
+  width: max-content;
+  max-width: 100%;
+
+  flex-direction: column;
+
+  align-items: center;
 
   margin:
     0.8rem
     0
     0;
 
-  padding:
-    0
-    0
-    0.45rem;
-
-  border-bottom:
-    1px solid
-    var(--color-accent);
+  padding: 0;
 
   color:
     var(--color-text-secondary);
 
   font-family: var(--font-sans);
 
-  font-size: 3.5cqi;
+  font-size: 3.3cqi;
 
   font-weight: 700;
 
@@ -377,7 +377,6 @@
 
   pointer-events: none;
 }
-
 
 /* =========================================================
    TRANSIÇÕES DA CAPA
