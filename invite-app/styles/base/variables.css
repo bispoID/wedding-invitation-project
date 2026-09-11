@@ -76,9 +76,6 @@
   --shadow-welcome-text:
     rgb(31 41 4 / 85.6%);
 
-  --shadow-card:
-    rgb(0 0 0 / 32.9%);
-
   --ease-smooth:
     cubic-bezier(0.22, 1, 0.36, 1);
 

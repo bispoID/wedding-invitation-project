@@ -70,12 +70,6 @@
     3.3s
     cubic-bezier(.45, 0, .55, 1)
     both;
-
-  box-shadow:
-    0
-    1.5rem
-    2.5rem
-    var(--shadow-card);
 }
 
 

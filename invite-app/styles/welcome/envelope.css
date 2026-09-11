@@ -79,26 +79,11 @@
   background-image:
     url("../../images/paper-grain-card.svg");
 
-  background-size:
-    180px 180px,
-    100% 100%;
-
   background-repeat:
     repeat,
     no-repeat;
 
-  color: var(--color-ink);
-
-  transform:
-    translateY(0)
-    scale(1);
-
   transform-origin: center center;
-
-  transition:
-    transform 850ms
-      var(--ease-smooth),
-    box-shadow 700ms ease;
 }
 
 /* Camada de sombra sobre o cartão; sua opacidade é animada durante a abertura da aba. */
