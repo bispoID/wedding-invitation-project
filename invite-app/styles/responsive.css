@@ -89,6 +89,62 @@
 
 
 /* =========================================================
+   MOBILE COM ALTURA REDUZIDA
+========================================================= */
+
+/* Mantém a capa inteira acessível em celulares horizontais ou compactos. */
+@media (max-width: 699px) and (max-height: 760px) {
+
+  .welcome {
+    align-content: start;
+
+    place-items: start center;
+
+    height: 100svh;
+    min-height: 0;
+
+    padding:
+      1.25rem
+      1.5rem;
+
+    overflow:
+      hidden
+      auto;
+  }
+
+  .welcome__content {
+    transform: none;
+  }
+
+  .welcome__intro {
+    margin:
+      0.25rem
+      0
+      0.45rem;
+  }
+
+  .envelope-unit {
+    width:
+      min(
+        18rem,
+        calc(100vw - 2rem)
+      );
+  }
+
+  .envelope-stage {
+    margin:
+      0.25rem
+      0
+      0.65rem;
+  }
+
+  .open-invitation {
+    margin-top: 0.5rem;
+  }
+}
+
+
+/* =========================================================
    TABLET E DESKTOP — A PARTIR DE 700PX
 ========================================================= */
 
