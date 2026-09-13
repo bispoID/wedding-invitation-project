@@ -307,7 +307,7 @@
 
   height: 66.3%;
 
-  clip-path:
+  --envelope-bottom-clip-path:
     polygon(
       0 100%,
       0 93%,
@@ -316,6 +316,39 @@
       100% 93%,
       100% 100%
     );
+
+  isolation: isolate;
+  overflow: visible;
+}
+
+.envelope__bottom-fold::before,
+.envelope__bottom-fold::after {
+  position: absolute;
+
+  inset: 0;
+
+  clip-path: var(--envelope-bottom-clip-path);
+
+  pointer-events: none;
+
+  content: "";
+}
+
+.envelope__bottom-fold::before {
+  z-index: 0;
+
+  background:
+    rgb(var(--color-envelope-shadow-rgb) / 10%);
+
+  transform:
+    translateY(-0.25rem);
+
+  filter:
+    blur(1.28rem);
+}
+
+.envelope__bottom-fold::after {
+  z-index: 1;
 
   background-color:
     var(--color-envelope-bottom);
@@ -333,39 +366,6 @@
     0
     1px
     rgb(var(--color-accent-rgb) / 14%);
-}
-
-.envelope__bottom-shadow {
-  position: absolute;
-
-  right: 0;
-  bottom: 0;
-  left: 0;
-
-  z-index: 2;
-
-  height: 66.3%;
-
-  clip-path:
-    polygon(
-      0 100%,
-      0 93%,
-      35% var(--envelope-bottom-tip),
-      65% var(--envelope-bottom-tip),
-      100% 93%,
-      100% 100%
-    );
-
-  background:
-    rgb(var(--color-envelope-shadow-rgb) / 10%);
-
-  transform:
-    translateY(-0.25rem);
-
-  filter:
-    blur(1.28rem);
-
-  pointer-events: none;
 }
 
 /* =========================================================
