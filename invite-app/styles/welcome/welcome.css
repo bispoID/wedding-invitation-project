@@ -77,7 +77,7 @@
     scale(2.1);
 
   background-image:
-    url('../../images/wallpaper_floral_vitoriano_vintage_2508x2508.webp');
+    var(--asset-welcome-wallpaper);
 
   background-position: center;
 
@@ -208,7 +208,7 @@
     0.55rem;
 
   background-image:
-    url("../../images/ornamento_ramas_welcome.webp");
+    var(--asset-welcome-ornament);
 
   background-position:
     center top;
@@ -319,7 +319,7 @@
     var(--color-envelope-deep);
 
   background-image:
-    url("../../images/paper-grain.svg");
+    var(--asset-paper-grain);
 
   background-size:
     var(--texture-grain-size);

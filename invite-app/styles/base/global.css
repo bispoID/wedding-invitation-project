@@ -9,6 +9,31 @@
   overflow: hidden;
 }
 
+body {
+  color: var(--color-ink);
+  font-family: var(--font-base);
+  font-synthesis: none;
+}
+
+
+/* =========================================================
+   TIPOGRAFIA COMPARTILHADA
+========================================================= */
+
+.script-name {
+  font-family: var(--font-script);
+  font-style: normal;
+  letter-spacing: 0;
+}
+
+.script-name--word {
+  color: var(--color-heading);
+}
+
+.script-name--amp {
+  color: var(--color-accent);
+}
+
 
 /* =========================================================
    BOTÕES
@@ -45,10 +70,16 @@
     background 200ms ease;
 }
 
-.button:hover,
-.button:focus-visible {
+.button:hover:not(:disabled),
+.button:focus-visible:not(:disabled) {
   transform:
     translateY(-2px);
+}
+
+.button:disabled {
+  /* Indica o cooldown do RSVP sem permitir nova submissão imediata. */
+  cursor: wait;
+  opacity: 0.7;
 }
 
 

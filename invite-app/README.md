@@ -5,8 +5,11 @@ Aplicação estática inicial do convite virtual.
 ## Arquitetura
 
 - **Apresentação:** `index.html`, com HTML semântico e acessível.
-- **Estilos:** `styles/main.css`, com tokens de cor, responsividade mobile-first e suporte a redução de movimento.
-- **Comportamento:** `scripts/main.js`, responsável pela abertura da carta e pelo estado demonstrativo do RSVP.
+- **Estilos:** `styles/main.css`, que importa tokens (`styles/base/variables.css`), fontes, base, componentes e responsividade mobile-first.
+- **Comportamento:** `scripts/main.js`, que inicializa os módulos de envelope, título e RSVP.
+- **Tokens compartilhados:** os tempos e curvas de movimento ficam em `styles/base/variables.css`; `scripts/shared/css.js` permite que o JavaScript reutilize esses valores.
+- **Assets de estilo:** imagens usadas pelo CSS também ficam centralizadas como tokens `--asset-*` em `styles/base/variables.css`.
+- **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` aplica um cooldown enquanto o RSVP ainda é local.
 - **Integrações futuras:** API/Edge Function, Supabase e área administrativa serão adicionados em camadas separadas.
 
 Essa estrutura vanilla é suficiente para a Fase 1 e evita adicionar framework ou build system antes de existir uma necessidade real.

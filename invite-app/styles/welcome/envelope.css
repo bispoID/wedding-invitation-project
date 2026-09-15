@@ -39,7 +39,7 @@
     var(--color-envelope-deep);
 
   background-image:
-    url("../../images/paper-grain.svg");
+    var(--asset-paper-grain);
 
   background-size:
     var(--texture-grain-size);
@@ -68,7 +68,7 @@
   background-color: var(--color-paper);
 
   background-image:
-    url("../../images/paper-grain-card.svg");
+    var(--asset-paper-grain-card);
 
 }
 
@@ -137,7 +137,7 @@
 
   /* Moldura floral aplicada ao cartão interno. */
   background-image:
-    url("../../images/moldura_ramas_1004x1442_50pct.webp");
+    var(--asset-envelope-card-frame);
 
   background-position: center;
 
@@ -177,20 +177,40 @@
 }
 
 /* =========================================================
-   ABAS LATERAIS
-=========================================================
+   ABAS FIXAS
 
-   IMPORTANTE:
-
-   Essas abas NÃO participam da animação.
-
-   Elas são simplesmente partes visuais fixas do envelope.
+   As abas laterais e inferior permanecem no lugar durante
+   a abertura; somente a aba superior é animada.
 ========================================================= */
 
 .envelope__fold {
   position: absolute;
 
   pointer-events: none;
+}
+
+.envelope__side-fold,
+.envelope__right-fold {
+  z-index: 2;
+
+  width: 50%;
+
+  background-color:
+    var(--color-envelope-side);
+
+  background-image:
+    var(--asset-paper-grain);
+
+  background-size:
+    var(--texture-grain-size);
+
+  filter:
+    drop-shadow(
+      0
+      0
+      0.22rem
+      rgb(var(--color-envelope-shadow-rgb) / 24%)
+    );
 }
 
 /* =========================================================
@@ -204,32 +224,11 @@
     0
     0;
 
-  z-index: 2;
-
-  width: 50%;
-
   clip-path:
     polygon(
       0 0,
       100% var(--envelope-fold-center),
       0 100%
-    );
-
-  background-color:
-    var(--color-envelope-side);
-
-  background-image:
-    url("../../images/paper-grain.svg");
-
-  background-size:
-    var(--texture-grain-size);
-
-  filter:
-    drop-shadow(
-      0
-      0
-      0.22rem
-      rgb(var(--color-envelope-shadow-rgb) / 24%)
     );
 
   box-shadow:
@@ -255,32 +254,11 @@
     0
     auto;
 
-  z-index: 2;
-
-  width: 50%;
-
   clip-path:
     polygon(
       100% 0,
       0 var(--envelope-fold-center),
       100% 100%
-    );
-
-  background-color:
-    var(--color-envelope-side);
-
-  background-image:
-    url("../../images/paper-grain.svg");
-
-  background-size:
-    var(--texture-grain-size);
-
-  filter:
-    drop-shadow(
-      0
-      0
-      0.22rem
-      rgb(var(--color-envelope-shadow-rgb) / 24%)
     );
 
   box-shadow:
@@ -298,15 +276,7 @@
 ========================================================= */
 
 .envelope__bottom-fold {
-  inset:
-    auto
-    0
-    0;
-
-  z-index: 3;
-
-  height: 66.3%;
-
+  /* A mesma geometria é compartilhada pela aba e pela sombra. */
   --envelope-bottom-clip-path:
     polygon(
       0 100%,
@@ -317,12 +287,22 @@
       100% 100%
     );
 
+  inset:
+    auto
+    0
+    0;
+
+  z-index: 3;
+
+  height: 66.3%;
+
   isolation: isolate;
   overflow: visible;
 }
 
 .envelope__bottom-fold::before,
 .envelope__bottom-fold::after {
+  /* Duas camadas visuais no mesmo elemento HTML: sombra e papel. */
   position: absolute;
 
   inset: 0;
@@ -354,7 +334,7 @@
     var(--color-envelope-bottom);
 
   background-image:
-    url("../../images/paper-grain.svg");
+    var(--asset-paper-grain);
 
   background-size:
     var(--texture-grain-size);
@@ -405,12 +385,6 @@
   z-index: 1;
 
   background-color: var(--color-envelope-fold);
-
-  background-image:
-    url("../../images/paper-grain.svg");
-
-  background-size:
-    var(--texture-grain-size);
 }
 
 
@@ -423,12 +397,6 @@
 
   background-color: var(--color-envelope-deep);
 
-  background-image:
-    url("../../images/paper-grain.svg");
-
-  background-size:
-    var(--texture-grain-size);
-
   transform:
     rotateY(180deg)
     translateZ(0.99px);
@@ -439,6 +407,12 @@
   position: absolute;
 
   inset: 0;
+
+  background-image:
+    var(--asset-paper-grain);
+
+  background-size:
+    var(--texture-grain-size);
 
   clip-path:
     polygon(
@@ -500,14 +474,8 @@
   pointer-events: none;
 
   /*
-   * O deslocamento dos elementos decorativos é aplicado
-   * ao contêiner para que flores e selo percorram exatamente
-   * a mesma distância, independentemente do elemento.
-   */
-  /*
-   * O grupo visual fica abaixo do centro geométrico do envelope.
-   * Este pivô mantém selo e flores crescendo a partir do próprio centro,
-   * em vez de deslocar o selo para baixo durante o scale().
+   * O contêiner move flores e selo juntos. O pivô abaixo do centro
+   * geométrico preserva o centro visual durante o scale().
    */
   transform-origin: 50% 65%;
 }

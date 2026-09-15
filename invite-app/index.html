@@ -97,17 +97,17 @@
                   ==================================================== -->
 
                   <div
-                    class="envelope__side-fold envelope__fold envelope__fold--left"
+                    class="envelope__side-fold envelope__fold"
                     aria-hidden="true"
                   ></div>
 
                   <div
-                    class="envelope__right-fold envelope__fold envelope__fold--right"
+                    class="envelope__right-fold envelope__fold"
                     aria-hidden="true"
                   ></div>
 
                   <div
-                    class="envelope__bottom-fold envelope__fold envelope__fold--bottom"
+                    class="envelope__bottom-fold envelope__fold"
                     aria-hidden="true"
                   ></div>
 
@@ -118,7 +118,7 @@
                       É a única aba do envelope que se movimenta.
                   ==================================================== -->
                   <div
-                    class="envelope__flap envelope__fold envelope__fold--top"
+                    class="envelope__flap envelope__fold"
                     aria-hidden="true"
                   >
 
@@ -135,7 +135,7 @@
                   </div>
 
 
-                  <!-- Elementos decorativos do envelope. -->
+                  <!-- O grupo visual se move junto; somente o selo recebe interação. -->
                   <div
                     class="envelope__decorations"
                   >
@@ -151,21 +151,23 @@
                       src="./images/selo_de_cera_carta_800x800.webp"
                       alt=""
                       aria-label="Abrir o convite pelo selo de cera"
+                      aria-describedby="open-invitation-hint"
                       role="button"
                       tabindex="0"
                     />
-                    
+
                   </div>
 
                 </div>
 
               </div>
 
+              <!-- A instrução é descrita pelo selo para usuários de tecnologia assistiva. -->
               <div
                 class="open-invitation"
-                aria-hidden="true"
+                id="open-invitation-hint"
               >
-                <span>Toque no selo para abrir o envelope</span>
+                <span>Toque no selo para abrir o convite</span>
 
                 <div
                   class="welcome__ramas"
@@ -210,8 +212,6 @@
             <p class="eyebrow">
               Com a bênção de nossas famílias
             </p>
-
-            <br>
 
             <img
               class="letter__monogram"

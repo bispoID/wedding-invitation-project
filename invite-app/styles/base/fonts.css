@@ -1,0 +1,31 @@
+/* Fontes locais utilizadas pela aplicação. */
+
+@font-face {
+  font-family: "Edwardian Script ITC";
+  src: url("../../fonts/EdwardianScriptITC.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Liberation Sans Local";
+  src: url("../../fonts/LiberationSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Liberation Sans Local";
+  src: url("../../fonts/LiberationSans-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Liberation Serif Local";
+  src: url("../../fonts/LiberationSerif-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

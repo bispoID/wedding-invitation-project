@@ -1,4 +1,4 @@
-/* Tokens visuais, tipográficos e fontes locais do projeto. */
+/* Tokens visuais, tipográficos e de movimento do projeto. */
 
 :root {
 
@@ -40,19 +40,13 @@
 
   --color-location-surface-rgb: 135 146 124;
 
-  --color-paper-highlight-rgb: 213 196 167;
-
   --color-black-rgb: 0 0 0;
 
   /* Sombras com cores próprias, preservadas como tokens para ajuste centralizado. */
 
   --color-envelope-shadow-rgb: 58 54 29;
 
-  --color-card-shadow-rgb: 38 46 39;
-
   --color-flower-shadow-rgb: 31 27 18;
-
-  --color-seal-shadow-rgb: 40 35 24;
 
   /* =========================================================
      FUNDOS
@@ -79,12 +73,61 @@
   --ease-smooth:
     cubic-bezier(0.22, 1, 0.36, 1);
 
+  --ease-card-open:
+    cubic-bezier(0.45, 0, 0.55, 1);
+
+  --ease-decorations:
+    cubic-bezier(0.33, 0, 0.67, 1);
+
+  /* Tempo de abertura da aba superior do envelope. */
+  --motion-flap-duration: 6500ms;
+
+  /* Tempo de desaparecimento da sombra projetada sobre o cartão. */
+  --motion-card-shadow-duration: 7000ms;
+
+  /* Tempo de saída do cartão interno para fora do envelope. */
+  --motion-card-duration: 3300ms;
+
+  /* Tempo de deslocamento conjunto das flores e do selo de cera. */
+  --motion-decorations-duration: 1200ms;
+
+  /* Tempo de entrada e revelação visual da carta. */
+  --motion-letter-duration: 900ms;
+
+  /* Atraso inicial compartilhado pela aba e pela sombra do cartão. */
+  --motion-opening-delay: 1500ms;
+
+  /* Tempo após o clique no selo até o cartão começar a sair. */
+  --motion-card-start: 4700ms;
+
+  /* Tempo após o clique no selo até a troca da capa pela carta. */
+  --motion-letter-enter: 8650ms;
+
   /* =========================================================
-     TEXTURAS
+     ASSETS E TEXTURAS
   ========================================================== */
 
   --texture-grain-size:
     180px 180px;
+
+  /*
+   * Os caminhos relativos deste bloco partem de styles/base/variables.css.
+   * Componentes devem referenciar os tokens com prefixo asset- em vez de repetir URLs.
+   */
+  --asset-paper-grain:
+    url("../../images/paper-grain.svg");
+
+  --asset-paper-grain-card:
+    url("../../images/paper-grain-card.svg");
+
+  --asset-welcome-wallpaper:
+    url("../../images/wallpaper_floral_vitoriano_vintage_2508x2508.webp");
+
+  --asset-welcome-ornament:
+    url("../../images/ornamento_ramas_welcome.webp");
+
+  --asset-envelope-card-frame:
+    url("../../images/moldura_ramas_1004x1442_50pct.webp");
 
   /* =========================================================
      ENVELOPE — GEOMETRIA E CORES ESTRUTURAIS
@@ -123,94 +166,4 @@
     "Times New Roman",
     Times,
     serif;
-
-  color: var(--color-ink);
-
-  font-family: var(--font-base);
-
-  font-synthesis: none;
-}
-
-
-/* =========================================================
-   FONTES LOCAIS
-========================================================= */
-
-@font-face {
-
-  font-family: "Edwardian Script ITC";
-
-  src: url("../../fonts/EdwardianScriptITC.ttf") format("truetype");
-
-  font-display: swap;
-}
-
-
-@font-face {
-
-  font-family: "Liberation Sans Local";
-
-  src: url("../../fonts/LiberationSans-Regular.ttf") format("truetype");
-
-  font-weight: 400;
-
-  font-style: normal;
-
-  font-display: swap;
-}
-
-
-@font-face {
-
-  font-family: "Liberation Sans Local";
-
-  src: url("../../fonts/LiberationSans-Bold.ttf") format("truetype");
-
-  font-weight: 700;
-
-  font-style: normal;
-
-  font-display: swap;
-}
-
-
-@font-face {
-
-  font-family: "Liberation Serif Local";
-
-  src: url("../../fonts/LiberationSerif-Regular.ttf") format("truetype");
-
-  font-weight: 400;
-
-  font-style: normal;
-
-  font-display: swap;
-}
-
-
-/* =========================================================
-   NOMES EM SCRIPT
-========================================================= */
-
-.script-name {
-
-  font-family: var(--font-script);
-
-  font-style: normal;
-
-  letter-spacing: 0;
-}
-
-
-.script-name.script-name--word {
-
-  color: var(--color-heading);
-
-}
-
-
-.script-name.script-name--amp {
-
-  color: var(--color-accent);
-
 }

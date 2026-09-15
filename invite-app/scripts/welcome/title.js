@@ -1,110 +1,76 @@
-/* =========================================================
-   ESTADO
-========================================================= */
+/* Deve acompanhar o breakpoint mobile definido em styles/responsive.css. */
+const MOBILE_MEDIA_QUERY = '(max-width: 699px)';
+/* Margem horizontal total reservada para o título no mobile, em pixels. */
+const TITLE_HORIZONTAL_MARGIN = 34;
 
-let welcomeTitleResizeFrame = null;
+let resizeFrame = null;
 
 
-/* =========================================================
-   AJUSTE RESPONSIVO DO TÍTULO
-========================================================= */
-
+/**
+ * Mantém o título em uma linha sem reduzir sua escala no desktop.
+ *
+ * A medição é refeita no mobile porque o título usa white-space: nowrap;
+ * no desktop, o tamanho definido pelo CSS é sempre restaurado.
+ *
+ * @returns {void}
+ */
 function fitWelcomeTitle() {
-
-  const title =
-    document.querySelector('#welcome-title');
+  const title = document.getElementById('welcome-title');
 
   if (!title) {
     return;
   }
 
-  const isMobile =
-    window.matchMedia('(max-width: 699px)').matches;
+  // O título não pode quebrar; no mobile, reduzimos a fonte apenas se necessário.
+  const isMobile = window.matchMedia(MOBILE_MEDIA_QUERY).matches;
 
-  /*
-   * Guarda o tamanho original apenas uma vez.
-   */
   if (!title.dataset.originalFontSize) {
-
-    title.dataset.originalFontSize =
-      parseFloat(
-        window.getComputedStyle(title).fontSize
-      );
+    // Guarda o valor do CSS para que cada resize parta do tamanho original.
+    title.dataset.originalFontSize = parseFloat(
+      window.getComputedStyle(title).fontSize
+    );
   }
 
-  const originalFontSize =
-    parseFloat(
-      title.dataset.originalFontSize
-    );
+  const originalFontSize = Number.parseFloat(
+    title.dataset.originalFontSize
+  );
 
-  /*
-   * Se estiver no desktop, restaura o tamanho original
-   * e não aplica nenhum ajuste automático.
-   */
   if (!isMobile) {
-
-    title.style.fontSize =
-      `${originalFontSize}px`;
-
+    title.style.fontSize = `${originalFontSize}px`;
     return;
   }
 
-  /*
-   * Volta ao tamanho original antes de medir.
-   * Isso permite recalcular corretamente após um resize.
-   */
-  title.style.fontSize =
-    `${originalFontSize}px`;
+  // Mede sempre a partir do tamanho original para evitar reduções acumuladas.
+  title.style.fontSize = `${originalFontSize}px`;
 
-  /*
-   * Mantém a mesma margem de segurança
-   * utilizada pelo título no mobile.
-   */
   const availableWidth =
-    window.innerWidth - 34;
+    window.innerWidth - TITLE_HORIZONTAL_MARGIN;
 
-  const titleWidth =
-    title.scrollWidth;
+  const titleWidth = title.scrollWidth;
 
-  /*
-   * Se já couber, mantém o tamanho original.
-   */
   if (titleWidth <= availableWidth) {
     return;
   }
 
-  /*
-   * Reduz proporcionalmente a fonte até o título caber
-   * na largura disponível, sem permitir quebra de linha.
-   */
-  const scale =
-    availableWidth / titleWidth;
-
-  title.style.fontSize =
-    `${originalFontSize * scale}px`;
+  const scale = availableWidth / titleWidth;
+  title.style.fontSize = `${originalFontSize * scale}px`;
 }
 
 
-/* =========================================================
-   INICIALIZAÇÃO E RESIZE
-========================================================= */
-
+/**
+ * Ajusta o título na inicialização e agenda uma nova medição durante resize.
+ *
+ * @returns {void}
+ */
 export function initWelcomeTitle() {
-
   fitWelcomeTitle();
 
-  window.addEventListener(
-    'resize',
-    () => {
+  // requestAnimationFrame evita medir o título várias vezes no mesmo resize.
+  window.addEventListener('resize', () => {
+    window.cancelAnimationFrame(resizeFrame);
 
-      window.cancelAnimationFrame(
-        welcomeTitleResizeFrame
-      );
-
-      welcomeTitleResizeFrame =
-        window.requestAnimationFrame(
-          fitWelcomeTitle
-        );
-    }
-  );
+    resizeFrame = window.requestAnimationFrame(
+      fitWelcomeTitle
+    );
+  });
 }

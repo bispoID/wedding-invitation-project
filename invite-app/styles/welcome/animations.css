@@ -12,9 +12,9 @@
   .envelope__flap {
   animation:
     flap-open
-    6500ms
+    var(--motion-flap-duration)
     var(--ease-smooth)
-    1500ms
+    var(--motion-opening-delay)
     both;
 }
 
@@ -49,9 +49,9 @@
 
   animation:
     card-flap-shadow
-    7000ms
+    var(--motion-card-shadow-duration)
     var(--ease-smooth)
-    1500ms
+    var(--motion-opening-delay)
     both;
 }
 
@@ -59,13 +59,14 @@
    ETAPA 2 — CARTÃO COMEÇA A SAIR
 ========================================================= */
 
+/* A classe é adicionada pelo JS no marco --motion-card-start. */
 .welcome.is-opening-card
   .envelope__card {  
 
   animation:
     card-open
-    3.3s
-    cubic-bezier(.45, 0, .55, 1)
+    var(--motion-card-duration)
+    var(--ease-card-open)
     both;
 }
 
@@ -103,11 +104,11 @@
    ETAPA 3 — ENTRADA DA CARTA
 ========================================================= */
 
-/* Entrada da carta após a transição da capa. */
+/* O JS oculta a capa no marco --motion-letter-enter e revela esta seção. */
 .letter.is-entering {
   animation:
     reveal-letter
-    900ms
+    var(--motion-letter-duration)
     var(--ease-smooth)
     both;
 }

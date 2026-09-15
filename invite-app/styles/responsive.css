@@ -69,7 +69,7 @@
 
   /*
    * O envelope pode crescer no mobile, mas nunca ultrapassa
-   * 2px de cada lado da viewport.
+   * 1rem de cada lado da viewport.
    */
   .envelope-unit {
     width: min(
@@ -86,8 +86,6 @@
       0;
   }
 }
-
-
 /* =========================================================
    MOBILE COM ALTURA REDUZIDA
 ========================================================= */
@@ -142,8 +140,6 @@
     margin-top: 0.5rem;
   }
 }
-
-
 /* =========================================================
    TABLET E DESKTOP — A PARTIR DE 700PX
 ========================================================= */
@@ -282,10 +278,3 @@
     align-items: center;
   }
 }
-
-
-/* =========================================================
-   REDUÇÃO DE MOVIMENTO
-========================================================= */
-
-/* A preferência do usuário é aplicada globalmente em base/global.css. */
