@@ -27,7 +27,7 @@ body {
 }
 
 .script-name--word {
-  color: var(--color-heading);
+  color: var(--color-heading) !important;
 }
 
 .script-name--amp {
