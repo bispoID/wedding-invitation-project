@@ -397,9 +397,7 @@
 
   background-color: var(--color-envelope-deep);
 
-  transform:
-    rotateY(180deg)
-    translateZ(0.99px);
+  transform: rotateY(180deg);
 }
 
 .envelope__flap-front,
