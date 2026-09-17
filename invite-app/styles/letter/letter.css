@@ -4,7 +4,7 @@
    CARTA
 ========================================================= */
 
-/* Superfície principal que contém moldura, conteúdo e áreas internas. */
+/* Superfície principal que contém o wallpaper e o conteúdo interno. */
 .letter {
   position: relative;
 
@@ -20,35 +20,43 @@
 
   overflow: hidden;
 
+  isolation: isolate;
+
   background:
     linear-gradient(
       145deg,
-      var(--color-letter-background-start),
-      var(--color-letter-background-end)
+      var(--color-welcome-background-start),
+      var(--color-welcome-background-end)
     );
 }
 
 
 /* =========================================================
-   MOLDURA DA CARTA
+   WALLPAPER DA CARTA
 ========================================================= */
 
-/* Moldura ocupa toda a carta como camada visual, sem interferir no conteúdo. */
-.letter__frame {
+/* O mesmo wallpaper da capa continua atrás da carta, sem interferir no conteúdo. */
+.letter::before {
+  content: "";
+
   position: absolute;
 
   inset: 0;
 
+  z-index: 0;
+
   opacity: 0.4;
 
+  background-image:
+    var(--asset-floral-wallpaper);
+
+  background-position: center;
+
+  background-repeat: no-repeat;
+
+  background-size: auto 100%;
+
   pointer-events: none;
-}
-
-.letter__frame img {
-  width: 100%;
-  height: 100%;
-
-  object-fit: cover;
 }
 
 

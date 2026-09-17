@@ -56,10 +56,6 @@
 
   --color-welcome-background-end: #e7e1d5;
 
-  --color-letter-background-start: #dfe2d5;
-
-  --color-letter-background-end: #c5cec0;
-
   /* =========================================================
      SOMBRAS E TRANSIÇÕES
   ========================================================== */
@@ -120,7 +116,7 @@
   --asset-paper-grain-card:
     url("../../images/paper-grain-card.svg");
 
-  --asset-welcome-wallpaper:
+  --asset-floral-wallpaper:
     url("../../images/wallpaper_floral_vitoriano_vintage_2508x2508.webp");
 
   --asset-welcome-ornament:

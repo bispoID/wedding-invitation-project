@@ -119,13 +119,13 @@
     opacity: 0;
 
     transform:
-      translateY(2rem);
+      scale(1.025);
   }
 
   to {
     opacity: 1;
 
     transform:
-      translateY(0);
+      scale(1);
   }
 }
