@@ -1,0 +1,57 @@
+/* =========================================================
+   PAINEL DO MODO DESENVOLVEDOR
+========================================================= */
+
+#dev-preview-panel {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 9999;
+
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+
+  border-radius: 999px;
+  background: rgb(22 20 18 / 75%);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0.75rem 1.5rem rgb(0 0 0 / 18%);
+}
+
+#dev-preview-panel button {
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+
+  background: transparent;
+  color: #f5efe7;
+  cursor: pointer;
+
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#dev-preview-panel button:hover,
+#dev-preview-panel button:focus-visible {
+  background: rgb(255 255 255 / 12%);
+}
+
+#dev-preview-panel button.is-active {
+  background: rgb(255 255 255 / 18%);
+}
+
+#dev-preview-panel .dev-preview-exit {
+  background: rgb(255 255 255 / 6%);
+}
+
+@media (max-width: 699px) {
+  #dev-preview-panel {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    max-width: calc(100vw - 1.5rem);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

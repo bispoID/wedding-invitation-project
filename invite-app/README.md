@@ -10,6 +10,7 @@ Aplicação estática inicial do convite virtual.
 - **Tokens compartilhados:** os tempos e curvas de movimento ficam em `styles/base/variables.css`; `scripts/shared/css.js` permite que o JavaScript reutilize esses valores.
 - **Assets de estilo:** imagens usadas pelo CSS também ficam centralizadas como tokens `--asset-*` em `styles/base/variables.css`.
 - **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` aplica um cooldown enquanto o RSVP ainda é local.
+- **Modo desenvolvedor:** `scripts/devmode/preview.js` controla os previews estáticos e `styles/devmode/devmode.css` concentra os estilos do painel.
 - **Integrações futuras:** API/Edge Function, Supabase e área administrativa serão adicionados em camadas separadas.
 
 Essa estrutura vanilla é suficiente para a Fase 1 e evita adicionar framework ou build system antes de existir uma necessidade real.
@@ -27,7 +28,7 @@ Para trabalhar sem depender da animação do envelope, o projeto aceita um previ
 
 ```js
 const DEV_PREVIEW = {
-  enabled: true,
+  enabled: false,
   target: 'envelope-card'
 };
 ```
