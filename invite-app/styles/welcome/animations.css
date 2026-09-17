@@ -18,6 +18,37 @@
     both;
 }
 
+/* Visualização estática para desenvolvimento. */
+.welcome.is-dev-preview-card
+  .envelope__flap {
+  animation: none;
+  transform: rotateX(185deg);
+  z-index: 0;
+}
+
+.welcome.is-dev-preview-card
+  .envelope__card {
+  animation: none;
+  transform: translateY(-2rem) scale(1.03);
+  z-index: 11;
+}
+
+.welcome.is-dev-preview-card
+  .envelope__card::after {
+  animation: none;
+  opacity: 0;
+}
+
+.welcome.is-dev-preview-card
+  .envelope__seal {
+  opacity: 0.275;
+}
+
+.welcome.is-dev-preview-card
+  .open-invitation {
+  display: none;
+}
+
 @keyframes flap-open {
 
   0% {

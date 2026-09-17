@@ -23,13 +23,27 @@ Os nomes e detalhes do evento são dados iniciais do protótipo e deverão ser s
 
 ## Modo desenvolvedor
 
-Para trabalhar diretamente na seção `letter` sem precisar abrir o envelope a cada carregamento, o projeto possui a configuração `DEV_SKIP_WELCOME` em `scripts/main.js`.
+Para trabalhar sem depender da animação do envelope, o projeto aceita um preview estático por configuração ou por parâmetro na URL.
 
 ```js
-const DEV_SKIP_WELCOME = true;
+const DEV_PREVIEW = {
+  enabled: true,
+  target: 'envelope-card'
+};
 ```
 
-- `true`: inicia diretamente na carta.
-- `false`: restaura o fluxo normal, iniciando pela capa/envelope.
+Opções suportadas:
 
-Mesmo com o modo desenvolvedor ativado, o botão **Voltar para a capa** continua funcionando normalmente, permitindo testar a abertura do envelope quando necessário.
+- `cover`: mantém a capa normal.
+- `envelope-card`: deixa a capa visível, mas com o cartão interno do envelope exposto de forma estática.
+- `letter`: inicia diretamente na carta.
+
+Também é possível usar a URL:
+
+```text
+?devmode=envelope-card
+?devmode=letter
+?devmode=cover
+```
+
+Esse modo foi pensado para inspeção de layout e ajustes visuais sem precisar executar a sequência de abertura a cada carregamento.

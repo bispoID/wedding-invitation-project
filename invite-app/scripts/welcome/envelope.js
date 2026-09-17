@@ -43,9 +43,157 @@ function readAnimationTiming() {
 }
 
 
-/* =========================================================
-   CONTROLE DO ENVELOPE
-========================================================= */
+/**
+ * Ajusta a apresentação do fluxo em desenvolvimento para previews estáticos.
+ *
+ * @param {{welcome: HTMLElement, letter: HTMLElement, mode: string}} params
+ * @returns {void}
+ */
+function applyDeveloperPreview({ welcome, letter, mode }) {
+  if (!mode) {
+    return;
+  }
+
+  resetFloralSealAnimations();
+
+  welcome.classList.remove(
+    'is-opening-envelope',
+    'is-opening-card',
+    'is-dev-preview-card'
+  );
+
+  letter.classList.remove('is-entering');
+
+  if (mode === 'cover') {
+    welcome.hidden = false;
+    letter.hidden = true;
+    return;
+  }
+
+  if (mode === 'envelope-card') {
+    welcome.hidden = false;
+    letter.hidden = true;
+    welcome.classList.add('is-dev-preview-card');
+    return;
+  }
+
+  if (mode === 'letter') {
+    welcome.hidden = true;
+    letter.hidden = false;
+    letter.classList.remove('is-entering');
+  }
+}
+
+
+/**
+ * Cria um painel de preview que permite alternar rapidamente entre capa, cartão e carta.
+ *
+ * @param {{welcome: HTMLElement, letter: HTMLElement, activeMode?: string}} params
+ * @returns {void}
+ */
+export function initDeveloperPreviewControls({ welcome, letter, activeMode = 'cover' }) {
+  const panelId = 'dev-preview-panel';
+  const existingPanel = document.getElementById(panelId);
+
+  if (existingPanel) {
+    existingPanel.remove();
+  }
+
+  const panel = document.createElement('div');
+  panel.id = panelId;
+  panel.setAttribute('role', 'toolbar');
+  panel.setAttribute('aria-label', 'Controles de preview do convite');
+  panel.style.position = 'fixed';
+  panel.style.right = '1rem';
+  panel.style.bottom = '1rem';
+  panel.style.zIndex = '9999';
+  panel.style.display = 'flex';
+  panel.style.gap = '0.5rem';
+  panel.style.padding = '0.5rem';
+  panel.style.borderRadius = '999px';
+  panel.style.background = 'rgba(22, 20, 18, 0.75)';
+  panel.style.backdropFilter = 'blur(8px)';
+  panel.style.boxShadow = '0 0.75rem 1.5rem rgba(0, 0, 0, 0.18)';
+
+  const options = [
+    { value: 'cover', label: 'Capa' },
+    { value: 'envelope-card', label: 'Cartão' },
+    { value: 'letter', label: 'Carta' }
+  ];
+
+  options.forEach(({ value, label }) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = label;
+    button.setAttribute('data-preview', value);
+    button.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+    button.style.borderRadius = '999px';
+    button.style.padding = '0.45rem 0.75rem';
+    button.style.background = value === activeMode
+      ? 'rgba(255, 255, 255, 0.18)'
+      : 'transparent';
+    button.style.color = '#f5efe7';
+    button.style.cursor = 'pointer';
+    button.style.fontSize = '0.72rem';
+    button.style.fontWeight = '600';
+    button.style.letterSpacing = '0.08em';
+    button.style.textTransform = 'uppercase';
+
+    button.addEventListener('click', () => {
+      const nextMode = value;
+      const url = new URL(window.location.href);
+      url.searchParams.set('devmode', nextMode);
+      window.history.replaceState({}, '', url);
+
+      applyDeveloperPreview({ welcome, letter, mode: nextMode });
+
+      if (nextMode === 'cover') {
+        resetFloralSealAnimations();
+      }
+
+      [...panel.querySelectorAll('button[data-preview]')].forEach((item) => {
+        const isSelected = item.getAttribute('data-preview') === nextMode;
+        item.style.background = isSelected
+          ? 'rgba(255, 255, 255, 0.18)'
+          : 'transparent';
+      });
+    });
+
+    panel.appendChild(button);
+  });
+
+  const exitButton = document.createElement('button');
+  exitButton.type = 'button';
+  exitButton.textContent = 'Sair';
+  exitButton.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+  exitButton.style.borderRadius = '999px';
+  exitButton.style.padding = '0.45rem 0.75rem';
+  exitButton.style.background = 'rgba(255, 255, 255, 0.06)';
+  exitButton.style.color = '#f5efe7';
+  exitButton.style.cursor = 'pointer';
+  exitButton.style.fontSize = '0.72rem';
+  exitButton.style.fontWeight = '600';
+  exitButton.style.letterSpacing = '0.08em';
+  exitButton.style.textTransform = 'uppercase';
+
+  exitButton.addEventListener('click', () => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('devmode');
+    window.history.replaceState({}, '', url);
+
+    panel.remove();
+
+    applyDeveloperPreview({
+      welcome,
+      letter,
+      mode: 'cover'
+    });
+  });
+
+  panel.appendChild(exitButton);
+  document.body.appendChild(panel);
+}
+
 
 /**
  * Cria o controlador que liga os elementos da interface à sequência de abertura.
@@ -127,7 +275,6 @@ function createInvitationController({
     isOpening = true;
     seal.setAttribute('aria-disabled', 'true');
 
-
     // Etapa 1: CSS inicia a aba superior; a Web Animation move o selo e flores.
     welcome.classList.add(
       'is-opening-envelope'
@@ -137,23 +284,16 @@ function createInvitationController({
 
     // Etapa 2: o cartão começa a sair depois que a aba já avançou.
     schedule(() => {
-
       welcome.classList.add(
         'is-opening-card'
       );
-
     }, animationTiming.cardStart);
-
 
     // Etapa 3: a capa é ocultada e a carta recebe o foco.
     schedule(() => {
-
       welcome.hidden = true;
-
       showLetter(letter);
-
       isOpening = false;
-
     }, animationTiming.letterEnter);
   }
 
@@ -181,18 +321,15 @@ function createInvitationController({
       'is-opening-card'
     );
 
-
     resetFloralSealAnimations();
 
     isOpening = false;
     seal.removeAttribute('aria-disabled');
 
-
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
-
 
     seal.focus({
       preventScroll: true
@@ -216,7 +353,6 @@ function createInvitationController({
       ) {
 
         event.preventDefault();
-
         openInvitation();
       }
     }
@@ -232,10 +368,10 @@ function createInvitationController({
 /**
  * Conecta o controlador aos elementos da capa e da carta.
  *
- * @param {{devSkipWelcome?: boolean}} options Opções de inicialização.
+ * @param {{devSkipWelcome?: boolean, devPreview?: string | null}} options Opções de inicialização.
  * @returns {void}
  */
-export function initEnvelope({ devSkipWelcome = false } = {}) {
+export function initEnvelope({ devSkipWelcome = false, devPreview = null } = {}) {
 
   const elements = Object.fromEntries(
     Object.entries(SELECTORS).map(
@@ -252,11 +388,24 @@ export function initEnvelope({ devSkipWelcome = false } = {}) {
     ...elements
   });
 
-
   if (devSkipWelcome) {
     // O modo de desenvolvimento não dispara nenhuma etapa da abertura.
     elements.welcome.hidden = true;
     elements.letter.hidden = false;
     elements.letter.classList.remove('is-entering');
+  }
+
+  if (devPreview) {
+    applyDeveloperPreview({
+      welcome: elements.welcome,
+      letter: elements.letter,
+      mode: devPreview
+    });
+
+    initDeveloperPreviewControls({
+      welcome: elements.welcome,
+      letter: elements.letter,
+      activeMode: devPreview
+    });
   }
 }
