@@ -46,10 +46,15 @@ export function applyDeveloperPreview({ welcome, letter, mode }) {
 /**
  * Cria um painel de preview que permite alternar rapidamente entre capa, cartão e carta.
  *
- * @param {{welcome: HTMLElement, letter: HTMLElement, activeMode?: string}} params
+ * @param {{welcome: HTMLElement, letter: HTMLElement, activeMode?: string, resetInvitationState: Function}} params
  * @returns {void}
  */
-export function initDeveloperPreviewControls({ welcome, letter, activeMode = 'cover' }) {
+export function initDeveloperPreviewControls({
+  welcome,
+  letter,
+  activeMode = 'cover',
+  resetInvitationState
+}) {
   const panelId = 'dev-preview-panel';
   const existingPanel = document.getElementById(panelId);
 
@@ -85,6 +90,7 @@ export function initDeveloperPreviewControls({ welcome, letter, activeMode = 'co
       url.searchParams.set('devmode', nextMode);
       window.history.replaceState({}, '', url);
 
+      resetInvitationState();
       applyDeveloperPreview({ welcome, letter, mode: nextMode });
 
       [...panel.querySelectorAll('button[data-preview]')].forEach((item) => {
@@ -109,6 +115,7 @@ export function initDeveloperPreviewControls({ welcome, letter, activeMode = 'co
 
     panel.remove();
 
+    resetInvitationState();
     applyDeveloperPreview({
       welcome,
       letter,

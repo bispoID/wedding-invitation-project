@@ -108,6 +108,32 @@ function createInvitationController({
 
 
   /**
+   * Interrompe a abertura e restaura apenas o estado visual do convite.
+   * Os valores preenchidos no formulário não são alterados.
+   *
+   * @returns {void}
+   */
+  function resetInvitationState() {
+    cancelScheduledSteps();
+
+    welcome.hidden = false;
+    letter.hidden = true;
+
+    welcome.classList.remove(
+      'is-opening-envelope',
+      'is-opening-card',
+      'is-dev-preview-card'
+    );
+
+    letter.classList.remove('is-entering');
+    resetFloralSealAnimations();
+
+    isOpening = false;
+    seal.removeAttribute('aria-disabled');
+  }
+
+
+  /**
    * Executa a sequência completa de abertura do convite.
    *
    * 1. Abre a aba superior e move as decorações.
@@ -215,6 +241,10 @@ function createInvitationController({
     'click',
     returnToCover
   );
+
+  return {
+    resetInvitationState
+  };
 }
 
 
@@ -237,7 +267,7 @@ export function initEnvelope({ devSkipWelcome = false, devPreview = null } = {})
     return;
   }
 
-  createInvitationController({
+  const invitationController = createInvitationController({
     ...elements
   });
 
@@ -258,7 +288,8 @@ export function initEnvelope({ devSkipWelcome = false, devPreview = null } = {})
     initDeveloperPreviewControls({
       welcome: elements.welcome,
       letter: elements.letter,
-      activeMode: devPreview
+      activeMode: devPreview,
+      resetInvitationState: invitationController.resetInvitationState
     });
   }
 }
