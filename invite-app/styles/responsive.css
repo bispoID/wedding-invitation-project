@@ -29,6 +29,11 @@
 
   /* Chamada superior da capa. */
   .eyebrow {
+    width: 100%;
+    max-width: 100%;
+
+    white-space: nowrap;
+
     transform: translateX(3.9px);
   }
 
@@ -38,12 +43,9 @@
    * para evitar que o texto ultrapasse a viewport.
    */
   #welcome-title {
-    white-space: nowrap;
-
     margin: 0 0 1rem;
 
     transform: translateX(-6.5px);
-
   }
 
   /* Frase introdutória da capa. */
@@ -53,6 +55,9 @@
    * compensando o espaço lateral definido pela capa.
    */
   .welcome__intro {
+    width: 100%;
+    max-width: 100%;
+
     margin:
       -0.7rem
       0
@@ -61,14 +66,13 @@
     font-size:
       clamp(
         0.75rem,
-        7.2cqw,
+        5.8cqw,
         1.1rem
       );
   }
 
   .welcome__content {
     width: calc(100vw - 4.5rem);
-    margin-inline: auto;
   }
 
   /*
@@ -98,10 +102,6 @@
 @media (max-width: 699px) and (max-height: 760px) {
 
   .welcome {
-    align-content: start;
-
-    place-items: start center;
-
     height: 100svh;
     min-height: 0;
 
@@ -114,8 +114,8 @@
       auto;
   }
 
-  .welcome__content {
-    transform: none;
+  #welcome-title {
+    margin: 0 0 1.3rem;
   }
 
   .welcome__intro {
@@ -141,7 +141,7 @@
   }
 
   .open-invitation {
-    margin-top: 0.5rem;
+    margin-top: 1.5rem;
   }
 }
 /* =========================================================
@@ -164,8 +164,10 @@
         100%,
         45rem
       );
+  }
 
-    transform: translateY(1.5rem);
+  #welcome-title {
+    margin: 0 0 3rem;
   }
 
   /* Ajuste da tipografia secundária da carta. */
@@ -175,7 +177,6 @@
 
   /* Chamada superior da capa. */
   .welcome .eyebrow {
-    font-size: 1.25rem;
     transform: translateX(4px);
   }
 
@@ -184,7 +185,7 @@
     font-family: var(--font-serif);
     font-size: 10.2rem;
 
-    transform: translateX(-11.5px);
+    transform: translateX(-15px);
   }
 
   /* Frase introdutória da capa. */
@@ -258,14 +259,6 @@
   }
 
   /* Bloco textual permanece centralizado dentro da coluna esquerda. */
-  .welcome__copy {
-    width: 100%;
-
-    align-items: center;
-
-    text-align: center;
-  }
-
   .welcome__copy .welcome__intro {
     max-width: 42rem;
     white-space: normal;

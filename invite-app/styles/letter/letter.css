@@ -120,6 +120,8 @@
 .letter__header .eyebrow {
   color:
     var(--color-page-background);
+
+  white-space: nowrap;
 }
 
 .letter__monogram {

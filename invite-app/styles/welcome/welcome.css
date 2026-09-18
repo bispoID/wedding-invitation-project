@@ -126,9 +126,6 @@
   align-items: center;
 
   text-align: center;
-
-  transform:
-    translateY(-2rem);
 }
 
 /* Bloco que reúne chamada, nomes e frase introdutória. */
@@ -168,11 +165,22 @@
   line-height: 1.4;
 
   text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+/* O título da capa respeita integralmente a largura útil do welcome__copy. */
+#welcome-title {
+  width: 100%;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: visible;
 }
 
 /* Títulos principais da capa e da carta compartilham a tipografia-base. */
 .welcome h1,
 .letter h2 {
+  box-sizing: border-box;
   font-family: var(--font-serif);
   margin: 0;
 

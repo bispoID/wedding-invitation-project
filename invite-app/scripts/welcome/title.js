@@ -1,76 +1,155 @@
-/* Deve acompanhar o breakpoint mobile definido em styles/responsive.css. */
-const MOBILE_MEDIA_QUERY = '(max-width: 699px)';
-/* Margem horizontal total reservada para o título no mobile, em pixels. */
-const TITLE_HORIZONTAL_MARGIN = 34;
+/* Ajuste tipográfico responsivo da capa. */
+
+const EYEBROW_TITLE_RATIO = 0.1665987;
 
 let resizeFrame = null;
-
-
+let copyResizeObserver = null;
 /**
- * Mantém o título em uma linha sem reduzir sua escala no desktop.
+ * Reduz a fonte até que o texto caiba integralmente na largura do container.
+ * O tamanho inline anterior é sempre removido antes da medição, permitindo
+ * recalcular corretamente após troca de viewport ou breakpoint.
  *
- * A medição é refeita no mobile porque o título usa white-space: nowrap;
- * no desktop, o tamanho definido pelo CSS é sempre restaurado.
- *
+ * @param {HTMLElement} element
+ * @param {HTMLElement} container
  * @returns {void}
  */
-function fitWelcomeTitle() {
-  const title = document.getElementById('welcome-title');
-
-  if (!title) {
+function fitTextToCopy(element, container) {
+  if (!element || !container) {
     return;
   }
 
-  // O título não pode quebrar; no mobile, reduzimos a fonte apenas se necessário.
-  const isMobile = window.matchMedia(MOBILE_MEDIA_QUERY).matches;
+  /* Volta ao tamanho definido pelo CSS para esta viewport. */
+  element.style.fontSize = '';
 
-  if (!title.dataset.originalFontSize) {
-    // Guarda o valor do CSS para que cada resize parta do tamanho original.
-    title.dataset.originalFontSize = parseFloat(
-      window.getComputedStyle(title).fontSize
-    );
-  }
-
-  const originalFontSize = Number.parseFloat(
-    title.dataset.originalFontSize
+  const cssFontSize = parseFloat(
+    window.getComputedStyle(element).fontSize
   );
 
-  if (!isMobile) {
-    title.style.fontSize = `${originalFontSize}px`;
+  const availableWidth = container.clientWidth;
+
+  if (!Number.isFinite(cssFontSize) || availableWidth <= 0) {
     return;
   }
 
-  // Mede sempre a partir do tamanho original para evitar reduções acumuladas.
-  title.style.fontSize = `${originalFontSize}px`;
+  element.style.fontSize = `${cssFontSize}px`;
 
-  const availableWidth =
-    window.innerWidth - TITLE_HORIZONTAL_MARGIN;
+  /*
+   * Com white-space: nowrap, scrollWidth representa a largura intrínseca
+   * necessária para manter todo o título em uma única linha.
+   */
+  const contentWidth = element.scrollWidth;
 
-  const titleWidth = title.scrollWidth;
-
-  if (titleWidth <= availableWidth) {
+  if (contentWidth <= availableWidth) {
     return;
   }
 
-  const scale = availableWidth / titleWidth;
-  title.style.fontSize = `${originalFontSize * scale}px`;
+  const scale = availableWidth / contentWidth;
+
+  element.style.fontSize =
+    `${cssFontSize * scale}px`;
 }
 
 
 /**
- * Ajusta o título na inicialização e agenda uma nova medição durante resize.
+ * Ajusta o título e mantém o eyebrow proporcional ao tamanho efetivo dele.
+ *
+ * @returns {void}
+ */
+function fitWelcomeTexts() {
+  const copy = document.querySelector('.welcome__copy');
+  const title = document.getElementById('welcome-title');
+  const eyebrow = document.querySelector('.welcome__copy .eyebrow');
+
+  if (!copy || !title || !eyebrow) {
+    return;
+  }
+
+  fitTextToCopy(title, copy);
+
+  const titleFontSize = parseFloat(
+    window.getComputedStyle(title).fontSize
+  );
+
+  if (Number.isFinite(titleFontSize)) {
+    eyebrow.style.fontSize =
+      `${titleFontSize * EYEBROW_TITLE_RATIO}px`;
+  }
+}
+
+
+/**
+ * Agenda uma única medição no próximo frame.
+ *
+ * @returns {void}
+ */
+function scheduleWelcomeTextFit() {
+  window.cancelAnimationFrame(resizeFrame);
+
+  resizeFrame = window.requestAnimationFrame(
+    fitWelcomeTexts
+  );
+}
+
+
+/**
+ * Inicializa o ajuste tipográfico e acompanha tanto o container quanto
+ * o carregamento das fontes. Isso evita que uma fonte carregada depois
+ * do primeiro cálculo deixe o título maior que o .welcome__copy.
  *
  * @returns {void}
  */
 export function initWelcomeTitle() {
-  fitWelcomeTitle();
+  const copy = document.querySelector('.welcome__copy');
+  const title = document.getElementById('welcome-title');
 
-  // requestAnimationFrame evita medir o título várias vezes no mesmo resize.
-  window.addEventListener('resize', () => {
-    window.cancelAnimationFrame(resizeFrame);
+  if (!copy || !title) {
+    return;
+  }
 
-    resizeFrame = window.requestAnimationFrame(
-      fitWelcomeTitle
+  /* Primeiro cálculo. */
+  scheduleWelcomeTextFit();
+
+  /* Mudança de viewport/orientação. */
+  window.addEventListener(
+    'resize',
+    scheduleWelcomeTextFit
+  );
+
+  /* Mudança efetiva da largura do .welcome__copy. */
+  if ('ResizeObserver' in window) {
+    copyResizeObserver = new ResizeObserver(
+      scheduleWelcomeTextFit
     );
-  });
+
+    copyResizeObserver.observe(copy);
+
+    /* Também observa o título para mudanças de layout tipográfico. */
+    titleResizeObserver = new ResizeObserver(
+      scheduleWelcomeTextFit
+    );
+}
+
+  /*
+   * As fontes locais usam font-display: swap. O primeiro cálculo pode ocorrer
+   * com a fonte fallback; quando Edwardian termina de carregar, refazemos tudo.
+   */
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+      scheduleWelcomeTextFit();
+    });
+  }
+
+  if (document.fonts) {
+    document.fonts.addEventListener?.(
+      'loadingdone',
+      scheduleWelcomeTextFit
+    );
+  }
+
+  /* Garante uma nova medição depois que os recursos da página estabilizarem. */
+  window.addEventListener(
+    'load',
+    scheduleWelcomeTextFit,
+    { once: true }
+  );
 }
