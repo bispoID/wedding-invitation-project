@@ -1,6 +1,6 @@
 import { initRsvp } from './letter/rsvp.js';
 import { initEnvelope } from './welcome/envelope.js';
-import { initWelcomeTitle } from './welcome/title.js';
+import { initWelcomeTypography } from './welcome/typography.js';
 
 
 /**
@@ -37,5 +37,5 @@ initEnvelope({
   devPreview: devMode ? resolvedPreviewTarget : null
 });
 
-initWelcomeTitle();
+initWelcomeTypography();
 initRsvp();
