@@ -133,6 +133,8 @@
 
 /* Bloco que reúne chamada, nomes e frase introdutória. */
 .welcome__copy {
+  container-type: inline-size;
+
   display: flex;
 
   width: 100%;
@@ -151,17 +153,17 @@
 }
 
 .eyebrow {
-  margin: 0 0 0.8rem;
+  margin: 0 0 0.4rem;
 
   color: var(--color-heading);
 
   font-family: var(--font-sans);
 
-  font-size: 0.6rem;
+  font-size: 0.7rem;
 
   font-weight: 700;
 
-  letter-spacing: 0.85em;
+  letter-spacing: 0.75em;
 
   line-height: 1.4;
 
