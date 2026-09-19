@@ -48,29 +48,6 @@
     transform: translateX(-6.5px);
   }
 
-  /* Frase introdutória da capa. */
-
-  /*
-   * Centraliza o conteúdo da capa na largura útil do mobile,
-   * compensando o espaço lateral definido pela capa.
-   */
-  .welcome__intro {
-    width: 100%;
-    max-width: 100%;
-
-    margin:
-      -0.7rem
-      0
-      0.8rem;
-
-    font-size:
-      clamp(
-        0.75rem,
-        5.8cqw,
-        1.1rem
-      );
-  }
-
   .welcome__content {
     width: calc(100vw - 4.5rem);
   }
@@ -116,13 +93,6 @@
 
   #welcome-title {
     margin: 0 0 1.3rem;
-  }
-
-  .welcome__intro {
-    margin:
-      0.25rem
-      0
-      1.45rem;
   }
 
   .envelope-unit {
@@ -188,18 +158,6 @@
     transform: translateX(-15px);
   }
 
-  /* Frase introdutória da capa. */
-  .welcome__intro {
-    font-family: var(--font-serif);
-    margin:
-      1rem
-      0
-      2rem;
-
-    font-size: 3.1rem;
-    transform: translateX(-6.8px);
-  }
-
   /* Espaçamento da instrução abaixo do envelope. */
   .open-invitation {
     margin:
@@ -256,12 +214,6 @@
     align-items: center;
 
     text-align: left;
-  }
-
-  /* Bloco textual permanece centralizado dentro da coluna esquerda. */
-  .welcome__copy .welcome__intro {
-    max-width: 42rem;
-    white-space: normal;
   }
 
   /* Envelope permanece centralizado dentro da coluna direita. */

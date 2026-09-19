@@ -128,7 +128,7 @@
   text-align: center;
 }
 
-/* Bloco que reúne chamada, nomes e frase introdutória. */
+/* Bloco que reúne a chamada e os nomes do casal. */
 .welcome__copy {
   container-type: inline-size;
 
@@ -239,21 +239,6 @@
 
   pointer-events: none;
 }
-
-.welcome__intro {
-  font-family: var(--font-serif);
-  margin:
-    0.5rem
-    0
-    0.7rem;
-
-  color: var(--color-text-secondary);
-
-  font-size: 1rem;
-
-  line-height: 1.6;
-}
-
 
 /* =========================================================
    ÁREA DO ENVELOPE
