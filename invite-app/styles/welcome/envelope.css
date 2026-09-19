@@ -156,27 +156,6 @@
 }
 
 /* =========================================================
-  IMAGEM DA ARTE MANGA
-========================================================= */
-
-/* Arte principal do cartão; o mix-blend-mode preserva a integração com a textura do papel. */
-.envelope__manga {
-  position: relative;
-
-  z-index: 3;
-
-  width: 85.3%;
-
-  top: -0.37rem;
-  left: -0.17rem;
-
-  height: auto;
-
-  mix-blend-mode: multiply;
-
-}
-
-/* =========================================================
    ABAS FIXAS
 
    As abas laterais e inferior permanecem no lugar durante
