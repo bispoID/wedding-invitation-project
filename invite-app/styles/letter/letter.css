@@ -69,26 +69,15 @@
 
   z-index: 1;
 
-  width:
-    min(
-      100%,
-      39rem
-    );
+  container-type: inline-size;
+
+  width: 100%;
+  max-width: 39rem;
 
   margin:
     0 auto;
 
-  padding:
-    clamp(
-      3.5rem,
-      9vw,
-      6rem
-    )
-    clamp(
-      1.35rem,
-      7vw,
-      4.5rem
-    );
+  padding: 4rem 3rem;
 
   border:
     1px solid
@@ -117,25 +106,34 @@
   align-items: center;
 }
 
-.letter__header .eyebrow {
+.letter__eyebrow {
+  margin: 0 0 2cqw;
+
   color:
     var(--color-page-background);
+
+  font-family: var(--font-sans);
+
+  font-size: 2.1cqw;
+
+  font-weight: 700;
+
+  letter-spacing: 0.22em;
+
+  line-height: 1.4;
+
+  text-transform: uppercase;
 
   white-space: nowrap;
 }
 
 .letter__monogram {
-  width:
-    clamp(
-      9rem,
-      25vw,
-      8rem
-    );
+  width: 22cqw;
 
   margin:
-    3.1rem
+    5cqw
     auto
-    3.1rem;
+    5cqw;
 
   mix-blend-mode:
     multiply;
@@ -146,40 +144,29 @@
   color:
     var(--color-heading);
 
-  font-size:
-    clamp(
-      2.8rem,
-      10vw,
-      4.8rem
-    );
+  font-size: 10cqw;
 }
 
 /* Ornamento horizontal que encerra visualmente o cabeçalho. */
 .ornament {
   display: flex;
 
-  width:
-    min(
-      100%,
-      15rem
-    );
+  width: 62cqw;
 
   align-items:
     center;
 
-  gap:
-    0.65rem;
+  gap: 2cqw;
 
   margin:
-    1.5rem
+    4cqw
     0
-    2rem;
+    5cqw;
 
   color:
     var(--color-accent);
 
-  font-size:
-    0.8rem;
+  font-size: 2.1cqw;
 }
 
 .ornament span {
