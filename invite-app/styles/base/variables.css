@@ -97,7 +97,7 @@
   --motion-card-start: 4700ms;
 
   /* Tempo após o clique no selo até a troca da capa pela carta. */
-  --motion-letter-enter: 8650ms;
+  --motion-letter-enter: 9500ms;
 
   /* =========================================================
      ASSETS E TEXTURAS
