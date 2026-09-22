@@ -10,6 +10,8 @@
 
   z-index: 1;
 
+  container-type: inline-size;
+
   perspective: 2100px;
 
   transform-style: preserve-3d;
@@ -137,18 +139,9 @@
 
   box-sizing: border-box;
 
-  padding-top: 25%;
+  padding-top: 19%;
 
   /* Moldura floral aplicada ao cartão interno. */
-  background-image:
-    var(--asset-envelope-card-frame);
-
-  background-position: center;
-
-  background-repeat: no-repeat;
-
-  background-size: cover;
-
   flex-direction: column;
 
   align-items: center;
@@ -159,16 +152,109 @@
     translateZ(1px);
 }
 
+.envelope__card-inner::before {
+  position: absolute;
+
+  z-index: 0;
+
+  inset: 0;
+
+  background-image:
+    var(--asset-envelope-card-frame);
+
+  background-position: center;
+
+  background-repeat: no-repeat;
+
+  background-size: cover;
+
+  content: "";
+
+  opacity: 0.72;
+
+  pointer-events: none;
+}
+
+.envelope__card-inner > * {
+  position: relative;
+
+  z-index: 1;
+}
+
+.envelope__card-monogram {
+  width: 10.5%;
+
+  mix-blend-mode: multiply;
+}
+
+.envelope__card-names {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 0.25em;
+
+  margin: 
+    8%
+    0
+    0
+    0;
+
+  font-family: var(--font-serif);
+  font-size: 8.2cqw;
+  font-weight: 400;
+
+  line-height: 1;
+}
+
+.envelope__card-ornament {
+  display: flex;
+
+  width: 54%;
+
+  align-items: center;
+
+  gap: 0.45cqw;
+
+  color: var(--color-accent);
+
+  font-size: 1.7cqw;
+}
+
+.envelope__card-ornament span {
+  height: 1px;
+
+  flex: 1;
+
+  background: var(--color-accent-light);
+}
+
+.envelope__card-date {
+  margin: 2% 0 0;
+
+  color: var(--color-heading);
+
+  font-family: var(--font-sans);
+  font-size: 1.7cqw;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .envelope__message {
   width: 60%;
 
-  margin: 0;
+  margin: 
+    50%
+    0
+    0
+    0;
 
   color: var(--color-text-secondary);
 
   font-family: var(--font-serif);
-  font-size: clamp(1.1rem, 2.6cqw, 1.25rem);
-  line-height: 0.9rem;
+  font-size: 3.6cqw;
+  line-height: 1.5;
 
   text-align: center;
 }
