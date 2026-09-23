@@ -79,7 +79,11 @@
 }
 
 .letter__content {
+  position: relative;
+
   width: 100%;
+
+  overflow: hidden;
 
   padding: 10cqw 8cqw;
 
@@ -97,6 +101,42 @@
     center;
 }
 
+.letter__content > :not(.letter__frame-decoration) {
+  position: relative;
+
+  z-index: 1;
+}
+
+.letter__frame-decoration {
+  position: absolute;
+
+  z-index: 0;
+
+  width: 100%;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  opacity: 0.82;
+}
+
+.letter__frame-decoration--top {
+  top: 0.75cqw;
+  left: 50%;
+  width: 99%;
+
+  transform: translateX(-50%);
+}
+
+.letter__frame-decoration--bottom {
+  bottom: 0.75cqw;
+  left: 49.9%;
+  width: 98%;
+
+  transform: translateX(-50%) rotate(180deg);
+}
+
 
 /* =========================================================
    CABEÇALHO
@@ -108,6 +148,8 @@
   flex-direction: column;
 
   align-items: center;
+
+  margin: 20cqw 0 0;
 }
 
 .letter__eyebrow {
@@ -128,15 +170,15 @@
 
   text-transform: uppercase;
 
-  white-space: nowrap;
+  width: 60%;
 }
 
 .letter__monogram {
-  width: 22cqw;
+  width: 15cqw;
 
   margin:
-    5cqw
-    auto
+    15cqw
+    0
     5cqw;
 
   mix-blend-mode:
