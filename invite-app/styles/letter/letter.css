@@ -64,7 +64,7 @@
    CONTEÚDO DA CARTA
 ========================================================= */
 
-.letter__content {
+.letter__frame {
   position: relative;
 
   z-index: 1;
@@ -76,8 +76,12 @@
 
   margin:
     0 auto;
+}
 
-  padding: 4rem 3rem;
+.letter__content {
+  width: 100%;
+
+  padding: 10cqw 8cqw;
 
   border:
     1px solid
