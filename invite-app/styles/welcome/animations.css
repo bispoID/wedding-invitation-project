@@ -29,7 +29,6 @@
 .welcome.is-dev-preview-card
   .envelope__card {
   animation: none;
-  transform: translateY(-5cqw) scale(1.03);
   z-index: 11;
 }
 
@@ -92,7 +91,7 @@
 
 /* A classe é adicionada pelo JS no marco --motion-card-start. */
 .welcome.is-opening-card
-  .envelope__card {  
+  .envelope__card {
 
   animation:
     card-open
@@ -106,15 +105,13 @@
 
   0% {
     transform:
-      translateY(0cqw)
-      scale(1);
+      translateY(0cqw);
     z-index: 1;
   }
 
   48% {
     transform:
-      translateY(calc(-5cqw - 100%))
-      scale(1.01);
+      translateY(calc(-5cqw - 100%));
     z-index: 1;
   }
 
@@ -125,7 +122,7 @@
   100% {
     transform:
       translateY(-5cqw)
-      scale(1.03);
+      scale(1.06);
     z-index: 11;
   }
 

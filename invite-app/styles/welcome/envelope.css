@@ -57,7 +57,7 @@
 
   z-index: 1;
 
-  inset: 4% 4% 4%;
+  inset: 8% 8% 8%;
 
   display: flex;
 
@@ -71,7 +71,6 @@
 
   background-image:
     var(--asset-paper-grain-card);
-
 }
 
 /* Camada de sombra sobre o cartão; sua opacidade é animada durante a abertura da aba. */
@@ -147,9 +146,6 @@
   align-items: center;
 
   justify-content: flex-start;
-
-  transform:
-    translateZ(1px);
 }
 
 .envelope__card-inner::before {
