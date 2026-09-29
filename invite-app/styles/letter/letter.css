@@ -85,7 +85,7 @@
 
   overflow: hidden;
 
-  padding: 10cqw 8cqw;
+  padding: 13cqw 13cqw;
 
   border:
     1px solid
@@ -149,22 +149,22 @@
 
   align-items: center;
 
-  margin: 20cqw 0 0;
+  margin: 0 0 0;
 }
 
 .letter__eyebrow {
-  margin: 0 0 2cqw;
+  margin: 0 0 15cqw;
 
   color:
-    var(--color-page-background);
+    var(--color-envelope-deep);
 
   font-family: var(--font-sans);
 
-  font-size: 2.1cqw;
+  font-size: 2.2cqw;
 
   font-weight: 700;
 
-  letter-spacing: 0.22em;
+  letter-spacing: 1cqw;
 
   line-height: 1.4;
 
@@ -174,10 +174,10 @@
 }
 
 .letter__monogram {
-  width: 15cqw;
+  width: 13cqw;
 
   margin:
-    15cqw
+    5cqw
     0
     5cqw;
 
@@ -197,7 +197,7 @@
 .ornament {
   display: flex;
 
-  width: 62cqw;
+  width: 90%;
 
   align-items:
     center;
@@ -205,9 +205,9 @@
   gap: 2cqw;
 
   margin:
-    4cqw
+    2.1cqw
     0
-    5cqw;
+    1cqw;
 
   color:
     var(--color-accent);
@@ -232,26 +232,28 @@
 .letter__opening,
 .letter__message {
   font-family: var(--font-serif);
+
+  color:
+    var(--color-text-secondary);
+
   max-width:
-    28rem;
+    90%;
 
   margin:
     0 auto;
 
   font-size:
-    1.05rem;
+    4cqw;
 
   line-height:
-    1.75;
+    1.75;  
 }
 
 .letter__message {
-  font-family: var(--font-sans);
-  margin-top:
-    0.6rem;
-
-  color:
-    var(--color-text-secondary);
+  margin:
+    5cqw
+    auto
+    3cqw;
 
   font-style:
     italic;

@@ -126,11 +126,6 @@
     margin: 0 0 3rem;
   }
 
-  /* Ajuste da tipografia secundária da carta. */
-  .letter__eyebrow {
-    font-size: 0.9rem;
-  }
-
   /* Chamada superior da capa. */
   .welcome .eyebrow {
     transform: translateX(4px);
