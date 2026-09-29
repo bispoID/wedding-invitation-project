@@ -153,7 +153,7 @@
 }
 
 .letter__eyebrow {
-  margin: 0 0 15cqw;
+  margin: 0 auto 15cqw;
 
   color:
     var(--color-envelope-deep);
@@ -197,7 +197,7 @@
 .ornament {
   display: flex;
 
-  width: 90%;
+  width: 50%;
 
   align-items:
     center;
@@ -205,18 +205,18 @@
   gap: 2cqw;
 
   margin:
-    2.1cqw
+    1cqw
     0
     1cqw;
 
   color:
     var(--color-accent);
 
-  font-size: 2.1cqw;
+  font-size: 3.1cqw;
 }
 
 .ornament span {
-  height: 1px;
+  height: 0.1cqw;
 
   flex: 1;
 
@@ -253,7 +253,7 @@
   margin:
     5cqw
     auto
-    3cqw;
+    17cqw;
 
   font-style:
     italic;
@@ -265,8 +265,10 @@
 ========================================================= */
 
 .letter__footer {
-  margin-top:
-    3rem;
+  margin:
+    1cqw
+    auto
+    17cqw;
 
   padding-top:
     1.5rem;

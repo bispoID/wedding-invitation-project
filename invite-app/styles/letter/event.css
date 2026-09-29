@@ -10,8 +10,8 @@
 
   width:
     min(
-      100%,
-      23rem
+      80%,
+      93cqw
     );
 
   align-items:
@@ -21,16 +21,16 @@
     center;
 
   margin:
-    2.8rem
+    0
     auto
-    2rem;
+    0;
 
   border-top:
-    1px solid
+    0.1cqw solid
     var(--color-accent-light);
 
   border-bottom:
-    1px solid
+    0.1cqw solid
     var(--color-accent-light);
 }
 
@@ -38,14 +38,14 @@
   flex: 1;
 
   padding:
-    1.2rem
-    0.75rem;
+    4cqw
+    4cqw;
 }
 
 /* Separador vertical entre os blocos de data e horário. */
 .event-detail + .event-detail {
   border-left:
-    1px solid
+    0.1cqw solid
     var(--color-accent-light);
 }
 
@@ -59,10 +59,10 @@
   font-family: var(--font-sans);
 
   font-size:
-    0.62rem;
+    3cqw;
 
   letter-spacing:
-    0.16em;
+    0.5cqw;
 
   text-transform:
     uppercase;
@@ -71,14 +71,15 @@
 .event-detail__date {
   font-family: var(--font-serif);
   margin:
-    0.2rem
-    0;
+    1cqw
+    auto 
+    1cqw;
 
   color:
     var(--color-heading);
 
   font-size:
-    3.2rem;
+    15cqw;
 
   line-height:
     1;
@@ -87,7 +88,7 @@
 .event-detail__value {
   font-family: var(--font-serif);
   margin:
-    0.8rem
+    3.4cqw
     0
     0;
 
@@ -95,7 +96,7 @@
     var(--color-heading);
 
   font-size:
-    1.8rem;
+    8cqw;
 }
 
 
@@ -105,7 +106,7 @@
 
 .location-card {
   margin:
-    2rem
+    20cqw
     auto;
 
   padding:
