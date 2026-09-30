@@ -110,7 +110,7 @@
     auto;
 
   padding:
-    1.5rem;
+    5cqw;
 
   background:
     rgb(var(--color-location-surface-rgb) / 12%);
@@ -120,7 +120,7 @@
   margin:
     0
     0
-    0.5rem;
+    2cqw;
 
   color:
     var(--color-text-muted);
@@ -134,7 +134,7 @@
     700;
 
   letter-spacing:
-    0.22em;
+    1cqw;
 
   text-transform:
     uppercase;
@@ -148,7 +148,7 @@
     var(--color-heading);
 
   font-size:
-    1.5rem;
+    7cqw;
 
   font-weight:
     400;
@@ -157,12 +157,21 @@
 .location-card p:not(.location-card__label) {
   font-family: var(--font-serif);
   margin:
-    0.45rem
+    2cqw
     0
-    1rem;
+    5cqw;
 
   color:
     var(--color-text-secondary);
+}
+
+.location-card__church {
+  display: block;
+
+  width: min(100%, 24rem);
+  height: auto;
+
+  margin: 3cqw auto;
 }
 
 
@@ -179,13 +188,13 @@
   font-family: var(--font-sans);
 
   font-size:
-    0.65rem;
+    3cqw;
 
   font-weight:
     700;
 
   letter-spacing:
-    0.1em;
+    0.4cqw;
 
   text-decoration:
     none;
@@ -200,5 +209,5 @@
     var(--color-accent);
 
   font-size:
-    0.95rem;
+    4cqw;
 }
