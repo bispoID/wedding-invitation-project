@@ -42,25 +42,30 @@ body {
 .button {
   display: inline-flex;
 
-  min-height: 3rem;
+  height: 13cqw;
+
+  width: 85%;
+
+  margin:
+    0 auto;
 
   align-items: center;
 
   justify-content: center;
 
-  gap: 1rem;
+  gap: 4cqw;
 
   border: 0;
 
-  border-radius: 999px;
+  border-radius: 10cqw;
 
   font-family: var(--font-sans);
 
-  font-size: 0.68rem;
+  font-size: 3cqw;
 
   font-weight: 700;
 
-  letter-spacing: 0.15em;
+  letter-spacing: 0.6cqw;
 
   text-transform: uppercase;
 

@@ -107,7 +107,8 @@
 .location-card {
   margin:
     20cqw
-    auto;
+    auto
+    5cqw;
 
   padding:
     5cqw;
