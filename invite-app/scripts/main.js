@@ -1,4 +1,5 @@
 import { initRsvp } from './letter/rsvp.js';
+import { initLocationChurchAnimation } from './letter/location-church.js';
 import { initEnvelope } from './welcome/envelope.js';
 import { initWelcomeTypography } from './welcome/typography.js';
 
@@ -36,6 +37,9 @@ initEnvelope({
   devSkipWelcome: devMode && resolvedPreviewTarget === 'letter',
   devPreview: devMode ? resolvedPreviewTarget : null
 });
+
+/* Inicia depois do preview, que pode deixar a carta visível sem abrir o envelope. */
+initLocationChurchAnimation();
 
 initWelcomeTypography();
 initRsvp();

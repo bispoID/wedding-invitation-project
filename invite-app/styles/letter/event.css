@@ -186,12 +186,18 @@
 }
 
 .location-card__church {
+  position: relative;
+  left: 50%;
+
   display: block;
 
-  width: min(100%, 45cqw);
+  /* Fallback antes do primeiro cálculo e quando movimento reduzido está ativo. */
+  width: var(--location-church-width, 53cqw);
   height: auto;
 
-  margin: 3cqw auto;
+  margin: 3cqw 0;
+
+  transform: translateX(-50%);
 }
 
 
