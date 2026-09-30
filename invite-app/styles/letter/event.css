@@ -145,7 +145,7 @@
   font-family: var(--font-sans);
 
   font-size:
-    0.62rem;
+    3cqw;
 
   font-weight:
     700;
@@ -180,6 +180,9 @@
 
   color:
     var(--color-text-secondary);
+
+  font-size:
+    3.6cqw;
 }
 
 .location-card__church {
