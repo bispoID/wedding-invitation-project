@@ -105,6 +105,9 @@
 ========================================================= */
 
 .location-card {
+  position: relative;
+  isolation: isolate;
+
   margin:
     20cqw
     auto
@@ -115,6 +118,19 @@
 
   background:
     rgb(var(--color-location-surface-rgb) / 12%);
+}
+
+.location-card::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+
+  background:
+    url("../../images/transparent_floral_vitoriano_vintage.png") center / cover no-repeat;
+
+  content: "";
+  opacity: 0.16;
+  pointer-events: none;
 }
 
 .location-card__label {
