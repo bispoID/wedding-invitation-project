@@ -64,31 +64,28 @@
    CONTEÚDO DA CARTA
 ========================================================= */
 
-.letter__content {
+.letter__frame {
   position: relative;
 
   z-index: 1;
 
-  width:
-    min(
-      100%,
-      39rem
-    );
+  container-type: inline-size;
+
+  width: 100%;
+  max-width: 39rem;
 
   margin:
     0 auto;
+}
 
-  padding:
-    clamp(
-      3.5rem,
-      9vw,
-      6rem
-    )
-    clamp(
-      1.35rem,
-      7vw,
-      4.5rem
-    );
+.letter__content {
+  position: relative;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  padding: 13cqw 13cqw;
 
   border:
     1px solid
@@ -104,6 +101,42 @@
     center;
 }
 
+.letter__content > :not(.letter__frame-decoration) {
+  position: relative;
+
+  z-index: 1;
+}
+
+.letter__frame-decoration {
+  position: absolute;
+
+  z-index: 0;
+
+  width: 100%;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  opacity: 0.72;
+}
+
+.letter__frame-decoration--top {
+  top: 0.75cqw;
+  left: 50%;
+  width: 99%;
+
+  transform: translateX(-50%);
+}
+
+.letter__frame-decoration--bottom {
+  bottom: 0.75cqw;
+  left: 49.9%;
+  width: 98%;
+
+  transform: translateX(-50%) rotate(180deg);
+}
+
 
 /* =========================================================
    CABEÇALHO
@@ -115,27 +148,57 @@
   flex-direction: column;
 
   align-items: center;
+
+  margin: 0 0 0;
 }
 
-.letter__header .eyebrow {
-  color:
-    var(--color-page-background);
+.letter__eyebrow-top {
+  margin: 0 auto 15cqw;
 
-  white-space: nowrap;
+  color:
+    var(--color-envelope-deep);
+
+  font-family: var(--font-sans);
+
+  font-size: 2.2cqw;
+
+  font-weight: 700;
+
+  letter-spacing: 1cqw;
+
+  line-height: 1.4;
+
+  text-transform: uppercase;
+
+  width: 60%;
+}
+
+.letter__eyebrow-middle {
+  margin: 0 auto 15cqw;
+
+  color:
+    var(--color-envelope-deep);
+
+  font-family: var(--font-sans);
+
+  font-size: 2.2cqw;
+
+  font-weight: 700;
+
+  letter-spacing: 1cqw;
+
+  line-height: 1.4;
+
+  text-transform: uppercase;
 }
 
 .letter__monogram {
-  width:
-    clamp(
-      9rem,
-      25vw,
-      8rem
-    );
+  width: 13cqw;
 
   margin:
-    3.1rem
-    auto
-    3.1rem;
+    10cqw
+    0
+    3cqw;
 
   mix-blend-mode:
     multiply;
@@ -146,44 +209,33 @@
   color:
     var(--color-heading);
 
-  font-size:
-    clamp(
-      2.8rem,
-      10vw,
-      4.8rem
-    );
+  font-size: 10cqw;
 }
 
 /* Ornamento horizontal que encerra visualmente o cabeçalho. */
 .ornament {
   display: flex;
 
-  width:
-    min(
-      100%,
-      15rem
-    );
+  width: 50%;
 
   align-items:
     center;
 
-  gap:
-    0.65rem;
+  gap: 2cqw;
 
   margin:
-    1.5rem
+    1cqw
     0
-    2rem;
+    1cqw;
 
   color:
     var(--color-accent);
 
-  font-size:
-    0.8rem;
+  font-size: 3.1cqw;
 }
 
 .ornament span {
-  height: 1px;
+  height: 0.1cqw;
 
   flex: 1;
 
@@ -199,26 +251,28 @@
 .letter__opening,
 .letter__message {
   font-family: var(--font-serif);
+
+  color:
+    var(--color-text-secondary);
+
   max-width:
-    28rem;
+    90%;
 
   margin:
     0 auto;
 
   font-size:
-    1.05rem;
+    4cqw;
 
   line-height:
-    1.75;
+    1.75;  
 }
 
 .letter__message {
-  font-family: var(--font-sans);
-  margin-top:
-    0.6rem;
-
-  color:
-    var(--color-text-secondary);
+  margin:
+    5cqw
+    auto
+    17cqw;
 
   font-style:
     italic;
@@ -230,29 +284,30 @@
 ========================================================= */
 
 .letter__footer {
-  margin-top:
-    3rem;
-
-  padding-top:
-    1.5rem;
-
-  border-top:
-    1px solid
-    rgb(var(--color-accent-rgb) / 35%);
+  margin:
+    1cqw
+    auto
+    17cqw;
 }
 
 .letter__footer p {
   font-family: var(--font-serif);
+
+  width:
+    80%;
+
   margin:
     0
-    0
-    1rem;
+    auto
+    20cqw;
 
   color:
     var(--color-text-secondary);
 
   font-style:
     italic;
+
+  font-size: 5cqw;
 }
 
 /* Botão textual usado no retorno para a capa. */

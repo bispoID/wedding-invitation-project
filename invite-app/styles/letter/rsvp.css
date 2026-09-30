@@ -6,10 +6,10 @@
 
 .letter__divider {
   width:
-    4rem;
+    15cqw;
 
   height:
-    1px;
+    0.1cqw;
 
   margin:
     2.8rem
@@ -27,18 +27,18 @@
 .rsvp h3 {
   font-family: var(--font-serif);
   margin:
-    0.35rem
+    3cqw    
     0
-    0.65rem;
+    3cqw;
 
   color:
     var(--color-heading);
 
   font-size:
     clamp(
-      1.8rem,
+      7cqw,
       7vw,
-      2.5rem
+      2cqw
     );
 
   font-weight:
@@ -47,19 +47,21 @@
 
 .rsvp__description {
   font-family: var(--font-serif);
-  max-width:
-    22rem;
+
+  max-width: 90%;
 
   margin:
     0
     auto
-    1.5rem;
+    4cqw;
 
   color:
     var(--color-text-secondary);
 
   line-height:
     1.6;
+
+  font-size: 4cqw;
 }
 
 
@@ -72,7 +74,7 @@
     grid;
 
   max-width:
-    25rem;
+    100%;
 
   margin:
     0 auto;
@@ -83,9 +85,9 @@
 
 .rsvp-form label {
   margin:
-    0.9rem
-    0
-    0.4rem;
+    3.3cqw
+    0.3cqw
+    1cqw;
 
   color:
     var(--color-text-secondary);
@@ -93,34 +95,37 @@
   font-family: var(--font-sans);
 
   font-size:
-    0.68rem;
+    3.5cqw;
 
   font-weight:
     700;
 
+  height: 99%;
+
   letter-spacing:
-    0.06em;
+    0.23cqw;
 }
 
 .rsvp-form input,
 .rsvp-form select {
   font-family: var(--font-serif);
+
   width:
     100%;
 
-  min-height:
-    2.9rem;
+  height:
+    11cqw;
 
   border:
-    1px solid
+    0.2cqw solid
     rgb(var(--color-text-muted-rgb) / 35%);
 
   border-radius:
-    0.15rem;
+    1cqw;
 
   padding:
-    0.7rem
-    0.8rem;
+    2cqw
+    2.8cqw;
 
   background:
     rgb(var(--color-surface-light-rgb) / 70%);
@@ -130,11 +135,13 @@
 
   outline:
     0;
+
+  font-size: 4cqw;
 }
 
 .rsvp-form .button {
   margin-top:
-    1.4rem;
+    8cqw;
 
   background:
     var(--color-text-secondary);
@@ -149,12 +156,12 @@
 ========================================================= */
 
 .form-feedback {
-  min-height:
-    1.2rem;
+  width:
+    95%;
 
   margin:
-    0.9rem
-    0
+    4cqw
+    auto
     0;
 
   color:
@@ -163,7 +170,7 @@
   font-family: var(--font-sans);
 
   font-size:
-    0.72rem;
+    3cqw;
 
   line-height:
     1.4;

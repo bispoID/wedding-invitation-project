@@ -2,7 +2,9 @@
 
 @font-face {
   font-family: "Edwardian Script ITC";
-  src: url("../../fonts/EdwardianScriptITC.ttf") format("truetype");
+  src: url("../../fonts/Edwardian_Script_ITC_Std_Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
   font-display: swap;
 }
 

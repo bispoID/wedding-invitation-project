@@ -10,6 +10,8 @@
 
   z-index: 1;
 
+  container-type: inline-size;
+
   perspective: 2100px;
 
   transform-style: preserve-3d;
@@ -55,7 +57,7 @@
 
   z-index: 1;
 
-  inset: 4% 4% 4%;
+  inset: 8% 8% 8%;
 
   display: flex;
 
@@ -69,7 +71,6 @@
 
   background-image:
     var(--asset-paper-grain-card);
-
 }
 
 /* Camada de sombra sobre o cartão; sua opacidade é animada durante a abertura da aba. */
@@ -135,7 +136,25 @@
   width: 98%;
   height: 98%;
 
+  box-sizing: border-box;
+
+  padding-top: 19%;
+
   /* Moldura floral aplicada ao cartão interno. */
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: flex-start;
+}
+
+.envelope__card-inner::before {
+  position: absolute;
+
+  z-index: 0;
+
+  inset: 0;
+
   background-image:
     var(--asset-envelope-card-frame);
 
@@ -145,35 +164,83 @@
 
   background-size: cover;
 
-  flex-direction: column;
+  content: "";
+
+  opacity: 0.72;
+
+  pointer-events: none;
+}
+
+.envelope__card-inner > * {
+  position: relative;
+
+  z-index: 1;
+}
+
+.envelope__card-monogram {
+  width: 10.5%;
+
+  mix-blend-mode: multiply;
+}
+
+.envelope__card-names {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 0.25em;
+
+  margin: 
+    8%
+    0
+    1%
+    0;
+
+  font-family: var(--font-serif);
+  font-size: 8.2cqw;
+  font-weight: 400;
+
+  line-height: 1;
+}
+
+.envelope__card-ornament {
+  display: flex;
+
+  width: 34%;
 
   align-items: center;
 
-  justify-content: center;
+  gap: 0.45cqw;
 
-  transform:
-    translateZ(1px);
+  color: var(--color-accent);
+
+  font-size: 1.7cqw;
 }
 
-/* =========================================================
-  IMAGEM DA ARTE MANGA
-========================================================= */
+.envelope__card-ornament span {
+  height: 1px;
 
-/* Arte principal do cartão; o mix-blend-mode preserva a integração com a textura do papel. */
-.envelope__manga {
-  position: relative;
+  flex: 1;
 
-  z-index: 3;
+  background: var(--color-accent-light);
+}
 
-  width: 85.3%;
+.envelope__message {
+  width: 50%;
 
-  top: -0.37rem;
-  left: -0.17rem;
+  margin: 
+    50%
+    0
+    0
+    0;
 
-  height: auto;
+  color: var(--color-text-secondary);
 
-  mix-blend-mode: multiply;
+  font-family: var(--font-serif);
+  font-size: 3.2cqw;
+  line-height: 1.5;
 
+  text-align: center;
 }
 
 /* =========================================================

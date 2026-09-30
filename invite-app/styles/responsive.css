@@ -13,20 +13,6 @@
     transform: none;
   }
 
-  .letter__monogram {
-    width:
-      clamp(
-        5rem,
-        25vw,
-        8rem
-      );
-
-    margin:
-      0.95rem
-      auto
-      1.4rem;
-  }
-
   /* Chamada superior da capa. */
   .eyebrow {
     width: 100%;
@@ -46,29 +32,6 @@
     margin: 0 0 1rem;
 
     transform: translateX(-6.5px);
-  }
-
-  /* Frase introdutória da capa. */
-
-  /*
-   * Centraliza o conteúdo da capa na largura útil do mobile,
-   * compensando o espaço lateral definido pela capa.
-   */
-  .welcome__intro {
-    width: 100%;
-    max-width: 100%;
-
-    margin:
-      -0.7rem
-      0
-      0.8rem;
-
-    font-size:
-      clamp(
-        0.75rem,
-        5.8cqw,
-        1.1rem
-      );
   }
 
   .welcome__content {
@@ -118,13 +81,6 @@
     margin: 0 0 1.3rem;
   }
 
-  .welcome__intro {
-    margin:
-      0.25rem
-      0
-      1.45rem;
-  }
-
   .envelope-unit {
     width:
       min(
@@ -170,11 +126,6 @@
     margin: 0 0 3rem;
   }
 
-  /* Ajuste da tipografia secundária da carta. */
-  .letter .eyebrow {
-    font-size: 0.9rem;
-  }
-
   /* Chamada superior da capa. */
   .welcome .eyebrow {
     transform: translateX(4px);
@@ -186,18 +137,6 @@
     font-size: 10.2rem;
 
     transform: translateX(-15px);
-  }
-
-  /* Frase introdutória da capa. */
-  .welcome__intro {
-    font-family: var(--font-serif);
-    margin:
-      1rem
-      0
-      2rem;
-
-    font-size: 3.1rem;
-    transform: translateX(-6.8px);
   }
 
   /* Espaçamento da instrução abaixo do envelope. */
@@ -256,12 +195,6 @@
     align-items: center;
 
     text-align: left;
-  }
-
-  /* Bloco textual permanece centralizado dentro da coluna esquerda. */
-  .welcome__copy .welcome__intro {
-    max-width: 42rem;
-    white-space: normal;
   }
 
   /* Envelope permanece centralizado dentro da coluna direita. */
