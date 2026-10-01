@@ -29,6 +29,7 @@ const SELECTORS = Object.freeze({
 
 /* Os valores reais ficam em styles/base/variables.css. */
 const TIMING_VARIABLES = Object.freeze({
+  openingPause: '--motion-opening-pause',
   cardStart: '--motion-card-start',
   letterEnter: '--motion-letter-enter'
 });
@@ -37,11 +38,12 @@ const TIMING_VARIABLES = Object.freeze({
 /**
  * Obtém os marcos da sequência diretamente dos tokens CSS.
  *
- * @returns {{cardStart: number, letterEnter: number}} Marcos em ms.
+ * @returns {{openingPause: number, cardStart: number, letterEnter: number}} Marcos em ms.
  */
 function readAnimationTiming() {
   // CSS é a fonte de verdade para que a animação visual e os timers coincidam.
   return {
+    openingPause: readMilliseconds(TIMING_VARIABLES.openingPause),
     cardStart: readMilliseconds(TIMING_VARIABLES.cardStart),
     letterEnter: readMilliseconds(TIMING_VARIABLES.letterEnter)
   };
@@ -154,26 +156,28 @@ function createInvitationController({
     isOpening = true;
     seal.setAttribute('aria-disabled', 'true');
 
-    // Etapa 1: CSS inicia a aba superior; a Web Animation move o selo e flores.
-    welcome.classList.add(
-      'is-opening-envelope'
-    );
-
-    animateFloralSealExit(decorations);
-
-    // Etapa 2: o cartão começa a sair depois que a aba já avançou.
     schedule(() => {
+      // Etapa 1: CSS inicia a aba superior; a Web Animation move o selo e flores.
       welcome.classList.add(
-        'is-opening-card'
+        'is-opening-envelope'
       );
-    }, animationTiming.cardStart);
 
-    // Etapa 3: a capa é ocultada e a carta recebe o foco.
-    schedule(() => {
-      welcome.hidden = true;
-      showLetter(letter);
-      isOpening = false;
-    }, animationTiming.letterEnter);
+      animateFloralSealExit(decorations);
+
+      // Etapa 2: o cartão começa a sair depois que a aba já avançou.
+      schedule(() => {
+        welcome.classList.add(
+          'is-opening-card'
+        );
+      }, animationTiming.cardStart);
+
+      // Etapa 3: a capa é ocultada e a carta recebe o foco.
+      schedule(() => {
+        welcome.hidden = true;
+        showLetter(letter);
+        isOpening = false;
+      }, animationTiming.letterEnter);
+    }, animationTiming.openingPause);
   }
 
 
