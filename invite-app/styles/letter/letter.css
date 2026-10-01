@@ -153,14 +153,14 @@
 }
 
 .letter__eyebrow-top {
-  margin: 0 auto 15cqw;
+  margin: 0 auto 6cqw;
 
   color:
     var(--color-envelope-deep);
 
   font-family: var(--font-sans);
 
-  font-size: 2.2cqw;
+  font-size: 2.6cqw;
 
   font-weight: 700;
 
@@ -198,7 +198,7 @@
   margin:
     10cqw
     0
-    3cqw;
+    15cqw;
 
   mix-blend-mode:
     multiply;
@@ -209,7 +209,7 @@
   color:
     var(--color-heading);
 
-  font-size: 10cqw;
+  font-size: 12cqw;
 }
 
 /* Ornamento horizontal que encerra visualmente o cabeçalho. */
@@ -225,7 +225,7 @@
 
   margin:
     1cqw
-    0
+    auto
     1cqw;
 
   color:
@@ -235,7 +235,7 @@
 }
 
 .ornament span {
-  height: 0.1cqw;
+  height: 0.3cqw;
 
   flex: 1;
 
@@ -256,13 +256,13 @@
     var(--color-text-secondary);
 
   max-width:
-    90%;
+    83%;
 
   margin:
     0 auto;
 
   font-size:
-    4cqw;
+    4.5cqw;
 
   line-height:
     1.75;  
@@ -297,9 +297,9 @@
     80%;
 
   margin:
-    0
+    10cqw
     auto
-    20cqw;
+    4cqw;
 
   color:
     var(--color-text-secondary);

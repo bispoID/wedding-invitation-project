@@ -26,11 +26,11 @@
     0;
 
   border-top:
-    0.1cqw solid
+    0.3cqw solid
     var(--color-accent-light);
 
   border-bottom:
-    0.1cqw solid
+    0.3cqw solid
     var(--color-accent-light);
 }
 

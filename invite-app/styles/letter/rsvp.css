@@ -9,11 +9,12 @@
     15cqw;
 
   height:
-    0.1cqw;
+    0.2cqw;
 
   margin:
-    2.8rem
-    auto;
+    2cqw
+    auto
+    15cqw;
 
   background:
     var(--color-accent-light);
@@ -26,8 +27,9 @@
 
 .rsvp h3 {
   font-family: var(--font-serif);
+
   margin:
-    3cqw    
+    15cqw    
     0
     3cqw;
 
