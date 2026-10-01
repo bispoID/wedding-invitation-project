@@ -200,6 +200,12 @@
   transform: translateX(-50%);
 }
 
+.location-card__reception {
+  margin-top: 6cqw;
+  padding-top: 5cqw;
+  border-top: 0.2cqw solid rgb(var(--color-text-muted-rgb) / 35%);
+}
+
 
 /* =========================================================
    LINKS E BOTÕES TEXTUAIS
