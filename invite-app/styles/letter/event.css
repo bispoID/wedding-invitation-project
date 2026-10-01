@@ -126,7 +126,7 @@
   inset: 0;
 
   background:
-    url("../../images/transparent_floral_vitoriano_vintage.png") center / cover no-repeat;
+    var(--asset-floral-watermark) center / cover no-repeat;
 
   content: "";
   opacity: 0.16;
