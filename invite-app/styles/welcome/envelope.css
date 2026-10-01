@@ -554,7 +554,7 @@
   position: absolute;
 
   top: 60%;
-  left: 52%;
+  left: 50%;
 
   width: 39%;
   height: auto;
@@ -568,7 +568,7 @@
     );
 
   transform:
-    translate(-53%, -38%)
+    translate(-50%, -38%)
     rotate(20deg);
 
   opacity: 0.92;

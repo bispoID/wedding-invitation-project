@@ -85,7 +85,7 @@
   --motion-card-duration: 3300ms;
 
   /* Tempo de deslocamento conjunto das flores e do selo de cera. */
-  --motion-decorations-duration: 1600ms;
+  --motion-decorations-duration: 1800ms;
 
   /* Tempo de entrada e revelação visual da carta. */
   --motion-letter-duration: 900ms;
