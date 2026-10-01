@@ -45,7 +45,7 @@
 /* Separador vertical entre os blocos de data e horário. */
 .event-detail + .event-detail {
   border-left:
-    0.1cqw solid
+    0.3cqw solid
     var(--color-accent-light);
 }
 
