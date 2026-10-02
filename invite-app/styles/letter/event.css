@@ -10,7 +10,7 @@
 
   width:
     min(
-      80%,
+      100%,
       93cqw
     );
 
@@ -109,9 +109,9 @@
   isolation: isolate;
 
   margin:
-    20cqw
+    15cqw
     auto
-    5cqw;
+    0;
 
   padding:
     5cqw;

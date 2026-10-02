@@ -153,14 +153,14 @@
 }
 
 .letter__eyebrow-top {
-  margin: 0 auto 6cqw;
+  margin: 0 auto 5cqw;
 
   color:
     var(--color-envelope-deep);
 
   font-family: var(--font-sans);
 
-  font-size: 2.6cqw;
+  font-size: 2cqw;
 
   font-weight: 700;
 
@@ -174,7 +174,7 @@
 }
 
 .letter__eyebrow-middle {
-  margin: 0 auto 15cqw;
+  margin: 3cqw auto 10cqw;
 
   color:
     var(--color-envelope-deep);
@@ -210,6 +210,8 @@
     var(--color-heading);
 
   font-size: 12cqw;
+
+  white-space: nowrap;
 }
 
 /* Ornamento horizontal que encerra visualmente o cabeçalho. */
@@ -224,9 +226,9 @@
   gap: 2cqw;
 
   margin:
-    1cqw
+    5cqw
     auto
-    1cqw;
+    5cqw;
 
   color:
     var(--color-accent);
@@ -256,7 +258,7 @@
     var(--color-text-secondary);
 
   max-width:
-    83%;
+    100%;
 
   margin:
     0 auto;
@@ -272,7 +274,7 @@
   margin:
     5cqw
     auto
-    17cqw;
+    8cqw;
 
   font-style:
     italic;
