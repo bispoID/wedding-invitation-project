@@ -1,6 +1,6 @@
 /* Ajuste estes limites para controlar o tamanho longe e no centro da tela. */
-const INITIAL_CHURCH_WIDTH_CQW = 53;
-const CENTERED_CHURCH_WIDTH_CQW = 60;
+const INITIAL_CHURCH_WIDTH_CQW = 58;
+const CENTERED_CHURCH_WIDTH_CQW = 63;
 
 
 /**

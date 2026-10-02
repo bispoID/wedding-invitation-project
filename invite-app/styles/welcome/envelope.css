@@ -210,7 +210,7 @@
 
   align-items: center;
 
-  gap: 0.45cqw;
+  gap: 2cqw;
 
   color: var(--color-accent);
 
@@ -218,11 +218,12 @@
 }
 
 .envelope__card-ornament span {
-  height: 1px;
+  height: 0.3cqw;
 
   flex: 1;
 
-  background: var(--color-accent-light);
+  background:
+    var(--color-accent-light);
 }
 
 .envelope__message {
