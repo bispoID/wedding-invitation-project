@@ -1,0 +1,1 @@
+alter table public.guests enable row level security;
