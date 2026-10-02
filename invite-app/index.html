@@ -485,6 +485,13 @@
                     Quantidade de acompanhantes
                   </label>
 
+                  <p
+                    id="companions-hint"
+                    class="rsvp-form__hint"
+                  >
+                    Não conte você mesmo. Informe apenas a quantidade de pessoas que irão acompanhá-lo.
+                  </p>
+
                   <input
                     id="companions"
                     name="companions"
@@ -494,6 +501,7 @@
                     step="1"
                     value="0"
                     inputmode="numeric"
+                    aria-describedby="companions-hint"
                     required
                   />
 
