@@ -1,6 +1,12 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 Deno.serve(async (req) => {
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
   if (req.method !== "POST") {
     return Response.json(
       {
@@ -102,14 +108,41 @@ Deno.serve(async (req) => {
 
   const name = body.name.trim();
 
-  console.log({
-    name,
-    email,
-    attendance: body.attendance,
-    companions,
-  });
+  const { error } = await supabase
+    .from("guests")
+    .insert({
+      name,
+      email,
+      attendance: body.attendance,
+      companions,
+    });
 
-  return Response.json({
-    success: true,
-  });
+  if (error) {
+    console.error("Database error:", error);
+
+    if (error.code === "23505") {
+      return Response.json(
+        {
+          success: false,
+          error: "EMAIL_ALREADY_REGISTERED",
+        },
+        { status: 409 },
+      );
+    }
+
+    return Response.json(
+      {
+        success: false,
+        error: "INTERNAL_ERROR",
+      },
+      { status: 500 },
+    );
+  }
+
+  return Response.json(
+    {
+      success: true,
+    },
+    { status: 201 },
+  );
 });
