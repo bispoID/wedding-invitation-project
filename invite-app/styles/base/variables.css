@@ -139,6 +139,24 @@
 
   --envelope-bottom-tip: 2%;
 
+  /*
+   * Cartão interno:
+   *
+   * Envelope físico: 20 x 14 cm.
+   * Carta: 19,5 x 13,65 cm.
+   *
+   * A redução total é de 2,5% em cada dimensão:
+   * 0,5 / 20 = 2,5% na altura
+   * 0,35 / 14 = 2,5% na largura
+   *
+   * Como a redução é distribuída igualmente entre os dois lados,
+   * cada margem corresponde a 1,25% do envelope.
+   *
+   * O valor em porcentagem mantém a proporção 7:10 em qualquer
+   * tamanho de viewport, sem depender de centímetros físicos.
+   */
+  --envelope-card-inset: 3%;
+
   --color-envelope-bottom: #525539;
 
   --color-envelope-deep: #44472d;
