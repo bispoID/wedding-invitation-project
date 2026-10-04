@@ -1,18 +1,18 @@
-/*
- * O RSVP ainda não envia dados. Este intervalo apenas impede cliques
- * repetidos no protótipo; na API real, o lock acompanhará a requisição.
- */
-const LOCAL_SUBMIT_COOLDOWN = 600;
+const SUPABASE_URL = 'https://bkkienyemqlkueygknzl.supabase.co';
+const RSVP_ENDPOINT = `${SUPABASE_URL}/functions/v1/rsvp`;
 
-const PENDING_MESSAGE =
-  'A confirmação será conectada ao RSVP quando a API e o Supabase forem configurados.';
-
+const ERROR_MESSAGES = {
+  400: 'Verifique os dados informados e tente novamente.',
+  409: 'Este e-mail já foi utilizado para uma confirmação.',
+  500: 'Não foi possível registrar sua confirmação agora. Tente novamente em instantes.',
+};
 
 /**
- * Inicializa o RSVP local enquanto a integração com a API não existe.
+ * Inicializa o formulário de RSVP e conecta o frontend à Edge Function.
  *
- * A validação nativa do formulário continua ativa; após um envio válido,
- * o botão é temporariamente desabilitado para absorver cliques repetidos.
+ * O frontend realiza apenas as validações necessárias para a experiência do
+ * usuário. A API continua sendo responsável pela validação definitiva e pelas
+ * regras de negócio.
  *
  * @returns {void}
  */
@@ -20,32 +20,128 @@ export function initRsvp() {
   const rsvpForm = document.querySelector('.rsvp-form');
   const feedback = document.querySelector('.form-feedback');
   const submitButton = rsvpForm?.querySelector('button[type="submit"]');
+  const companionsInput = rsvpForm?.querySelector('#companions');
 
-  if (!rsvpForm || !feedback || !submitButton) {
+  if (!rsvpForm || !feedback || !submitButton || !companionsInput) {
     return;
   }
 
-  // A validação nativa do formulário continua acontecendo antes do submit.
-  let isSubmitLocked = false;
+  let isSubmitting = false;
+  let isSubmitted = false;
 
-  rsvpForm.addEventListener('submit', (event) => {
+  rsvpForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    // Evita submissões repetidas enquanto o RSVP ainda é apenas local.
-    if (isSubmitLocked) {
+    if (isSubmitting || isSubmitted) {
       return;
     }
 
-    isSubmitLocked = true;
-    submitButton.disabled = true;
-    rsvpForm.setAttribute('aria-busy', 'true');
-    feedback.textContent = PENDING_MESSAGE;
+    // Mantém a validação nativa do navegador como primeira camada.
+    if (!rsvpForm.checkValidity()) {
+      rsvpForm.reportValidity();
+      return;
+    }
 
-    // Na integração real, o desbloqueio deve acompanhar a resposta da API.
-    window.setTimeout(() => {
-      isSubmitLocked = false;
-      submitButton.disabled = false;
-      rsvpForm.removeAttribute('aria-busy');
-    }, LOCAL_SUBMIT_COOLDOWN);
+    const formData = new FormData(rsvpForm);
+    const name = String(formData.get('name') ?? '').trim();
+    const email = String(formData.get('email') ?? '').trim().toLowerCase();
+    const attendanceValue = String(formData.get('attendance') ?? '');
+    const companions = Number(formData.get('companions'));
+
+    // Validações adicionais necessárias para montar um payload confiável.
+    if (!name || !email || !['yes', 'no'].includes(attendanceValue)) {
+      setFeedback(feedback, 'Verifique os dados informados e tente novamente.');
+      return;
+    }
+
+    if (!Number.isInteger(companions) || companions < 0 || companions > 15) {
+      setFeedback(feedback, 'A quantidade de acompanhantes deve estar entre 0 e 15.');
+      companionsInput.focus();
+      return;
+    }
+
+    const payload = {
+      name,
+      email,
+      attendance: attendanceValue === 'yes',
+      companions,
+    };
+
+    isSubmitting = true;
+    setLoadingState(rsvpForm, submitButton, feedback);
+
+    try {
+      const response = await fetch(RSVP_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.status === 201) {
+        isSubmitted = true;
+        setSuccessState(rsvpForm, submitButton, feedback);
+        return;
+      }
+
+      setFeedback(
+        feedback,
+        ERROR_MESSAGES[response.status] ??
+          'Não foi possível registrar sua confirmação. Tente novamente.'
+      );
+    } catch (error) {
+      console.error('Erro ao enviar RSVP:', error);
+      setFeedback(
+        feedback,
+        'Não foi possível conectar ao serviço de confirmação. Verifique sua conexão e tente novamente.'
+      );
+    } finally {
+      isSubmitting = false;
+
+      if (!isSubmitted) {
+        submitButton.disabled = false;
+        rsvpForm.removeAttribute('aria-busy');
+      }
+    }
   });
+}
+
+/**
+ * Atualiza o formulário durante o envio.
+ *
+ * @param {HTMLFormElement} form
+ * @param {HTMLButtonElement} button
+ * @param {HTMLElement} feedback
+ * @returns {void}
+ */
+function setLoadingState(form, button, feedback) {
+  button.disabled = true;
+  form.setAttribute('aria-busy', 'true');
+  setFeedback(feedback, 'Enviando sua confirmação...');
+}
+
+/**
+ * Atualiza o formulário após uma confirmação persistida pela API.
+ *
+ * @param {HTMLFormElement} form
+ * @param {HTMLButtonElement} button
+ * @param {HTMLElement} feedback
+ * @returns {void}
+ */
+function setSuccessState(form, button, feedback) {
+  button.disabled = true;
+  form.setAttribute('aria-busy', 'false');
+  setFeedback(feedback, 'Presença confirmada! Agradecemos pela sua confirmação.');
+}
+
+/**
+ * Atualiza a mensagem de feedback do formulário.
+ *
+ * @param {HTMLElement} feedback
+ * @param {string} message
+ * @returns {void}
+ */
+function setFeedback(feedback, message) {
+  feedback.textContent = message;
 }

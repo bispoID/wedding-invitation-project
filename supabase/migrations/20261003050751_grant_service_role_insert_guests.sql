@@ -1,0 +1,1 @@
+grant insert on table public.guests to service_role;

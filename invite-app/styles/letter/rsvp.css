@@ -108,6 +108,25 @@
     0.23cqw;
 }
 
+.rsvp-form__hint {
+  margin:
+    0.5cqw
+    0.3cqw
+    1.5cqw;
+
+  color:
+    var(--color-text-muted);
+
+  font-family:
+    var(--font-sans);
+
+  font-size:
+    2.5cqw;
+
+  line-height:
+    1.4;
+}
+
 .rsvp-form input,
 .rsvp-form select {
   font-family: var(--font-serif);
