@@ -1,7 +1,16 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "npm:@supabase/supabase-js@2";
+import {
+  createClient,
+  corsHeaders,
+} from "npm:@supabase/supabase-js@2";
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", {
+      headers: corsHeaders,
+    });
+  }
+
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -13,7 +22,10 @@ Deno.serve(async (req) => {
         success: false,
         error: "METHOD_NOT_ALLOWED",
       },
-      { status: 405 },
+      {
+        status: 405,
+        headers: corsHeaders,
+      },
     );
   }
 
@@ -27,7 +39,10 @@ Deno.serve(async (req) => {
         success: false,
         error: "INVALID_JSON",
       },
-      { status: 400 },
+      {
+        status: 400,
+        headers: corsHeaders,
+      },
     );
   }
 
@@ -41,7 +56,10 @@ Deno.serve(async (req) => {
         success: false,
         error: "INVALID_NAME",
       },
-      { status: 400 },
+      {
+        status: 400,
+        headers: corsHeaders,
+      },
     );
   }
 
@@ -55,7 +73,10 @@ Deno.serve(async (req) => {
         success: false,
         error: "INVALID_EMAIL",
       },
-      { status: 400 },
+      {
+        status: 400,
+        headers: corsHeaders,
+      },
     );
   }
 
@@ -70,7 +91,10 @@ Deno.serve(async (req) => {
         success: false,
         error: "INVALID_EMAIL",
       },
-      { status: 400 },
+      {
+        status: 400,
+        headers: corsHeaders,
+      },
     );
   }
 
@@ -81,7 +105,10 @@ Deno.serve(async (req) => {
         success: false,
         error: "INVALID_ATTENDANCE",
       },
-      { status: 400 },
+      {
+        status: 400,
+        headers: corsHeaders,
+      },
     );
   }
 
@@ -96,7 +123,10 @@ Deno.serve(async (req) => {
         success: false,
         error: "INVALID_COMPANIONS",
       },
-      { status: 400 },
+      {
+        status: 400,
+        headers: corsHeaders,
+      },
     );
   }
 
@@ -126,7 +156,10 @@ Deno.serve(async (req) => {
           success: false,
           error: "EMAIL_ALREADY_REGISTERED",
         },
-        { status: 409 },
+        {
+          status: 409,
+          headers: corsHeaders,
+        },
       );
     }
 
@@ -135,7 +168,10 @@ Deno.serve(async (req) => {
         success: false,
         error: "INTERNAL_ERROR",
       },
-      { status: 500 },
+      {
+        status: 500,
+        headers: corsHeaders,
+      },
     );
   }
 
@@ -143,6 +179,9 @@ Deno.serve(async (req) => {
     {
       success: true,
     },
-    { status: 201 },
+    {
+      status: 201,
+      headers: corsHeaders,
+    },
   );
 });
