@@ -2,6 +2,27 @@ import "@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
+async function hashIp(ip: string): Promise<string> {
+  const secret = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+  const data = new TextEncoder().encode(`${secret}:${ip}`);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function getClientIp(req: Request): string {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim();
+  }
+
+  return "unknown";
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", {
@@ -22,6 +43,62 @@ Deno.serve(async (req) => {
       },
       {
         status: 405,
+        headers: corsHeaders,
+      },
+    );
+  }
+
+  // Rate limiting
+  try {
+    const clientIp = getClientIp(req);
+    const ipHash = await hashIp(clientIp);
+
+    const { data: rateLimit, error: rateLimitError } = await supabase
+      .rpc("consume_rsvp_rate_limit", {
+        p_ip_hash: ipHash,
+      })
+      .single();
+
+    if (rateLimitError || !rateLimit) {
+      console.error("Rate limit error:", rateLimitError);
+
+      return Response.json(
+        {
+          success: false,
+          error: "INTERNAL_ERROR",
+        },
+        {
+          status: 500,
+          headers: corsHeaders,
+        },
+      );
+    }
+
+    if (!rateLimit.allowed) {
+      return Response.json(
+        {
+          success: false,
+          error: "RATE_LIMIT_EXCEEDED",
+        },
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            "Retry-After": "600",
+          },
+        },
+      );
+    }
+  } catch (error) {
+    console.error("Rate limit error:", error);
+
+    return Response.json(
+      {
+        success: false,
+        error: "INTERNAL_ERROR",
+      },
+      {
+        status: 500,
         headers: corsHeaders,
       },
     );
