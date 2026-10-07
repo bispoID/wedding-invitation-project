@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#f5f4ef" />
+    <title>Entrar | Administração</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/login.css" />
+  </head>
+  <body data-page="login">
+    <main class="admin-shell login-shell">
+      <section class="admin-card login-card" aria-labelledby="login-title">
+        <p class="eyebrow">Área administrativa</p>
+        <h1 id="login-title">Entrar</h1>
+        <p class="login-intro">Acesse com o e-mail e a senha do administrador.</p>
+
+        <p class="feedback" id="login-loading" role="status">
+          Verificando sua sessão...
+        </p>
+        <p class="feedback feedback--error" id="login-error" role="alert" hidden></p>
+
+        <form class="login-form" id="login-form" hidden>
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            inputmode="email"
+            required
+          />
+
+          <label for="password">Senha</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+
+          <button class="button" id="login-button" type="submit">Entrar</button>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="./scripts/main.js"></script>
+  </body>
+</html>

@@ -9,17 +9,31 @@ Aplicação estática inicial do convite virtual.
 - **Comportamento:** `scripts/main.js`, que inicializa os módulos de envelope, título e RSVP.
 - **Tokens compartilhados:** os tempos e curvas de movimento ficam em `styles/base/variables.css`; `scripts/shared/css.js` permite que o JavaScript reutilize esses valores.
 - **Assets de estilo:** imagens usadas pelo CSS também ficam centralizadas como tokens `--asset-*` em `styles/base/variables.css`.
-- **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` aplica um cooldown enquanto o RSVP ainda é local.
+- **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` envia o RSVP à Supabase Edge Function.
 - **Modo desenvolvedor:** `scripts/devmode/preview.js` controla os previews estáticos e `styles/devmode/devmode.css` concentra os estilos do painel.
-- **Integrações futuras:** API/Edge Function, Supabase e área administrativa serão adicionados em camadas separadas.
+- **Área administrativa:** `admin/` mantém o login Supabase Auth e o dashboard inicial separados do fluxo público do convite e RSVP.
 
 Essa estrutura vanilla é suficiente para a Fase 1 e evita adicionar framework ou build system antes de existir uma necessidade real.
 
 ## Como visualizar
 
-Abra `index.html` no navegador. A capa permite abrir a carta e o formulário de RSVP exibe um aviso enquanto a integração com o backend ainda não foi implementada.
+Sirva a pasta `invite-app` por HTTP (por exemplo, com o Live Server do VS Code) e acesse `index.html`. A área administrativa fica em `admin/login.html`.
 
 Os nomes e detalhes do evento são dados iniciais do protótipo e deverão ser substituídos pelos dados finais.
+
+## Configuração da área administrativa
+
+O frontend é estático e não carrega arquivos `.env`. Antes de usar o login, copie
+a chave **publishable** (ou a chave legada **anon**) do Supabase Dashboard para
+`admin/scripts/supabase-config.js`, na constante `SUPABASE_PUBLIC_KEY`.
+Essa chave é pública e pode ser enviada ao navegador; não use a chave
+`service_role`. A segurança dos dados continua dependendo das policies RLS do
+Supabase.
+
+O cliente `@supabase/supabase-js` é importado como módulo ES da versão fixada
+no CDN esm.sh, portanto o navegador precisa de acesso à internet. Nenhuma
+dependência npm ou etapa de build foi adicionada. A configuração e as páginas
+administrativas devem ser servidas por HTTP; abrir por `file://` não é suportado.
 
 
 ## Modo desenvolvedor

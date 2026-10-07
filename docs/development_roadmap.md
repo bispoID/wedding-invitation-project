@@ -260,9 +260,13 @@ Um problema temporário de infraestrutura não causa perda silenciosa do RSVP.
 
 Objetivo: criar o ambiente privado para gerenciamento dos convidados.
 
-- [ ] Criar tela de login.
-- [ ] Proteger a área administrativa.
-- [ ] Validar autenticação.
+- [x] Criar tela de login.
+- [x] Criar estrutura inicial independente para `/admin`.
+- [x] Integrar login por e-mail e senha com Supabase Auth.
+- [x] Verificar sessão e proteger o acesso ao dashboard.
+- [x] Implementar logout.
+- [x] Criar estrutura inicial do dashboard com estados de carregamento e erro.
+- [ ] Configurar a chave pública Supabase em `invite-app/admin/scripts/supabase-config.js`.
 - [ ] Criar listagem de convidados.
 - [ ] Exibir nome.
 - [ ] Exibir e-mail.
@@ -533,6 +537,11 @@ Não avançar simplesmente porque a implementação "parece pronta".
 # Estado atual
 
 **Fase 6 — Contingência: concluída.**
+
+**Fase 7 — Área administrativa: em andamento.** A base de login com Supabase
+Auth, verificação de sessão, logout e estrutura inicial protegida do dashboard
+foi implementada. Falta configurar a chave pública do projeto no frontend e
+implementar a listagem/gerenciamento de convidados nas etapas posteriores.
 
 As Fases 1 a 3, 5 e 6 estão concluídas. A Fase 4 permanece pendente
 exclusivamente da validação final do rate limiting.

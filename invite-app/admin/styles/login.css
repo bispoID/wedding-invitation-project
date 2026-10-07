@@ -1,0 +1,37 @@
+.login-shell {
+  padding-block: 32px;
+}
+
+.login-card {
+  width: min(100%, 440px);
+}
+
+.login-intro {
+  margin-bottom: 24px;
+  color: #59645a;
+  line-height: 1.5;
+}
+
+.login-form {
+  display: grid;
+  gap: 10px;
+}
+
+.login-form label {
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.login-form input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid #bfc8bd;
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+}
+
+.login-form .button {
+  margin-top: 16px;
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#f5f4ef" />
+    <title>Administração | Bruna &amp; Diego</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/dashboard.css" />
+  </head>
+  <body data-page="dashboard">
+    <main class="admin-shell" aria-labelledby="page-title">
+      <section class="admin-card">
+        <p class="feedback" id="dashboard-loading" role="status">
+          Verificando sua sessão...
+        </p>
+        <p class="feedback feedback--error" id="dashboard-error" role="alert" hidden></p>
+
+        <section id="dashboard-content" hidden>
+          <header class="dashboard-header">
+            <div>
+              <p class="eyebrow">Área administrativa</p>
+              <h1 id="page-title">Painel de administração</h1>
+            </div>
+            <button class="button button--secondary" id="logout-button" type="button">
+              Sair
+            </button>
+          </header>
+
+          <p class="dashboard-intro">
+            Área privada para administração do convite e dos convidados.
+          </p>
+
+          <section class="guests-panel" aria-labelledby="guests-title">
+            <h2 id="guests-title">Convidados</h2>
+            <div id="guests-content">
+              <p class="feedback" id="guests-loading" role="status" hidden>
+                Carregando convidados...
+              </p>
+              <p class="feedback feedback--error" id="guests-error" role="alert" hidden></p>
+              <p class="guests-placeholder" id="guests-placeholder">
+                A listagem de convidados será disponibilizada nesta área.
+              </p>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="./scripts/main.js"></script>
+  </body>
+</html>

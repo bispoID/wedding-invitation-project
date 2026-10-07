@@ -1,0 +1,50 @@
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.dashboard-header h1 {
+  margin-bottom: 0;
+}
+
+.button--secondary {
+  flex: 0 0 auto;
+  border-color: #bfc8bd;
+  background: #fff;
+  color: #344333;
+}
+
+.button--secondary:hover {
+  background: #f2f4f0;
+}
+
+.dashboard-intro {
+  margin: 20px 0 28px;
+  color: #59645a;
+  line-height: 1.5;
+}
+
+.guests-panel {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e6e0;
+}
+
+.guests-placeholder {
+  margin: 0;
+  padding: 24px;
+  border: 1px dashed #bfc8bd;
+  border-radius: 10px;
+  background: #fafbf9;
+  color: #59645a;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .dashboard-header {
+    flex-direction: column;
+  }
+}
