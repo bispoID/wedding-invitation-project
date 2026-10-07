@@ -424,3 +424,9 @@ entrypoint = "./functions/rsvp/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/rsvp/*.html" ]
+
+[functions.admin-recover-contingency]
+enabled = true
+verify_jwt = true
+max_duration = 120
+import_map = "./functions/admin-recover-contingency/deno.json"
