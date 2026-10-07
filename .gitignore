@@ -27,6 +27,9 @@ documentation/
 document/
 documents/
 doc/
-docs/
+!docs/
+docs/*
+!docs/google-sheets-contingency-recovery.md
+!docs/development_roadmap.md
 
 *.zip

@@ -85,6 +85,20 @@ export function initRsvp() {
         return;
       }
 
+      if (response.status === 202) {
+        const result = await response.json();
+
+        if (
+          result.success === false &&
+          result.contingency === true &&
+          result.error === 'RSVP_SAVED_TO_CONTINGENCY'
+        ) {
+          isSubmitted = true;
+          setContingencyState(rsvpForm, submitButton, feedback);
+          return;
+        }
+      }
+
       setFeedback(
         feedback,
         ERROR_MESSAGES[response.status] ??
@@ -133,6 +147,23 @@ function setSuccessState(form, button, feedback) {
   button.disabled = true;
   form.setAttribute('aria-busy', 'false');
   setFeedback(feedback, 'Presença confirmada! Agradecemos pela sua confirmação.');
+}
+
+/**
+ * Atualiza o formulário após salvar a confirmação na contingência.
+ *
+ * @param {HTMLFormElement} form
+ * @param {HTMLButtonElement} button
+ * @param {HTMLElement} feedback
+ * @returns {void}
+ */
+function setContingencyState(form, button, feedback) {
+  button.disabled = true;
+  form.setAttribute('aria-busy', 'false');
+  setFeedback(
+    feedback,
+    'Sua confirmação foi recebida e salva. Devido a uma instabilidade, ela será processada posteriormente.',
+  );
 }
 
 /**
