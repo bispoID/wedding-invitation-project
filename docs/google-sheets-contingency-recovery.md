@@ -5,6 +5,21 @@ truth. Automated recovery is handled only by the
 `admin-recover-contingency` Supabase Edge Function. The administrative browser
 must never access Google Sheets or its credentials directly.
 
+## Dashboard listing
+
+The dashboard loads pending rows through the separate
+`admin-list-contingency` Edge Function. It verifies the JWT and administrator
+UUID, reads the worksheet on the backend, and returns only the request ID,
+creation date, name, email, attendance, companions, status, error type, and
+sync timestamp. Rows whose status is not `pending` are not returned. The
+`attendance` field accepts either `attendance` or `presence` as its worksheet
+header.
+
+The browser sends only the `request_id` when it invokes
+`admin-recover-contingency`. A conflict or failure leaves the row visible; the
+dashboard refreshes the list only after the function confirms successful
+reconciliation and removal.
+
 ## Automated recovery contract
 
 The administrator submits only a `request_id`, together with the Supabase

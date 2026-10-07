@@ -90,6 +90,76 @@
   line-height: 1.5;
 }
 
+.contingency-panel .feedback {
+  margin: 16px 0 0;
+}
+
+.contingency-panel .feedback--error {
+  color: #8e2e21;
+}
+
+.feedback--success {
+  color: #2f613d;
+}
+
+.contingency-panel .feedback--success {
+  color: #2f613d;
+}
+
+.feedback--warning {
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff8e7;
+  color: #775516;
+}
+
+.contingency-panel .feedback--warning {
+  color: #775516;
+}
+
+.contingency-table-container {
+  overflow-x: auto;
+  margin-top: 16px;
+  border: 1px solid #e2e6e0;
+  border-radius: 10px;
+}
+
+.contingency-table {
+  width: 100%;
+  min-width: 1080px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.contingency-table th,
+.contingency-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e6e0;
+  vertical-align: top;
+}
+
+.contingency-table th {
+  background: #f5f7f3;
+  color: #344333;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.contingency-table td {
+  color: #39443a;
+  overflow-wrap: anywhere;
+}
+
+.contingency-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.button--small {
+  min-height: 38px;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
 @media (max-width: 480px) {
   .dashboard-header {
     flex-direction: column;
@@ -97,5 +167,9 @@
 
   .guests-table {
     min-width: 760px;
+  }
+
+  .admin-card {
+    overflow: hidden;
   }
 }

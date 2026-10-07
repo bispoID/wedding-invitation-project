@@ -430,3 +430,9 @@ enabled = true
 verify_jwt = true
 max_duration = 120
 import_map = "./functions/admin-recover-contingency/deno.json"
+
+[functions.admin-list-contingency]
+enabled = true
+verify_jwt = true
+max_duration = 60
+import_map = "./functions/admin-list-contingency/deno.json"

@@ -8,6 +8,7 @@ const REQUIRED_HEADERS = [
   "companions",
   "status",
 ];
+const OPTIONAL_HEADERS = ["created_at", "error_type", "synced_at"];
 const HEADER_ALIASES: Record<string, string[]> = {
   attendance: ["attendance", "presence"],
 };
@@ -27,11 +28,14 @@ export interface ContingencyRsvp {
 export interface ContingencyRow {
   rowNumber: number;
   requestId: string;
+  createdAt: string;
   name: string;
   email: string;
   attendance: unknown;
   companions: unknown;
   status: string;
+  errorType: string;
+  syncedAt: string;
 }
 
 export class GoogleSheetsError extends Error {
@@ -324,6 +328,21 @@ export async function readContingencyRows(): Promise<ContingencyRow[]> {
     columnIndexes.set(header, indexes[0]);
   }
 
+  for (const header of OPTIONAL_HEADERS) {
+    const indexes = headers
+      .map((value, index) => value === header ? index : -1)
+      .filter((index) => index !== -1);
+
+    if (indexes.length > 1) {
+      columnIssues.push(`duplicate:${header}`);
+      continue;
+    }
+
+    if (indexes.length === 1) {
+      columnIndexes.set(header, indexes[0]);
+    }
+  }
+
   if (columnIssues.length > 0) {
     throw new GoogleSheetsError(
       "read",
@@ -334,7 +353,7 @@ export async function readContingencyRows(): Promise<ContingencyRow[]> {
   }
 
   const getCell = (row: unknown[], header: string): unknown =>
-    row[columnIndexes.get(header)!] ?? "";
+    columnIndexes.has(header) ? row[columnIndexes.get(header)!] ?? "" : "";
 
   return values.slice(1).flatMap((row, index) => {
     const requestId = String(getCell(row, "request_id")).trim();
@@ -346,11 +365,14 @@ export async function readContingencyRows(): Promise<ContingencyRow[]> {
     return [{
       rowNumber: index + 2,
       requestId,
+      createdAt: String(getCell(row, "created_at")),
       name: String(getCell(row, "name")),
       email: String(getCell(row, "email")),
       attendance: getCell(row, "attendance"),
       companions: getCell(row, "companions"),
       status: String(getCell(row, "status")).trim().toLowerCase(),
+      errorType: String(getCell(row, "error_type")),
+      syncedAt: String(getCell(row, "synced_at")),
     }];
   });
 }

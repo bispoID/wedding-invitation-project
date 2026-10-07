@@ -81,6 +81,13 @@ Deno.test({
         true,
         "Presence should map to attendance",
       );
+      assertEquals(
+        rows[0].createdAt,
+        "2026-01-01T00:00:00.000Z",
+        "Creation date should be mapped",
+      );
+      assertEquals(rows[0].errorType, "test", "Error type should be mapped");
+      assertEquals(rows[0].syncedAt, "", "Sync timestamp should be mapped");
 
       sheetValues = [
         [

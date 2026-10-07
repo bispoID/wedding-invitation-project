@@ -69,9 +69,38 @@
 
           <section class="contingency-panel" aria-labelledby="contingency-title">
             <h2 id="contingency-title">Contingência</h2>
-            <p>
-              Registros preservados na contingência serão exibidos nesta área.
+            <p class="feedback" id="contingency-loading" role="status" hidden>
+              Carregando registros pendentes...
             </p>
+            <p class="feedback feedback--error" id="contingency-error" role="alert" hidden></p>
+            <p class="feedback feedback--success" id="contingency-feedback" role="status" aria-live="polite" hidden></p>
+            <p class="guests-placeholder" id="contingency-empty" role="status" hidden>
+              Nenhum registro pendente na contingência.
+            </p>
+            <div
+              class="contingency-table-container"
+              id="contingency-table-container"
+              role="region"
+              aria-label="Registros pendentes da contingência"
+              tabindex="0"
+              hidden
+            >
+              <table class="contingency-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Request ID</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Presença</th>
+                    <th scope="col">Acompanhantes</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="contingency-table-body"></tbody>
+              </table>
+            </div>
           </section>
         </section>
       </section>
