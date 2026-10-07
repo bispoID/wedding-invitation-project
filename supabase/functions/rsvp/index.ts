@@ -1,10 +1,13 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { saveToGoogleSheets } from "./google-sheets.ts";
+import { notifyAdmin } from "./notify-admin.ts";
 
 async function hashIp(ip: string): Promise<string> {
   const secret = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
+  // Derive a stable rate-limit key without persisting the raw client IP.
   const data = new TextEncoder().encode(`${secret}:${ip}`);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
 
@@ -14,6 +17,7 @@ async function hashIp(ip: string): Promise<string> {
 }
 
 function getClientIp(req: Request): string {
+  // Use the first forwarded address as the client key for per-IP throttling.
   const forwardedFor = req.headers.get("x-forwarded-for");
 
   if (forwardedFor) {
@@ -21,173 +25,6 @@ function getClientIp(req: Request): string {
   }
 
   return "unknown";
-}
-
-interface ContingencyRsvp {
-  request_id: string;
-  created_at: string;
-  name: string;
-  email: string;
-  attendance: boolean;
-  companions: number;
-  status: "pending";
-  error_type: string;
-  synced_at: string;
-}
-
-interface AdminAlert {
-  request_id: string;
-  occurred_at: string;
-  failure_type: string;
-  contingency_status: "pending" | "failed";
-  email: string;
-  name: string;
-  companions: number;
-}
-
-function notifyAdmin(alert: AdminAlert): void {
-  try {
-    console.error("RSVP contingency alert", alert);
-  } catch (error) {
-    console.warn(
-      "Could not write RSVP contingency alert to Supabase Logs",
-      error instanceof Error ? error.message : "Unknown logging error",
-    );
-  }
-}
-
-async function saveToGoogleSheets(
-  rsvp: ContingencyRsvp,
-): Promise<void> {
-  const serviceAccountBase64 = Deno.env.get(
-    "GOOGLE_SERVICE_ACCOUNT_JSON_B64",
-  );
-
-  const spreadsheetId = Deno.env.get(
-    "GOOGLE_SPREADSHEET_ID",
-  );
-
-  if (!serviceAccountBase64 || !spreadsheetId) {
-    throw new Error("Google Sheets configuration is missing");
-  }
-
-  const serviceAccount = JSON.parse(
-    atob(serviceAccountBase64),
-  );
-
-  const now = Math.floor(Date.now() / 1000);
-
-  const base64UrlEncode = (value: string): string =>
-    btoa(value)
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/, "");
-
-  const header = base64UrlEncode(
-    JSON.stringify({
-      alg: "RS256",
-      typ: "JWT",
-    }),
-  );
-
-  const payload = base64UrlEncode(
-    JSON.stringify({
-      iss: serviceAccount.client_email,
-      scope: "https://www.googleapis.com/auth/spreadsheets",
-      aud: "https://oauth2.googleapis.com/token",
-      iat: now,
-      exp: now + 3600,
-    }),
-  );
-
-  const unsignedToken = `${header}.${payload}`;
-
-  const privateKeyPem = serviceAccount.private_key
-    .replace("-----BEGIN PRIVATE KEY-----", "")
-    .replace("-----END PRIVATE KEY-----", "")
-    .replace(/\s/g, "");
-
-  const privateKeyDer = Uint8Array.from(
-    atob(privateKeyPem),
-    (char) => char.charCodeAt(0),
-  );
-
-  const privateKey = await crypto.subtle.importKey(
-    "pkcs8",
-    privateKeyDer,
-    {
-      name: "RSASSA-PKCS1-v1_5",
-      hash: "SHA-256",
-    },
-    false,
-    ["sign"],
-  );
-
-  const signature = await crypto.subtle.sign(
-    "RSASSA-PKCS1-v1_5",
-    privateKey,
-    new TextEncoder().encode(unsignedToken),
-  );
-
-  const signatureBase64 = base64UrlEncode(
-    String.fromCharCode(...new Uint8Array(signature)),
-  );
-
-  const jwt = `${unsignedToken}.${signatureBase64}`;
-
-  const tokenResponse = await fetch(
-    "https://oauth2.googleapis.com/token",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        assertion: jwt,
-      }),
-    },
-  );
-
-  if (!tokenResponse.ok) {
-    throw new Error(
-      `Google OAuth error: ${tokenResponse.status}`,
-    );
-  }
-
-  const tokenData = await tokenResponse.json();
-
-  const sheetsResponse = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/RSVP:append?valueInputOption=USER_ENTERED`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${tokenData.access_token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        values: [[
-          rsvp.request_id,
-          rsvp.created_at,
-          rsvp.name,
-          rsvp.email,
-          rsvp.attendance,
-          rsvp.companions,
-          rsvp.status,
-          rsvp.error_type,
-          rsvp.synced_at,
-        ]],
-      }),
-    },
-  );
-
-  if (!sheetsResponse.ok) {
-    const errorBody = await sheetsResponse.text();
-
-    throw new Error(
-      `Google Sheets error: ${sheetsResponse.status} ${errorBody}`,
-    );
-  }
 }
 
 Deno.serve(async (req) => {
@@ -215,7 +52,7 @@ Deno.serve(async (req) => {
     );
   }
 
-  // Rate limiting
+  // Count every POST attempt, including malformed payloads, before parsing it.
   try {
     const clientIp = getClientIp(req);
     const ipHash = await hashIp(clientIp);
@@ -408,6 +245,7 @@ Deno.serve(async (req) => {
     console.error("Database error:", databaseError);
 
     if (databaseError.code === "23505") {
+      // Duplicate RSVPs are a business conflict, not an infrastructure failure.
       return Response.json(
         {
           success: false,
@@ -420,6 +258,7 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Only persistence failures reach the temporary contingency queue.
     try {
       await saveToGoogleSheets({
         request_id: requestId,
@@ -443,6 +282,7 @@ Deno.serve(async (req) => {
         companions,
       });
 
+      // 202 means the RSVP is preserved, but still needs manual synchronization.
       return Response.json(
         {
           success: false,
@@ -457,6 +297,7 @@ Deno.serve(async (req) => {
     } catch (error) {
       console.error("Google Sheets contingency error:", error);
 
+      // Neither store accepted the RSVP, so do not report it as received.
       notifyAdmin({
         request_id: requestId,
         occurred_at: new Date().toISOString(),
