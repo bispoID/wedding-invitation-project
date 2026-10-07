@@ -266,12 +266,12 @@ Objetivo: criar o ambiente privado para gerenciamento dos convidados.
 - [x] Verificar sessão e proteger o acesso ao dashboard.
 - [x] Implementar logout.
 - [x] Criar estrutura inicial do dashboard com estados de carregamento e erro.
-- [ ] Configurar a chave pública Supabase em `invite-app/admin/scripts/supabase-config.js`.
-- [ ] Criar listagem de convidados.
-- [ ] Exibir nome.
-- [ ] Exibir e-mail.
-- [ ] Exibir presença.
-- [ ] Exibir acompanhantes.
+- [x] Configurar a chave pública Supabase em `invite-app/admin/scripts/supabase-config.js`.
+- [x] Criar listagem administrativa de convidados via sessão autenticada e RLS.
+- [x] Exibir nome, e-mail, presença, acompanhantes e data de envio.
+- [x] Implementar estados de carregamento, erro e lista vazia.
+- [x] Criar seção visual inicial para futura área de contingência.
+- [ ] Integrar a leitura administrativa da contingência do Google Sheets (Bloco 7C).
 - [ ] Permitir correção manual dos dados.
 - [ ] Permitir exclusão, se necessária.
 - [ ] Criar indicadores/resumos posteriormente.
@@ -539,9 +539,10 @@ Não avançar simplesmente porque a implementação "parece pronta".
 **Fase 6 — Contingência: concluída.**
 
 **Fase 7 — Área administrativa: em andamento.** A base de login com Supabase
-Auth, verificação de sessão, logout e estrutura inicial protegida do dashboard
-foi implementada. Falta configurar a chave pública do projeto no frontend e
-implementar a listagem/gerenciamento de convidados nas etapas posteriores.
+Auth, verificação de sessão, logout e listagem dos convidados via RLS foram
+implementados. A seção visual de contingência está preparada; sua leitura e
+recuperação permanecem para o Bloco 7C. Edição, exclusão e indicadores também
+permanecem pendentes.
 
 As Fases 1 a 3, 5 e 6 estão concluídas. A Fase 4 permanece pendente
 exclusivamente da validação final do rate limiting.

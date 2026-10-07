@@ -31,7 +31,7 @@ input {
 }
 
 .admin-card {
-  width: min(100%, 760px);
+  width: min(100%, 1120px);
   padding: clamp(24px, 5vw, 48px);
   border: 1px solid #d9ddd6;
   border-radius: 16px;

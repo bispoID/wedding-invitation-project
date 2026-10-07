@@ -1,5 +1,5 @@
 import { getCurrentSession, signIn, signOut } from './auth.js';
-import { showGuestsPlaceholder } from './guests.js';
+import { getGuests } from './guests.js';
 
 const page = document.body.dataset.page;
 
@@ -74,27 +74,99 @@ async function initializeDashboard() {
 
     loadingMessage.hidden = true;
     content.hidden = false;
-    showGuestsPlaceholder();
+
+    logoutButton.addEventListener('click', async () => {
+      logoutButton.disabled = true;
+      logoutButton.textContent = 'Saindo...';
+      errorMessage.hidden = true;
+
+      try {
+        await signOut();
+        window.location.replace('./login.html');
+      } catch (error) {
+        showError(errorMessage, `Não foi possível encerrar a sessão. ${getErrorMessage(error)}`);
+        logoutButton.disabled = false;
+        logoutButton.textContent = 'Sair';
+      }
+    });
+
+    await loadGuests();
   } catch (error) {
     loadingMessage.hidden = true;
     showError(errorMessage, getErrorMessage(error));
-    return;
+  }
+}
+
+async function loadGuests() {
+  const loadingMessage = document.querySelector('#guests-loading');
+  const errorMessage = document.querySelector('#guests-error');
+  const emptyMessage = document.querySelector('#guests-empty');
+  const tableContainer = document.querySelector('#guests-table-container');
+  const tableBody = document.querySelector('#guests-table-body');
+
+  loadingMessage.hidden = false;
+  errorMessage.hidden = true;
+  emptyMessage.hidden = true;
+  tableContainer.hidden = true;
+  tableBody.replaceChildren();
+
+  try {
+    const guests = await getGuests();
+    loadingMessage.hidden = true;
+
+    if (guests.length === 0) {
+      emptyMessage.hidden = false;
+      return;
+    }
+
+    for (const guest of guests) {
+      tableBody.append(createGuestRow(guest));
+    }
+
+    tableContainer.hidden = false;
+  } catch (error) {
+    console.error('Erro ao carregar convidados:', error);
+    loadingMessage.hidden = true;
+    showError(
+      errorMessage,
+      'Não foi possível carregar a lista de convidados. Tente atualizar a página.'
+    );
+  }
+}
+
+function createGuestRow(guest) {
+  const row = document.createElement('tr');
+  const attendance = guest.attendance ? 'Confirmado' : 'Não poderá comparecer';
+  const createdAt = formatDate(guest.created_at);
+
+  row.append(
+    createCell(guest.name),
+    createCell(guest.email),
+    createCell(attendance),
+    createCell(String(guest.companions)),
+    createCell(createdAt)
+  );
+
+  return row;
+}
+
+function createCell(value) {
+  const cell = document.createElement('td');
+  cell.textContent = value;
+  return cell;
+}
+
+function formatDate(value) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return '—';
   }
 
-  logoutButton.addEventListener('click', async () => {
-    logoutButton.disabled = true;
-    logoutButton.textContent = 'Saindo...';
-    errorMessage.hidden = true;
-
-    try {
-      await signOut();
-      window.location.replace('./login.html');
-    } catch (error) {
-      showError(errorMessage, `Não foi possível encerrar a sessão. ${getErrorMessage(error)}`);
-      logoutButton.disabled = false;
-      logoutButton.textContent = 'Sair';
-    }
-  });
+  return new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  }).format(date);
 }
 
 function showError(element, message) {

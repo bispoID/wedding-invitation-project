@@ -40,10 +40,38 @@
                 Carregando convidados...
               </p>
               <p class="feedback feedback--error" id="guests-error" role="alert" hidden></p>
-              <p class="guests-placeholder" id="guests-placeholder">
-                A listagem de convidados será disponibilizada nesta área.
+              <p class="guests-placeholder" id="guests-empty" role="status" hidden>
+                Nenhum convidado cadastrado.
               </p>
+              <div
+                class="guests-table-container"
+                id="guests-table-container"
+                role="region"
+                aria-label="Lista de convidados"
+                tabindex="0"
+                hidden
+              >
+                <table class="guests-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nome</th>
+                      <th scope="col">E-mail</th>
+                      <th scope="col">Presença</th>
+                      <th scope="col">Acompanhantes</th>
+                      <th scope="col">Data de envio</th>
+                    </tr>
+                  </thead>
+                  <tbody id="guests-table-body"></tbody>
+                </table>
+              </div>
             </div>
+          </section>
+
+          <section class="contingency-panel" aria-labelledby="contingency-title">
+            <h2 id="contingency-title">Contingência</h2>
+            <p>
+              Registros preservados na contingência serão exibidos nesta área.
+            </p>
           </section>
         </section>
       </section>

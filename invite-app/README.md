@@ -11,7 +11,7 @@ Aplicação estática inicial do convite virtual.
 - **Assets de estilo:** imagens usadas pelo CSS também ficam centralizadas como tokens `--asset-*` em `styles/base/variables.css`.
 - **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` envia o RSVP à Supabase Edge Function.
 - **Modo desenvolvedor:** `scripts/devmode/preview.js` controla os previews estáticos e `styles/devmode/devmode.css` concentra os estilos do painel.
-- **Área administrativa:** `admin/` mantém o login Supabase Auth e o dashboard inicial separados do fluxo público do convite e RSVP.
+- **Área administrativa:** `admin/` mantém o login Supabase Auth, a listagem autenticada de convidados e uma seção informativa de contingência separados do fluxo público do convite e RSVP.
 
 Essa estrutura vanilla é suficiente para a Fase 1 e evita adicionar framework ou build system antes de existir uma necessidade real.
 

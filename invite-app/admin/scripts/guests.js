@@ -1,9 +1,15 @@
-export function showGuestsPlaceholder() {
-  const loading = document.querySelector('#guests-loading');
-  const error = document.querySelector('#guests-error');
-  const placeholder = document.querySelector('#guests-placeholder');
+import { getSupabaseClient } from './supabase.js';
 
-  loading.hidden = true;
-  error.hidden = true;
-  placeholder.hidden = false;
+export async function getGuests() {
+  const supabase = await getSupabaseClient();
+  const { data, error } = await supabase
+    .from('guests')
+    .select('id, name, email, attendance, companions, created_at, updated_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
