@@ -35,11 +35,34 @@
 
           <section class="guests-panel" aria-labelledby="guests-title">
             <h2 id="guests-title">Convidados</h2>
+            <div class="guest-metrics" aria-label="Resumo dos convidados">
+              <article class="guest-metric">
+                <h3>Total de convidados</h3>
+                <p id="metric-total">—</p>
+              </article>
+              <article class="guest-metric">
+                <h3>Confirmados</h3>
+                <p id="metric-confirmed">—</p>
+              </article>
+              <article class="guest-metric">
+                <h3>Não poderão comparecer</h3>
+                <p id="metric-declined">—</p>
+              </article>
+              <article class="guest-metric">
+                <h3>Total de acompanhantes</h3>
+                <p id="metric-companions">—</p>
+              </article>
+              <article class="guest-metric">
+                <h3>Total de pessoas confirmadas</h3>
+                <p id="metric-confirmed-people">—</p>
+              </article>
+            </div>
             <div id="guests-content">
               <p class="feedback" id="guests-loading" role="status" hidden>
                 Carregando convidados...
               </p>
               <p class="feedback feedback--error" id="guests-error" role="alert" hidden></p>
+              <p class="feedback feedback--success" id="guests-feedback" role="status" aria-live="polite" hidden></p>
               <p class="guests-placeholder" id="guests-empty" role="status" hidden>
                 Nenhum convidado cadastrado.
               </p>
@@ -59,6 +82,7 @@
                       <th scope="col">Presença</th>
                       <th scope="col">Acompanhantes</th>
                       <th scope="col">Data de envio</th>
+                      <th scope="col">Ações</th>
                     </tr>
                   </thead>
                   <tbody id="guests-table-body"></tbody>
@@ -105,6 +129,37 @@
         </section>
       </section>
     </main>
+    <dialog class="guest-dialog" id="guest-dialog" aria-labelledby="guest-dialog-title">
+      <form id="guest-form" novalidate>
+        <h2 id="guest-dialog-title">Editar convidado</h2>
+        <p class="feedback feedback--error" id="guest-form-error" role="alert" hidden></p>
+        <label for="guest-name">Nome</label>
+        <input id="guest-name" name="name" type="text" maxlength="200" required />
+        <label for="guest-email">E-mail</label>
+        <input id="guest-email" name="email" type="email" maxlength="320" required />
+        <label for="guest-attendance">Presença</label>
+        <select id="guest-attendance" name="attendance" required>
+          <option value="true">Confirmado</option>
+          <option value="false">Não poderá comparecer</option>
+        </select>
+        <label for="guest-companions">Acompanhantes</label>
+        <input
+          id="guest-companions"
+          name="companions"
+          type="number"
+          min="0"
+          max="15"
+          step="1"
+          required
+        />
+        <div class="guest-dialog-actions">
+          <button class="button button--secondary" id="guest-cancel" type="button">
+            Cancelar
+          </button>
+          <button class="button" id="guest-save" type="submit">Salvar alterações</button>
+        </div>
+      </form>
+    </dialog>
     <script type="module" src="./scripts/main.js"></script>
   </body>
 </html>

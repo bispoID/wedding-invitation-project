@@ -54,3 +54,9 @@ export async function recoverContingency(requestId) {
     body: { request_id: requestId },
   });
 }
+
+export async function manageGuest(action, id, guest) {
+  return callAdminFunction('admin-manage-guests', {
+    body: { action, id, ...(action === 'update' ? { guest } : {}) },
+  });
+}

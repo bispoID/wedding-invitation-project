@@ -436,3 +436,9 @@ enabled = true
 verify_jwt = true
 max_duration = 60
 import_map = "./functions/admin-list-contingency/deno.json"
+
+[functions.admin-manage-guests]
+enabled = true
+verify_jwt = true
+max_duration = 30
+import_map = "./functions/admin-manage-guests/deno.json"

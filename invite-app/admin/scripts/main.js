@@ -1,6 +1,7 @@
 import { getCurrentSession, signIn, signOut } from './auth.js';
-import { getPendingContingency, recoverContingency } from './contingency.js';
+import { getPendingContingency, manageGuest, recoverContingency } from './contingency.js';
 import { getGuests } from './guests.js';
+import { calculateGuestMetrics } from './guest-metrics.js';
 
 const page = document.body.dataset.page;
 
@@ -91,6 +92,7 @@ async function initializeDashboard() {
       }
     });
 
+    initializeGuestEditor();
     await Promise.all([loadGuests(), loadContingency()]);
   } catch (error) {
     loadingMessage.hidden = true;
@@ -104,15 +106,18 @@ async function loadGuests() {
   const emptyMessage = document.querySelector('#guests-empty');
   const tableContainer = document.querySelector('#guests-table-container');
   const tableBody = document.querySelector('#guests-table-body');
+  const feedbackMessage = document.querySelector('#guests-feedback');
 
   loadingMessage.hidden = false;
   errorMessage.hidden = true;
   emptyMessage.hidden = true;
   tableContainer.hidden = true;
   tableBody.replaceChildren();
+  feedbackMessage.hidden = true;
 
   try {
     const guests = await getGuests();
+    updateGuestMetrics(guests);
     loadingMessage.hidden = true;
 
     if (guests.length === 0) {
@@ -135,20 +140,182 @@ async function loadGuests() {
   }
 }
 
+function updateGuestMetrics(guests) {
+  const metrics = calculateGuestMetrics(guests);
+  document.querySelector('#metric-total').textContent = String(metrics.totalGuests);
+  document.querySelector('#metric-confirmed').textContent = String(metrics.confirmedGuests);
+  document.querySelector('#metric-declined').textContent = String(metrics.declinedGuests);
+  document.querySelector('#metric-companions').textContent = String(metrics.totalCompanions);
+  document.querySelector('#metric-confirmed-people').textContent = String(metrics.confirmedPeople);
+}
+
 function createGuestRow(guest) {
   const row = document.createElement('tr');
   const attendance = guest.attendance ? 'Confirmado' : 'Não poderá comparecer';
   const createdAt = formatDate(guest.created_at);
+  const actions = document.createElement('td');
+  const editButton = document.createElement('button');
+  const deleteButton = document.createElement('button');
+
+  editButton.className = 'button button--small';
+  editButton.type = 'button';
+  editButton.textContent = 'Editar';
+  editButton.setAttribute('aria-label', `Editar ${guest.name}`);
+  editButton.addEventListener('click', () => openGuestEditor(guest));
+
+  deleteButton.className = 'button button--small button--danger';
+  deleteButton.type = 'button';
+  deleteButton.textContent = 'Excluir';
+  deleteButton.setAttribute('aria-label', `Excluir ${guest.name}`);
+  deleteButton.addEventListener('click', () => deleteGuestRecord(guest, deleteButton));
+  actions.className = 'guest-actions';
+  actions.append(editButton, deleteButton);
 
   row.append(
     createCell(guest.name),
     createCell(guest.email),
     createCell(attendance),
     createCell(String(guest.companions)),
-    createCell(createdAt)
+    createCell(createdAt),
+    actions
   );
 
   return row;
+}
+
+function initializeGuestEditor() {
+  const dialog = document.querySelector('#guest-dialog');
+  const form = document.querySelector('#guest-form');
+  const attendance = document.querySelector('#guest-attendance');
+  const companions = document.querySelector('#guest-companions');
+  const cancelButton = document.querySelector('#guest-cancel');
+  const saveButton = document.querySelector('#guest-save');
+
+  attendance.addEventListener('change', () => {
+    const attending = attendance.value === 'true';
+    companions.disabled = !attending;
+    if (!attending) {
+      companions.value = '0';
+    }
+  });
+
+  cancelButton.addEventListener('click', () => dialog.close());
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const errorMessage = document.querySelector('#guest-form-error');
+    errorMessage.hidden = true;
+
+    const id = form.dataset.guestId;
+    const formData = new FormData(form);
+    const name = String(formData.get('name')).trim();
+    const email = String(formData.get('email')).trim().toLowerCase();
+    const attendanceValue = String(formData.get('attendance'));
+    const companionsValue = document.querySelector('#guest-companions').value.trim();
+    const companionsCount = Number(companionsValue);
+
+    if (!name) {
+      showError(errorMessage, 'O nome é obrigatório.');
+      document.querySelector('#guest-name').focus();
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError(errorMessage, 'Informe um e-mail válido.');
+      document.querySelector('#guest-email').focus();
+      return;
+    }
+
+    if (
+      !['true', 'false'].includes(attendanceValue) ||
+      !Number.isInteger(companionsCount) ||
+      companionsCount < 0 ||
+      companionsCount > 15
+    ) {
+      showError(errorMessage, 'Confira a presença e a quantidade de acompanhantes (0 a 15).');
+      return;
+    }
+
+    saveButton.disabled = true;
+    saveButton.textContent = 'Salvando...';
+    form.setAttribute('aria-busy', 'true');
+
+    try {
+      await manageGuest('update', id, {
+        name,
+        email,
+        attendance: attendanceValue === 'true',
+        companions: attendanceValue === 'true' ? companionsCount : 0,
+      });
+      dialog.close();
+      form.reset();
+      delete form.dataset.guestId;
+      await loadGuests();
+      setGuestFeedback('Dados do convidado atualizados.', 'success');
+    } catch (error) {
+      showError(errorMessage, getGuestMutationMessage(error));
+    } finally {
+      saveButton.disabled = false;
+      saveButton.textContent = 'Salvar alterações';
+      form.removeAttribute('aria-busy');
+    }
+  });
+}
+
+function openGuestEditor(guest) {
+  const dialog = document.querySelector('#guest-dialog');
+  const form = document.querySelector('#guest-form');
+  form.dataset.guestId = guest.id;
+  form.elements.name.value = guest.name;
+  form.elements.email.value = guest.email;
+  form.elements.attendance.value = String(guest.attendance);
+  form.elements.companions.value = String(guest.companions);
+  form.elements.companions.disabled = !guest.attendance;
+  document.querySelector('#guest-form-error').hidden = true;
+  dialog.showModal();
+  form.elements.name.focus();
+}
+
+async function deleteGuestRecord(guest, button) {
+  const confirmed = window.confirm(
+    `Excluir o convidado "${guest.name}" (${guest.email})? Esta ação não pode ser desfeita.`
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Excluindo...';
+  button.setAttribute('aria-busy', 'true');
+
+  try {
+    await manageGuest('delete', guest.id);
+    await loadGuests();
+    setGuestFeedback('Convidado excluído.', 'success');
+  } catch (error) {
+    setGuestFeedback(getGuestMutationMessage(error), 'error');
+    button.disabled = false;
+    button.textContent = 'Excluir';
+    button.removeAttribute('aria-busy');
+  }
+}
+
+function getGuestMutationMessage(error) {
+  if (error?.code === 'EMAIL_ALREADY_REGISTERED') {
+    return 'Este e-mail já está associado a outro convidado. Os dados atuais foram preservados.';
+  }
+
+  return error instanceof Error && error.message
+    ? error.message
+    : 'Não foi possível salvar a alteração.';
+}
+
+function setGuestFeedback(message, type) {
+  const feedbackMessage = document.querySelector('#guests-feedback');
+  feedbackMessage.className = `feedback feedback--${type}`;
+  feedbackMessage.textContent = message;
+  feedbackMessage.hidden = false;
 }
 
 async function loadContingency({ preserveFeedback = false } = {}) {

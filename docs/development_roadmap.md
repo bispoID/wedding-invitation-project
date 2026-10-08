@@ -270,19 +270,20 @@ Objetivo: criar o ambiente privado para gerenciamento dos convidados.
 - [x] Criar listagem administrativa de convidados via sessão autenticada e RLS.
 - [x] Exibir nome, e-mail, presença, acompanhantes e data de envio.
 - [x] Implementar estados de carregamento, erro e lista vazia.
-- [x] Criar seção visual inicial para futura área de contingência.
-- [ ] Integrar a leitura administrativa da contingência do Google Sheets (Bloco 7C).
-- [ ] Permitir correção manual dos dados.
-- [ ] Permitir exclusão, se necessária.
-- [ ] Criar indicadores/resumos posteriormente.
+- [x] 7A — Implementar a base administrativa privada, autenticação e dashboard.
+- [x] 7B — Listar os convidados e validar a consulta autenticada.
+- [x] 7C.1 — Recuperar com segurança registros da contingência.
+- [x] 7C.2 — Listar e recuperar registros pendentes da contingência no dashboard.
+- [x] 7D — Editar e excluir convidados com validação administrativa.
+- [x] 7D — Exibir e recalcular indicadores dos convidados.
+- [x] Documentar a autorização e operação administrativa em `docs/admin-guest-management.md`.
 
-### Indicadores possíveis
+### Indicadores
 
 ```text
 Total de convidados
 Confirmados
-Não confirmados
-Recusaram
+Não poderão comparecer
 Total de acompanhantes
 Total de pessoas confirmadas
 ```
@@ -523,7 +524,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [ ] 04 — API / Edge Function (validação final do rate limiting pendente)
 [x] 05 — RSVP
 [x] 06 — Contingência
-[ ] 07 — Área Administrativa
+[x] 07 — Área Administrativa (Blocos 7A–7D)
 [ ] 08 — Monitoramento
 [ ] 09 — Interface / Design
 [ ] 10 — Integração
@@ -538,13 +539,13 @@ Não avançar simplesmente porque a implementação "parece pronta".
 
 **Fase 6 — Contingência: concluída.**
 
-**Fase 7 — Área administrativa: em andamento.** A base de login com Supabase
-Auth, verificação de sessão, logout e listagem dos convidados via RLS foram
-implementados. A seção visual de contingência está preparada; sua leitura e
-recuperação permanecem para o Bloco 7C. Edição, exclusão e indicadores também
-permanecem pendentes.
+**Fase 7 — Área administrativa: concluída até o Bloco 7D.** Os Blocos 7A e 7B
+entregam autenticação, proteção de sessão e listagem de convidados; o Bloco 7C
+entrega listagem e recuperação da contingência; e o Bloco 7D entrega edição,
+exclusão confirmada e indicadores. O CRUD administrativo foi validado com
+registros sintéticos temporários, removidos ao final.
 
-As Fases 1 a 3, 5 e 6 estão concluídas. A Fase 4 permanece pendente
+As Fases 1 a 3 e 5 a 7 estão concluídas. A Fase 4 permanece pendente
 exclusivamente da validação final do rate limiting.
 
 A proteção contra abuso / rate limiting está implementada na Supabase Edge
