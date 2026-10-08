@@ -1,6 +1,8 @@
 # Invite app
 
-Aplicação estática inicial do convite virtual.
+Aplicação estática do convite virtual, com RSVP e área administrativa integrados.
+GitHub Pages é a hospedagem atual/canônica; Vercel é uma alternativa futura e
+opcional. A arquitetura deve permanecer independente do provedor estático.
 
 ## Arquitetura
 
@@ -13,13 +15,18 @@ Aplicação estática inicial do convite virtual.
 - **Modo desenvolvedor:** `scripts/devmode/preview.js` controla os previews estáticos e `styles/devmode/devmode.css` concentra os estilos do painel.
 - **Área administrativa:** `admin/` mantém o login Supabase Auth, a listagem de convidados restrita ao administrador por Edge Function e uma seção de contingência independente do fluxo público do convite e RSVP.
 
-Essa estrutura vanilla é suficiente para a Fase 1 e evita adicionar framework ou build system antes de existir uma necessidade real.
+Essa estrutura vanilla atende à aplicação atual e evita adicionar framework ou
+build system antes de existir uma necessidade real. A interface e a integração
+já possuem implementação significativa, mas o aceite final permanece pendente
+no roadmap.
 
 ## Como visualizar
 
 Sirva a pasta `invite-app` por HTTP (por exemplo, com o Live Server do VS Code) e acesse `index.html`. A área administrativa fica em `admin/login.html`.
 
-Os nomes e detalhes do evento são dados iniciais do protótipo e deverão ser substituídos pelos dados finais.
+Os nomes e detalhes do evento ainda são dados do protótipo versionados no HTML.
+A retirada dos dados reais/configuráveis do código por meio de `event_config`
+está aprovada para implementação futura; ela não foi realizada neste lote.
 
 ## Configuração da área administrativa
 

@@ -144,12 +144,16 @@ Configuração atual:
 ```text
 Monitor: Supabase — Health Check RSVP
 URL: https://bkkienyemqlkueygknzl.supabase.co/functions/v1/health
-Intervalo: 5 minutos
+Intervalo: 15 minutos
 Método: HEAD
 Autenticação: nenhuma
 Alertas: e-mail
-Estado atual: Up
 ```
+
+O intervalo de 15 minutos é a configuração oficial informada pelo responsável
+pelo projeto. A equalização documental não altera o monitor externo. O estado
+do monitor é transitório e deve ser consultado no UptimeRobot; não é registrado
+como permanentemente saudável neste documento.
 
 Fluxo:
 
@@ -190,8 +194,9 @@ Esse monitor verifica a disponibilidade da página. O monitor do Supabase
 verifica a saúde da infraestrutura necessária ao RSVP. Eles têm objetivos
 diferentes.
 
-O deploy em Vercel pertence a uma fase posterior do roadmap e não é tratado
-como infraestrutura atualmente em produção neste documento.
+GitHub Pages é a hospedagem atual/canônica. Vercel é uma alternativa
+futura/opcional, não uma migração obrigatória nem infraestrutura atual. O
+monitor de health é independente do provedor de hospedagem estática.
 
 ## Limitações
 
@@ -229,9 +234,18 @@ A função publicada foi validada remotamente:
 - `HEAD`: HTTP `200` sem corpo;
 - `POST`: HTTP `405` com `{"error":"METHOD_NOT_ALLOWED"}`.
 
-O TypeScript dos testes foi validado com `deno test --no-run`. A execução
-completa da suíte unitária permanece condicionada ao runner do Deno no Windows,
-que apresentou um panic interno de named pipe antes de executar as asserções.
+O TypeScript dos testes foi validado com `deno test --no-run`. O runner do Deno
+`2.9.7` apresentou panic de named pipe no Windows dentro do isolamento local,
+antes de executar asserções. Em 08/10/2026, a suíte completa executou fora desse
+isolamento, no mesmo Windows: 57 testes aprovados e zero falhas, incluindo os
+dez testes do health. A restrição de rede foi mantida; nenhuma dependência real
+do health foi acessada pelos testes unitários.
+
+O workflow `.github/workflows/test.yml` prepara a baseline completa em Linux,
+incluindo estes testes e as métricas administrativas. Sua criação não comprova
+que uma execução remota já passou; consulte os resultados do GitHub Actions.
+O contrato `GET`/`HEAD`, o RPC e o escopo de pré-requisitos do RSVP permanecem
+inalterados. `event_config` é uma extensão futura e não integra este health.
 
 ## Teste local
 

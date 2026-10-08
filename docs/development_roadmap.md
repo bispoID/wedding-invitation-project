@@ -35,11 +35,11 @@ FASE 9 — INTERFACE / DESIGN
         ↓
 FASE 10 — INTEGRAÇÃO
         ↓
-FASE 11 — VERCEL / AMBIENTE DE DEPLOY
+FASE 11 — HOSPEDAGEM ESTÁTICA / AMBIENTES
         ↓
-FASE 12 — TESTES
+FASE 12 — TESTES / QUALIDADE
         ↓
-FASE 13 — DEPLOY / PRODUÇÃO
+FASE 13 — PUBLICAÇÃO / OPERAÇÃO
 ```
 
 ---
@@ -60,6 +60,9 @@ Objetivo: preparar o repositório e a estrutura inicial da aplicação.
 
 Repositório organizado e pronto para receber as próximas camadas.
 
+**Entrega anterior concluída; extensão pendente:** centralização de App Config
+e preparação portátil do artefato pertencem aos próximos lotes.
+
 ---
 
 # FASE 2 — Banco / Supabase
@@ -77,6 +80,9 @@ Objetivo: criar a estrutura de dados necessária para o RSVP.
 **Resultado esperado:**
 
 Banco estruturado e capaz de armazenar os RSVPs.
+
+**Entrega anterior concluída; extensão pendente:** schema de `event_config` e
+constraints adicionais de convidados serão implementados em lotes posteriores.
 
 ---
 
@@ -117,6 +123,9 @@ DELETE → permitido, se necessário
 
 Banco protegido e permissões funcionando de acordo com o modelo definido.
 
+**Entrega anterior concluída; extensão pendente:** aplicar o padrão de segurança
+às futuras APIs/tabela de evento e revalidar os acessos.
+
 ---
 
 # FASE 4 — API / Edge Function
@@ -147,6 +156,10 @@ Objetivo: criar a camada responsável por receber e processar os RSVPs.
 **Resultado esperado:**
 
 A API consegue receber, validar e persistir um RSVP corretamente, com proteção contra abuso implementada e validada na Edge Function.
+
+**Entrega anterior concluída; extensão pendente:** APIs de configuração do evento,
+validação compartilhada e minimização dos logs. O rate limit não será alterado
+como parte do Lote 1.
 
 ---
 
@@ -182,6 +195,9 @@ Nunca apresentar sucesso falso.
 **Resultado esperado:**
 
 O convidado consegue confirmar presença de forma confiável.
+
+**Entrega anterior concluída; revalidação futura:** preservar os contratos e o
+comportamento do RSVP após as extensões de configuração e validação.
 
 ---
 
@@ -254,6 +270,9 @@ O Google Sheets é uma contingência/fila de emergência, e não um segundo banc
 
 Um problema temporário de infraestrutura não causa perda silenciosa do RSVP.
 
+**Entrega anterior concluída; revalidação futura:** preservar reconciliação,
+lock e limpeza segura após as novas validações e minimização de logs.
+
 ---
 
 # FASE 7 — Área administrativa
@@ -295,6 +314,10 @@ Total de pessoas confirmadas
 
 O administrador consegue visualizar e gerenciar a lista de forma privada.
 
+**Entrega anterior concluída; extensão pendente:** criação manual de convidados,
+edição de `event_config` e navegação para convite/previews. Atualmente existem
+listagem, edição e exclusão; a criação manual ainda não foi implementada.
+
 ---
 
 # FASE 8 — Monitoramento
@@ -330,7 +353,7 @@ O administrador consegue saber quando o sistema precisa de atenção.
 
 Health Check publicado na Supabase Edge Function `health` e validado no
 endpoint remoto. O monitor externo do UptimeRobot consulta o endpoint por
-`HEAD` a cada 5 minutos e envia alertas por e-mail em caso de falha. O
+`HEAD` a cada 15 minutos e envia alertas por e-mail em caso de falha. O
 monitoramento é independente do computador local e não executa o fluxo real de
 RSVP nem gera notificações para confirmações normais.
 
@@ -344,6 +367,11 @@ Detalhes técnicos: [health-check.md](health-check.md). Ferramentas e serviços:
 Objetivo: desenvolver a experiência visual do convite.
 
 Esta fase vem depois da definição da base técnica, evitando construir a interface sobre uma arquitetura ainda instável.
+
+**Estado: PARCIAL.** Envelope/capa, animação, carta, tipografia, monograma,
+informações do evento, RSVP, responsividade e previews já possuem implementação
+significativa. Os itens abaixo permanecem como checklist de aceite final, não
+como afirmação de que a interface está vazia.
 
 - [ ] Definir identidade visual.
 - [ ] Integrar monograma.
@@ -377,11 +405,20 @@ A experiência deve transmitir:
 
 Convite visualmente finalizado e funcional.
 
+**Critérios de conclusão:** validar desktop/mobile, teclado e redução de
+movimento; aprovar layout e nomes longos; nos lotes posteriores, integrar os
+dados de `event_config`, tratar loading/erro/campos opcionais e substituir
+conteúdo/assets personalizados versionados por alternativas genéricas.
+
 ---
 
 # FASE 10 — Integração
 
 Objetivo: conectar todas as camadas.
+
+**Estado: PARCIAL.** RSVP, banco, Auth/admin, contingência e health já estão
+integrados no escopo atual. Falta o aceite ponta a ponta do escopo equalizado,
+incluindo as extensões ainda não implementadas. O checklist é de revalidação.
 
 ```text
 Frontend
@@ -413,34 +450,65 @@ Checklist:
 
 Todo o sistema funciona como uma única aplicação.
 
+**Critérios de conclusão:** validar os contratos atuais e futuros de ponta a
+ponta, configuração única por carregamento, CRUD administrativo completo,
+edição do evento, erros e ausência de regressões no RSVP/contingência.
+
 ---
 
-# FASE 11 — Vercel / Ambiente de Deploy
+# FASE 11 — Hospedagem estática / ambientes
 
-Objetivo: preparar e validar o ambiente de hospedagem da aplicação antes dos testes finais e da publicação em produção.
+Objetivo: validar a hospedagem atual e a portabilidade operacional do frontend
+estático, sem dependência de um provedor nas regras de negócio.
 
-- [ ] Criar conta na Vercel.
-- [ ] Conectar a conta da Vercel ao repositório GitHub.
-- [ ] Criar e configurar o projeto na Vercel.
-- [ ] Configurar o projeto para a estrutura utilizada pelo frontend.
-- [ ] Configurar as variáveis de ambiente necessárias.
-- [ ] Separar corretamente variáveis de ambiente de Preview e Production, quando necessário.
-- [ ] Fazer um primeiro deploy de Preview/validação.
-- [ ] Validar o carregamento do frontend através da Vercel.
-- [ ] Validar a comunicação Frontend → API / Edge Function.
-- [ ] Validar o uso das variáveis de ambiente no ambiente hospedado.
-- [ ] Validar o comportamento da aplicação em ambiente hospedado.
-- [ ] Preparar a configuração de domínio personalizado, se aplicável.
+**Estado: PARCIAL.** GitHub Pages é a hospedagem atual/canônica, com publicação
+implementada. A equalização de URLs, paths e configuração operacional ainda
+depende dos lotes posteriores.
+
+- [x] Implementar publicação de `invite-app` no GitHub Pages por workflow.
+- [ ] Validar paths na raiz e no subpath `/wedding-invitation-project/`.
+- [ ] Validar comunicação Frontend → Edge Functions no ambiente publicado.
+- [ ] Equalizar configuração pública e URLs no lote correspondente.
+- [ ] Validar origins/CORS dos ambientes efetivamente utilizados.
+- [ ] Documentar a preparação e validação do artefato estático.
+- [ ] Validar configuração operacional de Preview/Production, quando necessária.
+
+Vercel é uma alternativa futura/opcional. Caso adotada, configurar publicação
+do mesmo frontend e validar URLs/origins. Não é necessário criar conta, migrar
+ou publicar na Vercel para concluir esta fase. Domínio personalizado também
+permanece opcional.
 
 **Resultado esperado:**
 
-Ambiente de Preview funcionando na Vercel, integrado ao GitHub e com as variáveis de ambiente necessárias configuradas corretamente. A aplicação está pronta para os testes finais antes da publicação em produção.
+GitHub Pages validado, configuração operacional documentada e portabilidade de
+paths verificada, sem modificar regras de negócio. A aplicação está pronta
+para os testes finais no provedor estático escolhido.
 
 ---
 
-# FASE 12 — Testes
+# FASE 12 — Testes / qualidade
 
 Objetivo: verificar funcionamento, segurança, confiabilidade e experiência.
+
+**Estado: PARCIAL.** Existem sete arquivos de teste das Functions e um de
+métricas administrativas. O Lote 1 acrescenta a baseline em Linux/CI, sem
+representar aceite completo de segurança, integração ou interface.
+
+## Baseline automatizada
+
+- [x] Criar workflow independente `.github/workflows/test.yml` em Linux.
+- [x] Configurar descoberta de JavaScript versionado e `node --check`.
+- [x] Incluir testes das Functions e o teste de métricas explicitamente.
+- [x] Restringir permissões dos testes e dispensar secrets de produção.
+- [x] Configurar verificação de whitespace.
+- [x] Executar os oito arquivos localmente fora do isolamento: 57 testes aprovados em 08/10/2026.
+- [ ] Confirmar execução bem-sucedida do workflow no GitHub Actions.
+
+O workflow utiliza Node.js `22.14.0` e Deno `2.9.7` em `ubuntu-24.04`. A execução
+Windows dentro do isolamento local apresentou panic de named pipe no runner;
+o mesmo comando passou fora do isolamento, com 57 testes e zero falhas.
+`--no-run` é checagem, não execução de asserções. Resultados Linux ainda devem ser confirmados após
+revisão/publicação. Comandos e permissões: [external-services.md](external-services.md#baseline-linux--ci).
 
 ## RSVP
 
@@ -481,19 +549,29 @@ Objetivo: verificar funcionamento, segurança, confiabilidade e experiência.
 
 Sistema validado antes da publicação.
 
+**Critérios de conclusão:** suíte executada em runtime funcional e evidências
+dos testes de RLS/CORS, RSVP, admin, contingência, health e interface. As futuras
+APIs de evento, limites e portabilidade deverão integrar esse aceite, sem
+testes destrutivos em produção.
+
 ---
 
-# FASE 13 — Deploy / Produção
+# FASE 13 — Publicação / operação
 
 Objetivo: colocar o sistema em funcionamento real.
 
-- [ ] Promover/publicar a versão validada na Vercel em Production.
-- [ ] Revisar e configurar as variáveis de ambiente de Production.
+**Estado: PUBLICADO; ACEITE FINAL PENDENTE.** O frontend atual já está publicado
+via GitHub Pages e a infraestrutura Supabase possui validações anteriores. A
+publicação existente não equivale ao aceite do escopo equalizado.
+
+- [x] Disponibilizar a publicação atual via GitHub Pages.
+- [ ] Publicar a versão equalizada somente após os critérios das Fases 10 a 12.
+- [ ] Revisar a configuração pública e operacional do ambiente escolhido.
 - [ ] Confirmar a configuração do Supabase de produção.
 - [ ] Configurar monitoramento.
 - [ ] Validar health check.
-- [ ] Fazer testes reais.
-- [ ] Testar RSVP em produção.
+- [ ] Realizar smoke checks não destrutivos no ambiente publicado.
+- [ ] Validar o RSVP completo em ambiente de teste com registros sintéticos.
 - [ ] Testar área administrativa.
 - [ ] Validar contingência.
 - [ ] Validar segurança.
@@ -502,6 +580,10 @@ Objetivo: colocar o sistema em funcionamento real.
 **Resultado esperado:**
 
 Convite disponível para os convidados e infraestrutura pronta para uso real.
+
+**Critérios de conclusão:** versão equalizada aprovada, smoke checks,
+monitoramento, procedimentos operacionais e evidências de segurança/integração
+documentados. Vercel e domínio personalizado não são requisitos obrigatórios.
 
 ---
 
@@ -532,19 +614,19 @@ Não avançar simplesmente porque a implementação "parece pronta".
 # Ordem resumida para acompanhamento
 
 ```text
-[x] 01 — Base do projeto
-[x] 02 — Banco / Supabase
-[x] 03 — Segurança / Permissões
-[x] 04 — API / Edge Function
-[x] 05 — RSVP
-[x] 06 — Contingência
-[x] 07 — Área Administrativa (Blocos 7A–7D)
+[x] 01 — Base do projeto (entrega anterior; extensão pendente)
+[x] 02 — Banco / Supabase (entrega anterior; extensão pendente)
+[x] 03 — Segurança / Permissões (entrega anterior; extensão pendente)
+[x] 04 — API / Edge Function (entrega anterior; extensão pendente)
+[x] 05 — RSVP (entrega anterior; revalidação futura)
+[x] 06 — Contingência (entrega anterior; revalidação futura)
+[x] 07 — Área Administrativa (Blocos 7A–7D; extensão pendente)
 [x] 08 — Monitoramento
-[ ] 09 — Interface / Design
-[ ] 10 — Integração
-[ ] 11 — Vercel / Ambiente de Deploy
-[ ] 12 — Testes
-[ ] 13 — Deploy / Produção
+[ ] 09 — Interface / Design (PARCIAL)
+[ ] 10 — Integração (PARCIAL)
+[ ] 11 — Hospedagem estática / ambientes (PARCIAL; Pages implementado)
+[ ] 12 — Testes / qualidade (PARCIAL; baseline CI criada)
+[ ] 13 — Publicação / operação (PUBLICADO; ACEITE FINAL PENDENTE)
 ```
 
 ---
@@ -553,18 +635,37 @@ Não avançar simplesmente porque a implementação "parece pronta".
 
 **Fase 6 — Contingência: concluída.**
 
-**Fase 7 — Área administrativa: concluída.** A autenticação Supabase Auth e a
+**Fase 7 — Área administrativa: entrega anterior concluída; extensão pendente.** A autenticação Supabase Auth e a
 proteção de sessão estão implementadas. A autorização é verificada no backend
 por JWT válido e associação do UUID à lista `ADMIN_AUTH_USER_IDS`; suporta
 múltiplos administradores e retorna 403 a usuários autenticados não autorizados.
-O CRUD de convidados, os indicadores e a integração da contingência ao painel
-estão implementados. O hardening de segurança foi realizado, mantendo
+Listagem, edição e exclusão de convidados, os indicadores e a integração da
+contingência ao painel estão implementados. A criação manual ainda não existe.
+O hardening de segurança foi realizado, mantendo
 `service_role` exclusivamente no backend. As quatro Edge Functions
-administrativas estão publicadas, ACTIVE e com `verify_jwt=true`. O CRUD
-administrativo foi validado com registros sintéticos temporários, removidos ao
+administrativas foram verificadas como ACTIVE e com `verify_jwt=true` na
+auditoria de 08/10/2026. Listagem, edição e exclusão administrativas foram
+validadas anteriormente com registros sintéticos temporários, removidos ao
 final.
 
-As Fases 1 a 7 estão concluídas.
+As entregas anteriores das Fases 1 a 8 estão concluídas. As extensões aprovadas
+das Fases 1 a 7 permanecem pendentes e não foram implementadas no Lote 1.
+
+**Fase 8 — Monitoramento: concluída.** A configuração oficial do UptimeRobot é
+`HEAD` a cada 15 minutos. Este lote equaliza somente sua documentação.
+
+**Fases 9, 10 e 12: parciais.** Já há interface, integração e testes. O workflow
+Linux foi criado, mas sua primeira execução remota ainda precisa ser confirmada.
+
+**Fase 11: parcial.** Pages é atual/canônico; a portabilidade operacional será
+validada posteriormente. Vercel é alternativa opcional.
+
+**Fase 13: publicado, com aceite final pendente.** A publicação atual em Pages
+não encerra a equalização.
+
+`event_config`, App Config, criação manual, minimização de PII/logs,
+constraints adicionais e novas Functions/migrations permanecem como extensões
+aprovadas para lotes posteriores.
 
 A proteção contra abuso / rate limiting está implementada na Supabase Edge
 Function e foi validada. O IP é obtido pelo header `x-forwarded-for`, seu hash
@@ -588,7 +689,7 @@ armazenamento persistente no Supabase.
 O fluxo esperado é:
 
 ```text
-Frontend / Vercel
+Frontend estático (GitHub Pages atual; outro provedor opcional)
         ↓
 Supabase Edge Function
         ↓

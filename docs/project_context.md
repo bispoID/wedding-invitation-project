@@ -98,9 +98,15 @@ Possíveis seções:
 
 ## 5. Hospedagem
 
-O frontend será hospedado na **Vercel**.
+O frontend estático está publicado no **GitHub Pages**, a hospedagem
+atual/canônica do projeto.
 
-Inicialmente poderá utilizar o domínio fornecido pela Vercel.
+A arquitetura deve permanecer independente do provedor de hospedagem estática.
+**Vercel é uma alternativa futura/opcional**, sem migração obrigatória ou
+dependência para concluir o projeto. Publicar em outro provedor deve exigir
+somente configuração operacional de URLs, origins/CORS e deploy, sem alterar
+regras de negócio. A equalização dessa portabilidade ainda pertence aos lotes
+posteriores.
 
 Posteriormente poderá ser utilizado um domínio personalizado.
 
@@ -344,7 +350,10 @@ As operações administrativas deverão exigir autenticação e autorização ad
 
 ## 15. Área administrativa
 
-Haverá uma área administrativa privada.
+Existe uma área administrativa com autenticação e autorização no backend,
+listagem, edição e exclusão de convidados, indicadores e recuperação da
+contingência. A criação manual de convidados e a edição de `event_config`
+são extensões aprovadas para implementação futura; ainda não existem.
 
 Inicialmente deverá permitir visualizar:
 
@@ -470,33 +479,33 @@ A prioridade será:
 
 ## 19. Monitoramento de saúde
 
-O sistema deverá possuir um mecanismo de **health check**.
+O sistema possui um mecanismo de **health check** público para os
+pré-requisitos operacionais read-only do RSVP.
 
 A ideia é verificar não apenas se a página está acessível, mas se os componentes importantes do fluxo estão funcionando.
 
 Conceito:
 
 ```text
-Monitoramento
+UptimeRobot
       ↓
-Vercel / API
+GET/HEAD /functions/v1/health
       ↓
-Edge Function
+public.check_rsvp_health()
       ↓
-Supabase
+PostgreSQL e pré-requisitos do RSVP
       ↓
-Banco
-      ↓
-Operação necessária ao sistema
+HTTP 200 ou HTTP 503
 ```
 
-O health check poderá verificar:
+O health atual verifica a existência e acessibilidade das tabelas e do RPC de
+rate limiting, além dos privilégios necessários ao RSVP. Não executa INSERT de
+convidados, não incrementa o contador, não acessa Google Sheets e não simula uma
+confirmação real. O UptimeRobot consulta o endpoint por `HEAD` a cada **15
+minutos**; há monitoramento separado do frontend publicado em GitHub Pages.
 
-1. Vercel/API respondendo;
-2. Edge Function respondendo;
-3. Supabase acessível;
-4. Banco acessível;
-5. Operação simples necessária ao funcionamento do RSVP.
+O monitor é externo, independente de sessão administrativa e do provedor de
+hospedagem estática. Detalhes: [health-check.md](health-check.md).
 
 Caso seja identificada uma falha, o administrador deverá receber um alerta.
 
@@ -676,7 +685,7 @@ Nunca apresentar sucesso falso.
                                     │
                                     ▼
                          ┌──────────────────────┐
-                         │       VERCEL         │
+                         │  FRONTEND ESTÁTICO   │
                          │                      │
                          │ HTML / CSS / JS      │
                          │ Landing Page         │
@@ -718,8 +727,8 @@ Nunca apresentar sucesso falso.
         ┌────────────────────────────────────────────┐
         │              MONITORAMENTO                 │
         │                                            │
-        │ Vercel → API → Edge Function → Supabase   │
-        │                     → Banco                │
+        │ health → RPC read-only → PostgreSQL        │
+        │ Frontend: monitor independente             │
         └──────────────────────┬─────────────────────┘
                                │
                              FALHA
@@ -777,7 +786,8 @@ Frontend
 → JavaScript
 
 Hospedagem
-→ Vercel
+→ GitHub Pages (atual/canônica)
+→ Outro provedor estático, como Vercel (opcional)
 
 Backend/API
 → Edge Function / API
@@ -864,6 +874,20 @@ passo de execução. Essas informações devem permanecer no
 - Recursos administrativos avançados;
 - CAPTCHA/Turnstile, caso não seja necessário;
 - Outras funcionalidades que não sejam essenciais ao RSVP.
+
+### Extensões aprovadas, ainda não implementadas
+
+A equalização será incremental. Estão aprovados para lotes posteriores:
+
+- `event_config` para dados do casamento fora do código versionado;
+- App Config para centralizar configurações públicas da aplicação;
+- criação manual de convidados e edição do evento no admin;
+- minimização de dados pessoais nos logs técnicos;
+- validações/constraints adicionais e aceite integrado de portabilidade.
+
+Esses itens não descrevem funcionalidades atuais. O convite continuará público;
+retirar dados reais do Git não os torna secretos quando exibidos em runtime.
+O status e os critérios de conclusão ficam no roadmap.
 
 ---
 

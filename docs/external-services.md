@@ -48,7 +48,7 @@ estado remoto e publicação das Edge Functions.
 
 - monitor `Supabase — Health Check RSVP`;
 - consulta do endpoint remoto de Health Check por `HEAD`;
-- intervalo de 5 minutos;
+- intervalo de 15 minutos;
 - alerta por e-mail em caso de falha;
 - monitoramento independente do computador local e do painel administrativo.
 
@@ -62,7 +62,7 @@ A configuração atual do monitor está detalhada em
 
 ## GitHub Pages
 
-**Finalidade:** hospedagem atual do frontend estático publicado.
+**Finalidade:** hospedagem atual/canônica do frontend estático publicado.
 
 **Uso no projeto:**
 
@@ -72,6 +72,10 @@ A configuração atual do monitor está detalhada em
 
 O monitor do frontend verifica a disponibilidade da página. Ele é independente
 do monitor do Supabase, que verifica os pré-requisitos operacionais do RSVP.
+
+GitHub Pages não é uma dependência permanente da arquitetura. A portabilidade
+de URLs e configuração operacional para outros provedores será validada nos
+próximos lotes, mantendo as regras de negócio nas Supabase Edge Functions.
 
 **Referência oficial:**
 
@@ -97,18 +101,73 @@ projeto.
 ## Deno
 
 **Finalidade:** runtime TypeScript compatível com as Supabase Edge Functions e
-execução dos testes unitários do Health Check.
+execução dos testes unitários das Functions e das métricas administrativas.
 
 **Uso no projeto:**
 
 - runtime das Edge Functions no ambiente Supabase;
-- testes em `supabase/functions/health/health_test.ts`;
-- checagem TypeScript dos módulos da função.
+- testes das Functions em `supabase/functions`;
+- teste adicional em `invite-app/admin/scripts/guest-metrics.test.ts`;
+- checagem TypeScript dos módulos de teste.
 
-A validação remota da função foi concluída. A execução completa da suíte no
-Windows ficou temporariamente bloqueada por um panic interno conhecido do runner
-do Deno 2.9.7, antes da execução das asserções. A checagem com
-`deno test --no-run` passou.
+A validação remota do health foi concluída anteriormente. Na auditoria e no
+Lote 1, o runner Deno `2.9.7` apresentou panic de named pipe no Windows dentro
+do isolamento local, antes de executar as asserções. A checagem com
+`deno test --no-run` passou para os oito arquivos. Em **08/10/2026**, o mesmo
+comando completo, com rede negada e as duas permissões de ambiente abaixo,
+executou fora desse isolamento no mesmo Windows: **57 testes aprovados, zero
+falhas**. Não há evidência para atribuir a falha a todo ambiente Windows ou
+às asserções do projeto.
+
+### Baseline Linux / CI
+
+O workflow `../.github/workflows/test.yml` utiliza `ubuntu-24.04`, Node.js
+`22.14.0` e Deno `2.9.7`, mantendo a versão Deno observada localmente para
+separar limitações do ambiente local de falhas nas asserções. É acionado por push,
+pull request ou execução manual, sem realizar deploy e sem alterar o workflow
+de GitHub Pages.
+
+A validação sintática descobre os arquivos `.js` versionados pelo Git e exclui
+diretórios gerados ou de dependências. A execução Deno descobre os testes em
+`supabase/functions` e inclui o arquivo de métricas explicitamente. A baseline
+atual contém oito arquivos:
+
+```text
+supabase/functions/_shared/admin-auth_test.ts
+supabase/functions/_shared/google-sheets_test.ts
+supabase/functions/admin-list-contingency/list_test.ts
+supabase/functions/admin-list-guests/handler_test.ts
+supabase/functions/admin-manage-guests/handler_test.ts
+supabase/functions/admin-recover-contingency/recovery_test.ts
+supabase/functions/health/health_test.ts
+invite-app/admin/scripts/guest-metrics.test.ts
+```
+
+Comando equivalente, executado a partir da raiz do projeto:
+
+```text
+deno test --no-prompt --deny-net --allow-env=GOOGLE_SERVICE_ACCOUNT_JSON_B64,GOOGLE_SPREADSHEET_ID supabase/functions invite-app/admin/scripts/guest-metrics.test.ts
+```
+
+As duas permissões de ambiente são necessárias porque `google-sheets_test.ts`
+cria e restaura valores sintéticos nessas variáveis. Os testes substituem
+`fetch`; o acesso real à rede é explicitamente negado. Não há `--allow-all`,
+permissão de escrita, execução de subprocessos, leitura runtime de arquivos
+ou acesso a secrets de produção. O runner permite somente `contents: read`
+no GitHub, sem persistir credenciais no checkout. As actions de setup precisam
+baixar os runtimes, mas os testes não acessam serviços externos.
+
+O CI também executa `git diff --check HEAD^ HEAD`, para verificar a diferença
+do commit obtido pelo checkout, e `git diff --check`, para o working tree. A
+criação do workflow não confirma uma execução Linux remota bem-sucedida;
+esse resultado deve ser conferido no GitHub Actions após revisão/publicação.
+
+`--no-run` valida os módulos sem executar asserções. Um panic do runner deve ser
+registrado como bloqueio de runtime/ambiente, não como teste aprovado nem como
+assertion failure. A execução completa Windows fora do isolamento já passou;
+Linux/CI é a baseline reproduzível proposta e sua primeira execução remota
+ainda precisa ser confirmada. Testes individuais ou WSL, quando disponível,
+podem auxiliar o diagnóstico.
 
 **Referências oficiais:**
 
@@ -118,5 +177,6 @@ do Deno 2.9.7, antes da execução das asserções. A checagem com
 
 ## Serviços não considerados atuais
 
-A Vercel permanece prevista no roadmap para uma fase posterior. O projeto não
-deve tratar a Vercel como infraestrutura atualmente em produção neste documento.
+A Vercel é uma alternativa futura/opcional para hospedar o mesmo frontend
+estático. Não há migração obrigatória nem dependência de Vercel para concluir
+o projeto. Ela não é infraestrutura atualmente em produção.

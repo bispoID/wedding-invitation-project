@@ -14,9 +14,13 @@ O projeto combina:
 - **Autenticação administrativa:** Supabase Auth;
 - **Contingência:** Google Sheets como fila temporária de recuperação;
 - **Monitoramento:** Health Check e UptimeRobot;
-- **Hospedagem:** GitHub Pages ou Vercel, conforme o ambiente e a etapa de publicação definidos no roadmap.
+- **Hospedagem atual/canônica:** GitHub Pages; Vercel é uma alternativa futura e opcional.
 
 A arquitetura prioriza simplicidade, segurança, privacidade, baixo custo, manutenção e confiabilidade proporcional ao projeto.
+
+O frontend é estático e a arquitetura é independente do provedor de hospedagem.
+Não há migração obrigatória para Vercel; a portabilidade de URLs e configurações
+operacionais será validada nos próximos lotes, sem alterar regras de negócio.
 
 ## Arquitetura principal
 
@@ -93,7 +97,7 @@ A autorização é verificada no backend. O frontend não decide quem é adminis
 
 Quando uma falha de infraestrutura impede a persistência normal, o RSVP pode ser encaminhado para o Google Sheets como registro temporário. A recuperação é feita administrativamente e a linha somente é removida depois da confirmação do registro no banco.
 
-A Edge Function pública `health` verifica os pré-requisitos operacionais do RSVP. O UptimeRobot consulta esse endpoint por `HEAD` a cada cinco minutos e envia alertas quando há falha.
+A Edge Function pública `health` verifica os pré-requisitos operacionais do RSVP. O UptimeRobot consulta esse endpoint por `HEAD` a cada 15 minutos e envia alertas quando há falha.
 
 ## Desenvolvimento local
 
@@ -111,6 +115,21 @@ Endereços úteis:
 
 Os detalhes do fluxo de testes mobile estão em [android-emulator-local-devtools.md](docs/android-emulator-local-devtools.md).
 
+## Baseline de testes
+
+O workflow [test.yml](.github/workflows/test.yml) prepara a validação em Linux
+(`ubuntu-24.04`), com Node.js `22.14.0` e Deno `2.9.7`. Ele verifica a sintaxe dos
+JavaScript versionados, executa os testes das Functions e inclui explicitamente
+`invite-app/admin/scripts/guest-metrics.test.ts`, além de verificar whitespace.
+
+Os testes usam dependências simuladas e dados sintéticos. Não exigem secrets de
+produção, não acessam banco ou Google Sheets reais e não fazem deploy. O
+workflow de deploy existente permanece independente. A criação do workflow não
+significa que uma execução remota do GitHub Actions já passou.
+
+Permissões, comando local equivalente e a limitação do runner Deno no Windows
+estão descritos em [external-services.md](docs/external-services.md#deno).
+
 ## Roadmap
 
 O desenvolvimento do projeto está organizado em 13 fases, que estruturam sua evolução desde a base técnica até a publicação e validação em produção:
@@ -125,11 +144,18 @@ O desenvolvimento do projeto está organizado em 13 fases, que estruturam sua ev
 8. Monitoramento;
 9. Interface / Design;
 10. Integração;
-11. Vercel / Ambiente de Deploy;
-12. Testes;
-13. Deploy / Produção.
+11. Hospedagem estática / ambientes;
+12. Testes / qualidade;
+13. Publicação / operação.
 
 O [development_roadmap.md](docs/development_roadmap.md) é a fonte oficial para a ordem, o status e os próximos objetivos das fases.
+
+As Fases 1 a 8 têm suas entregas anteriores concluídas. As Fases 9, 10 e 12
+possuem implementação parcial; o ambiente GitHub Pages da Fase 11 já existe,
+e a publicação atual da Fase 13 ainda não representa o aceite final do escopo
+equalizado. `event_config`, App Config, criação manual de convidados e
+minimização de PII nos logs são extensões aprovadas para lotes posteriores,
+não funcionalidades implementadas neste lote.
 
 ## Documentação
 

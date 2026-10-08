@@ -1,0 +1,72 @@
+name: Test baseline
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: JavaScript and Deno tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    env:
+      DENO_NO_UPDATE_CHECK: "1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: "2.9.7"
+
+      - name: Check tracked JavaScript syntax
+        run: |
+          node --input-type=commonjs <<'NODE'
+          const { execFileSync, spawnSync } = require('node:child_process');
+          const files = execFileSync('git', ['ls-files', '-z', '--', '*.js'], {
+            encoding: 'utf8',
+          }).split('\0').filter((file) =>
+            file && !/(^|\/)(node_modules|dist|build|_site|\.vercel)\//.test(file)
+          );
+          if (files.length === 0) {
+            throw new Error('No tracked JavaScript files found.');
+          }
+          for (const file of files) {
+            const result = spawnSync(process.execPath, ['--check', file], {
+              stdio: 'inherit',
+            });
+            if (result.error) throw result.error;
+            if (result.status !== 0) process.exit(result.status ?? 1);
+          }
+          console.log(`JavaScript syntax checked: ${files.length} files.`);
+          NODE
+
+      - name: Run Function tests and admin metrics
+        run: >-
+          deno test --no-prompt --deny-net
+          --allow-env=GOOGLE_SERVICE_ACCOUNT_JSON_B64,GOOGLE_SPREADSHEET_ID
+          supabase/functions invite-app/admin/scripts/guest-metrics.test.ts
+
+      - name: Check whitespace
+        run: |
+          git diff --check HEAD^ HEAD
+          git diff --check
