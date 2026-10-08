@@ -301,15 +301,15 @@ O administrador consegue visualizar e gerenciar a lista de forma privada.
 
 Objetivo: verificar a saúde dos componentes importantes do sistema.
 
-- [ ] Criar health check.
-- [ ] Verificar disponibilidade da API.
-- [ ] Verificar Edge Function.
-- [ ] Verificar Supabase.
-- [ ] Verificar banco.
-- [ ] Validar a operação necessária ao RSVP.
-- [ ] Configurar monitoramento externo.
-- [ ] Configurar alertas de falha.
-- [ ] Evitar notificações para operações normais.
+- [x] Criar health check.
+- [x] Verificar disponibilidade da API.
+- [x] Verificar Edge Function.
+- [x] Verificar Supabase.
+- [x] Verificar banco.
+- [x] Validar a operação necessária ao RSVP.
+- [x] Configurar monitoramento externo.
+- [x] Configurar alertas de falha.
+- [x] Evitar notificações para operações normais.
 
 ### O administrador deve ser alertado quando houver problemas como:
 
@@ -325,6 +325,17 @@ Não enviar uma notificação para cada RSVP realizado com sucesso.
 **Resultado esperado:**
 
 O administrador consegue saber quando o sistema precisa de atenção.
+
+**Resultado da Fase 8:**
+
+Health Check publicado na Supabase Edge Function `health` e validado no
+endpoint remoto. O monitor externo do UptimeRobot consulta o endpoint por
+`HEAD` a cada 5 minutos e envia alertas por e-mail em caso de falha. O
+monitoramento é independente do computador local e não executa o fluxo real de
+RSVP nem gera notificações para confirmações normais.
+
+Detalhes técnicos: [health-check.md](health-check.md). Ferramentas e serviços:
+[external-services.md](external-services.md).
 
 ---
 
@@ -528,7 +539,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 05 — RSVP
 [x] 06 — Contingência
 [x] 07 — Área Administrativa (Blocos 7A–7D)
-[ ] 08 — Monitoramento
+[x] 08 — Monitoramento
 [ ] 09 — Interface / Design
 [ ] 10 — Integração
 [ ] 11 — Vercel / Ambiente de Deploy

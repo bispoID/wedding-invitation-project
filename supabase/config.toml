@@ -425,6 +425,11 @@ entrypoint = "./functions/rsvp/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/rsvp/*.html" ]
 
+[functions.health]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/health/index.ts"
+
 [functions.admin-recover-contingency]
 enabled = true
 verify_jwt = true

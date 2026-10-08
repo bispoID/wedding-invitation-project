@@ -31,5 +31,7 @@ doc/
 docs/*
 !docs/google-sheets-contingency-recovery.md
 !docs/development_roadmap.md
+!docs/health-check.md
+!docs/external-services.md
 
 *.zip
