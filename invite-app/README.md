@@ -32,7 +32,7 @@ está aprovada para implementação futura; ela não foi realizada neste lote.
 
 O frontend é estático e não carrega arquivos `.env`. Antes de usar o login, copie
 a chave **publishable** (ou a chave legada **anon**) do Supabase Dashboard para
-`admin/scripts/supabase-config.js`, na constante `SUPABASE_PUBLIC_KEY`.
+`scripts/shared/app-config.js`, na constante `SUPABASE_PUBLIC_KEY`.
 Essa chave é pública e pode ser enviada ao navegador; não use a chave
 `service_role`. O Supabase Auth autentica os administradores. As Edge Functions
 administrativas validam o JWT e autorizam separadamente o usuário comparando
@@ -53,6 +53,48 @@ O cliente `@supabase/supabase-js` é importado como módulo ES da versão fixada
 no CDN esm.sh, portanto o navegador precisa de acesso à internet. Nenhuma
 dependência npm ou etapa de build foi adicionada. A configuração e as páginas
 administrativas devem ser servidas por HTTP; abrir por `file://` não é suportado.
+
+## Configuração pública e publicação portátil
+
+`scripts/shared/app-config.js` centraliza `SUPABASE_URL` e
+`SUPABASE_PUBLIC_KEY`. `FUNCTIONS_BASE_URL` é derivada pela API URL; o RSVP
+mantém seu contrato e o admin mantém Auth/sessão. `APP_BASE_URL` é derivada de
+`import.meta.url`, dois diretórios acima do módulo, preservando root e subpath.
+Nomes das Functions continuam contratos locais, não configuração do evento.
+
+Na raiz do repositório, execute o preparador com `PUBLIC_SITE_URL` definida:
+
+```powershell
+$env:PUBLIC_SITE_URL = 'https://example.github.io/wedding-invitation-project/'
+node scripts/prepare-static-site.mjs
+```
+
+Ele copia `invite-app` para um `_site` novo e resolve somente os marcadores
+`__PUBLIC_SITE_URL__` e `__PUBLIC_SHARE_IMAGE_URL__` nos metadados canonical,
+Open Graph e Twitter. Não modifica o HTML-fonte, os textos ou as imagens.
+URL HTTP(S) absoluta é obrigatória; credenciais, query e fragmento são rejeitados.
+Uma barra final é normalizada. Destino existente é recusado, sem limpeza automática.
+
+Para publicar em root, use, por exemplo, `https://example.vercel.app/`.
+Sirva/publice o conteúdo de `_site`, não os marcadores do source. Em desenvolvimento,
+continue servindo `invite-app`: os marcadores não participam do comportamento do
+convite, mas os metadados de compartilhamento só ficam prontos no artefato.
+
+No Pages, a URL operacional vem de `actions/configure-pages`; a política de
+publicação continua na branch `feature/landing-page`. A branch de desenvolvimento
+não ganha trigger de deploy. Vercel permanece opcional; não há bundler ou leitura
+de `.env` pelo browser. `event_config` e a retirada dos dados personalizados
+continuam futuros.
+
+Testes locais, sem rede, na raiz do repositório:
+
+```text
+node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs
+```
+
+O workflow de testes executa essa suíte além dos testes Deno existentes. O workflow
+Pages executa os mesmos testes Node como gate simples antes da preparação, sem
+dependência circular ou duplicação da suíte Deno.
 
 
 ## Modo desenvolvedor

@@ -28,12 +28,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure GitHub Pages
+        id: pages
         uses: actions/configure-pages@v5
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+
+      - name: Validate portable preparation
+        run: node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs
+
       - name: Prepare site
-        run: |
-          mkdir _site
-          cp -R invite-app/. _site/
+        env:
+          PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
+        run: node scripts/prepare-static-site.mjs
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3

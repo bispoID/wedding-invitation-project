@@ -159,14 +159,15 @@ baixar os runtimes, mas os testes não acessam serviços externos.
 
 O CI também executa `git diff --check HEAD^ HEAD`, para verificar a diferença
 do commit obtido pelo checkout, e `git diff --check`, para o working tree. A
-criação do workflow não confirma uma execução Linux remota bem-sucedida;
-esse resultado deve ser conferido no GitHub Actions após revisão/publicação.
+baseline do Lote 1 passou no GitHub Actions em 08/10/2026 (execução 37852513840).
+O Lote 2 acrescenta testes Node de App Config e preparação portátil; essa extensão
+ainda aguarda revisão/publicação. Comando: [invite-app/README.md](../invite-app/README.md#configuração-pública-e-publicação-portátil).
 
 `--no-run` valida os módulos sem executar asserções. Um panic do runner deve ser
 registrado como bloqueio de runtime/ambiente, não como teste aprovado nem como
 assertion failure. A execução completa Windows fora do isolamento já passou;
-Linux/CI é a baseline reproduzível proposta e sua primeira execução remota
-ainda precisa ser confirmada. Testes individuais ou WSL, quando disponível,
+Linux/CI teve sua baseline do Lote 1 confirmada; alterações posteriores exigem
+nova validação remota. Testes individuais ou WSL, quando disponível,
 podem auxiliar o diagnóstico.
 
 **Referências oficiais:**

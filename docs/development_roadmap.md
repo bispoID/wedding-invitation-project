@@ -60,8 +60,8 @@ Objetivo: preparar o repositório e a estrutura inicial da aplicação.
 
 Repositório organizado e pronto para receber as próximas camadas.
 
-**Entrega anterior concluída; extensão pendente:** centralização de App Config
-e preparação portátil do artefato pertencem aos próximos lotes.
+**Entrega anterior concluída; extensão do Lote 2 implementada:** App Config e
+preparação portátil do artefato. Revisão e aceite publicado permanecem pendentes.
 
 ---
 
@@ -285,7 +285,7 @@ Objetivo: criar o ambiente privado para gerenciamento dos convidados.
 - [x] Verificar sessão e proteger o acesso ao dashboard.
 - [x] Implementar logout.
 - [x] Criar estrutura inicial do dashboard com estados de carregamento e erro.
-- [x] Configurar a chave pública Supabase em `invite-app/admin/scripts/supabase-config.js`.
+- [x] Configurar a chave pública Supabase; no Lote 2, centralizada em `invite-app/scripts/shared/app-config.js`.
 - [x] Criar listagem administrativa de convidados por Edge Function restrita ao administrador.
 - [x] Exibir nome, e-mail, presença, acompanhantes e data de envio.
 - [x] Implementar estados de carregamento, erro e lista vazia.
@@ -462,15 +462,15 @@ Objetivo: validar a hospedagem atual e a portabilidade operacional do frontend
 estático, sem dependência de um provedor nas regras de negócio.
 
 **Estado: PARCIAL.** GitHub Pages é a hospedagem atual/canônica, com publicação
-implementada. A equalização de URLs, paths e configuração operacional ainda
-depende dos lotes posteriores.
+implementada. O Lote 2 centraliza configuração pública e prepara metadados de
+root/subpath, com testes locais. O aceite publicado e de origins segue pendente.
 
 - [x] Implementar publicação de `invite-app` no GitHub Pages por workflow.
 - [ ] Validar paths na raiz e no subpath `/wedding-invitation-project/`.
 - [ ] Validar comunicação Frontend → Edge Functions no ambiente publicado.
-- [ ] Equalizar configuração pública e URLs no lote correspondente.
+- [x] Centralizar configuração pública e preparar URLs de metadados no Lote 2.
 - [ ] Validar origins/CORS dos ambientes efetivamente utilizados.
-- [ ] Documentar a preparação e validação do artefato estático.
+- [x] Documentar preparação e testes locais do artefato estático.
 - [ ] Validar configuração operacional de Preview/Production, quando necessária.
 
 Vercel é uma alternativa futura/opcional. Caso adotada, configurar publicação
@@ -502,13 +502,18 @@ representar aceite completo de segurança, integração ou interface.
 - [x] Restringir permissões dos testes e dispensar secrets de produção.
 - [x] Configurar verificação de whitespace.
 - [x] Executar os oito arquivos localmente fora do isolamento: 57 testes aprovados em 08/10/2026.
-- [ ] Confirmar execução bem-sucedida do workflow no GitHub Actions.
+- [x] Confirmar baseline do Lote 1 no GitHub Actions: execução 37852513840, em 08/10/2026.
+- [x] Acrescentar testes Node de App Config e preparação portátil no Lote 2.
+- [x] Executar localmente o Lote 2: 26 testes Node novos e os 57 Deno existentes aprovados.
+- [ ] Confirmar a execução remota da extensão de testes do Lote 2 após revisão.
 
 O workflow utiliza Node.js `22.14.0` e Deno `2.9.7` em `ubuntu-24.04`. A execução
 Windows dentro do isolamento local apresentou panic de named pipe no runner;
 o mesmo comando passou fora do isolamento, com 57 testes e zero falhas.
-`--no-run` é checagem, não execução de asserções. Resultados Linux ainda devem ser confirmados após
-revisão/publicação. Comandos e permissões: [external-services.md](external-services.md#baseline-linux--ci).
+`--no-run` é checagem, não execução de asserções. A baseline Linux do Lote 1
+passou; a extensão do Lote 2 ainda não foi publicada. Comandos novos:
+[invite-app/README.md](../invite-app/README.md#configuração-pública-e-publicação-portátil).
+Comandos Deno e permissões: [external-services.md](external-services.md#baseline-linux--ci).
 
 ## RSVP
 
@@ -614,7 +619,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 # Ordem resumida para acompanhamento
 
 ```text
-[x] 01 — Base do projeto (entrega anterior; extensão pendente)
+[x] 01 — Base do projeto (entrega anterior; App Config/preparador implementados)
 [x] 02 — Banco / Supabase (entrega anterior; extensão pendente)
 [x] 03 — Segurança / Permissões (entrega anterior; extensão pendente)
 [x] 04 — API / Edge Function (entrega anterior; extensão pendente)
@@ -648,22 +653,24 @@ auditoria de 08/10/2026. Listagem, edição e exclusão administrativas foram
 validadas anteriormente com registros sintéticos temporários, removidos ao
 final.
 
-As entregas anteriores das Fases 1 a 8 estão concluídas. As extensões aprovadas
-das Fases 1 a 7 permanecem pendentes e não foram implementadas no Lote 1.
+As entregas anteriores das Fases 1 a 8 estão concluídas. App Config e preparador
+estático foram implementados no Lote 2; demais extensões das Fases 2 a 7 seguem
+pendentes.
 
 **Fase 8 — Monitoramento: concluída.** A configuração oficial do UptimeRobot é
 `HEAD` a cada 15 minutos. Este lote equaliza somente sua documentação.
 
 **Fases 9, 10 e 12: parciais.** Já há interface, integração e testes. O workflow
-Linux foi criado, mas sua primeira execução remota ainda precisa ser confirmada.
+Linux do Lote 1 passou; os novos testes do Lote 2 aguardam execução remota.
 
-**Fase 11: parcial.** Pages é atual/canônico; a portabilidade operacional será
-validada posteriormente. Vercel é alternativa opcional.
+**Fase 11: parcial.** Pages é atual/canônico; a portabilidade operacional foi
+testada localmente para configuração/metadados; aceite publicado ainda pendente.
+Vercel é alternativa opcional.
 
 **Fase 13: publicado, com aceite final pendente.** A publicação atual em Pages
 não encerra a equalização.
 
-`event_config`, App Config, criação manual, minimização de PII/logs,
+`event_config`, criação manual, minimização de PII/logs,
 constraints adicionais e novas Functions/migrations permanecem como extensões
 aprovadas para lotes posteriores.
 

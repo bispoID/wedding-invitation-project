@@ -105,8 +105,8 @@ A arquitetura deve permanecer independente do provedor de hospedagem estática.
 **Vercel é uma alternativa futura/opcional**, sem migração obrigatória ou
 dependência para concluir o projeto. Publicar em outro provedor deve exigir
 somente configuração operacional de URLs, origins/CORS e deploy, sem alterar
-regras de negócio. A equalização dessa portabilidade ainda pertence aos lotes
-posteriores.
+regras de negócio. App Config e preparação de metadados root/subpath estão
+implementadas; o aceite no ambiente publicado e de origins permanece pendente.
 
 Posteriormente poderá ser utilizado um domínio personalizado.
 
@@ -875,12 +875,17 @@ passo de execução. Essas informações devem permanecer no
 - CAPTCHA/Turnstile, caso não seja necessário;
 - Outras funcionalidades que não sejam essenciais ao RSVP.
 
-### Extensões aprovadas, ainda não implementadas
+### Configuração pública e extensões planejadas
+
+O Lote 2 implementa `scripts/shared/app-config.js` como fonte única de URL e
+chave pública Supabase do browser. A base da aplicação é derivada do módulo;
+metadados absolutos são preparados no artefato por `scripts/prepare-static-site.mjs`
+com `PUBLIC_SITE_URL` operacional. Não há secrets no módulo nem `.env` no browser.
+Detalhes de execução e limites: [invite-app/README.md](../invite-app/README.md#configuração-pública-e-publicação-portátil).
 
 A equalização será incremental. Estão aprovados para lotes posteriores:
 
 - `event_config` para dados do casamento fora do código versionado;
-- App Config para centralizar configurações públicas da aplicação;
 - criação manual de convidados e edição do evento no admin;
 - minimização de dados pessoais nos logs técnicos;
 - validações/constraints adicionais e aceite integrado de portabilidade.

@@ -1,11 +1,11 @@
-import { SUPABASE_PUBLIC_KEY, SUPABASE_URL } from './supabase-config.js';
+import { SUPABASE_PUBLIC_KEY, SUPABASE_URL } from '../../scripts/shared/app-config.js';
 
 let supabaseClientPromise;
 
 export async function getSupabaseClient() {
   if (!SUPABASE_PUBLIC_KEY.trim()) {
     throw new Error(
-      'A chave pública do Supabase não está configurada em admin/scripts/supabase-config.js.'
+      'A chave pública do Supabase não está configurada em scripts/shared/app-config.js.'
     );
   }
 

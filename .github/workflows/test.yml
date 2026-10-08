@@ -60,6 +60,9 @@ jobs:
           console.log(`JavaScript syntax checked: ${files.length} files.`);
           NODE
 
+      - name: Test public config and portable artifact
+        run: node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs
+
       - name: Run Function tests and admin metrics
         run: >-
           deno test --no-prompt --deny-net

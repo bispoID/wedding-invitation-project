@@ -1,5 +1,6 @@
-const SUPABASE_URL = 'https://bkkienyemqlkueygknzl.supabase.co';
-const RSVP_ENDPOINT = `${SUPABASE_URL}/functions/v1/rsvp`;
+import { FUNCTIONS_BASE_URL } from '../shared/app-config.js';
+
+const RSVP_ENDPOINT = new URL('rsvp', FUNCTIONS_BASE_URL).href;
 
 const ERROR_MESSAGES = {
   400: 'Verifique os dados informados e tente novamente.',

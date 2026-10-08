@@ -19,8 +19,10 @@ O projeto combina:
 A arquitetura prioriza simplicidade, segurança, privacidade, baixo custo, manutenção e confiabilidade proporcional ao projeto.
 
 O frontend é estático e a arquitetura é independente do provedor de hospedagem.
-Não há migração obrigatória para Vercel; a portabilidade de URLs e configurações
-operacionais será validada nos próximos lotes, sem alterar regras de negócio.
+Não há migração obrigatória para Vercel. App Config centraliza a infraestrutura
+pública do browser; o preparador estático resolve metadados de root/subpath no
+artefato. O aceite no ambiente publicado permanece pendente, sem alterar regras
+de negócio. Instruções: [invite-app/README.md](invite-app/README.md#configuração-pública-e-publicação-portátil).
 
 ## Arquitetura principal
 
@@ -121,11 +123,13 @@ O workflow [test.yml](.github/workflows/test.yml) prepara a validação em Linux
 (`ubuntu-24.04`), com Node.js `22.14.0` e Deno `2.9.7`. Ele verifica a sintaxe dos
 JavaScript versionados, executa os testes das Functions e inclui explicitamente
 `invite-app/admin/scripts/guest-metrics.test.ts`, além de verificar whitespace.
+Também executa os testes Node de App Config e preparação portátil em `scripts/`.
 
 Os testes usam dependências simuladas e dados sintéticos. Não exigem secrets de
 produção, não acessam banco ou Google Sheets reais e não fazem deploy. O
-workflow de deploy existente permanece independente. A criação do workflow não
-significa que uma execução remota do GitHub Actions já passou.
+workflow de deploy permanece independente, com gate Node antes da preparação.
+A baseline do Lote 1 passou no GitHub Actions em 08/10/2026; as mudanças do
+Lote 2 ainda precisam de revisão e execução remota.
 
 Permissões, comando local equivalente e a limitação do runner Deno no Windows
 estão descritos em [external-services.md](docs/external-services.md#deno).
@@ -153,7 +157,8 @@ O [development_roadmap.md](docs/development_roadmap.md) é a fonte oficial para 
 As Fases 1 a 8 têm suas entregas anteriores concluídas. As Fases 9, 10 e 12
 possuem implementação parcial; o ambiente GitHub Pages da Fase 11 já existe,
 e a publicação atual da Fase 13 ainda não representa o aceite final do escopo
-equalizado. `event_config`, App Config, criação manual de convidados e
+equalizado. App Config e preparação portátil estão implementadas no Lote 2.
+`event_config`, criação manual de convidados e
 minimização de PII nos logs são extensões aprovadas para lotes posteriores,
 não funcionalidades implementadas neste lote.
 
