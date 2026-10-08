@@ -74,6 +74,9 @@ async function initializeDashboard() {
       return;
     }
 
+    document.querySelector('#admin-email').textContent =
+      session.user.email || 'E-mail não disponível';
+
     loadingMessage.hidden = true;
     content.hidden = false;
 

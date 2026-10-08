@@ -1,14 +1,15 @@
 .login-shell {
   padding-block: 32px;
+  place-items: center;
 }
 
 .login-card {
-  width: min(100%, 440px);
+  width: min(100%, 460px);
 }
 
 .login-intro {
   margin-bottom: 24px;
-  color: #59645a;
+  color: var(--admin-text-muted);
   line-height: 1.5;
 }
 
@@ -19,6 +20,7 @@
 
 .login-form label {
   margin-top: 8px;
+  color: var(--admin-text);
   font-weight: 700;
 }
 
@@ -26,10 +28,14 @@
   width: 100%;
   min-height: 46px;
   padding: 10px 12px;
-  border: 1px solid #bfc8bd;
+  border: 1px solid var(--admin-border);
   border-radius: 8px;
-  background: #fff;
-  color: inherit;
+  background: var(--admin-input);
+  color: var(--admin-text);
+}
+
+.login-form input::placeholder {
+  color: var(--admin-text-muted);
 }
 
 .login-form .button {

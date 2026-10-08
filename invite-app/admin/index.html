@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#f5f4ef" />
+    <meta name="theme-color" content="#171b16" />
     <title>Administração | Bruna &amp; Diego</title>
     <link rel="icon" type="image/x-icon" href="../images/favicon_selo.ico" />
     <link rel="stylesheet" href="./styles/main.css" />
@@ -24,9 +24,15 @@
               <p class="eyebrow">Área administrativa</p>
               <h1 id="page-title">Painel de administração</h1>
             </div>
-            <button class="button button--secondary" id="logout-button" type="button">
-              Sair
-            </button>
+            <div class="dashboard-header-actions">
+              <div class="admin-identity" aria-label="Administrador autenticado">
+                <span class="admin-identity-label">Administrador</span>
+                <span class="admin-identity-email" id="admin-email"></span>
+              </div>
+              <button class="button button--secondary" id="logout-button" type="button">
+                Sair
+              </button>
+            </div>
           </header>
 
           <p class="dashboard-intro">
