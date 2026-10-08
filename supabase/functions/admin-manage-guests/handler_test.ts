@@ -3,9 +3,11 @@ import {
   type GuestAdminDependencies,
   type GuestUpdate,
 } from "./handler.ts";
+import { parseAdminUserIds } from "../_shared/admin-auth.ts";
 
 const ADMIN_ID = "c2d806a4-3438-4f24-8d1d-62c50a17c531";
-const OTHER_USER_ID = "94827da7-58a1-46f3-8a8d-c82d324d5d7c";
+const SECOND_ADMIN_ID = "94827da7-58a1-46f3-8a8d-c82d324d5d7c";
+const OTHER_USER_ID = "f8c06c53-1c6b-4c6c-9acd-cdbb1451541a";
 const GUEST_ID = "f8c06c53-1c6b-4c6c-9acd-cdbb1451541a";
 const ORIGIN = "http://localhost:5500";
 
@@ -43,7 +45,7 @@ function makeHarness(
   };
   const handler = createGuestAdminHandler({
     allowedOrigins: [ORIGIN],
-    adminUserId: ADMIN_ID,
+    adminUserIds: parseAdminUserIds(`${ADMIN_ID},${SECOND_ADMIN_ID}`),
     authenticate,
     createDependencies() {
       state.dependenciesCreated = true;
@@ -171,6 +173,15 @@ Deno.test("delete targets the requested UUID only", async () => {
   assertEquals(response.status, 200, "Delete should succeed");
   assertEquals(state.deleteId, GUEST_ID, "Delete should use the UUID");
   assertEquals(body.action, "deleted", "Response should identify deletion");
+});
+
+Deno.test("second administrator can perform guest administration", async () => {
+  const { handler } = makeHarness(() => Promise.resolve(SECOND_ADMIN_ID));
+  const response = await handler(
+    makeRequest({ action: "delete", id: GUEST_ID }),
+  );
+
+  assertEquals(response.status, 200, "Second administrator should be allowed");
 });
 
 Deno.test("missing guest returns not found", async () => {

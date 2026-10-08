@@ -1,4 +1,5 @@
 import type { ContingencyRow } from "../_shared/google-sheets.ts";
+import { isAuthorizedAdmin } from "../_shared/admin-auth.ts";
 
 export interface AdminContingencyRecord {
   request_id: string;
@@ -14,7 +15,7 @@ export interface AdminContingencyRecord {
 
 export interface ListHandlerOptions {
   allowedOrigins: string[];
-  adminUserId: string;
+  adminUserIds: ReadonlySet<string>;
   authenticate(request: Request): Promise<string | null>;
   listRows(): Promise<ContingencyRow[]>;
 }
@@ -160,7 +161,7 @@ export function createListHandler(
       return errorResponse("UNAUTHORIZED", 401, origin);
     }
 
-    if (userId.toLowerCase() !== options.adminUserId.toLowerCase()) {
+    if (!isAuthorizedAdmin(userId, options.adminUserIds)) {
       return errorResponse("ADMIN_ACCESS_DENIED", 403, origin);
     }
 

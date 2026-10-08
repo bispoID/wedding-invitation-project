@@ -1,3 +1,4 @@
+import { isAuthorizedAdmin } from "../_shared/admin-auth.ts";
 import {
   recoverContingencyRecord,
   type RecoveryDependencies,
@@ -9,7 +10,7 @@ const REQUEST_ID_PATTERN =
 
 export interface RecoveryHandlerOptions {
   allowedOrigins: string[];
-  adminUserId: string;
+  adminUserIds: ReadonlySet<string>;
   authenticate(request: Request): Promise<string | null>;
   createDependencies(): Promise<RecoveryDependencies>;
 }
@@ -116,7 +117,7 @@ export function createRecoveryHandler(
       return errorResponse("UNAUTHORIZED", 401, origin);
     }
 
-    if (userId.toLowerCase() !== options.adminUserId.toLowerCase()) {
+    if (!isAuthorizedAdmin(userId, options.adminUserIds)) {
       return errorResponse("ADMIN_ACCESS_DENIED", 403, origin);
     }
 

@@ -1,4 +1,5 @@
 import { createRecoveryHandler } from "./handler.ts";
+import { parseAdminUserIds } from "../_shared/admin-auth.ts";
 import {
   type ContingencyRecord,
   type GuestRecord,
@@ -9,7 +10,8 @@ import {
 
 const REQUEST_ID = "f8c06c53-1c6b-4c6c-9acd-cdbb1451541a";
 const ADMIN_ID = "c2d806a4-3438-4f24-8d1d-62c50a17c531";
-const OTHER_USER_ID = "94827da7-58a1-46f3-8a8d-c82d324d5d7c";
+const SECOND_ADMIN_ID = "94827da7-58a1-46f3-8a8d-c82d324d5d7c";
+const OTHER_USER_ID = "f8c06c53-1c6b-4c6c-9acd-cdbb1451541a";
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
@@ -343,7 +345,7 @@ Deno.test("non-admin authenticated user is denied before dependencies are create
   let dependenciesCreated = false;
   const handler = createRecoveryHandler({
     allowedOrigins: ["http://localhost:5500"],
-    adminUserId: ADMIN_ID,
+    adminUserIds: parseAdminUserIds(`${ADMIN_ID},${SECOND_ADMIN_ID}`),
     authenticate() {
       return Promise.resolve(OTHER_USER_ID);
     },
@@ -376,6 +378,33 @@ Deno.test("non-admin authenticated user is denied before dependencies are create
     false,
     "Privileged dependencies must not be created",
   );
+});
+
+Deno.test("second configured administrator can recover a contingency record", async () => {
+  const state = makeState([pendingRow()]);
+  const handler = createRecoveryHandler({
+    allowedOrigins: ["http://localhost:5500"],
+    adminUserIds: parseAdminUserIds(`${ADMIN_ID},${SECOND_ADMIN_ID}`),
+    authenticate() {
+      return Promise.resolve(SECOND_ADMIN_ID);
+    },
+    createDependencies() {
+      return Promise.resolve(makeDependencies(state));
+    },
+  });
+  const response = await handler(
+    new Request("http://edge.test/admin-recover-contingency", {
+      method: "POST",
+      headers: {
+        Origin: "http://localhost:5500",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ request_id: REQUEST_ID }),
+    }),
+  );
+
+  assertEquals(response.status, 200, "Second administrator should be allowed");
+  assertEquals(state.insertCount, 1, "Recovery behavior should remain intact");
 });
 
 Deno.test("non-pending record is preserved", async () => {

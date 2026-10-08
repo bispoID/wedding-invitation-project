@@ -1,15 +1,51 @@
 # Administração de convidados
 
+O administrador autentica sua própria conta pelo Supabase Auth. A autenticação
+confirma a identidade do usuário, mas não concede, por si só, autorização
+administrativa na aplicação.
+
 O dashboard lista os registros de `public.guests` pela Edge Function
-`admin-list-guests`. Ela valida o JWT e compara o UUID do usuário com
-`ADMIN_AUTH_USER_ID` antes de consultar os dados com `service_role`. O cliente
-do navegador não tem permissão de leitura direta nessa tabela.
+`admin-list-guests`. A função valida o JWT e compara o UUID autenticado com a
+lista `ADMIN_AUTH_USER_IDS` antes de consultar os dados com `service_role`. O
+cliente do navegador não tem permissão de leitura direta nessa tabela.
 
 As operações de edição e exclusão passam pela Edge Function
-`admin-manage-guests`, que valida o mesmo JWT e UUID administrativo antes de
-inicializar o cliente `service_role`.
+`admin-manage-guests`; listagem e recuperação da contingência também verificam a
+mesma lista compartilhada no backend. Cada função valida o JWT e rejeita
+usuários cujo UUID não esteja autorizado.
 
-O navegador nunca recebe a chave `service_role`. A função atualiza somente
+## Autorização administrativa
+
+As Edge Functions administrativas `admin-list-guests`,
+`admin-list-contingency`, `admin-manage-guests` e
+`admin-recover-contingency` exigem JWT válido (`verify_jwt=true`) e verificam a
+autorização exclusivamente no backend. Cada função compara o UUID do usuário
+validado com a lista de UUIDs mantida no secret `ADMIN_AUTH_USER_IDS`, separados
+por vírgulas. O backend remove espaços, normaliza maiúsculas e minúsculas e
+rejeita configuração ausente ou inválida. Um JWT válido sozinho não concede
+permissão administrativa: usuário autenticado cujo UUID não esteja na lista
+recebe HTTP 403. O frontend não decide quem é administrador nem recebe essa
+lista.
+
+Cada administrador possui sua própria conta do Supabase Auth. O Email Provider
+está habilitado, a confirmação de e-mail é exigida e o cadastro público de novos
+usuários está desabilitado. A senha deve ter no mínimo oito caracteres. A
+proteção contra senhas vazadas não está disponível no plano atual. Convidados
+que enviam RSVP não possuem conta no Supabase Auth.
+
+Novos administradores são criados manualmente pelo proprietário no Supabase
+Dashboard e, em seguida, seus UUIDs são incluídos em `ADMIN_AUTH_USER_IDS`.
+A autorização na aplicação é independente do acesso ao Dashboard/projeto
+Supabase: ser administrador da aplicação não concede automaticamente acesso
+administrativo ao projeto Supabase, e esse acesso deve ser gerenciado
+separadamente.
+
+O modelo histórico utilizava o secret singular `ADMIN_AUTH_USER_ID`; ele foi
+substituído por `ADMIN_AUTH_USER_IDS` e não é mais usado como mecanismo de
+autorização.
+
+`service_role` permanece exclusivamente no backend e nunca é entregue ao
+navegador. A função atualiza somente
 `name`, `email`, `attendance` e `companions`, por UUID, e exclui somente o UUID
 solicitado. E-mails são normalizados com trim e lowercase. A constraint
 `UNIQUE(email)` rejeita duplicidade sem alterar o registro existente.

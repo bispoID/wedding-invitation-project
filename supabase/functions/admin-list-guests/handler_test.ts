@@ -1,7 +1,9 @@
 import { type AdminGuestRecord, createGuestListHandler } from "./handler.ts";
+import { parseAdminUserIds } from "../_shared/admin-auth.ts";
 
 const ADMIN_ID = "c2d806a4-3438-4f24-8d1d-62c50a17c531";
-const OTHER_USER_ID = "94827da7-58a1-46f3-8a8d-c82d324d5d7c";
+const SECOND_ADMIN_ID = "94827da7-58a1-46f3-8a8d-c82d324d5d7c";
+const OTHER_USER_ID = "f8c06c53-1c6b-4c6c-9acd-cdbb1451541a";
 const ORIGIN = "http://localhost:5500";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -32,7 +34,7 @@ function makeHandler(
 ): (request: Request) => Promise<Response> {
   return createGuestListHandler({
     allowedOrigins: [ORIGIN],
-    adminUserId: ADMIN_ID,
+    adminUserIds: parseAdminUserIds(`${ADMIN_ID},${SECOND_ADMIN_ID}`),
     authenticate,
     listGuests() {
       onList();
@@ -57,6 +59,13 @@ Deno.test("administrator receives guest records", async () => {
   assertEquals(body.records.length, 1, "One guest should be returned");
   assertEquals(body.records[0].id, guest.id, "Guest UUID should be mapped");
   assertEquals(body.records[0].email, guest.email, "Email should be mapped");
+});
+
+Deno.test("second configured administrator receives guest records", async () => {
+  const handler = makeHandler([guest], () => Promise.resolve(SECOND_ADMIN_ID));
+  const response = await handler(getRequest());
+
+  assertEquals(response.status, 200, "Second administrator should be allowed");
 });
 
 Deno.test("response contains only dashboard fields", async () => {

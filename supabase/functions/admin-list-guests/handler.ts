@@ -1,3 +1,5 @@
+import { isAuthorizedAdmin } from "../_shared/admin-auth.ts";
+
 export interface AdminGuestRecord {
   id: string;
   name: string;
@@ -9,7 +11,7 @@ export interface AdminGuestRecord {
 
 export interface GuestListHandlerOptions {
   allowedOrigins: string[];
-  adminUserId: string;
+  adminUserIds: ReadonlySet<string>;
   authenticate(request: Request): Promise<string | null>;
   listGuests(): Promise<AdminGuestRecord[]>;
 }
@@ -98,7 +100,7 @@ export function createGuestListHandler(
       return errorResponse("UNAUTHORIZED", 401, origin);
     }
 
-    if (userId.toLowerCase() !== options.adminUserId.toLowerCase()) {
+    if (!isAuthorizedAdmin(userId, options.adminUserIds)) {
       return errorResponse("ADMIN_ACCESS_DENIED", 403, origin);
     }
 

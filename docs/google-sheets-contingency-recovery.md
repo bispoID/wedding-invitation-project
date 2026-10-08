@@ -24,8 +24,10 @@ reconciliation and removal.
 
 The administrator submits only a `request_id`, together with the Supabase
 Auth JWT. The Edge Function verifies the JWT and checks the user ID against
-the backend-only `ADMIN_AUTH_USER_ID` configuration before creating a
-service-role client or accessing Google credentials.
+the backend-only `ADMIN_AUTH_USER_IDS` configuration before creating a
+service-role client or accessing Google credentials. The secret contains a
+comma-separated list of UUIDs for permitted Supabase Auth users; malformed or
+missing configuration fails closed.
 
 The function serializes recoveries for the worksheet with the persisted
 `google_sheets_rsvp_recovery` lock. The lock lease is 180 seconds; the function
@@ -82,8 +84,8 @@ fails, the function returns `CLEANUP_PENDING` with `persisted: true` and
 
 Configure these values only for the Supabase Edge Functions:
 
-- `ADMIN_AUTH_USER_ID`: UUID of the single administrator permitted to recover
-  contingency entries.
+- `ADMIN_AUTH_USER_IDS`: comma-separated UUIDs of the Supabase Auth users
+  permitted to access administrative functions, including contingency recovery.
 - `ADMIN_ALLOWED_ORIGINS`: comma-separated exact browser origins allowed to
   call the function; do not include paths or wildcard origins.
 - `GOOGLE_SERVICE_ACCOUNT_JSON_B64`: existing service-account JSON secret.
@@ -96,9 +98,9 @@ accessing the Google configuration. `service_role`, the Google service-account
 credential, OAuth tokens, and spreadsheet data are never returned to the
 browser or logged.
 
-The endpoint requires a JWT and separately checks the administrator UUID.
-CORS is restricted to the configured exact origins; CORS is not a substitute
-for JWT and administrator validation.
+The endpoint requires a JWT and separately checks membership in the
+administrator UUID list. CORS is restricted to the configured exact origins;
+CORS is not a substitute for JWT and administrator validation.
 
 ## Operational limits
 

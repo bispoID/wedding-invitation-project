@@ -27,9 +27,20 @@ O frontend é estático e não carrega arquivos `.env`. Antes de usar o login, c
 a chave **publishable** (ou a chave legada **anon**) do Supabase Dashboard para
 `admin/scripts/supabase-config.js`, na constante `SUPABASE_PUBLIC_KEY`.
 Essa chave é pública e pode ser enviada ao navegador; não use a chave
-`service_role`. A listagem e as alterações administrativas de convidados são
-servidas por Edge Functions que validam o JWT e o UUID de administrador antes
-de consultar ou alterar `public.guests`.
+`service_role`. O Supabase Auth autentica os administradores. As Edge Functions
+administrativas validam o JWT e autorizam separadamente o usuário comparando
+seu UUID com a lista configurada em `ADMIN_AUTH_USER_IDS` antes de consultar ou
+alterar `public.guests`. Um JWT válido não basta: usuário autenticado que não
+esteja nessa lista recebe 403.
+
+Os UUIDs autorizados são mantidos somente no secret de backend
+`ADMIN_AUTH_USER_IDS`, como uma lista separada por vírgulas; nunca copie essa
+lista nem credenciais privilegiadas para o frontend. O cadastro público de
+usuários Auth está desativado. Convidados do RSVP não possuem contas Auth;
+administradores possuem contas individuais criadas manualmente no Supabase
+Dashboard e autorizadas no secret. `service_role` permanece exclusivamente no
+backend. Consulte `../docs/admin-guest-management.md` para detalhes da
+autorização administrativa.
 
 O cliente `@supabase/supabase-js` é importado como módulo ES da versão fixada
 no CDN esm.sh, portanto o navegador precisa de acesso à internet. Nenhuma

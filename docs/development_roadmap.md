@@ -276,6 +276,9 @@ Objetivo: criar o ambiente privado para gerenciamento dos convidados.
 - [x] 7C.2 — Listar e recuperar registros pendentes da contingência no dashboard.
 - [x] 7D — Editar e excluir convidados com validação administrativa.
 - [x] 7D — Exibir e recalcular indicadores dos convidados.
+- [x] Implementar hardening de segurança para a área administrativa.
+- [x] Implementar autorização com JWT válido e `ADMIN_AUTH_USER_IDS`, com suporte a múltiplos administradores.
+- [x] Publicar as quatro Edge Functions administrativas com `verify_jwt=true`.
 - [x] Documentar a autorização e operação administrativa em `docs/admin-guest-management.md`.
 
 ### Indicadores
@@ -539,11 +542,16 @@ Não avançar simplesmente porque a implementação "parece pronta".
 
 **Fase 6 — Contingência: concluída.**
 
-**Fase 7 — Área administrativa: concluída até o Bloco 7D.** Os Blocos 7A e 7B
-entregam autenticação, proteção de sessão e listagem de convidados; o Bloco 7C
-entrega listagem e recuperação da contingência; e o Bloco 7D entrega edição,
-exclusão confirmada e indicadores. O CRUD administrativo foi validado com
-registros sintéticos temporários, removidos ao final.
+**Fase 7 — Área administrativa: concluída.** A autenticação Supabase Auth e a
+proteção de sessão estão implementadas. A autorização é verificada no backend
+por JWT válido e associação do UUID à lista `ADMIN_AUTH_USER_IDS`; suporta
+múltiplos administradores e retorna 403 a usuários autenticados não autorizados.
+O CRUD de convidados, os indicadores e a integração da contingência ao painel
+estão implementados. O hardening de segurança foi realizado, mantendo
+`service_role` exclusivamente no backend. As quatro Edge Functions
+administrativas estão publicadas, ACTIVE e com `verify_jwt=true`. O CRUD
+administrativo foi validado com registros sintéticos temporários, removidos ao
+final.
 
 As Fases 1 a 3 e 5 a 7 estão concluídas. A Fase 4 permanece pendente
 exclusivamente da validação final do rate limiting.

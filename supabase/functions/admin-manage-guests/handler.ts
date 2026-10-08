@@ -1,3 +1,5 @@
+import { isAuthorizedAdmin } from "../_shared/admin-auth.ts";
+
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,7 +21,7 @@ export interface GuestAdminDependencies {
 
 export interface GuestAdminHandlerOptions {
   allowedOrigins: string[];
-  adminUserId: string;
+  adminUserIds: ReadonlySet<string>;
   authenticate(request: Request): Promise<string | null>;
   createDependencies(): GuestAdminDependencies;
 }
@@ -171,7 +173,7 @@ export function createGuestAdminHandler(
       return errorResponse("UNAUTHORIZED", 401, origin);
     }
 
-    if (userId.toLowerCase() !== options.adminUserId.toLowerCase()) {
+    if (!isAuthorizedAdmin(userId, options.adminUserIds)) {
       return errorResponse("ADMIN_ACCESS_DENIED", 403, origin);
     }
 

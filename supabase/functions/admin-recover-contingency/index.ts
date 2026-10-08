@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { parseAdminUserIds } from "../_shared/admin-auth.ts";
 import {
   deleteContingencyRow,
   GoogleSheetsError,
@@ -12,8 +13,6 @@ import type {
 } from "./recovery.ts";
 
 const REQUEST_TIMEOUT_MS = 12_000;
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function requireEnv(name: string): string {
   const value = Deno.env.get(name);
@@ -57,11 +56,7 @@ function fetchWithTimeout(
 
 const supabaseUrl = requireEnv("SUPABASE_URL");
 const publicKey = requireEnv("SUPABASE_ANON_KEY");
-const adminUserId = requireEnv("ADMIN_AUTH_USER_ID");
-
-if (!UUID_PATTERN.test(adminUserId)) {
-  throw new Error("ADMIN_AUTH_USER_ID must be a UUID");
-}
+const adminUserIds = parseAdminUserIds(Deno.env.get("ADMIN_AUTH_USER_IDS"));
 
 const authClient = createClient(supabaseUrl, publicKey, {
   auth: {
@@ -75,7 +70,7 @@ const authClient = createClient(supabaseUrl, publicKey, {
 
 const handler = createRecoveryHandler({
   allowedOrigins: configuredOrigins(),
-  adminUserId,
+  adminUserIds,
   async authenticate(request) {
     const authorization = request.headers.get("authorization");
     const match = authorization?.match(/^Bearer\s+(.+)$/i);
