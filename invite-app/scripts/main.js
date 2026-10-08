@@ -1,7 +1,12 @@
-import { initRsvp } from './letter/rsvp.js';
-import { initLocationChurchAnimation } from './letter/location-church.js';
-import { initEnvelope } from './welcome/envelope.js';
-import { initWelcomeTypography } from './welcome/typography.js';
+import {
+  initRsvp,
+  initLocationChurchAnimation
+} from './letter.js';
+
+import {
+  initEnvelope,
+  initWelcomeTypography
+} from './envelope.js';
 
 
 /**

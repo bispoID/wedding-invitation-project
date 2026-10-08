@@ -1,0 +1,9 @@
+/* Entry point dos estilos da capa e do envelope.
+ *
+ * A ordem destes imports preserva a cascata existente do welcome:
+ * estrutura da capa -> envelope -> estados e animações.
+ */
+
+@import url("./welcome/welcome.css");
+@import url("./welcome/envelope.css");
+@import url("./welcome/animations.css");

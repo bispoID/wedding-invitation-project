@@ -1,0 +1,9 @@
+/* Entry point dos estilos da carta e de seus conteúdos específicos.
+ *
+ * A ordem destes imports preserva a cascata existente da carta:
+ * estrutura principal -> evento/local -> RSVP.
+ */
+
+@import url("./letter/letter.css");
+@import url("./letter/event.css");
+@import url("./letter/rsvp.css");

@@ -15,21 +15,17 @@
 
 
 /* =========================================================
-   CAPA / WELCOME
+   CAPA / ENVELOPE
 ========================================================= */
 
-@import url("./welcome/welcome.css");
-@import url("./welcome/envelope.css");
-@import url("./welcome/animations.css");
+@import url("./envelope.css");
 
 
 /* =========================================================
    CARTA
 ========================================================= */
 
-@import url("./letter/letter.css");
-@import url("./letter/event.css");
-@import url("./letter/rsvp.css");
+@import url("./letter.css");
 
 
 /* =========================================================
