@@ -139,7 +139,7 @@ Objetivo: criar a camada responsável por receber e processar os RSVPs.
 - [x] Evitar exposição de informações internas nas respostas.
 - [x] Garantir o funcionamento normal para convidados legítimos.
 - [x] Definir armazenamento persistente do contador de requisições.
-- [ ] Realizar a validação final do rate limiting.
+- [x] Realizar a validação final do rate limiting.
 - [x] Inserir no Supabase.
 - [x] Retornar respostas padronizadas.
 - [x] Implementar tratamento de erros.
@@ -524,7 +524,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 01 — Base do projeto
 [x] 02 — Banco / Supabase
 [x] 03 — Segurança / Permissões
-[ ] 04 — API / Edge Function (validação final do rate limiting pendente)
+[x] 04 — API / Edge Function
 [x] 05 — RSVP
 [x] 06 — Contingência
 [x] 07 — Área Administrativa (Blocos 7A–7D)
@@ -553,11 +553,12 @@ administrativas estão publicadas, ACTIVE e com `verify_jwt=true`. O CRUD
 administrativo foi validado com registros sintéticos temporários, removidos ao
 final.
 
-As Fases 1 a 3 e 5 a 7 estão concluídas. A Fase 4 permanece pendente
-exclusivamente da validação final do rate limiting.
+As Fases 1 a 7 estão concluídas.
 
 A proteção contra abuso / rate limiting está implementada na Supabase Edge
-Function. Falta somente a validação final definida para a Fase 4.
+Function e foi validada. O IP é obtido pelo header `x-forwarded-for`, seu hash
+SHA-256 é usado no controle persistido no Supabase, e os testes e o
+comportamento do rate limiting foram verificados.
 
 A Fase 5 — RSVP está concluída. O fluxo real de confirmação de presença foi implementado, testado e validado, incluindo validações do frontend, integração com a API, estado de carregamento, tratamento de erros, confirmação após persistência real e tratamento de e-mail duplicado.
 
@@ -566,11 +567,12 @@ implementada; fallback e retorno HTTP 202 validados; falha dupla HTTP 500
 validada; logging administrativo via Supabase Logs implementado; procedimento
 de recuperação manual documentado; função temporária de teste removida.
 
-### Validação final da Fase 4
+### Validação do rate limiting da Fase 4
 
 A proteção contra abuso foi implementada diretamente na **Supabase Edge
-Function** e não depende da Vercel. A validação final do rate limiting
-permanece pendente; a Fase 4 não está concluída até essa validação.
+Function** e não depende da Vercel. O rate limiting foi testado e validado,
+incluindo o uso do IP encaminhado em `x-forwarded-for`, hash SHA-256 e
+armazenamento persistente no Supabase.
 
 O fluxo esperado é:
 
@@ -585,10 +587,6 @@ Validação
         ↓
 Supabase
 ```
-
-Próximo objetivo:
-
-> **Concluir a validação final do rate limiting pendente da Fase 4.**
 
 ---
 
