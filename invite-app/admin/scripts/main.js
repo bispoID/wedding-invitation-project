@@ -419,6 +419,7 @@ async function handleRecovery(record, button) {
         : 'Registro recuperado e removido da contingência.',
       'success'
     );
+    window.setTimeout(() => window.location.reload(), 2000);
     await loadContingency({ preserveFeedback: true });
   } catch (error) {
     const code = error?.code;
