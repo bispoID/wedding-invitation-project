@@ -11,7 +11,7 @@ Aplicação estática inicial do convite virtual.
 - **Assets de estilo:** imagens usadas pelo CSS também ficam centralizadas como tokens `--asset-*` em `styles/base/variables.css`.
 - **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` envia o RSVP à Supabase Edge Function.
 - **Modo desenvolvedor:** `scripts/devmode/preview.js` controla os previews estáticos e `styles/devmode/devmode.css` concentra os estilos do painel.
-- **Área administrativa:** `admin/` mantém o login Supabase Auth, a listagem autenticada de convidados e uma seção informativa de contingência separados do fluxo público do convite e RSVP.
+- **Área administrativa:** `admin/` mantém o login Supabase Auth, a listagem de convidados restrita ao administrador por Edge Function e uma seção de contingência independente do fluxo público do convite e RSVP.
 
 Essa estrutura vanilla é suficiente para a Fase 1 e evita adicionar framework ou build system antes de existir uma necessidade real.
 
@@ -27,8 +27,9 @@ O frontend é estático e não carrega arquivos `.env`. Antes de usar o login, c
 a chave **publishable** (ou a chave legada **anon**) do Supabase Dashboard para
 `admin/scripts/supabase-config.js`, na constante `SUPABASE_PUBLIC_KEY`.
 Essa chave é pública e pode ser enviada ao navegador; não use a chave
-`service_role`. A segurança dos dados continua dependendo das policies RLS do
-Supabase.
+`service_role`. A listagem e as alterações administrativas de convidados são
+servidas por Edge Functions que validam o JWT e o UUID de administrador antes
+de consultar ou alterar `public.guests`.
 
 O cliente `@supabase/supabase-js` é importado como módulo ES da versão fixada
 no CDN esm.sh, portanto o navegador precisa de acesso à internet. Nenhuma

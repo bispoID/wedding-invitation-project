@@ -258,7 +258,7 @@ export async function appendContingencyRsvp(
 ): Promise<void> {
   const config = await getGoogleConfig();
   const url =
-    `https://sheets.googleapis.com/v4/spreadsheets/${config.spreadsheetId}/values/${WORKSHEET_NAME}:append?valueInputOption=USER_ENTERED`;
+    `https://sheets.googleapis.com/v4/spreadsheets/${config.spreadsheetId}/values/${WORKSHEET_NAME}:append?valueInputOption=RAW`;
 
   await sheetsRequest(
     config,

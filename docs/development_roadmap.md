@@ -267,7 +267,7 @@ Objetivo: criar o ambiente privado para gerenciamento dos convidados.
 - [x] Implementar logout.
 - [x] Criar estrutura inicial do dashboard com estados de carregamento e erro.
 - [x] Configurar a chave pública Supabase em `invite-app/admin/scripts/supabase-config.js`.
-- [x] Criar listagem administrativa de convidados via sessão autenticada e RLS.
+- [x] Criar listagem administrativa de convidados por Edge Function restrita ao administrador.
 - [x] Exibir nome, e-mail, presença, acompanhantes e data de envio.
 - [x] Implementar estados de carregamento, erro e lista vazia.
 - [x] 7A — Implementar a base administrativa privada, autenticação e dashboard.

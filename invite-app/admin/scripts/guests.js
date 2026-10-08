@@ -1,15 +1,18 @@
-import { getSupabaseClient } from './supabase.js';
+import { getSupabaseClient } from "./supabase.js";
 
 export async function getGuests() {
   const supabase = await getSupabaseClient();
-  const { data, error } = await supabase
-    .from('guests')
-    .select('id, name, email, attendance, companions, created_at, updated_at')
-    .order('created_at', { ascending: false });
+  const { data, error } = await supabase.functions.invoke("admin-list-guests", {
+    method: "GET",
+  });
 
   if (error) {
     throw error;
   }
 
-  return data;
+  if (!Array.isArray(data?.records)) {
+    throw new Error("A função retornou uma lista de convidados inválida.");
+  }
+
+  return data.records;
 }
