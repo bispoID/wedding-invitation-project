@@ -4,6 +4,17 @@ begin;
 do $$
 declare role_name text; column_name text;
 begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public'
+    and table_name = 'event_config' and column_name = 'monogram_url') or
+    not exists (select 1 from information_schema.columns where table_schema = 'public'
+    and table_name = 'event_config' and column_name = 'reception_maps_url') then
+    raise exception 'Unexpected Event Config contract';
+  end if;
+  if (select count(*) from information_schema.columns where table_schema = 'public'
+      and table_name = 'event_config' and column_name in ('reception_city', 'reception_state')
+      and is_nullable = 'YES') <> 2 then
+    raise exception 'Reception location columns must exist and be nullable';
+  end if;
   if not (select relrowsecurity from pg_class where oid = 'public.event_config'::regclass) then
     raise exception 'event_config RLS disabled';
   end if;
@@ -24,7 +35,7 @@ begin
   end if;
   foreach column_name in array array['id', 'bride_name', 'groom_name', 'event_date', 'event_time',
     'city', 'state', 'ceremony_name', 'ceremony_address', 'ceremony_maps_url',
-    'reception_name', 'reception_address', 'monogram_url'] loop
+    'reception_name', 'reception_address', 'reception_city', 'reception_state', 'reception_maps_url'] loop
     if not has_column_privilege('service_role', 'public.event_config', column_name, 'INSERT') or
        not has_column_privilege('service_role', 'public.event_config', column_name, 'UPDATE') then
       raise exception 'Missing service_role column privilege %', column_name;
@@ -80,8 +91,24 @@ do $$ begin
     raise exception 'Reception dependency missing';
   exception when check_violation then null; end;
   begin
-    update public.event_config set monogram_url = 'http://example.invalid/a';
+    update public.event_config set reception_maps_url = 'http://example.invalid/a';
     raise exception 'HTTP URL accepted';
+  exception when check_violation then null; end;
+  begin
+    update public.event_config set reception_city = repeat('a', 151);
+    raise exception 'Long reception city accepted';
+  exception when check_violation then null; end;
+  begin
+    update public.event_config set reception_state = repeat('a', 101);
+    raise exception 'Long reception state accepted';
+  exception when check_violation then null; end;
+  begin
+    update public.event_config set reception_city = ' ';
+    raise exception 'Blank reception city accepted';
+  exception when check_violation then null; end;
+  begin
+    update public.event_config set reception_state = ' ';
+    raise exception 'Blank reception state accepted';
   exception when check_violation then null; end;
   begin
     insert into public.guests (name, email, attendance, companions)
@@ -93,9 +120,22 @@ do $$ begin
     values ('Sintético', repeat('a', 321), true, 0);
     raise exception 'Long guest email accepted';
   exception when check_violation then null; end;
-  if (select ceremony_address is not null or reception_name is not null or monogram_url is not null
+  if (select ceremony_address is not null or reception_name is not null or reception_maps_url is not null
+      or reception_city is not null or reception_state is not null
       from public.event_config where id = 1) then raise exception 'Optional defaults are not NULL'; end if;
 end $$;
+-- Reception map remains independent from optional name/address.
+set local role service_role;
+update public.event_config set reception_maps_url = 'https://example.invalid/maps';
+do $$ begin
+  if (select reception_maps_url <> 'https://example.invalid/maps' or
+      reception_address is not null or reception_name is not null
+      from public.event_config where id = 1) then
+    raise exception 'Reception map independence failed';
+  end if;
+end $$;
+update public.event_config set reception_maps_url = null;
+reset role;
 -- Trigger timestamp test does not depend on transaction-time advancement.
 alter table public.event_config disable trigger event_config_set_updated_at;
 update public.event_config set updated_at = '2000-01-01T00:00:00Z';

@@ -1,3 +1,5 @@
+import { initEventConfig } from './event-config.js';
+
 import {
   initRsvp,
   initLocationChurchAnimation
@@ -48,3 +50,4 @@ initLocationChurchAnimation();
 
 initWelcomeTypography();
 initRsvp();
+void initEventConfig();

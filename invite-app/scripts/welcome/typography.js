@@ -66,6 +66,8 @@ export function initWelcomeTypography() {
 
   scheduleWelcomeTypography();
 
+  document.addEventListener('invitation:content-updated', scheduleWelcomeTypography);
+
   window.addEventListener(
     'resize',
     scheduleWelcomeTypography

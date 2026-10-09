@@ -1,11 +1,12 @@
 import { callAdminFunction } from './functions.js';
+import { formatTimestamp } from './date-time.js';
 
 export const EVENT_FIELDS = [
   'bride_name', 'groom_name', 'event_date', 'event_time', 'city', 'state',
   'ceremony_name', 'ceremony_address', 'ceremony_maps_url', 'reception_name',
-  'reception_address', 'monogram_url',
+  'reception_address', 'reception_city', 'reception_state', 'reception_maps_url',
 ];
-const optional = new Set(['ceremony_address', 'ceremony_maps_url', 'reception_name', 'reception_address', 'monogram_url']);
+const optional = new Set(['ceremony_address', 'ceremony_maps_url', 'reception_name', 'reception_address', 'reception_city', 'reception_state', 'reception_maps_url']);
 export function readEventForm(form) {
   return Object.fromEntries(EVENT_FIELDS.map((field) => {
     const value = form.elements.namedItem(field).value.trim();
@@ -24,6 +25,14 @@ export async function requestEventConfig(method, config, invoke = callAdminFunct
   return result.config;
 }
 export async function initializeEventConfig(root = document, request = requestEventConfig) {
+  const toggle = root.querySelector('#event-toggle');
+  const content = root.querySelector('#event-content');
+  const setExpanded = (expanded) => {
+    toggle.setAttribute('aria-expanded', String(expanded));
+    content.hidden = !expanded;
+  };
+  setExpanded(false);
+  toggle.addEventListener('click', () => setExpanded(content.hidden));
   const form = root.querySelector('#event-form');
   const feedback = root.querySelector('#event-feedback');
   const loading = root.querySelector('#event-loading');
@@ -38,11 +47,12 @@ export async function initializeEventConfig(root = document, request = requestEv
     feedback.textContent = text;
     feedback.className = 'feedback feedback--' + type;
     feedback.hidden = false;
+    setExpanded(true);
   };
   const fill = (config) => {
     for (const field of EVENT_FIELDS) form.elements.namedItem(field).value = config?.[field] ?? '';
     root.querySelector('#event-updated').textContent = config?.updated_at
-      ? 'Atualizado em: ' + config.updated_at : '';
+      ? 'Atualizado em: ' + formatTimestamp(config.updated_at) : '';
   };
   let ready = false;
   const load = async () => {
@@ -70,8 +80,9 @@ export async function initializeEventConfig(root = document, request = requestEv
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!ready || form.getAttribute('aria-busy') === 'true' || !form.reportValidity()) return;
+    setExpanded(true);
     const config = readEventForm(form);
-    for (const field of ['ceremony_maps_url', 'monogram_url']) {
+    for (const field of ['ceremony_maps_url', 'reception_maps_url']) {
       if (!config[field]) continue;
       try {
         const url = new URL(config[field]);

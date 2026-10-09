@@ -12,7 +12,9 @@ export const EVENT_FIELDS = [
   "ceremony_maps_url",
   "reception_name",
   "reception_address",
-  "monogram_url",
+  "reception_city",
+  "reception_state",
+  "reception_maps_url",
 ] as const;
 export type EventField = typeof EVENT_FIELDS[number];
 export type EventConfig = Record<EventField, string | null>;
@@ -28,8 +30,10 @@ const optionalText: Record<string, number> = {
   ceremony_address: 500,
   reception_name: 200,
   reception_address: 500,
+  reception_city: 150,
+  reception_state: 100,
   ceremony_maps_url: 2048,
-  monogram_url: 2048,
+  reception_maps_url: 2048,
 };
 
 export function isHttpsUrl(value: string): boolean {
@@ -90,7 +94,7 @@ export function validateEventConfig(
     return { error: "INVALID_EVENT_CONFIG", field: "event_time" };
   }
   config.event_time = config.event_time!.slice(0, 5);
-  for (const field of ["ceremony_maps_url", "monogram_url"] as const) {
+  for (const field of ["ceremony_maps_url", "reception_maps_url"] as const) {
     if (config[field] && !isHttpsUrl(config[field])) {
       return { error: "INVALID_EVENT_CONFIG", field };
     }

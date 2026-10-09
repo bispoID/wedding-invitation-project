@@ -40,3 +40,11 @@
 ========================================================= */
 
 @import url("./responsive.css");
+
+/* Public event data is unavailable until its one-shot request succeeds. */
+[data-event-state]:not([data-event-state="ready"]) [data-event-dependent] {
+  visibility: hidden;
+}
+[data-event-state] [hidden] { display: none !important; }
+[data-event-status] { text-align: center; overflow-wrap: anywhere; }
+[data-event-field] { overflow-wrap: anywhere; }

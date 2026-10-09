@@ -83,8 +83,9 @@ Banco estruturado e capaz de armazenar os RSVPs.
 
 **Entrega anterior concluída; extensão implementada localmente no Bloco 3:**
 schema singleton de `event_config` e limites de convidados com NOT VALID.
-Aplicação das migrations, testes SQL e auditoria dos históricos permanecem
-pendentes; nenhuma alteração remota foi executada.
+Migrations aplicadas nos checkpoints autorizados, incluindo localização própria
+da recepção. Suite SQL local integral e auditoria/VALIDATE dos históricos seguem
+pendentes; nenhum dado histórico foi corrigido automaticamente.
 
 ---
 
@@ -127,7 +128,8 @@ Banco protegido e permissões funcionando de acordo com o modelo definido.
 
 **Entrega anterior concluída; extensão local do Bloco 3:** RLS/grants restritivos
 na migration de evento, DTO público limitado e Auth/allowlist/origem nas APIs
-administrativas. Testes simulados passaram; validação SQL e aceite remoto pendentes.
+administrativas. Testes simulados e verificações remotas de schema/HTTP passaram;
+a suite SQL local integral permanece pendente.
 
 ---
 
@@ -160,10 +162,11 @@ Objetivo: criar a camada responsável por receber e processar os RSVPs.
 
 A API consegue receber, validar e persistir um RSVP corretamente, com proteção contra abuso implementada e validada na Edge Function.
 
-**Entrega anterior concluída; extensão local do Bloco 3:** APIs de configuração
+**Entrega anterior concluída; extensão implantada do Bloco 3:** APIs de configuração
 do evento, validação compartilhada e minimização dos logs implementadas e
 testadas offline. O algoritmo, chave, RPC e limites do rate limiting foram
-preservados. Publicação e aceite integrado continuam pendentes.
+preservados. Backend implantado e aceite funcional concluído nos checkpoints;
+publicação do frontend atualizado permanece pendente.
 
 ---
 
@@ -318,10 +321,11 @@ Total de pessoas confirmadas
 
 O administrador consegue visualizar e gerenciar a lista de forma privada.
 
-**Entrega anterior concluída; extensão implementada localmente no Bloco 3:**
+**Entrega anterior concluída; extensão do Bloco 3 com backend implantado:**
 criação manual de convidados, edição de `event_config` e navegação para
-convite/previews. Asserções backend e UI simulada passaram; publicação e
-aceite visual/integrado continuam pendentes.
+convite/previews. Asserções backend e UI simulada passaram; aceite funcional e
+visual local concluído, incluindo Event Config do Bloco 4. Publicação do frontend
+atualizado permanece pendente.
 
 ---
 
@@ -501,6 +505,31 @@ representar aceite completo de segurança, integração ou interface.
 
 ## Baseline automatizada
 
+**Bloco 4 — implementação e aceite local:** frontend consome Event Config com um GET por
+carregamento, estados explícitos, opcionais seguros e metadata genérica, sem
+fallback pessoal. Contrato final de 14 campos: bride_name, groom_name, event_date,
+event_time, city, state, ceremony_name, ceremony_address, ceremony_maps_url,
+reception_name, reception_address, reception_city, reception_state e
+reception_maps_url. Monograma BD estático nos dois slots originais; share preview
+genérica em previa-link-envelope.webp. Migration de localização aplicada e
+somente as duas Functions de Event Config publicadas (versão 3), com registro
+real/timestamps preservados na implantação e campos novos inicialmente NULL.
+O primeiro PUT real foi realizado pelo usuário e READY local já alcançado.
+A recepção não herda a localização principal. Timestamps continuam instantes
+absolutos; o painel usa America/Sao_Paulo somente na apresentação. event_time
+permanece horário civil sem conversão. #event-updated ganha margem superior
+de 12px, preservando a margem aprovada de #event-feedback.
+Backend do Bloco 3 implantado; reset RSVP validado e versionado.
+As 13 fases permanecem preservadas: este ajuste não conclui fases automaticamente.
+Aceite manual concluído: READY, cerimônia, recepção/localização independente,
+mapas, monograma nos dois locais, timestamps, espaçamentos, desktop e mobile
+aproximadamente 390px. Event Config recolhível aprovado, mantendo GET, valores,
+feedback visível e salvamento, sem persistir estado. Regressão final local:
+254 testes (144 Deno e 110 Node), typecheck, syntax e whitespace aprovados.
+O workflow Test baseline acompanha o commit de encerramento. Publicação do
+frontend e integração com feature/landing-page permanecem pendentes.
+VALIDATE versionado e suite SQL local integral continuam pendências separadas.
+
 - [x] Criar workflow independente `.github/workflows/test.yml` em Linux.
 - [x] Configurar descoberta de JavaScript versionado e `node --check`.
 - [x] Incluir testes das Functions e o teste de métricas explicitamente.
@@ -630,12 +659,12 @@ Não avançar simplesmente porque a implementação "parece pronta".
 
 ```text
 [x] 01 — Base do projeto (entrega anterior; App Config/preparador implementados)
-[x] 02 — Banco / Supabase (entrega anterior; extensão pendente)
-[x] 03 — Segurança / Permissões (entrega anterior; extensão pendente)
-[x] 04 — API / Edge Function (entrega anterior; extensão pendente)
+[x] 02 — Banco / Supabase (migrations aplicadas; SQL local/auditoria/VALIDATE pendentes)
+[x] 03 — Segurança / Permissões (extensão implantada; suite SQL local pendente)
+[x] 04 — API / Edge Function (extensão implantada e aceite funcional concluído)
 [x] 05 — RSVP (entrega anterior; revalidação futura)
 [x] 06 — Contingência (entrega anterior; revalidação futura)
-[x] 07 — Área Administrativa (Blocos 7A–7D; extensão pendente)
+[x] 07 — Área Administrativa (backend implantado e aceite local; frontend não publicado)
 [x] 08 — Monitoramento
 [ ] 09 — Interface / Design (PARCIAL)
 [ ] 10 — Integração (PARCIAL)
@@ -650,13 +679,14 @@ Não avançar simplesmente porque a implementação "parece pronta".
 
 **Fase 6 — Contingência: concluída.**
 
-**Fase 7 — Área administrativa: entrega anterior concluída; extensão pendente.** A autenticação Supabase Auth e a
+**Fase 7 — Área administrativa: backend implantado e aceite local concluído; frontend atualizado não publicado.** A autenticação Supabase Auth e a
 proteção de sessão estão implementadas. A autorização é verificada no backend
 por JWT válido e associação do UUID à lista `ADMIN_AUTH_USER_IDS`; suporta
 múltiplos administradores e retorna 403 a usuários autenticados não autorizados.
 Listagem, edição e exclusão de convidados, os indicadores e a integração da
 contingência ao painel estão implementados. O Bloco 3 acrescenta criação manual,
-configuração do evento e previews localmente, sem publicação.
+configuração do evento e previews; backend implantado, painel aceito localmente,
+sem nova publicação do frontend.
 O hardening de segurança foi realizado, mantendo
 `service_role` exclusivamente no backend. As quatro Edge Functions
 administrativas foram verificadas como ACTIVE e com `verify_jwt=true` na
@@ -666,16 +696,21 @@ final.
 
 As entregas anteriores das Fases 1 a 8 estão concluídas. App Config e preparador
 estático foram implementados no Lote 2; extensões das Fases 2 a 7 foram
-implementadas localmente no Bloco 3. Migrations/aplicação remota e aceite
-integrado dessas extensões permanecem pendentes.
+implementadas no Bloco 3, com migrations/Functions aplicadas e aceite funcional
+informado. Primeiro PUT real realizado pelo usuário e READY local alcançado.
+VALIDATE versionado e suite SQL local integral continuam pendentes.
 
 **Fase 8 — Monitoramento: concluída.** A configuração oficial do UptimeRobot é
 `HEAD` a cada 15 minutos. Este lote equaliza somente sua documentação.
 
 **Fases 9, 10 e 12: parciais.** Já há interface, integração e testes. O workflow
-Linux do Lote 1 passou; os novos testes do Lote 2 aguardam execução remota.
-O Bloco 3 passou localmente em 185 testes; sua revisão, CI Linux e aceite
-visual/SQL permanecem pendentes. Não foi feito commit, push ou deploy.
+Linux do Lote 1 passou; Test baseline permanece o gate Linux de regressão.
+O encerramento do Bloco 3 passou em 194 testes, CI Linux e aceite manual,
+com backend implantado. O Bloco 4 passou em 254 testes locais (144 Deno e 110 Node),
+incluindo os sete testes do collapsible; nenhuma cobertura legítima foi perdida.
+O aceite manual em desktop/mobile e da localização da recepção foi concluído.
+As fases seguem parciais: integração deliberada com feature/landing-page,
+publicação do frontend e aceites de operação publicados permanecem pendentes.
 
 **Fase 11: parcial.** Pages é atual/canônico; a portabilidade operacional foi
 testada localmente para configuração/metadados; aceite publicado ainda pendente.
@@ -684,9 +719,9 @@ Vercel é alternativa opcional.
 **Fase 13: publicado, com aceite final pendente.** A publicação atual em Pages
 não encerra a equalização.
 
-`event_config`, criação manual, minimização de PII/logs,
-constraints adicionais e novas Functions/migrations permanecem como extensões
-aprovadas para lotes posteriores.
+`event_config`, criação manual e as extensões de backend dos Blocos 3/4 já foram
+implementados nos checkpoints autorizados. A validação histórica das constraints
+de convidados permanece uma extensão futura separada.
 
 A proteção contra abuso / rate limiting está implementada na Supabase Edge
 Function e foi validada. O IP é obtido pelo header `x-forwarded-for`, seu hash

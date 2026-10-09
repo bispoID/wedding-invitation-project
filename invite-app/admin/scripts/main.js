@@ -5,6 +5,7 @@ import { calculateGuestMetrics } from './guest-metrics.js';
 import { validateGuest } from './guest-validation.js';
 import { initializeEventConfig } from './event-config.js';
 import { initializeInvitationLinks } from './navigation.js';
+import { formatTimestamp } from './date-time.js';
 
 const page = document.body.dataset.page;
 
@@ -160,7 +161,7 @@ function updateGuestMetrics(guests) {
 function createGuestRow(guest) {
   const row = document.createElement('tr');
   const attendance = guest.attendance ? 'Confirmado' : 'Não poderá comparecer';
-  const createdAt = formatDate(guest.created_at);
+  const createdAt = formatTimestamp(guest.created_at);
   const actions = document.createElement('td');
   const editButton = document.createElement('button');
   const deleteButton = document.createElement('button');
@@ -383,7 +384,7 @@ function createContingencyRow(record) {
     createCell(record.email),
     createCell(attendance),
     createCell(companions),
-    createCell(formatDate(record.created_at)),
+    createCell(formatTimestamp(record.created_at)),
     createCell(record.status === 'pending' ? 'Pendente' : record.status),
     actionCell
   );
@@ -452,19 +453,6 @@ function createCell(value) {
   const cell = document.createElement('td');
   cell.textContent = value;
   return cell;
-}
-
-function formatDate(value) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return '—';
-  }
-
-  return new Intl.DateTimeFormat('pt-BR', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-  }).format(date);
 }
 
 function showError(element, message) {

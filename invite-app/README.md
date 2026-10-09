@@ -8,7 +8,7 @@ opcional. A arquitetura deve permanecer independente do provedor estático.
 
 - **Apresentação:** `index.html`, com HTML semântico e acessível.
 - **Estilos:** `styles/main.css`, que importa tokens (`styles/base/variables.css`), fontes, base, componentes e responsividade mobile-first.
-- **Comportamento:** `scripts/main.js`, que inicializa os módulos de envelope, título e RSVP.
+- **Comportamento:** `scripts/main.js`, que inicializa os módulos de envelope, título, RSVP e Event Config.
 - **Tokens compartilhados:** os tempos e curvas de movimento ficam em `styles/base/variables.css`; `scripts/shared/css.js` permite que o JavaScript reutilize esses valores.
 - **Assets de estilo:** imagens usadas pelo CSS também ficam centralizadas como tokens `--asset-*` em `styles/base/variables.css`.
 - **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` envia o RSVP à Supabase Edge Function.
@@ -24,16 +24,47 @@ no roadmap.
 
 Sirva a pasta `invite-app` por HTTP (por exemplo, com o Live Server do VS Code) e acesse `index.html`. A área administrativa fica em `admin/login.html`.
 
-Os nomes e detalhes do evento ainda são dados do protótipo versionados no HTML.
-A retirada dos dados reais/configuráveis do código por meio de `event_config`
-está aprovada para implementação futura; ela não foi realizada neste lote.
+Os nomes e detalhes do evento são carregados pela Function pública `event-config`,
+sem dados pessoais de fallback no HTML. Esta implementação local ainda não foi
+publicada; a versão atualmente hospedada permanece anterior ao Bloco 4.
 
 ## Configuração da área administrativa
 
-Extensão local do Bloco 3, ainda não publicada: criação manual de convidados,
+O frontend público do Bloco 4 está implementado localmente, não publicado nem
+integrado com feature/landing-page. Os dados públicos vêm exclusivamente da
+Function event-config: um GET/Promise por página, timeout de 12 segundos,
+loading/ready/not-configured/error, sem cache persistente ou fallback pessoal.
+O contrato final tem 14 campos públicos, incluindo reception_city,
+reception_state e reception_maps_url. O monograma não é configurável:
+`images/monograma_bd.webp` é estático/versionado,
+no cartão e na carta. Endereços e mapas são opcionais; city/state mantêm a
+posição geográfica da cerimônia, sem fallback para a recepção. Esta possui
+cidade/estado próprios opcionais, sem placeholders ou separadores órfãos.
+Metadata estática é genérica e usa
+`images/previa-link-envelope.webp`; os markers PUBLIC_SITE_URL permanecem.
+O contrato completo está em [event-config.md](../docs/event-config.md).
+O primeiro PUT real foi realizado pelo usuário e READY já foi alcançado.
+A nova migration de localização e as duas Functions foram implantadas em
+checkpoints anteriores, sem alteração automática do registro ou seus timestamps.
+O preenchimento manual e a localização independente da recepção foram validados
+pelo usuário. Este checkpoint não reaplica migrations, deploys ou PUT remoto.
+O painel formata updated_at e timestamps já exibidos de convidados/contingência
+em America/Sao_Paulo, por Intl.DateTimeFormat compartilhado, só na apresentação.
+A persistência de instantes absolutos permanece inalterada. event_time continua
+horário civil HH:mm sem conversão. Há 12px acima de #event-updated; o espaçamento
+aprovado de #event-feedback permanece.
+O Event Config usa seção recolhível: botão nativo com aria-expanded/aria-controls,
+inicialmente recolhida, mantendo GET e valores dos inputs. Feedback importante
+expande a seção; salvar não a recolhe. Não há persistência do estado.
+Aceite manual concluído em desktop e mobile aproximadamente 390px, incluindo
+mapas, monograma, timestamp, espaçamentos e seção recolhível; frontend não publicado.
+O RSVP funciona independente do carregamento dos dados.
+
+Extensão do Bloco 3, com backend implantado e painel aceito localmente: criação manual de convidados,
 configuração do evento e links portáteis para convite/previews. A configuração
 do evento é pública pela API, não um armazenamento de dados privados. O convite
-ainda não consome dinamicamente esses dados. Requisitos e testes:
+publicado ainda não consome dinamicamente esses dados; o consumo local foi
+implementado no Bloco 4. Requisitos e testes:
 [event-config.md](../docs/event-config.md).
 
 O frontend é estático e não carrega arquivos `.env`. Antes de usar o login, copie
@@ -89,17 +120,17 @@ convite, mas os metadados de compartilhamento só ficam prontos no artefato.
 No Pages, a URL operacional vem de `actions/configure-pages`; a política de
 publicação continua na branch `feature/landing-page`. A branch de desenvolvimento
 não ganha trigger de deploy. Vercel permanece opcional; não há bundler ou leitura
-de `.env` pelo browser. `event_config` e a retirada dos dados personalizados
-continuam futuros.
+de `.env` pelo browser. O consumo de `event_config` e a retirada dos dados pessoais
+hardcoded foram implementados no Bloco 4; sua publicação permanece pendente.
 
 Testes locais, sem rede, na raiz do repositório:
 
 ```text
-node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs
+node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs scripts/admin-block3.test.mjs scripts/event-config.test.mjs
 ```
 
 O workflow de testes executa essa suíte além dos testes Deno existentes. O workflow
-Pages executa os mesmos testes Node como gate simples antes da preparação, sem
+Pages executa os testes de App Config e do preparador como gate antes da preparação, sem
 dependência circular ou duplicação da suíte Deno.
 
 

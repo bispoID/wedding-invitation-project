@@ -25,8 +25,9 @@ Deno.test("public event GET uses allowlist, SQL time and no-store CORS", async (
   )(new Request("https://example.invalid"));
   const body = await response.json();
   assert(
-    response.status === 200 && Object.keys(body.config).length === 12 &&
-      body.config.event_time === "12:30",
+    response.status === 200 && Object.keys(body.config).length === 14 &&
+      body.config.event_time === "12:30" && body.config.reception_city === null &&
+      body.config.reception_state === null && !("monogram_url" in body.config),
   );
   assert(
     response.headers.get("cache-control") === "no-store" &&

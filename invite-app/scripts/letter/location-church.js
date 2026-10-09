@@ -77,6 +77,7 @@ export function initLocationChurchAnimation() {
 
   window.addEventListener('scroll', scheduleChurchWidthUpdate, { passive: true });
   window.addEventListener('resize', scheduleChurchWidthUpdate);
+  document.addEventListener('invitation:content-updated', scheduleChurchWidthUpdate);
 
   scheduleChurchWidthUpdate();
 }

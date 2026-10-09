@@ -353,7 +353,7 @@ As operações administrativas deverão exigir autenticação e autorização ad
 Existe uma área administrativa com autenticação e autorização no backend,
 listagem, edição e exclusão de convidados, indicadores e recuperação da
 contingência. A criação manual de convidados e a edição de `event_config`
-são extensões aprovadas para implementação futura; ainda não existem.
+foram implementadas no Bloco 3, com backend implantado e painel aceito localmente.
 
 Inicialmente deverá permitir visualizar:
 
@@ -885,14 +885,45 @@ Detalhes de execução e limites: [invite-app/README.md](../invite-app/README.md
 
 O Bloco 3 implementa localmente o singleton `event_config`, sua API pública
 de leitura e API administrativa GET/PUT, criação manual de convidados e
-formulários independentes no painel. São extensões ainda não publicadas.
+formulários independentes no painel. O backend foi implantado; a publicação
+do frontend permanece pendente.
 Validação de convidados é comum a RSVP, administração e recuperação; logs
 técnicos de RSVP não devem incluir dados pessoais nem erros externos brutos.
 Migrations adicionais mantêm RLS restritiva e evitam alterações automáticas
 nos dados históricos. Contratos e pré-requisitos: [event-config.md](event-config.md).
 
-O consumo dinâmico pelo convite público e o aceite integrado de portabilidade
-permanecem para blocos posteriores. O convite continuará público;
+O Bloco 4 implementa localmente o consumo público dinâmico pela Function
+event-config: uma Promise/GET por página, timeout, validação e textContent,
+estados loading/ready/not-configured/error e opcionais ocultos quando ausentes.
+Não há fallback pessoal, acesso direto à tabela ou cache persistente. Datas são
+civis; metadata permanece genérica com markers do preparador estático.
+O contrato final de 14 campos é bride_name, groom_name, event_date, event_time,
+city, state, ceremony_name, ceremony_address, ceremony_maps_url, reception_name,
+reception_address, reception_city, reception_state e reception_maps_url.
+Mapas HTTPS são opcionais e independentes
+dos endereços; city/state mantêm o papel geográfico da cerimônia. A recepção
+possui cidade/estado próprios, opcionais (limites 150/100), sem cópia ou fallback
+da localização principal. Valores isolados são exibidos sem separador órfão.
+O monograma
+`invite-app/images/monograma_bd.webp` é identidade estática/versionada no cartão
+e na carta; a preview genérica é `invite-app/images/previa-link-envelope.webp`.
+O primeiro PUT real foi realizado pelo usuário e READY já foi alcançado no
+convite local. A migration de localização da recepção foi aplicada e somente
+as duas Functions de Event Config atualizadas, sem alteração automática do
+registro real. O preenchimento manual e a localização independente da recepção
+foram validados pelo usuário. Não houve PUT automático.
+Timestamps persistem como instantes absolutos no schema existente, sem conversão
+ou alteração histórica. O painel compartilha um formatador Intl.DateTimeFormat
+com America/Sao_Paulo explícito somente na apresentação de timestamps existentes.
+event_time permanece horário civil, sem conversão de timezone.
+O formulário administrativo é recolhível por botão nativo com aria-expanded e
+aria-controls, inicialmente recolhido, sem persistência do estado. O GET continua
+ocorrendo; expandir/recolher preserva os inputs. Feedback importante expande a
+seção, que não se recolhe automaticamente ao salvar.
+O aceite manual foi concluído em desktop e mobile aproximadamente 390px,
+incluindo localidades/mapas, monograma, timestamps, espaçamentos e collapsible.
+Publicação do frontend e integração com feature/landing-page permanecem pendentes.
+O convite continuará público;
 retirar dados reais do Git não os torna secretos quando exibidos em runtime.
 O status e os critérios de conclusão ficam no roadmap.
 

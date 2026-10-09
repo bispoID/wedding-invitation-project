@@ -11,5 +11,7 @@ export const fixture = {
   ceremony_maps_url: null,
   reception_name: null,
   reception_address: null,
-  monogram_url: null,
+  reception_city: null,
+  reception_state: null,
+  reception_maps_url: null,
 };

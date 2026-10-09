@@ -39,14 +39,16 @@ Deno.test("admin event GET empty, initial PUT, GET persisted and update", async 
   const first = await handler(req("PUT", { config: fixture }));
   assert(first.status === 200 && (await first.json()).config.updated_at);
   const second = await handler(
-    req("PUT", { config: { ...fixture, city: "Outra cidade sintética" } }),
+    req("PUT", { config: { ...fixture, city: "Outra cidade sintética", reception_city: " Cidade independente ", reception_state: " UF " } }),
   );
   const body = await second.json();
   assert(
-    body.config.city === "Outra cidade sintética" && !("id" in body.config),
+    body.config.city === "Outra cidade sintética" && !("id" in body.config) &&
+      body.config.reception_city === "Cidade independente" && body.config.reception_state === "UF" &&
+      Object.keys(body.config).length === 15,
   );
   assert(
-    (await (await handler(req("GET"))).json()).config.city === body.config.city,
+    JSON.stringify((await (await handler(req("GET"))).json()).config) === JSON.stringify(body.config),
   );
 });
 for (
@@ -91,7 +93,7 @@ for (
     [{ config: fixture, id: 1 }, 400],
     [[], 400],
     [{ config: { ...fixture, updated_at: "now" } }, 422],
-    [{ config: { ...fixture, monogram_url: "http://example.invalid/a" } }, 422],
+    [{ config: { ...fixture, reception_maps_url: "http://example.invalid/a" } }, 422],
     [{ config: { ...fixture, bride_name: " " } }, 422],
     [{ config: { ...fixture, reception_address: "Address" } }, 422],
   ] as const
@@ -112,7 +114,7 @@ Deno.test("admin event accepts HTTPS and returns sanitized persistence failure",
   assert(
     (await h.handler(
       req("PUT", {
-        config: { ...fixture, monogram_url: "https://example.invalid/a.png" },
+        config: { ...fixture, reception_maps_url: "https://example.invalid/a.png" },
       }),
     )).status === 200,
   );

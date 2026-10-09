@@ -11,7 +11,12 @@ const validation = await load('invite-app/admin/scripts/guest-validation.js');
 const navigation = await load('invite-app/admin/scripts/navigation.js', [
   ["import { APP_BASE_URL } from '../../scripts/shared/app-config.js';", "const APP_BASE_URL = 'https://example.invalid/invite/';"],
 ]);
+const dateTimeSource = await readFile(new URL('../invite-app/admin/scripts/date-time.js', import.meta.url), 'utf8');
+const dateTimeUrl = 'data:text/javascript;base64,' + Buffer.from(dateTimeSource).toString('base64');
+const dateTime = await import(dateTimeUrl);
+const timestampImport = ["import { formatTimestamp } from './date-time.js';", "import { formatTimestamp } from '" + dateTimeUrl + "';"];
 const eventModule = await load('invite-app/admin/scripts/event-config.js', [
+  timestampImport,
   ["import { callAdminFunction } from './functions.js';", 'const callAdminFunction = () => { throw new Error("No real network"); };'],
 ]);
 const guest = { name: ' Nome Á Sintético ', email: ' TEST@example.invalid ', attendance: true, companions: 2 };
@@ -173,11 +178,159 @@ function eventRoot() {
   form.elements.namedItem = (name) => fields[name];
   const save = new Element(); form.elements.push(save);
   const elements = { '#event-form': form };
-  for (const id of ['event-feedback', 'event-loading', 'event-retry', 'event-updated']) elements['#' + id] = new Element();
+  for (const id of ['event-feedback', 'event-loading', 'event-retry', 'event-updated', 'event-toggle', 'event-content']) elements['#' + id] = new Element();
+  elements['#event-toggle'].setAttribute('aria-controls', 'event-content');
   return { querySelector: (id) => elements[id], fields, form, elements };
+}
+function assertEventExpanded(root, expanded) {
+  assert.equal(root.elements['#event-toggle'].getAttribute('aria-expanded'), String(expanded));
+  assert.equal(root.elements['#event-content'].hidden, !expanded);
 }
 const eventFixture = Object.fromEntries(eventModule.EVENT_FIELDS.map((field) => [field, ['bride_name', 'groom_name', 'city', 'state', 'ceremony_name'].includes(field) ? 'Sintético' : null]));
 eventFixture.event_date = '2030-01-01'; eventFixture.event_time = '12:30';
+test('event collapsible starts closed, loads all fields while closed and toggles without requests or data loss', async () => {
+  const root = eventRoot();
+  const requests = [];
+  let resolve;
+  const loading = eventModule.initializeEventConfig(root, (method) => {
+    requests.push(method);
+    return new Promise((done) => { resolve = done; });
+  });
+  assertEventExpanded(root, false);
+  assert.equal(root.elements['#event-toggle'].getAttribute('aria-controls'), 'event-content');
+  assert.deepEqual(requests, ['GET']);
+  assert.ok(root.form.elements.every((element) => element.disabled));
+  resolve({ ...eventFixture, updated_at: '2026-10-09T03:04:02.407812+00:00' });
+  await loading;
+  assertEventExpanded(root, false);
+  assert.equal(root.form.hidden, false);
+  for (const field of eventModule.EVENT_FIELDS) assert.equal(root.fields[field].value, eventFixture[field] ?? '');
+  assert.equal(root.elements['#event-updated'].textContent, 'Atualizado em: 09/10/2026 às 00:04');
+  root.fields.reception_city.value = 'Cidade em edição';
+  const values = eventModule.readEventForm(root.form);
+  root.elements['#event-toggle'].events.click();
+  assertEventExpanded(root, true);
+  assert.deepEqual(eventModule.readEventForm(root.form), values);
+  root.elements['#event-toggle'].events.click();
+  assertEventExpanded(root, false);
+  assert.deepEqual(eventModule.readEventForm(root.form), values);
+  assert.deepEqual(requests, ['GET']);
+});
+test('event collapsible state is not carried over to a new page initialization', async () => {
+  const first = eventRoot();
+  await eventModule.initializeEventConfig(first, async () => eventFixture);
+  first.elements['#event-toggle'].events.click();
+  assertEventExpanded(first, true);
+  const next = eventRoot();
+  await eventModule.initializeEventConfig(next, async () => eventFixture);
+  assertEventExpanded(next, false);
+});
+test('event collapsible keeps editing, save and confirmed success expanded with the same 14-field payload', async () => {
+  const root = eventRoot();
+  let resolve, payload;
+  await eventModule.initializeEventConfig(root, (method, config) => {
+    if (method === 'GET') return Promise.resolve(eventFixture);
+    payload = config;
+    return new Promise((done) => { resolve = done; });
+  });
+  root.elements['#event-toggle'].events.click();
+  root.fields.city.value = 'Cidade editada';
+  assertEventExpanded(root, true);
+  const saving = root.form.events.submit({ preventDefault() {} });
+  assertEventExpanded(root, true);
+  assert.deepEqual(Object.keys(payload), eventModule.EVENT_FIELDS);
+  assert.equal(payload.city, 'Cidade editada');
+  assert.ok(root.form.elements.every((element) => element.disabled));
+  resolve({ ...payload, updated_at: '2026-10-09T03:04:02.407812+00:00' });
+  await saving;
+  assertEventExpanded(root, true);
+  assert.equal(root.elements['#event-feedback'].hidden, false);
+  assert.match(root.elements['#event-feedback'].textContent, /confirmada/);
+  assert.deepEqual(eventModule.readEventForm(root.form), payload);
+  root.elements['#event-toggle'].events.click();
+  assertEventExpanded(root, false);
+  assert.deepEqual(eventModule.readEventForm(root.form), payload);
+  root.elements['#event-toggle'].events.click();
+  const nextSave = root.form.events.submit({ preventDefault() {} });
+  root.elements['#event-toggle'].events.click();
+  assertEventExpanded(root, false);
+  resolve(payload);
+  await nextSave;
+  assertEventExpanded(root, true);
+  assert.equal(root.elements['#event-feedback'].hidden, false);
+});
+test('event collapsible reveals save failure even after manual collapse and preserves edits', async () => {
+  const root = eventRoot();
+  let reject;
+  await eventModule.initializeEventConfig(root, (method) => method === 'GET'
+    ? Promise.resolve(eventFixture) : new Promise((_, fail) => { reject = fail; }));
+  root.elements['#event-toggle'].events.click();
+  root.fields.reception_city.value = 'Edição preservada';
+  const values = eventModule.readEventForm(root.form);
+  const saving = root.form.events.submit({ preventDefault() {} });
+  root.elements['#event-toggle'].events.click();
+  assertEventExpanded(root, false);
+  reject(new Error('Synthetic save failure'));
+  await saving;
+  assertEventExpanded(root, true);
+  assert.equal(root.elements['#event-feedback'].hidden, false);
+  assert.match(root.elements['#event-feedback'].textContent, /edições foram preservadas/);
+  assert.deepEqual(eventModule.readEventForm(root.form), values);
+  assert.ok(root.form.elements.every((element) => !element.disabled));
+});
+test('event collapsible reveals GET failure and retry success does not close the section', async () => {
+  const root = eventRoot();
+  let reject, calls = 0;
+  const loading = eventModule.initializeEventConfig(root, () => {
+    calls++;
+    return calls === 1 ? new Promise((_, fail) => { reject = fail; }) : Promise.resolve(eventFixture);
+  });
+  assertEventExpanded(root, false);
+  reject(new Error('Synthetic load failure'));
+  await loading;
+  assertEventExpanded(root, true);
+  assert.equal(root.elements['#event-retry'].hidden, false);
+  assert.equal(root.elements['#event-feedback'].hidden, false);
+  await root.elements['#event-retry'].events.click();
+  assertEventExpanded(root, true);
+  assert.equal(root.elements['#event-retry'].hidden, true);
+  assert.equal(root.fields.city.value, eventFixture.city);
+  assert.equal(calls, 2);
+});
+test('event collapsible reveals validation feedback without changing the PUT behavior', async () => {
+  const root = eventRoot();
+  let puts = 0;
+  await eventModule.initializeEventConfig(root, async (method) => {
+    if (method === 'PUT') puts++;
+    return eventFixture;
+  });
+  root.fields.reception_maps_url.value = 'javascript:alert(1)';
+  await root.form.events.submit({ preventDefault() {} });
+  assertEventExpanded(root, true);
+  assert.equal(root.elements['#event-feedback'].hidden, false);
+  assert.match(root.elements['#event-feedback'].textContent, /URLs HTTPS/);
+  assert.equal(root.fields.reception_maps_url.value, 'javascript:alert(1)');
+  assert.equal(puts, 0);
+});
+test('event collapsible markup associates a native heading button with all content and scoped focus and chevron styles', async () => {
+  const html = await readFile(new URL('../invite-app/admin/index.html', import.meta.url), 'utf8');
+  const section = html.match(/<section class="event-panel"[\s\S]*?<\/section>/)?.[0];
+  assert.ok(section);
+  assert.match(section, /<h2 id="event-title">\s*<button id="event-toggle" class="event-toggle" type="button" aria-expanded="false" aria-controls="event-content">/);
+  assert.match(section, /<span class="event-toggle__chevron" aria-hidden="true"><\/span>/);
+  const content = section.match(/<div id="event-content" hidden>([\s\S]*)<\/div>\s*<\/section>/)?.[1];
+  assert.ok(content);
+  assert.doesNotMatch(content, /id="event-toggle"/);
+  assert.match(content, /Os dados cadastrados serão públicos/);
+  for (const id of ['event-loading', 'event-feedback', 'event-retry', 'event-form', 'event-updated']) assert.ok(content.includes('id="' + id + '"'));
+  assert.match(content, /type="submit">Salvar configuração<\/button>/);
+  assert.deepEqual([...content.matchAll(/<input[^>]+name="([^"]+)"/g)].map((match) => match[1]), eventModule.EVENT_FIELDS);
+  const css = await readFile(new URL('../invite-app/admin/styles/dashboard.css', import.meta.url), 'utf8');
+  assert.match(css, /\.event-toggle:focus-visible\s*\{\s*outline: 3px solid var\(--admin-focus\)/);
+  assert.match(css, /\.event-toggle\[aria-expanded="true"\] \.event-toggle__chevron\s*\{\s*transform: rotate\(225deg\)/);
+  const source = await readFile(new URL('../invite-app/admin/scripts/event-config.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(source, /localStorage|sessionStorage|keydown|keyup/);
+});
 test('event UI loading and empty config allow first fill', async () => {
   const root = eventRoot();
   let resolve;
@@ -189,6 +342,7 @@ test('event UI loading and empty config allow first fill', async () => {
   assert.ok(root.form.elements.every((element) => !element.disabled));
   assert.equal(root.fields.bride_name.value, '');
   assert.match(root.elements['#event-feedback'].textContent, /Nenhuma configuração/);
+  assertEventExpanded(root, true);
 });
 test('event UI GET failure is isolated and offers retry', async () => {
   const root = eventRoot();
@@ -209,7 +363,7 @@ test('event UI PUT waits for confirmation and retains edits on failure', async (
   const submit = root.form.events.submit({ preventDefault() {} });
   assert.ok(root.form.elements.every((element) => element.disabled));
   assert.equal(root.elements['#event-feedback'].hidden, true);
-  assert.equal(Object.keys(received).length, 12);
+  assert.equal(Object.keys(received).length, 14);
   assert.ok(!('id' in received) && !('updated_at' in received));
   reject(new Error('database')); await submit;
   assert.equal(root.fields.city.value, '<img src=x onerror=alert(1)>');
@@ -235,10 +389,10 @@ test('event UI rejects unsafe URLs and reception without name', async () => {
     if (method === 'PUT') puts++;
     return Promise.resolve(eventFixture);
   });
-  root.fields.monogram_url.value = 'javascript:alert(1)';
+  root.fields.reception_maps_url.value = 'javascript:alert(1)';
   await root.form.events.submit({ preventDefault() {} });
   assert.equal(puts, 0);
-  root.fields.monogram_url.value = '';
+  root.fields.reception_maps_url.value = '';
   root.fields.reception_address.value = 'Endereço sintético';
   await root.form.events.submit({ preventDefault() {} });
   assert.equal(puts, 0);
@@ -266,6 +420,7 @@ test('guest create/update UI uses shared dialog and confirms backend before clos
   globalThis.FormData = class { constructor(target) { this.form = target; } get(name) { return this.form.elements[name].value; } };
   try {
     await load('invite-app/admin/scripts/main.js', [
+      timestampImport,
       ["import { getCurrentSession, signIn, signOut } from './auth.js';", "const getCurrentSession = async () => ({user:{email:'admin@example.invalid'}}); const signIn = async()=>{}; const signOut=async()=>{};"],
       ["import { getPendingContingency, manageGuest, recoverContingency } from './contingency.js';", "const getPendingContingency=async()=>[]; const manageGuest=(...args)=>globalThis.__block3.manage(...args); const recoverContingency=async()=>{};"],
       ["import { getGuests } from './guests.js';", "const getGuests=async()=>[globalThis.__block3.guest];"],
@@ -331,4 +486,52 @@ test('shared admin helper preserves errors and create/update/delete payloads', a
     outcome = { data: null, error: { context: Response.json({ error: 'EMAIL_ALREADY_REGISTERED', message: 'Duplicado' }, { status: 409 }) } };
     await assert.rejects(api.manageGuest('create', undefined, guest), (error) => error.code === 'EMAIL_ALREADY_REGISTERED' && error.status === 409);
   } finally { globalThis.__adminInvoke = oldHook; globalThis.__adminCall = oldCall; }
+});
+
+test('timestamp presentation is explicitly Sao Paulo regardless of machine timezone', () => {
+  const original = process.env.TZ;
+  try {
+    for (const zone of ['UTC', 'Asia/Tokyo', 'America/Los_Angeles']) {
+      process.env.TZ = zone;
+      assert.equal(dateTime.formatTimestamp('2026-10-09T03:04:02.407812+00:00'), '09/10/2026 às 00:04');
+      assert.equal(dateTime.formatTimestamp('2026-10-09T01:00:00Z'), '08/10/2026 às 22:00');
+    }
+  } finally { if (original === undefined) delete process.env.TZ; else process.env.TZ = original; }
+});
+test('timestamp presentation handles invalid or absent values safely', () => {
+  for (const value of [null, undefined, '', 'not-a-date']) assert.equal(dateTime.formatTimestamp(value), '—');
+});
+test('event admin GET preserves existing fields, null reception location and civil time without auto-save', async () => {
+  const root = eventRoot(); let puts = 0;
+  const config = { ...eventFixture, event_time: '17:00', updated_at: '2026-10-09T03:04:02.407812+00:00' };
+  await eventModule.initializeEventConfig(root, async (method) => { if (method === 'PUT') puts++; return config; });
+  for (const field of eventModule.EVENT_FIELDS) assert.equal(root.fields[field].value, config[field] ?? '');
+  assert.equal(root.fields.reception_city.value, '');
+  assert.equal(root.fields.reception_state.value, '');
+  assert.equal(root.fields.event_time.value, '17:00');
+  assert.equal(root.elements['#event-updated'].textContent, 'Atualizado em: 09/10/2026 às 00:04');
+  assert.equal(puts, 0);
+  root.fields.reception_city.value = ' Cidade independente ';
+  root.fields.reception_state.value = ' UF ';
+  const payload = eventModule.readEventForm(root.form);
+  assert.equal(payload.reception_city, 'Cidade independente');
+  assert.equal(payload.reception_state, 'UF');
+  assert.equal(Object.keys(payload).length, 14);
+  root.fields.reception_city.value = ' '; root.fields.reception_state.value = '';
+  assert.equal(eventModule.readEventForm(root.form).reception_city, null);
+  assert.equal(eventModule.readEventForm(root.form).reception_state, null);
+  assert.equal(payload.event_time, '17:00');
+});
+test('event form has accessible optional reception location and isolated approved spacing', async () => {
+  const html = await readFile(new URL('../invite-app/admin/index.html', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../invite-app/admin/styles/dashboard.css', import.meta.url), 'utf8');
+  for (const [field, limit] of [['reception_city', 150], ['reception_state', 100]]) {
+    assert.ok(html.includes('for="event-' + field + '"'));
+    assert.ok(html.includes('id="event-' + field + '" name="' + field + '" type="text" maxlength="' + limit + '"'));
+  }
+  assert.match(css, /#event-feedback\s*\{\s*margin-bottom:\s*12px;/);
+  assert.match(css, /#event-updated\s*\{\s*margin-top:\s*12px;/);
+  const main = await readFile(new URL('../invite-app/admin/scripts/main.js', import.meta.url), 'utf8');
+  assert.match(main, /formatTimestamp\(guest.created_at\)/);
+  assert.match(main, /formatTimestamp\(record.created_at\)/);
 });
