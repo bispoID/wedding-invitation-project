@@ -21,7 +21,8 @@ Essa estrutura vanilla atende à aplicação atual e evita adicionar framework o
 build system antes de existir uma necessidade real. A interface e a integração
 já estão implementadas e possuem publicação anterior validada. Os aceites
 manuais ampliados de interface/acessibilidade foram consolidados; suas correções
-de QA ainda aguardam commit, CI e publicação. Evidências e limites:
+de QA estão versionadas e publicadas, com CI e smoke checks aprovados. O aceite
+visual final da publicação permanece pendente na Fase 13. Evidências e limites:
 [qa-final-evidence.md](../docs/qa-final-evidence.md).
 
 ## Como visualizar
@@ -142,10 +143,11 @@ O workflow de testes executa essa suíte além dos testes Deno existentes. O wor
 Pages executa os testes de App Config e do preparador como gate antes da preparação, sem
 dependência circular ou duplicação da suíte Deno.
 
-O QA consolidado aprovou localmente **212 testes Node e 144 Deno (356)**,
+O QA consolidado aprovou localmente e em Linux/CI **212 testes Node e 144 Deno (356)**,
 incluindo as suítes de movimento, tipografia, wallpaper e nomes no cartão/carta
-importadas por `admin-block3.test.mjs`. Não houve CI desta versão ainda não
-commitada/publicada. A baseline histórica de **119 Node e 144 Deno (263)** foi
+importadas por `admin-block3.test.mjs`. CI e publicação do commit consolidado
+`9d34e6c` estão registrados em [qa-final-evidence.md](../docs/qa-final-evidence.md).
+A baseline histórica de **119 Node e 144 Deno (263)** foi
 aprovada localmente e em Linux/CI no Bloco 7. A suíte SQL integral foi aprovada
 separadamente em banco local
 descartável; consulte [event-config.md](../docs/event-config.md#validação-local).

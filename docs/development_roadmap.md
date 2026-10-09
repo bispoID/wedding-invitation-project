@@ -386,8 +386,9 @@ animação, carta, tipografia, monograma, informações do evento, RSVP,
 responsividade e previews estão implementados. Os aceites ampliados de teclado,
 redução de movimento e nomes longos foram informados pelo responsável pelo QA
 e consolidados em [qa-final-evidence.md](qa-final-evidence.md), em 09/10/2026.
-As correções ainda estão no working tree; sua publicação e verificação pertencem
-à Fase 13. A aprovação não implica cobertura universal de navegadores.
+As correções foram versionadas e publicadas no commit `9d34e6c`, com CI e smoke
+checks aprovados. O aceite visual final da versão publicada pertence à Fase 13.
+A aprovação não implica cobertura universal de navegadores.
 
 - [x] Definir identidade visual.
 - [x] Integrar monograma estático nos dois slots.
@@ -510,8 +511,8 @@ Objetivo: verificar funcionamento, segurança, confiabilidade e experiência.
 automatizada e aceites ampliados estão consolidados em
 [qa-final-evidence.md](qa-final-evidence.md). A suíte SQL local aprovada no Bloco
 7 permanece como evidência anterior; não foi repetida, pois não houve mudança
-de migration/schema. CI e verificação da versão consolidada após publicação
-continuam como gates da Fase 13. Testes simulados não equivalem a aceite visual
+de migration/schema. CI e smoke checks da publicação consolidada passaram;
+o aceite visual final continua como gate da Fase 13. Testes simulados não equivalem a aceite visual
 nem representam uma auditoria de segurança exaustiva.
 
 ## Baseline automatizada
@@ -519,7 +520,11 @@ nem representam uma auditoria de segurança exaustiva.
 Regressão local consolidada em 09/10/2026: **144 Deno e 212 Node, total 356,
 zero falhas**, com typecheck de oito entrypoints, syntax de 35 arquivos
 JavaScript e whitespace aprovados. Inclui as suítes adicionadas durante o QA.
-Não houve push ou CI desta versão ainda não commitada.
+O CI do commit consolidado `9d34e6c` também aprovou 212 Node e 144 Deno,
+conforme os logs da execução
+[37982999446](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999446).
+Nesse CI passaram 26 syntax checks e whitespace; o typecheck dos oito
+entrypoints foi executado localmente.
 
 Baseline histórica do Bloco 7: **144 Deno e 119 Node, total 263, zero falhas**, com typecheck dos
 cinco entrypoints, syntax checks e whitespace. Passou localmente e no Linux/CI
@@ -610,8 +615,8 @@ Sistema validado antes da publicação.
 dos testes de RLS/CORS, RSVP, Admin, contingência, health e Event Config já
 existem. Os critérios manuais ampliados foram consolidados conforme o relato,
 sem testes destrutivos em produção e sem declarar aprovação universal de
-interface pela suíte automatizada. Publicação e verificação da versão final
-permanecem pendentes na Fase 13.
+interface pela suíte automatizada. A publicação e os smoke checks da versão
+consolidada passaram; o aceite visual final permanece pendente na Fase 13.
 
 ---
 
@@ -619,12 +624,14 @@ permanecem pendentes na Fase 13.
 
 Objetivo: colocar o sistema em funcionamento real.
 
-**Estado: PARCIAL — versão anterior publicada e operacional; publicação e
-verificação do QA consolidado pendentes.** O escopo equalizado foi publicado no
-Bloco 5 e os checkpoints posteriores aprovaram hotfixes, constraints e SQL
-local. Os aceites das Fases 9/12 estão consolidados, mas suas correções ainda
-não foram commitadas/publicadas. A conclusão integral exige CI, publicação e
-verificação dessa versão, sem confundir o working tree com a versão operacional.
+**Estado: PARCIAL — QA consolidado publicado; aceite visual final pendente.**
+O commit `9d34e6c` foi publicado, com Test baseline e Pages aprovados:
+[CI 37982999446](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999446)
+e [Pages 37982999447](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999447).
+Os smoke checks confirmaram HTTP 200, metadados e integridade de 64 arquivos.
+Os aceites anteriores das Fases 9/12 não substituem a confirmação visual final
+do responsável para essa publicação. Evidências:
+[qa-final-evidence.md](qa-final-evidence.md#publicação-do-qa--09102026).
 
 - [x] Disponibilizar a publicação atual via GitHub Pages.
 - [x] Publicar a versão equalizada e os hotfixes aprovados.
@@ -635,9 +642,10 @@ verificação dessa versão, sem confundir o working tree com a versão operacio
 - [x] Validar RSVP/Admin/contingência com cenários sintéticos nos checkpoints.
 - [x] Validar os controles de segurança definidos, incluindo suíte SQL local.
 - [x] Consolidar o aceite manual ampliado das Fases 9/12.
-- [ ] Aprovar o workflow Test baseline para o commit consolidado de QA.
-- [ ] Publicar a versão consolidada pelo workflow previsto, com deploy aprovado.
-- [ ] Verificar a versão publicada e registrar SHA, runs e aceite da publicação.
+- [x] Aprovar o workflow Test baseline para o commit consolidado de QA.
+- [x] Publicar a versão consolidada pelo workflow previsto, com deploy aprovado.
+- [x] Executar smoke checks operacionais e registrar SHA e runs da publicação.
+- [ ] Receber e registrar o aceite visual final do responsável na versão publicada.
 
 Domínio personalizado é melhoria opcional, não requisito de publicação.
 
@@ -648,8 +656,9 @@ Convite disponível para os convidados e infraestrutura pronta para uso real.
 **Critérios de conclusão:** versão equalizada aprovada, smoke checks,
 monitoramento, procedimentos operacionais e evidências de segurança/integração
 documentados. A operação funcional está validada; a conclusão integral do
-roadmap depende da publicação e da verificação das correções de QA consolidadas.
-Nenhum deploy foi executado durante esta consolidação documental.
+roadmap depende da confirmação visual final do responsável na versão consolidada
+publicada. A consolidação documental anterior não executou deploy; o checkpoint
+posterior de publicação foi autorizado e concluído tecnicamente.
 
 ---
 
@@ -692,7 +701,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
 [x] 11 — Hospedagem estática / ambientes (CONCLUÍDA no ambiente utilizado)
 [x] 12 — Testes / qualidade (356 testes locais; SQL anterior e aceites manuais consolidados)
-[ ] 13 — Publicação / operação (PARCIAL: publicar e verificar o QA consolidado)
+[ ] 13 — Publicação / operação (QA publicado; aceite visual final pendente)
 ```
 
 ---
@@ -710,11 +719,11 @@ sem violações, preservando dados. No Bloco 7, as 15 migrations e a suíte SQL
 integral passaram em banco local descartável, eliminando essa pendência técnica.
 Baseline histórica do Bloco 7: 144 Deno + 119 Node = 263, aprovada localmente e
 em Linux/CI. Regressão local do QA consolidado: 144 Deno + 212 Node = 356, zero
-falhas; novo CI ainda não executado, pois não houve push.
+falhas, também confirmada em Linux no CI do commit consolidado `9d34e6c`.
 
-**Pendência real para o encerramento:** aprovar CI, publicar e verificar a versão
-consolidada de QA. A Fase 13 permanece parcial; a versão anterior continua como
-registro operacional publicado. O QA manual ampliado foi informado como aprovado
+**Pendência real para o encerramento:** confirmação visual final do responsável
+para a versão consolidada publicada. CI, Pages e smoke checks passaram; a Fase
+13 permanece parcial até esse aceite. O QA manual ampliado foi informado como aprovado
 e consolidado, respeitando a ausência de evidência específica para Safari/iOS e
 redução de movimento no celular real. Não há defeito aberto identificado nos
 gates locais; esses limites de cobertura não são garantia de aprovação universal.

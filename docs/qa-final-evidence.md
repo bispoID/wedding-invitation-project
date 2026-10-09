@@ -4,20 +4,22 @@ Consolidação: **09/10/2026**. Projeto: `wedding-invitation-project`.
 Branch: `feature/landing-page`.
 HEAD de referência: `1d9939a28d27c83e9eb7f3336378f6aaa1c698ac`.
 
-As correções de QA e este registro estão no working tree, ainda sem commit ou
-publicação. O HEAD identifica a referência anterior, não a versão consolidada.
+O HEAD acima identifica a referência anterior à consolidação. As correções de
+QA foram versionadas e publicadas no commit
+`9d34e6c8c79c5553f8fc3177a5becca53a5a32db`; os resultados estão na seção de
+publicação abaixo. O aceite visual final dessa publicação permanece pendente.
 O [roadmap](development_roadmap.md) é a fonte oficial do estado das 13 fases.
 
 ## Origem e alcance das evidências
 
-- **Execução técnica nesta consolidação:** revisão de todos os diffs e arquivos
+- **Execução técnica na consolidação local:** revisão de todos os diffs e arquivos
   novos, testes Node/Deno, typecheck, syntax checks e whitespace locais.
 - **Aceite manual informado:** resultados relatados pelo responsável pelo QA
   durante os testes de navegador. Não foram repetidos pelo agente nesta execução;
   não há nova captura de tela ou matriz de versões dos navegadores anexada aqui.
 - **Histórico operacional:** os checkpoints anteriores registram CI, publicação
-  e suíte SQL local. Esses resultados não representam CI ou deploy das correções
-  ainda não commitadas.
+  e suíte SQL local. São distintos das novas execuções de CI e Pages do commit
+  consolidado, registradas abaixo.
 
 Automação com DOM, fontes, geometria e timers simulados verifica contratos e
 regressões; não comprova renderização, contraste ou compatibilidade universal.
@@ -53,7 +55,8 @@ caso quando essa informação não foi especificada.
 - Palavras sem espaços, erros de medição, métricas de fontes tardias e alguns
   formatos extremos de viewport têm regressões simuladas; isso não significa
   que cada um recebeu aceite visual manual.
-- A versão consolidada ainda precisa de CI e verificação após publicação.
+- CI, Pages e smoke checks estáticos da versão consolidada passaram. Ainda
+  falta o aceite visual final do responsável no navegador após a publicação.
 
 ## Revisão técnica das correções acumuladas
 
@@ -124,8 +127,51 @@ substituto de execução. O aviso Node `MODULE_TYPELESS_PACKAGE_JSON` não imped
 os testes; não foi alterado o modo de módulos global para suprimi-lo.
 
 A baseline de **144 Deno + 119 Node = 263** aprovada no Linux/CI do Bloco 7
-continua como evidência histórica no roadmap. **Não houve nova execução de CI
-desta consolidação**, pois não houve push.
+continua como evidência histórica no roadmap. Na consolidação local ainda não
+havia push; o checkpoint de publicação posterior confirmou a nova suíte em
+Linux, conforme o registro abaixo.
+
+## Publicação do QA — 09/10/2026
+
+Commit: `9d34e6c8c79c5553f8fc3177a5becca53a5a32db`.
+Mensagem: `feat(ui): finalize accessibility and responsive QA`.
+Conjunto: exatamente 20 arquivos, sem alterações de backend ou workflows.
+Push para `origin feature/landing-page` aprovado e branch sincronizada.
+
+- **Test baseline: SUCCESS**, execução
+  [37982999446](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999446).
+  Os logs confirmaram Ubuntu 24.04.5, 26 syntax checks de JavaScript,
+  **212 Node e 144 Deno, zero falhas**, além de whitespace aprovado.
+  Typecheck dos oito entrypoints permanece como evidência local, não como
+  etapa adicional presumida do CI.
+- **Deploy invite-app to GitHub Pages: SUCCESS**, execução
+  [37982999447](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999447).
+  Gate portátil: **26 testes Node aprovados**, zero falhas. Preparação de
+  `_site`, upload e publicação concluídos para o mesmo SHA.
+- URL: [convite publicado](https://bispoid.github.io/wedding-invitation-project/).
+
+### Smoke checks operacionais
+
+Verificação principal em **09/10/2026, 19:52:33 UTC** (16:52:33 em
+America/Sao_Paulo), seguida de confirmação nas URLs normais sem parâmetros.
+Somente GET de arquivos estáticos; nenhum JavaScript da página foi executado.
+
+- HTTP **200** na raiz pública, `admin/`, `admin/index.html` e `admin/login.html`.
+- **64 arquivos** retornaram HTTP 200 e corresponderam por SHA-256 aos bytes
+  do commit: os **44 CSS/JS**, três HTML e 17 imagens/fontes referenciadas.
+  Para o HTML público, a comparação utilizou o resultado exato de
+  `resolveMetadata` aplicado ao source, como faz o preparador de publicação.
+- **76 referências relativas** de imports, CSS e HTML resolveram para arquivos
+  existentes; os recursos identificados foram verificados por HTTP.
+- `scripts/shared/invitation-names.js`, `scripts/welcome/typography.js` e seus
+  imports estão disponíveis. CSS com largura de 65%, cálculo JS de 0.65,
+  foco visível, estado disabled, wallpaper e nomes longos foi confirmado.
+- Canonical, Open Graph e Twitter correspondem ao HTML preparado; nenhum
+  marcador `__PUBLIC_*__` permaneceu. A imagem de compartilhamento retornou 200.
+
+Esses checks confirmam disponibilidade e integridade da publicação, **não
+renderização visual, execução do login/Admin ou aceite funcional em navegador**.
+Não houve RSVP, chamadas à API Supabase ou operações administrativas.
 
 A suíte SQL local aprovada no Bloco 7 permanece válida como registro anterior.
 Não foi repetida: nenhuma migration ou schema foi alterado durante este QA.
@@ -134,20 +180,23 @@ Não foi repetida: nenhuma migration ou schema foi alterado durante este QA.
 
 Os aceites informados e os gates locais sustentam o encerramento das Fases 9 e
 12 no escopo validado, com os limites de cobertura acima. A Fase 13 permanece
-parcial até publicar e verificar a versão consolidada.
+parcial até o responsável confirmar o aceite visual final da versão publicada.
 
-Após autorização específica para commit/publicação:
+Andamento do checkpoint autorizado de publicação:
 
-1. Revisar e versionar o conjunto exato de arquivos de QA e documentação.
-2. Exigir sucesso do workflow `Test baseline` para o commit consolidado.
-3. Publicar pelo workflow previsto e verificar sucesso do deploy.
-4. Verificar a versão publicada: abertura e navegação por teclado, foco do RSVP,
+1. Concluído: revisar e versionar o conjunto exato de 20 arquivos.
+2. Concluído: sucesso do workflow `Test baseline` para o commit consolidado.
+3. Concluído: publicação pelo workflow previsto e smoke checks aprovados.
+4. Pendente: aceite visual final no navegador, pelo responsável. Verificar
+   abertura e navegação por teclado, foco do RSVP,
    estados de Acompanhantes sem enviar RSVP sintético, redução de movimento,
    wallpaper e nomes usuais/longos nos componentes afetados. Usar fixtures
    locais de inspeção para nomes sintéticos, sem editar dados reais do evento.
-5. Registrar SHA, runs de CI/deploy e resultado do aceite da publicação antes
-   de concluir a Fase 13.
+5. SHA e runs registrados; registrar o resultado manual final antes de concluir
+   a Fase 13. Este documento não presume esse aceite.
 
-Nesta execução não houve staging, commit, push, deploy, consulta/escrita de dados
-remotos ou envio de RSVP. Supabase, banco, migrations, Functions, Auth, secrets,
-Google Sheets e UptimeRobot não foram modificados.
+Na consolidação local anterior não houve staging, commit, push ou deploy. O
+checkpoint posterior autorizou commit, push e publicação de frontend, realizados
+conforme o registro acima. Não houve consulta/escrita de dados remotos ou envio
+de RSVP. Supabase, banco, migrations, Functions, Auth, secrets, Google Sheets e
+UptimeRobot não foram modificados.
