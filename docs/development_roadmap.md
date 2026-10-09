@@ -85,7 +85,8 @@ Banco estruturado e capaz de armazenar os RSVPs.
 schema singleton de `event_config` e limites de convidados originalmente NOT VALID.
 Migrations aplicadas nos checkpoints autorizados, incluindo localização própria
 da recepção. Auditoria histórica e VALIDATE concluídas no Bloco 6, sem correção
-dos dados existentes. A suite SQL local integral permanece pendente.
+dos dados existentes. A suite SQL local integral foi aprovada no Bloco 7, com
+as 15 migrations em PostgreSQL/Supabase local descartável, sem usar produção.
 
 ---
 
@@ -129,7 +130,7 @@ Banco protegido e permissões funcionando de acordo com o modelo definido.
 **Entrega anterior concluída; extensão local do Bloco 3:** RLS/grants restritivos
 na migration de evento, DTO público limitado e Auth/allowlist/origem nas APIs
 administrativas. Testes simulados e verificações remotas de schema/HTTP passaram;
-a suite SQL local integral permanece pendente.
+a suite SQL local integral foi aprovada no Bloco 7 em banco descartável.
 
 ---
 
@@ -528,7 +529,8 @@ feedback visível e salvamento, sem persistir estado. Regressão final local:
 254 testes (144 Deno e 110 Node), typecheck, syntax e whitespace aprovados.
 O workflow Test baseline acompanha o commit de encerramento. Publicação do
 frontend e integração com feature/landing-page permanecem pendentes.
-VALIDATE versionado concluído no Bloco 6; suite SQL local integral permanece pendente.
+VALIDATE versionado concluído no Bloco 6; suite SQL local integral aprovada no
+Bloco 7, exclusivamente em banco descartável local, sem usar produção.
 
 - [x] Criar workflow independente `.github/workflows/test.yml` em Linux.
 - [x] Configurar descoberta de JavaScript versionado e `node --check`.
@@ -543,7 +545,10 @@ VALIDATE versionado concluído no Bloco 6; suite SQL local integral permanece pe
 - [x] Implementar e executar localmente testes do Bloco 3: 141 Deno e 44 Node,
   incluindo os 83 da baseline anterior, sem remover cenários.
 - [x] Preparar CI para os testes administrativos novos, sem deploy.
-- [ ] Executar `supabase/tests/block3.sql` em PostgreSQL local descartável.
+- [x] Executar `supabase/tests/block3.sql` em PostgreSQL local descartável:
+  Bloco 7, em 09/10/2026, PostgreSQL 17.6/Supabase CLI 2.120.0 em Docker/WSL2;
+  reset local sem seed, 15 migrations e duas execuções integrais com ROLLBACK
+  aprovadas, sem utilizar produção.
 - [ ] Confirmar CI Linux do Bloco 3 e aceite visual/integrado após revisão.
 
 O workflow utiliza Node.js `22.14.0` e Deno `2.9.7` em `ubuntu-24.04`. A execução
@@ -659,8 +664,8 @@ Não avançar simplesmente porque a implementação "parece pronta".
 
 ```text
 [x] 01 — Base do projeto (entrega anterior; App Config/preparador implementados)
-[x] 02 — Banco / Supabase (migrations aplicadas; auditoria/VALIDATE concluídas; SQL local pendente)
-[x] 03 — Segurança / Permissões (extensão implantada; suite SQL local pendente)
+[x] 02 — Banco / Supabase (migrations aplicadas; auditoria/VALIDATE concluídas; SQL local aprovado)
+[x] 03 — Segurança / Permissões (extensão implantada; suite SQL local aprovada)
 [x] 04 — API / Edge Function (extensão implantada e aceite funcional concluído)
 [x] 05 — RSVP (entrega anterior; revalidação futura)
 [x] 06 — Contingência (entrega anterior; revalidação futura)
@@ -698,7 +703,8 @@ As entregas anteriores das Fases 1 a 8 estão concluídas. App Config e preparad
 estático foram implementados no Lote 2; extensões das Fases 2 a 7 foram
 implementadas no Bloco 3, com migrations/Functions aplicadas e aceite funcional
 informado. Primeiro PUT real realizado pelo usuário e READY local alcançado.
-VALIDATE versionado concluído no Bloco 6; suite SQL local integral permanece pendente.
+VALIDATE versionado concluído no Bloco 6; suite SQL local integral aprovada no
+Bloco 7, exclusivamente em banco descartável local, sem usar produção.
 
 **Fase 8 — Monitoramento: concluída.** A configuração oficial do UptimeRobot é
 `HEAD` a cada 15 minutos. Este lote equaliza somente sua documentação.

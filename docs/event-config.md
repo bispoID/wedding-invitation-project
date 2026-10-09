@@ -156,8 +156,9 @@ confirmou o estado validado e a mesma contagem de convidados.
 6. Em checkpoints futuros, implantar somente as Functions autorizadas, preservando
    configurações JWT; as duas de Event Config já estão sincronizadas.
 7. Aceites dos checkpoints anteriores e revisão manual do Bloco 4 foram
-   concluídos; publicação do frontend e suite SQL local integral continuam
-   pendentes. GitHub Pages é hospedagem atual; Vercel é opcional.
+   concluídos; a suite SQL local integral foi aprovada no Bloco 7. A publicação
+   do frontend permanece pendente neste registro. GitHub Pages é hospedagem
+   atual; Vercel é opcional.
 
 ## Validação local
 
@@ -171,9 +172,16 @@ O script `supabase/tests/block3.sql` é separado do CI e só deve ser executado
 num banco LOCAL DESCARTÁVEL, com migrations aplicadas e role proprietário capaz
 de SET ROLE. Usa transação/rollback e dados exclusivamente sintéticos.
 Testa singleton, RLS, grants, upsert, bloqueio de DELETE/TRUNCATE, acesso direto,
-constraints, opcionais e trigger. Não foi executado: PostgreSQL/Docker não
-estavam disponíveis. Testes de UI usam DOM simulado; não substituem aceite
-visual desktop/mobile ou integração com serviços publicados.
+constraints, opcionais e trigger. Executado integralmente no Bloco 7 em
+09/10/2026, com PostgreSQL 17.6 do Supabase local, Docker Desktop/WSL2 e CLI
+2.120.0. O banco descartável foi recriado com
+`npx --no-install supabase db reset --local --no-seed`, aplicando as 15 migrations,
+incluindo `20261009000400_validate_guest_length_constraints.sql`.
+Duas execuções integrais com `psql -X -v ON_ERROR_STOP=1` passaram e terminaram
+em ROLLBACK; a auditoria confirmou histórico, RLS/RPCs e constraints validadas,
+com `guests` e `event_config` vazias antes e depois. Produção não foi utilizada.
+Testes de UI usam DOM simulado; não substituem aceite visual desktop/mobile
+ou integração com serviços publicados.
 
 ## Frontend público dinâmico — Bloco 4 local
 
@@ -209,9 +217,10 @@ sem reproduzir dados pessoais. O aceite manual já confirmou READY, cerimônia,
 recepção e sua localização independente, mapas, monograma nos dois locais,
 timestamp administrativo, espaçamentos, desktop e mobile aproximadamente 390px.
 O workflow Test baseline acompanha o commit de encerramento; integração com
-feature/landing-page, publicação/preview social real e suite SQL local integral
-permanecem pendentes. A auditoria prévia e a VALIDATE dos convidados foram
-concluídas posteriormente no Bloco 6, sem alteração dos dados existentes.
+feature/landing-page e publicação/preview social real permanecem pendentes
+neste registro. A auditoria prévia e a VALIDATE dos convidados foram concluídas
+posteriormente no Bloco 6, sem alteração dos dados existentes; a suite SQL local
+integral foi aprovada no Bloco 7, exclusivamente em banco descartável.
 
 ## Painel administrativo recolhível
 

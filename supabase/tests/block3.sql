@@ -2,7 +2,7 @@
 -- Run with psql -v ON_ERROR_STOP=1 -f supabase/tests/block3.sql <local connection>.
 begin;
 do $$
-declare role_name text; column_name text;
+declare role_name text; tested_column_name text;
 begin
   if exists (select 1 from information_schema.columns where table_schema = 'public'
     and table_name = 'event_config' and column_name = 'monogram_url') or
@@ -33,12 +33,12 @@ begin
      has_column_privilege('service_role', 'public.event_config', 'updated_at', 'INSERT,UPDATE') then
     raise exception 'Invalid service_role privileges';
   end if;
-  foreach column_name in array array['id', 'bride_name', 'groom_name', 'event_date', 'event_time',
+  foreach tested_column_name in array array['id', 'bride_name', 'groom_name', 'event_date', 'event_time',
     'city', 'state', 'ceremony_name', 'ceremony_address', 'ceremony_maps_url',
     'reception_name', 'reception_address', 'reception_city', 'reception_state', 'reception_maps_url'] loop
-    if not has_column_privilege('service_role', 'public.event_config', column_name, 'INSERT') or
-       not has_column_privilege('service_role', 'public.event_config', column_name, 'UPDATE') then
-      raise exception 'Missing service_role column privilege %', column_name;
+    if not has_column_privilege('service_role', 'public.event_config', tested_column_name, 'INSERT') or
+       not has_column_privilege('service_role', 'public.event_config', tested_column_name, 'UPDATE') then
+      raise exception 'Missing service_role column privilege %', tested_column_name;
     end if;
   end loop;
   if (select count(*) from pg_constraint where conrelid = 'public.guests'::regclass
