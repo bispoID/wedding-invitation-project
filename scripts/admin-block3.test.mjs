@@ -15,6 +15,121 @@ const eventModule = await load('invite-app/admin/scripts/event-config.js', [
   ["import { callAdminFunction } from './functions.js';", 'const callAdminFunction = () => { throw new Error("No real network"); };'],
 ]);
 const guest = { name: ' Nome Á Sintético ', email: ' TEST@example.invalid ', attendance: true, companions: 2 };
+const rsvpModule = await load('invite-app/scripts/letter/rsvp.js', [
+  ["import { FUNCTIONS_BASE_URL } from '../shared/app-config.js';", "const FUNCTIONS_BASE_URL = 'https://example.invalid/functions/v1/';"],
+]);
+
+async function withRsvpForm(run) {
+  const previous = { document: globalThis.document, FormData: globalThis.FormData, fetch: globalThis.fetch };
+  const fields = { name: 'Synthetic RSVP', email: 'rsvp@example.invalid', attendance: 'yes', companions: '2' };
+  const button = { disabled: false };
+  const companions = { disabled: false, focus() {} };
+  const feedback = { textContent: '' };
+  const attrs = {};
+  let submit, resets = 0;
+  const requests = [];
+  const form = {
+    querySelector: (selector) => selector === '#companions' ? companions : button,
+    addEventListener: (_, listener) => { submit = listener; },
+    checkValidity: () => true,
+    reportValidity() {},
+    setAttribute: (name, value) => { attrs[name] = value; },
+    removeAttribute: (name) => { delete attrs[name]; },
+    reset() { resets++; Object.assign(fields, { name: '', email: '', attendance: '', companions: '0' }); },
+  };
+  globalThis.document = { querySelector: (selector) => selector === '.rsvp-form' ? form : feedback };
+  globalThis.FormData = class { get(name) { return fields[name]; } };
+  globalThis.fetch = (url, options) => new Promise((resolve, reject) => {
+    requests.push({ url, payload: JSON.parse(options.body), resolve, reject });
+  });
+  try {
+    rsvpModule.initRsvp();
+    await run({ fields, button, companions, feedback, attrs, requests,
+      submit: () => submit({ preventDefault() {} }), resets: () => resets });
+  } finally {
+    Object.assign(globalThis, previous);
+  }
+}
+
+test('RSVP 201 resets defaults, preserves success and allows second submit without double-submit', async () => {
+  await withRsvpForm(async (ui) => {
+    const first = ui.submit();
+    assert.equal(ui.button.disabled, true);
+    assert.equal(ui.attrs['aria-busy'], 'true');
+    assert.match(ui.feedback.textContent, /Enviando/);
+    assert.doesNotMatch(ui.feedback.textContent, /Presença confirmada/);
+    await ui.submit();
+    assert.equal(ui.requests.length, 1);
+    assert.equal(ui.resets(), 0);
+    ui.companions.disabled = true;
+    ui.requests[0].resolve(new Response(null, { status: 201 }));
+    await first;
+    assert.match(ui.feedback.textContent, /Presença confirmada/);
+    assert.deepEqual(ui.fields, { name: '', email: '', attendance: '', companions: '0' });
+    assert.equal(ui.companions.disabled, false);
+    assert.equal(ui.button.disabled, false);
+    assert.equal(ui.attrs['aria-busy'], undefined);
+    assert.equal(ui.resets(), 1);
+    Object.assign(ui.fields, { name: 'Second synthetic RSVP', email: 'second@example.invalid', attendance: 'yes', companions: '1' });
+    const second = ui.submit();
+    assert.equal(ui.requests.length, 2);
+    assert.equal(ui.requests[1].payload.email, 'second@example.invalid');
+    assert.equal(ui.button.disabled, true);
+    ui.requests[1].resolve(new Response(null, { status: 201 }));
+    await second;
+    assert.equal(ui.resets(), 2);
+    assert.equal(ui.button.disabled, false);
+  });
+});
+
+for (const status of [400, 409, 429, 500, 200, 202]) {
+  test(`RSVP HTTP ${status} does not reset and allows retry`, async () => {
+    await withRsvpForm(async (ui) => {
+      const initial = { ...ui.fields };
+      const sending = ui.submit();
+      ui.requests[0].resolve(Response.json({ success: false }, { status }));
+      await sending;
+      assert.deepEqual(ui.fields, initial);
+      assert.equal(ui.resets(), 0);
+      assert.equal(ui.button.disabled, false);
+      assert.equal(ui.attrs['aria-busy'], undefined);
+      const retry = ui.submit();
+      assert.equal(ui.requests.length, 2);
+      ui.requests[1].resolve(Response.json({ success: false }, { status }));
+      await retry;
+    });
+  });
+}
+
+test('RSVP network failure retains entered data and enables retry', async () => {
+  await withRsvpForm(async (ui) => {
+    const initial = { ...ui.fields };
+    const sending = ui.submit();
+    ui.requests[0].reject(new Error('Synthetic offline failure'));
+    await sending;
+    assert.deepEqual(ui.fields, initial);
+    assert.equal(ui.resets(), 0);
+    assert.equal(ui.button.disabled, false);
+    assert.equal(ui.attrs['aria-busy'], undefined);
+    assert.match(ui.feedback.textContent, /Verifique sua conexão/);
+  });
+});
+
+test('RSVP confirmed contingency preserves existing behavior without reset', async () => {
+  await withRsvpForm(async (ui) => {
+    const initial = { ...ui.fields };
+    const sending = ui.submit();
+    ui.requests[0].resolve(Response.json({ success: false, contingency: true, error: 'RSVP_SAVED_TO_CONTINGENCY' }, { status: 202 }));
+    await sending;
+    assert.deepEqual(ui.fields, initial);
+    assert.equal(ui.resets(), 0);
+    assert.match(ui.feedback.textContent, /processada posteriormente/);
+    assert.equal(ui.button.disabled, true);
+    assert.equal(ui.attrs['aria-busy'], 'false');
+    await ui.submit();
+    assert.equal(ui.requests.length, 1);
+  });
+});
 for (const change of [
   { name: '' }, { name: 'a'.repeat(201) }, { email: 'invalid' },
   { email: 'a'.repeat(307) + '@example.invalid' }, { attendance: 'false' },

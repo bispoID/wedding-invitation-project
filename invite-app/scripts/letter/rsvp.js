@@ -29,6 +29,7 @@ export function initRsvp() {
 
   let isSubmitting = false;
   let isSubmitted = false;
+  const companionsInitiallyDisabled = companionsInput.disabled;
 
   rsvpForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -81,8 +82,8 @@ export function initRsvp() {
       });
 
       if (response.status === 201) {
-        isSubmitted = true;
         setSuccessState(rsvpForm, submitButton, feedback);
+        companionsInput.disabled = companionsInitiallyDisabled;
         return;
       }
 
@@ -145,7 +146,8 @@ function setLoadingState(form, button, feedback) {
  * @returns {void}
  */
 function setSuccessState(form, button, feedback) {
-  button.disabled = true;
+  form.reset();
+  button.disabled = false;
   form.setAttribute('aria-busy', 'false');
   setFeedback(feedback, 'Presença confirmada! Agradecemos pela sua confirmação.');
 }
