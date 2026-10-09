@@ -387,7 +387,7 @@ responsividade e previews estão implementados. Os aceites ampliados de teclado,
 redução de movimento e nomes longos foram informados pelo responsável pelo QA
 e consolidados em [qa-final-evidence.md](qa-final-evidence.md), em 09/10/2026.
 As correções foram versionadas e publicadas no commit `9d34e6c`, com CI e smoke
-checks aprovados. O aceite visual final da versão publicada pertence à Fase 13.
+checks aprovados. O aceite visual final da versão publicada foi registrado na Fase 13.
 A aprovação não implica cobertura universal de navegadores.
 
 - [x] Definir identidade visual.
@@ -512,8 +512,9 @@ automatizada e aceites ampliados estão consolidados em
 [qa-final-evidence.md](qa-final-evidence.md). A suíte SQL local aprovada no Bloco
 7 permanece como evidência anterior; não foi repetida, pois não houve mudança
 de migration/schema. CI e smoke checks da publicação consolidada passaram;
-o aceite visual final continua como gate da Fase 13. Testes simulados não equivalem a aceite visual
-nem representam uma auditoria de segurança exaustiva.
+o responsável confirmou o aceite visual final, registrado na Fase 13.
+Testes simulados não equivalem a aceite visual nem representam uma auditoria
+de segurança exaustiva.
 
 ## Baseline automatizada
 
@@ -616,7 +617,8 @@ dos testes de RLS/CORS, RSVP, Admin, contingência, health e Event Config já
 existem. Os critérios manuais ampliados foram consolidados conforme o relato,
 sem testes destrutivos em produção e sem declarar aprovação universal de
 interface pela suíte automatizada. A publicação e os smoke checks da versão
-consolidada passaram; o aceite visual final permanece pendente na Fase 13.
+consolidada passaram; o responsável também aprovou o aceite visual final,
+registrado na Fase 13.
 
 ---
 
@@ -624,13 +626,17 @@ consolidada passaram; o aceite visual final permanece pendente na Fase 13.
 
 Objetivo: colocar o sistema em funcionamento real.
 
-**Estado: PARCIAL — QA consolidado publicado; aceite visual final pendente.**
+**Estado: CONCLUÍDA no escopo publicado e validado.**
 O commit `9d34e6c` foi publicado, com Test baseline e Pages aprovados:
 [CI 37982999446](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999446)
 e [Pages 37982999447](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999447).
 Os smoke checks confirmaram HTTP 200, metadados e integridade de 64 arquivos.
-Os aceites anteriores das Fases 9/12 não substituem a confirmação visual final
-do responsável para essa publicação. Evidências:
+Em 09/10/2026, o responsável confirmou o aceite visual final após testar a
+versão publicada: "Aprovado após testar a versão publicada". A referência
+operacional desse aceite é `47439ee`, cujo código de interface é idêntico ao
+commit consolidado `9d34e6c`; o commit intermediário alterou somente documentos.
+Essa confirmação é evidência manual informada, não inferência dos smoke checks
+nem teste de navegador executado pelo agente. Evidências:
 [qa-final-evidence.md](qa-final-evidence.md#publicação-do-qa--09102026).
 
 - [x] Disponibilizar a publicação atual via GitHub Pages.
@@ -645,7 +651,7 @@ do responsável para essa publicação. Evidências:
 - [x] Aprovar o workflow Test baseline para o commit consolidado de QA.
 - [x] Publicar a versão consolidada pelo workflow previsto, com deploy aprovado.
 - [x] Executar smoke checks operacionais e registrar SHA e runs da publicação.
-- [ ] Receber e registrar o aceite visual final do responsável na versão publicada.
+- [x] Receber e registrar o aceite visual final do responsável na versão publicada.
 
 Domínio personalizado é melhoria opcional, não requisito de publicação.
 
@@ -655,10 +661,10 @@ Convite disponível para os convidados e infraestrutura pronta para uso real.
 
 **Critérios de conclusão:** versão equalizada aprovada, smoke checks,
 monitoramento, procedimentos operacionais e evidências de segurança/integração
-documentados. A operação funcional está validada; a conclusão integral do
-roadmap depende da confirmação visual final do responsável na versão consolidada
-publicada. A consolidação documental anterior não executou deploy; o checkpoint
-posterior de publicação foi autorizado e concluído tecnicamente.
+documentados, com publicação, CI, smoke checks e aceite visual final do
+responsável aprovados. As 13 fases estão concluídas nos escopos definidos,
+preservando os limites de cobertura documentados; isso não garante
+compatibilidade universal nem disponibilidade futura dos serviços.
 
 ---
 
@@ -701,14 +707,14 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
 [x] 11 — Hospedagem estática / ambientes (CONCLUÍDA no ambiente utilizado)
 [x] 12 — Testes / qualidade (356 testes locais; SQL anterior e aceites manuais consolidados)
-[ ] 13 — Publicação / operação (QA publicado; aceite visual final pendente)
+[x] 13 — Publicação / operação (QA publicado; CI, smoke checks e aceite visual final aprovados)
 ```
 
 ---
 
 # Estado atual
 
-As Fases 1–12 estão concluídas nos escopos definidos, com as evidências e limites
+As Fases 1–13 estão concluídas nos escopos definidos, com as evidências e limites
 das Fases 9/12 registrados em [qa-final-evidence.md](qa-final-evidence.md). App Config,
 Event Config, CRUD administrativo, RSVP e contingência estão integrados e
 publicados. O monitor externo utiliza HEAD a cada 15 minutos; sua saúde
@@ -721,10 +727,11 @@ Baseline histórica do Bloco 7: 144 Deno + 119 Node = 263, aprovada localmente e
 em Linux/CI. Regressão local do QA consolidado: 144 Deno + 212 Node = 356, zero
 falhas, também confirmada em Linux no CI do commit consolidado `9d34e6c`.
 
-**Pendência real para o encerramento:** confirmação visual final do responsável
-para a versão consolidada publicada. CI, Pages e smoke checks passaram; a Fase
-13 permanece parcial até esse aceite. O QA manual ampliado foi informado como aprovado
-e consolidado, respeitando a ausência de evidência específica para Safari/iOS e
+**Encerramento integral do escopo:** CI, Pages e smoke checks passaram, e o
+responsável confirmou o aceite visual final da versão publicada em 09/10/2026.
+Não restam pendências obrigatórias identificadas para o encerramento das 13
+fases. O QA manual ampliado e o aceite final foram informados como aprovados
+e consolidados, respeitando a ausência de evidência específica para Safari/iOS e
 redução de movimento no celular real. Não há defeito aberto identificado nos
 gates locais; esses limites de cobertura não são garantia de aprovação universal.
 

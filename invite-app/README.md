@@ -22,7 +22,8 @@ build system antes de existir uma necessidade real. A interface e a integração
 já estão implementadas e possuem publicação anterior validada. Os aceites
 manuais ampliados de interface/acessibilidade foram consolidados; suas correções
 de QA estão versionadas e publicadas, com CI e smoke checks aprovados. O aceite
-visual final da publicação permanece pendente na Fase 13. Evidências e limites:
+visual final da publicação foi aprovado pelo responsável pelo QA e registrado
+no encerramento da Fase 13. Evidências e limites:
 [qa-final-evidence.md](../docs/qa-final-evidence.md).
 
 ## Como visualizar

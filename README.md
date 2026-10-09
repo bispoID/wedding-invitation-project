@@ -129,7 +129,7 @@ Também executa os testes Node de App Config, preparação portátil, Admin e Ev
 Config em `scripts/`. O QA consolidado passou localmente e em Linux/CI com **356 testes:
 144 Deno e 212 Node**, incluindo as regressões de acessibilidade, movimento
 e nomes longos. Suas correções foram versionadas e publicadas; o aceite visual
-final da publicação permanece pendente na Fase 13.
+final da publicação foi aprovado pelo responsável pelo QA.
 
 Os testes usam dependências simuladas e dados sintéticos. Não exigem secrets de
 produção, não acessam banco ou Google Sheets reais e não fazem deploy. O
@@ -169,10 +169,9 @@ O [development_roadmap.md](docs/development_roadmap.md) é a fonte oficial para 
 
 O escopo funcional atual está implementado e publicado, incluindo App Config,
 Event Config, criação manual de convidados e minimização de PII nos logs.
-O roadmap distingue essas entregas validadas dos critérios de aceite manual
-ampliado de interface/acessibilidade ainda sem evidência consolidada e das
-melhorias opcionais. Publicação funcional não equivale a validar toda combinação
-de navegador, tela ou tecnologia assistiva.
+O roadmap reúne as entregas validadas, os aceites manuais consolidados e as
+melhorias opcionais. O encerramento do escopo não equivale a validar toda
+combinação de navegador, tela ou tecnologia assistiva.
 
 ## Documentação
 

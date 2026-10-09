@@ -7,7 +7,8 @@ HEAD de referência: `1d9939a28d27c83e9eb7f3336378f6aaa1c698ac`.
 O HEAD acima identifica a referência anterior à consolidação. As correções de
 QA foram versionadas e publicadas no commit
 `9d34e6c8c79c5553f8fc3177a5becca53a5a32db`; os resultados estão na seção de
-publicação abaixo. O aceite visual final dessa publicação permanece pendente.
+publicação abaixo. O responsável confirmou o aceite visual final dessa
+publicação em 09/10/2026, conforme o registro de encerramento.
 O [roadmap](development_roadmap.md) é a fonte oficial do estado das 13 fases.
 
 ## Origem e alcance das evidências
@@ -55,8 +56,10 @@ caso quando essa informação não foi especificada.
 - Palavras sem espaços, erros de medição, métricas de fontes tardias e alguns
   formatos extremos de viewport têm regressões simuladas; isso não significa
   que cada um recebeu aceite visual manual.
-- CI, Pages e smoke checks estáticos da versão consolidada passaram. Ainda
-  falta o aceite visual final do responsável no navegador após a publicação.
+- CI, Pages e smoke checks estáticos da versão consolidada passaram. O
+  responsável também confirmou o aceite visual final após testar a publicação.
+  Não foram especificados novos navegadores, versões ou dispositivos nesse
+  aceite; os limites de cobertura anteriores permanecem.
 
 ## Revisão técnica das correções acumuladas
 
@@ -179,21 +182,40 @@ Não foi repetida: nenhuma migration ou schema foi alterado durante este QA.
 ## Encerramento e publicação
 
 Os aceites informados e os gates locais sustentam o encerramento das Fases 9 e
-12 no escopo validado, com os limites de cobertura acima. A Fase 13 permanece
-parcial até o responsável confirmar o aceite visual final da versão publicada.
+12 no escopo validado, com os limites de cobertura acima. Em 09/10/2026, o
+responsável pelo QA respondeu à solicitação de aceite final no navegador:
+
+> Aprovado após testar a versão publicada
+
+A solicitação identificava a URL publicada e os cenários de abertura,
+teclado/foco, RSVP sem enviar, redução de movimento e responsividade. Esta é
+uma confirmação manual do responsável; o agente não repetiu o teste visual nem
+presume execução de cenários adicionais, envio de RSVP ou operações do Admin.
+
+A referência da publicação no registro é
+`47439eee7357e16bcb3ca845d5e1537c7f25849f`, com a mesma implementação de interface
+de `9d34e6c`; a diferença é exclusivamente documental. Esse checkpoint também
+teve [CI 37983470306](https://github.com/bispoID/wedding-invitation-project/actions/runs/37983470306)
+e [Pages 37983470523](https://github.com/bispoID/wedding-invitation-project/actions/runs/37983470523)
+aprovados. Os logs repetiram 212 Node + 144 Deno sem falhas, 26 syntax checks e
+whitespace aprovado; o gate Pages executou 26 testes. Os smoke checks posteriores
+confirmaram 65 arquivos por HTTP/SHA-256, incluindo o README publicado, e as
+mesmas 76 referências relativas, sem executar JavaScript ou APIs de produção.
+
+Com publicação, regressão, smoke checks e aceite final registrados, a Fase 13
+está concluída e o escopo das 13 fases do roadmap está integralmente encerrado.
+Os limites de cobertura acima não foram apagados nem tratados como aprovação
+universal. O commit de encerramento altera somente documentação.
 
 Andamento do checkpoint autorizado de publicação:
 
 1. Concluído: revisar e versionar o conjunto exato de 20 arquivos.
 2. Concluído: sucesso do workflow `Test baseline` para o commit consolidado.
 3. Concluído: publicação pelo workflow previsto e smoke checks aprovados.
-4. Pendente: aceite visual final no navegador, pelo responsável. Verificar
-   abertura e navegação por teclado, foco do RSVP,
-   estados de Acompanhantes sem enviar RSVP sintético, redução de movimento,
-   wallpaper e nomes usuais/longos nos componentes afetados. Usar fixtures
-   locais de inspeção para nomes sintéticos, sem editar dados reais do evento.
-5. SHA e runs registrados; registrar o resultado manual final antes de concluir
-   a Fase 13. Este documento não presume esse aceite.
+4. Concluído: confirmação explícita do aceite visual final pelo responsável
+   após testar a versão publicada, conforme o relato acima.
+5. Concluído: SHA, runs, resultados operacionais e aceite final registrados,
+   permitindo o encerramento da Fase 13.
 
 Na consolidação local anterior não houve staging, commit, push ou deploy. O
 checkpoint posterior autorizou commit, push e publicação de frontend, realizados
