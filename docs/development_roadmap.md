@@ -81,8 +81,10 @@ Objetivo: criar a estrutura de dados necessária para o RSVP.
 
 Banco estruturado e capaz de armazenar os RSVPs.
 
-**Entrega anterior concluída; extensão pendente:** schema de `event_config` e
-constraints adicionais de convidados serão implementados em lotes posteriores.
+**Entrega anterior concluída; extensão implementada localmente no Bloco 3:**
+schema singleton de `event_config` e limites de convidados com NOT VALID.
+Aplicação das migrations, testes SQL e auditoria dos históricos permanecem
+pendentes; nenhuma alteração remota foi executada.
 
 ---
 
@@ -123,8 +125,9 @@ DELETE → permitido, se necessário
 
 Banco protegido e permissões funcionando de acordo com o modelo definido.
 
-**Entrega anterior concluída; extensão pendente:** aplicar o padrão de segurança
-às futuras APIs/tabela de evento e revalidar os acessos.
+**Entrega anterior concluída; extensão local do Bloco 3:** RLS/grants restritivos
+na migration de evento, DTO público limitado e Auth/allowlist/origem nas APIs
+administrativas. Testes simulados passaram; validação SQL e aceite remoto pendentes.
 
 ---
 
@@ -157,9 +160,10 @@ Objetivo: criar a camada responsável por receber e processar os RSVPs.
 
 A API consegue receber, validar e persistir um RSVP corretamente, com proteção contra abuso implementada e validada na Edge Function.
 
-**Entrega anterior concluída; extensão pendente:** APIs de configuração do evento,
-validação compartilhada e minimização dos logs. O rate limit não será alterado
-como parte do Lote 1.
+**Entrega anterior concluída; extensão local do Bloco 3:** APIs de configuração
+do evento, validação compartilhada e minimização dos logs implementadas e
+testadas offline. O algoritmo, chave, RPC e limites do rate limiting foram
+preservados. Publicação e aceite integrado continuam pendentes.
 
 ---
 
@@ -314,9 +318,10 @@ Total de pessoas confirmadas
 
 O administrador consegue visualizar e gerenciar a lista de forma privada.
 
-**Entrega anterior concluída; extensão pendente:** criação manual de convidados,
-edição de `event_config` e navegação para convite/previews. Atualmente existem
-listagem, edição e exclusão; a criação manual ainda não foi implementada.
+**Entrega anterior concluída; extensão implementada localmente no Bloco 3:**
+criação manual de convidados, edição de `event_config` e navegação para
+convite/previews. Asserções backend e UI simulada passaram; publicação e
+aceite visual/integrado continuam pendentes.
 
 ---
 
@@ -490,8 +495,8 @@ para os testes finais no provedor estático escolhido.
 
 Objetivo: verificar funcionamento, segurança, confiabilidade e experiência.
 
-**Estado: PARCIAL.** Existem sete arquivos de teste das Functions e um de
-métricas administrativas. O Lote 1 acrescenta a baseline em Linux/CI, sem
+**Estado: PARCIAL.** Há testes das Functions, métricas administrativas e Node.
+O Lote 1 acrescentou a baseline em Linux/CI, sem
 representar aceite completo de segurança, integração ou interface.
 
 ## Baseline automatizada
@@ -506,6 +511,11 @@ representar aceite completo de segurança, integração ou interface.
 - [x] Acrescentar testes Node de App Config e preparação portátil no Lote 2.
 - [x] Executar localmente o Lote 2: 26 testes Node novos e os 57 Deno existentes aprovados.
 - [ ] Confirmar a execução remota da extensão de testes do Lote 2 após revisão.
+- [x] Implementar e executar localmente testes do Bloco 3: 141 Deno e 44 Node,
+  incluindo os 83 da baseline anterior, sem remover cenários.
+- [x] Preparar CI para os testes administrativos novos, sem deploy.
+- [ ] Executar `supabase/tests/block3.sql` em PostgreSQL local descartável.
+- [ ] Confirmar CI Linux do Bloco 3 e aceite visual/integrado após revisão.
 
 O workflow utiliza Node.js `22.14.0` e Deno `2.9.7` em `ubuntu-24.04`. A execução
 Windows dentro do isolamento local apresentou panic de named pipe no runner;
@@ -645,7 +655,8 @@ proteção de sessão estão implementadas. A autorização é verificada no bac
 por JWT válido e associação do UUID à lista `ADMIN_AUTH_USER_IDS`; suporta
 múltiplos administradores e retorna 403 a usuários autenticados não autorizados.
 Listagem, edição e exclusão de convidados, os indicadores e a integração da
-contingência ao painel estão implementados. A criação manual ainda não existe.
+contingência ao painel estão implementados. O Bloco 3 acrescenta criação manual,
+configuração do evento e previews localmente, sem publicação.
 O hardening de segurança foi realizado, mantendo
 `service_role` exclusivamente no backend. As quatro Edge Functions
 administrativas foram verificadas como ACTIVE e com `verify_jwt=true` na
@@ -654,14 +665,17 @@ validadas anteriormente com registros sintéticos temporários, removidos ao
 final.
 
 As entregas anteriores das Fases 1 a 8 estão concluídas. App Config e preparador
-estático foram implementados no Lote 2; demais extensões das Fases 2 a 7 seguem
-pendentes.
+estático foram implementados no Lote 2; extensões das Fases 2 a 7 foram
+implementadas localmente no Bloco 3. Migrations/aplicação remota e aceite
+integrado dessas extensões permanecem pendentes.
 
 **Fase 8 — Monitoramento: concluída.** A configuração oficial do UptimeRobot é
 `HEAD` a cada 15 minutos. Este lote equaliza somente sua documentação.
 
 **Fases 9, 10 e 12: parciais.** Já há interface, integração e testes. O workflow
 Linux do Lote 1 passou; os novos testes do Lote 2 aguardam execução remota.
+O Bloco 3 passou localmente em 185 testes; sua revisão, CI Linux e aceite
+visual/SQL permanecem pendentes. Não foi feito commit, push ou deploy.
 
 **Fase 11: parcial.** Pages é atual/canônico; a portabilidade operacional foi
 testada localmente para configuração/metadados; aceite publicado ainda pendente.

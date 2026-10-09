@@ -397,3 +397,31 @@
     width: 100%;
   }
 }
+.invitation-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+.invitation-navigation a { color: inherit; text-decoration: underline; }
+.event-panel { margin-block: 2rem; }
+.event-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 1rem;
+}
+.event-fields label { display: grid; gap: .5rem; min-width: 0; }
+.event-fields input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #586151;
+  background: #171b16;
+  color: #f3eee2;
+  padding: .75rem;
+  border-radius: .5rem;
+  font: inherit;
+  color-scheme: dark;
+}
+.event-fields input:focus-visible { outline: 2px solid #c8b88a; outline-offset: 2px; }
+.event-fields input:disabled { opacity: .6; }
+#guest-create { margin-bottom: 1rem; }

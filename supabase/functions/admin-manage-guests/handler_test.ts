@@ -50,6 +50,11 @@ function makeHarness(
     createDependencies() {
       state.dependenciesCreated = true;
       return {
+        createGuest(guest) {
+          return overrides.createGuest
+            ? overrides.createGuest(guest)
+            : Promise.resolve({ id: GUEST_ID });
+        },
         updateGuest(id, guest) {
           state.updateId = id;
           state.updatedGuest = guest;
@@ -233,3 +238,78 @@ Deno.test("unauthenticated and non-admin callers cannot create dependencies", as
     );
   }
 });
+Deno.test("create returns 201, normalizes absent guest and preserves DB defaults", async () => {
+  let saved: GuestUpdate | null = null;
+  const { handler } = makeHarness(undefined, {
+    createGuest(guest) {
+      saved = guest;
+      return Promise.resolve({ id: GUEST_ID });
+    },
+  });
+  const response = await handler(
+    makeRequest({
+      action: "create",
+      guest: { ...validGuest, attendance: false },
+    }),
+  );
+  const body = await response.json();
+  assertEquals(response.status, 201, "Created");
+  assertEquals(body.action, "created", "Action");
+  assertEquals(body.id, GUEST_ID, "DB id");
+  const persisted = saved as GuestUpdate | null;
+  assertEquals(persisted?.companions, 0, "Absence");
+  assertEquals(persisted?.email, "teste@example.invalid", "Normalized");
+});
+for (
+  const body of [
+    { action: "create", id: GUEST_ID, guest: validGuest },
+    { action: "create", created_at: "now", guest: validGuest },
+    { action: "create", guest: { ...validGuest, updated_at: "now" } },
+    { action: "create", guest: { ...validGuest, id: GUEST_ID } },
+  ]
+) {
+  Deno.test(
+    "create rejects extra fields " + JSON.stringify(body).slice(0, 60),
+    async () => {
+      const { handler, state } = makeHarness();
+      assertEquals(
+        (await handler(makeRequest(body))).status,
+        400,
+        "Strict DTO",
+      );
+      assertEquals(state.dependenciesCreated, false, "No write");
+    },
+  );
+}
+Deno.test("create duplicate is 409 without contingency", async () => {
+  const { handler } = makeHarness(undefined, {
+    createGuest() {
+      return Promise.reject({ code: "23505" });
+    },
+  });
+  assertEquals(
+    (await handler(makeRequest({ action: "create", guest: validGuest })))
+      .status,
+    409,
+    "Duplicate",
+  );
+});
+for (
+  const guest of [{ ...validGuest, name: "a".repeat(201) }, {
+    ...validGuest,
+    email: "a".repeat(307) + "@example.invalid",
+  }, { ...validGuest, companions: 1.5 }]
+) {
+  Deno.test(
+    "create rejects invalid guest " + JSON.stringify(guest).slice(0, 40),
+    async () => {
+      const { handler, state } = makeHarness();
+      assertEquals(
+        (await handler(makeRequest({ action: "create", guest }))).status,
+        422,
+        "Validation",
+      );
+      assertEquals(state.dependenciesCreated, false, "No write");
+    },
+  );
+}

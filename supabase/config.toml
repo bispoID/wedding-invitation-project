@@ -453,3 +453,9 @@ enabled = true
 verify_jwt = true
 max_duration = 30
 import_map = "./functions/admin-list-guests/deno.json"
+
+[functions.event-config]
+verify_jwt = false
+
+[functions.admin-manage-event-config]
+verify_jwt = true

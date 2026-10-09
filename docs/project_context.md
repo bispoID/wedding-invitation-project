@@ -883,14 +883,16 @@ metadados absolutos são preparados no artefato por `scripts/prepare-static-site
 com `PUBLIC_SITE_URL` operacional. Não há secrets no módulo nem `.env` no browser.
 Detalhes de execução e limites: [invite-app/README.md](../invite-app/README.md#configuração-pública-e-publicação-portátil).
 
-A equalização será incremental. Estão aprovados para lotes posteriores:
+O Bloco 3 implementa localmente o singleton `event_config`, sua API pública
+de leitura e API administrativa GET/PUT, criação manual de convidados e
+formulários independentes no painel. São extensões ainda não publicadas.
+Validação de convidados é comum a RSVP, administração e recuperação; logs
+técnicos de RSVP não devem incluir dados pessoais nem erros externos brutos.
+Migrations adicionais mantêm RLS restritiva e evitam alterações automáticas
+nos dados históricos. Contratos e pré-requisitos: [event-config.md](event-config.md).
 
-- `event_config` para dados do casamento fora do código versionado;
-- criação manual de convidados e edição do evento no admin;
-- minimização de dados pessoais nos logs técnicos;
-- validações/constraints adicionais e aceite integrado de portabilidade.
-
-Esses itens não descrevem funcionalidades atuais. O convite continuará público;
+O consumo dinâmico pelo convite público e o aceite integrado de portabilidade
+permanecem para blocos posteriores. O convite continuará público;
 retirar dados reais do Git não os torna secretos quando exibidos em runtime.
 O status e os critérios de conclusão ficam no roadmap.
 

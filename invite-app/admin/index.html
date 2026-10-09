@@ -39,8 +39,65 @@
             Área privada para administração do convite e dos convidados.
           </p>
 
+          <nav class="invitation-navigation" aria-label="Convite e previews">
+            <a data-invitation-mode="main" target="_blank" rel="noopener noreferrer">Abrir convite</a>
+            <a data-invitation-mode="cover" target="_blank" rel="noopener noreferrer">Preview: capa</a>
+            <a data-invitation-mode="envelope-card" target="_blank" rel="noopener noreferrer">Preview: envelope</a>
+            <a data-invitation-mode="letter" target="_blank" rel="noopener noreferrer">Preview: carta</a>
+          </nav>
+          <section class="event-panel" aria-labelledby="event-title">
+            <h2 id="event-title">Configuração do evento</h2>
+            <p>Os dados cadastrados serão públicos pela API. Não inclua informações privadas.</p>
+            <p id="event-loading" class="feedback" role="status">Carregando configuração...</p>
+            <p id="event-feedback" class="feedback" role="status" aria-live="polite" hidden></p>
+            <button id="event-retry" class="button button--secondary" type="button" hidden>Tentar novamente</button>
+            <form id="event-form" hidden>
+              <div class="event-fields">
+                <label for="event-bride_name">Nome da noiva *
+                  <input id="event-bride_name" name="bride_name" type="text" maxlength="200" required />
+                </label>
+                <label for="event-groom_name">Nome do noivo *
+                  <input id="event-groom_name" name="groom_name" type="text" maxlength="200" required />
+                </label>
+                <label for="event-event_date">Data do evento *
+                  <input id="event-event_date" name="event_date" type="date" required />
+                </label>
+                <label for="event-event_time">Horário *
+                  <input id="event-event_time" name="event_time" type="time" required step="60" />
+                </label>
+                <label for="event-city">Cidade *
+                  <input id="event-city" name="city" type="text" maxlength="150" required />
+                </label>
+                <label for="event-state">Estado *
+                  <input id="event-state" name="state" type="text" maxlength="100" required />
+                </label>
+                <label for="event-ceremony_name">Nome da cerimônia *
+                  <input id="event-ceremony_name" name="ceremony_name" type="text" maxlength="200" required />
+                </label>
+                <label for="event-ceremony_address">Endereço da cerimônia
+                  <input id="event-ceremony_address" name="ceremony_address" type="text" maxlength="500" />
+                </label>
+                <label for="event-ceremony_maps_url">Mapa da cerimônia (HTTPS)
+                  <input id="event-ceremony_maps_url" name="ceremony_maps_url" type="url" maxlength="2048" />
+                </label>
+                <label for="event-reception_name">Nome da recepção
+                  <input id="event-reception_name" name="reception_name" type="text" maxlength="200" />
+                </label>
+                <label for="event-reception_address">Endereço da recepção
+                  <input id="event-reception_address" name="reception_address" type="text" maxlength="500" />
+                </label>
+                <label for="event-monogram_url">Monograma (URL HTTPS)
+                  <input id="event-monogram_url" name="monogram_url" type="url" maxlength="2048" />
+                </label>
+              </div>
+              <p id="event-updated"></p>
+              <button class="button" type="submit">Salvar configuração</button>
+            </form>
+          </section>
+
           <section class="guests-panel" aria-labelledby="guests-title">
             <h2 id="guests-title">Convidados</h2>
+            <button class="button" id="guest-create" type="button">Criar convidado</button>
             <div class="guest-metrics" aria-label="Resumo dos convidados">
               <article class="guest-metric">
                 <h3>Total de convidados</h3>

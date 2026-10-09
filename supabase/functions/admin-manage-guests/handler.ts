@@ -1,17 +1,17 @@
 import { isAuthorizedAdmin } from "../_shared/admin-auth.ts";
+import {
+  type GuestData,
+  isRecord,
+  validateGuest,
+} from "../_shared/guest-validation.ts";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export interface GuestUpdate {
-  name: string;
-  email: string;
-  attendance: boolean;
-  companions: number;
-}
+export type GuestUpdate = GuestData;
 
 export interface GuestAdminDependencies {
+  createGuest(guest: GuestUpdate): Promise<{ id: string }>;
   updateGuest(
     id: string,
     guest: GuestUpdate,
@@ -42,10 +42,6 @@ function response(
       "Vary": "Origin",
     },
   });
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function errorResponse(
@@ -79,55 +75,6 @@ function errorResponse(
     status,
     origin,
   );
-}
-
-function parseGuestUpdate(value: unknown):
-  | { guest: GuestUpdate }
-  | {
-    error:
-      | "INVALID_NAME"
-      | "INVALID_EMAIL"
-      | "INVALID_ATTENDANCE"
-      | "INVALID_COMPANIONS";
-  } {
-  if (!isRecord(value)) {
-    return { error: "INVALID_NAME" };
-  }
-
-  const candidate = value;
-
-  if (typeof candidate.name !== "string" || !candidate.name.trim()) {
-    return { error: "INVALID_NAME" };
-  }
-
-  if (
-    typeof candidate.email !== "string" ||
-    !EMAIL_PATTERN.test(candidate.email.trim().toLowerCase())
-  ) {
-    return { error: "INVALID_EMAIL" };
-  }
-
-  if (typeof candidate.attendance !== "boolean") {
-    return { error: "INVALID_ATTENDANCE" };
-  }
-
-  if (
-    typeof candidate.companions !== "number" ||
-    !Number.isInteger(candidate.companions) ||
-    candidate.companions < 0 ||
-    candidate.companions > 15
-  ) {
-    return { error: "INVALID_COMPANIONS" };
-  }
-
-  return {
-    guest: {
-      name: candidate.name.trim(),
-      email: candidate.email.trim().toLowerCase(),
-      attendance: candidate.attendance,
-      companions: candidate.attendance ? candidate.companions : 0,
-    },
-  };
 }
 
 export function createGuestAdminHandler(
@@ -189,16 +136,34 @@ export function createGuestAdminHandler(
     }
 
     const guestId = payload.id;
-    if (payload.action !== "update" && payload.action !== "delete") {
+    if (
+      payload.action !== "create" && payload.action !== "update" &&
+      payload.action !== "delete"
+    ) {
       return errorResponse("INVALID_REQUEST", 400, origin);
     }
 
-    if (typeof guestId !== "string" || !UUID_PATTERN.test(guestId)) {
+    if (
+      payload.action === "create" && (
+        Object.keys(payload).some((key) =>
+          !["action", "guest"].includes(key)
+        ) ||
+        !isRecord(payload.guest) ||
+        Object.keys(payload.guest).some((key) =>
+          !["name", "email", "attendance", "companions"].includes(key)
+        )
+      )
+    ) return errorResponse("INVALID_REQUEST", 400, origin);
+
+    if (
+      payload.action !== "create" &&
+      (typeof guestId !== "string" || !UUID_PATTERN.test(guestId))
+    ) {
       return errorResponse("INVALID_ID", 400, origin);
     }
 
-    const parsedGuest = payload.action === "update"
-      ? parseGuestUpdate(payload.guest)
+    const parsedGuest = payload.action !== "delete"
+      ? validateGuest(payload.guest)
       : null;
 
     if (parsedGuest && "error" in parsedGuest) {
@@ -207,9 +172,19 @@ export function createGuestAdminHandler(
 
     try {
       const dependencies = options.createDependencies();
+      if (
+        payload.action === "create" && parsedGuest && "guest" in parsedGuest
+      ) {
+        const created = await dependencies.createGuest(parsedGuest.guest);
+        return response(
+          { success: true, action: "created", id: created.id },
+          201,
+          origin,
+        );
+      }
 
       if (payload.action === "delete") {
-        const deleted = await dependencies.deleteGuest(guestId);
+        const deleted = await dependencies.deleteGuest(guestId as string);
 
         if (!deleted) {
           return errorResponse("GUEST_NOT_FOUND", 404, origin);
@@ -227,7 +202,7 @@ export function createGuestAdminHandler(
       }
 
       const updated = await dependencies.updateGuest(
-        guestId,
+        guestId as string,
         parsedGuest.guest,
       );
 

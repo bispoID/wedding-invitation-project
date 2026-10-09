@@ -1,41 +1,5 @@
-import { getSupabaseClient } from './supabase.js';
-
-export class AdminFunctionError extends Error {
-  constructor(code, message, status) {
-    super(message);
-    this.name = 'AdminFunctionError';
-    this.code = code;
-    this.status = status;
-  }
-}
-
-async function callAdminFunction(name, options) {
-  const supabase = await getSupabaseClient();
-  const { data, error } = await supabase.functions.invoke(name, options);
-
-  if (error) {
-    const response = error.context;
-
-    if (response instanceof Response) {
-      let body;
-      try {
-        body = await response.clone().json();
-      } catch {
-        body = null;
-      }
-
-      throw new AdminFunctionError(
-        body?.error ?? 'FUNCTION_FAILED',
-        body?.message ?? 'A solicitação administrativa falhou.',
-        response.status
-      );
-    }
-
-    throw error;
-  }
-
-  return data;
-}
+import { callAdminFunction } from './functions.js';
+export { AdminFunctionError } from './functions.js';
 
 export async function getPendingContingency() {
   const result = await callAdminFunction('admin-list-contingency', {
@@ -56,7 +20,12 @@ export async function recoverContingency(requestId) {
 }
 
 export async function manageGuest(action, id, guest) {
-  return callAdminFunction('admin-manage-guests', {
-    body: { action, id, ...(action === 'update' ? { guest } : {}) },
+  const result = await callAdminFunction('admin-manage-guests', {
+    body: { action, ...(action !== 'create' ? { id } : {}), ...(['create', 'update'].includes(action) ? { guest } : {}) },
   });
+  const expected = { create: 'created', update: 'updated', delete: 'deleted' }[action];
+  if (result?.success !== true || result.action !== expected || typeof result.id !== 'string') {
+    throw new Error('A operação não foi confirmada pelo backend.');
+  }
+  return result;
 }

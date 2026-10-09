@@ -1,3 +1,5 @@
+import { validateGuest } from "../_shared/guest-validation.ts";
+
 export interface ContingencyRecord {
   rowNumber: number;
   requestId: string;
@@ -67,10 +69,6 @@ export type RecoveryResult = {
   contingency_removed: true;
 };
 
-function normalizeEmail(email: string): string {
-  return email.trim().toLowerCase();
-}
-
 function readBoolean(value: unknown): boolean | null {
   if (typeof value === "boolean") {
     return value;
@@ -99,23 +97,14 @@ function readCompanions(value: unknown): number | null {
 }
 
 function parseContingencyRecord(row: ContingencyRecord): GuestRecord {
-  const name = row.name.trim();
-  const email = normalizeEmail(row.email);
-  const attendance = readBoolean(row.attendance);
-  const companions = readCompanions(row.companions);
-
-  if (
-    !name ||
-    !email ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
-    attendance === null ||
-    companions === null ||
-    (!attendance && companions !== 0)
-  ) {
-    throw new RecoveryError("INVALID_DATA");
-  }
-
-  return { name, email, attendance, companions };
+  const parsed = validateGuest({
+    name: row.name,
+    email: row.email,
+    attendance: readBoolean(row.attendance),
+    companions: readCompanions(row.companions),
+  });
+  if ("error" in parsed) throw new RecoveryError("INVALID_DATA");
+  return parsed.guest;
 }
 
 function recordsMatch(left: GuestRecord, right: GuestRecord): boolean {

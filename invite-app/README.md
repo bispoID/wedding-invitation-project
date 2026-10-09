@@ -30,6 +30,12 @@ está aprovada para implementação futura; ela não foi realizada neste lote.
 
 ## Configuração da área administrativa
 
+Extensão local do Bloco 3, ainda não publicada: criação manual de convidados,
+configuração do evento e links portáteis para convite/previews. A configuração
+do evento é pública pela API, não um armazenamento de dados privados. O convite
+ainda não consome dinamicamente esses dados. Requisitos e testes:
+[event-config.md](../docs/event-config.md).
+
 O frontend é estático e não carrega arquivos `.env`. Antes de usar o login, copie
 a chave **publishable** (ou a chave legada **anon**) do Supabase Dashboard para
 `scripts/shared/app-config.js`, na constante `SUPABASE_PUBLIC_KEY`.

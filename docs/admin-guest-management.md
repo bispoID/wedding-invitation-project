@@ -58,6 +58,24 @@ editáveis) e DELETE são usados somente por `service_role`. Não há policies
 privilégios de leitura ou mutação na tabela. O privilégio de TRUNCATE também
 foi removido de `service_role`, `PUBLIC`, `anon` e `authenticated`.
 
+## Extensão local — Bloco 3 (ainda não publicada)
+
+`admin-manage-guests` mantém POST/update/delete e acrescenta
+`{action:"create",guest:{name,email,attendance,companions}}`.
+Criação exige a mesma autenticação, allowlist e origem; rejeita campos extras,
+id e timestamps; usa defaults do banco, retorna 201/created/id ou 409 por
+email duplicado. Não usa fallback Sheets nem o rate limiting público.
+Nome/e-mail têm limites 200/320, trim/lowercase; presença é boolean e
+acompanhantes inteiro 0–15, normalizados para zero na ausência.
+Validação compartilhada também atende RSVP e recuperação.
+
+O painel reutiliza o diálogo para criar/editar, desabilita controles durante
+envio e atualiza listagem/métricas depois da confirmação backend. A configuração
+do evento usa seção independente, GET/PUT e 12 campos completos; consulte
+[event-config.md](event-config.md) para contratos, segurança e pré-requisitos.
+Links do convite/previews derivam de APP_BASE_URL sem host/subpath fixo.
+Recuperação atualiza listas sem refresh geral que descarte edições do evento.
+
 ## Indicadores
 
 Os indicadores são calculados sobre a lista atualmente carregada e recalculados

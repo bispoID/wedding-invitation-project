@@ -170,6 +170,22 @@ Linux/CI teve sua baseline do Lote 1 confirmada; alterações posteriores exigem
 nova validação remota. Testes individuais ou WSL, quando disponível,
 podem auxiliar o diagnóstico.
 
+### Extensão local do Bloco 3
+
+Nenhum serviço remoto foi alterado. Novas Functions `event-config` e
+`admin-manage-event-config` e migrations estão somente no working tree.
+Testes offline executados em Windows: 141 Deno e 44 Node, sem falhas.
+O CI acrescenta `scripts/admin-block3.test.mjs`; não executa SQL, deploy ou
+conexão a produção. Banco local e aceite visual permanecem pendentes.
+Contratos e implantação posterior: [event-config.md](event-config.md).
+UptimeRobot permanece HEAD a cada 15 minutos; Pages é atual, Vercel opcional.
+
+Comando Node atualizado:
+
+```text
+node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs scripts/admin-block3.test.mjs
+```
+
 **Referências oficiais:**
 
 - [Deno Documentation](https://docs.deno.com/runtime/)

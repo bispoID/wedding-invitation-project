@@ -417,3 +417,46 @@ Deno.test("non-pending record is preserved", async () => {
 
   assertEquals(state.deleteCount, 0, "Non-pending row must not be removed");
 });
+Deno.test("Sheets adapter normalizes known strings and absence companions", async () => {
+  const state = makeState([
+    pendingRow({
+      name: "  Nome Á Sintético  ",
+      attendance: "FALSE",
+      companions: "2",
+    }),
+  ]);
+  await recoverContingencyRecord(REQUEST_ID, makeDependencies(state));
+  assertEquals(
+    state.guests.get("teste@example.com")?.name,
+    "Nome Á Sintético",
+    "Trim Unicode",
+  );
+  assertEquals(
+    state.guests.get("teste@example.com")?.companions,
+    0,
+    "Absent normalization",
+  );
+  assertEquals(state.deleteCount, 1, "Verified recovery removes row");
+});
+for (
+  const overrides of [
+    { name: "a".repeat(201) },
+    { email: "a".repeat(307) + "@example.invalid" },
+    { attendance: "maybe" },
+    { companions: "1.5" },
+  ]
+) {
+  Deno.test(
+    "invalid Sheets record preserved " + JSON.stringify(overrides).slice(0, 35),
+    async () => {
+      const state = makeState([pendingRow(overrides)]);
+      await assertRecoveryError(
+        recoverContingencyRecord(REQUEST_ID, makeDependencies(state)),
+        "INVALID_DATA",
+      );
+      assertEquals(state.insertCount, 0, "No insert");
+      assertEquals(state.deleteCount, 0, "No deletion");
+      assertEquals(state.rows.length, 1, "Preserved");
+    },
+  );
+}

@@ -1,6 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { parseAdminUserIds } from "../_shared/admin-auth.ts";
-import { createGuestAdminHandler } from "./handler.ts";
+import { createEventAdminHandler } from "./handler.ts";
+import { EVENT_FIELDS } from "../_shared/event-validation.ts";
 
 const REQUEST_TIMEOUT_MS = 12_000;
 
@@ -56,7 +57,7 @@ const authClient = createClient(supabaseUrl, publicKey, {
   global: { fetch: fetchWithTimeout },
 });
 
-const handler = createGuestAdminHandler({
+const handler = createEventAdminHandler({
   allowedOrigins: configuredOrigins(),
   adminUserIds,
   async authenticate(request) {
@@ -84,40 +85,19 @@ const handler = createGuestAdminHandler({
     );
 
     return {
-      async createGuest(guest) {
-        const { data, error } = await serviceClient.from("guests").insert(guest)
-          .select("id").single();
-        if (error) throw { code: error.code };
-        if (!data) throw { code: "DATABASE_ERROR" };
-        return data;
-      },
-      async updateGuest(id, guest) {
-        const { data, error } = await serviceClient
-          .from("guests")
-          .update(guest)
-          .eq("id", id)
-          .select("id")
+      async read() {
+        const { data, error } = await serviceClient.from("event_config")
+          .select([...EVENT_FIELDS, "updated_at"].join(",")).eq("id", 1)
           .maybeSingle();
-
-        if (error) {
-          throw { code: error.code };
-        }
-
-        return data;
+        if (error) throw new Error("DATABASE_ERROR");
+        return data as Record<string, unknown> | null;
       },
-      async deleteGuest(id) {
-        const { data, error } = await serviceClient
-          .from("guests")
-          .delete()
-          .eq("id", id)
-          .select("id")
-          .maybeSingle();
-
-        if (error) {
-          throw { code: error.code };
-        }
-
-        return data;
+      async upsert(config) {
+        const { data, error } = await serviceClient.from("event_config")
+          .upsert({ id: 1, ...config }, { onConflict: "id" })
+          .select([...EVENT_FIELDS, "updated_at"].join(",")).single();
+        if (error || !data) throw new Error("DATABASE_ERROR");
+        return data as unknown as Record<string, unknown>;
       },
     };
   },

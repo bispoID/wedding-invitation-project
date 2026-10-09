@@ -2,6 +2,9 @@ import { getCurrentSession, signIn, signOut } from './auth.js';
 import { getPendingContingency, manageGuest, recoverContingency } from './contingency.js';
 import { getGuests } from './guests.js';
 import { calculateGuestMetrics } from './guest-metrics.js';
+import { validateGuest } from './guest-validation.js';
+import { initializeEventConfig } from './event-config.js';
+import { initializeInvitationLinks } from './navigation.js';
 
 const page = document.body.dataset.page;
 
@@ -96,6 +99,8 @@ async function initializeDashboard() {
     });
 
     initializeGuestEditor();
+    initializeInvitationLinks();
+    void initializeEventConfig();
     await Promise.all([loadGuests(), loadContingency()]);
   } catch (error) {
     loadingMessage.hidden = true;
@@ -202,6 +207,10 @@ function initializeGuestEditor() {
     }
   });
 
+  document.querySelector('#guest-create').addEventListener('click', () => openGuestEditor());
+  dialog.addEventListener('cancel', (event) => {
+    if (form.getAttribute('aria-busy') === 'true') event.preventDefault();
+  });
   cancelButton.addEventListener('click', () => dialog.close());
 
   form.addEventListener('submit', async (event) => {
@@ -209,7 +218,9 @@ function initializeGuestEditor() {
     const errorMessage = document.querySelector('#guest-form-error');
     errorMessage.hidden = true;
 
+    if (form.getAttribute('aria-busy') === 'true') return;
     const id = form.dataset.guestId;
+    const action = form.dataset.mode === 'create' ? 'create' : 'update';
     const formData = new FormData(form);
     const name = String(formData.get('name')).trim();
     const email = String(formData.get('email')).trim().toLowerCase();
@@ -217,63 +228,47 @@ function initializeGuestEditor() {
     const companionsValue = document.querySelector('#guest-companions').value.trim();
     const companionsCount = Number(companionsValue);
 
-    if (!name) {
-      showError(errorMessage, 'O nome é obrigatório.');
-      document.querySelector('#guest-name').focus();
+    const parsed = validateGuest({ name, email, attendance: ['true', 'false'].includes(attendanceValue) ? attendanceValue === 'true' : null, companions: companionsValue ? companionsCount : NaN });
+    if ('error' in parsed) {
+      showError(errorMessage, 'Confira nome (até 200), e-mail (até 320), presença e acompanhantes (0 a 15).');
       return;
     }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      showError(errorMessage, 'Informe um e-mail válido.');
-      document.querySelector('#guest-email').focus();
-      return;
-    }
-
-    if (
-      !['true', 'false'].includes(attendanceValue) ||
-      !Number.isInteger(companionsCount) ||
-      companionsCount < 0 ||
-      companionsCount > 15
-    ) {
-      showError(errorMessage, 'Confira a presença e a quantidade de acompanhantes (0 a 15).');
-      return;
-    }
-
-    saveButton.disabled = true;
+    [...form.elements].forEach((control) => { control.disabled = true; });
     saveButton.textContent = 'Salvando...';
     form.setAttribute('aria-busy', 'true');
 
     try {
-      await manageGuest('update', id, {
-        name,
-        email,
-        attendance: attendanceValue === 'true',
-        companions: attendanceValue === 'true' ? companionsCount : 0,
-      });
+      await manageGuest(action, id, parsed.guest);
       dialog.close();
       form.reset();
       delete form.dataset.guestId;
       await loadGuests();
-      setGuestFeedback('Dados do convidado atualizados.', 'success');
+      setGuestFeedback(action === 'create' ? 'Convidado criado e confirmado.' : 'Dados do convidado atualizados.', 'success');
     } catch (error) {
       showError(errorMessage, getGuestMutationMessage(error));
     } finally {
-      saveButton.disabled = false;
-      saveButton.textContent = 'Salvar alterações';
+      [...form.elements].forEach((control) => { control.disabled = false; });
+      companions.disabled = attendance.value !== 'true';
+      saveButton.textContent = action === 'create' ? 'Criar convidado' : 'Salvar alterações';
       form.removeAttribute('aria-busy');
     }
   });
 }
 
-function openGuestEditor(guest) {
+function openGuestEditor(guest = null) {
   const dialog = document.querySelector('#guest-dialog');
   const form = document.querySelector('#guest-form');
-  form.dataset.guestId = guest.id;
-  form.elements.name.value = guest.name;
-  form.elements.email.value = guest.email;
-  form.elements.attendance.value = String(guest.attendance);
-  form.elements.companions.value = String(guest.companions);
-  form.elements.companions.disabled = !guest.attendance;
+  form.reset();
+  form.dataset.mode = guest ? 'update' : 'create';
+  if (guest) form.dataset.guestId = guest.id;
+  else delete form.dataset.guestId;
+  document.querySelector('#guest-dialog-title').textContent = guest ? 'Editar convidado' : 'Criar convidado';
+  document.querySelector('#guest-save').textContent = guest ? 'Salvar alterações' : 'Criar convidado';
+  form.elements.name.value = guest?.name ?? '';
+  form.elements.email.value = guest?.email ?? '';
+  form.elements.attendance.value = String(guest?.attendance ?? true);
+  form.elements.companions.value = String(guest?.companions ?? 0);
+  form.elements.companions.disabled = guest?.attendance === false;
   document.querySelector('#guest-form-error').hidden = true;
   dialog.showModal();
   form.elements.name.focus();
@@ -419,7 +414,7 @@ async function handleRecovery(record, button) {
         : 'Registro recuperado e removido da contingência.',
       'success'
     );
-    window.setTimeout(() => window.location.reload(), 2000);
+    await loadGuests(); // Refresh metrics without discarding unsaved event edits.
     await loadContingency({ preserveFeedback: true });
   } catch (error) {
     const code = error?.code;
