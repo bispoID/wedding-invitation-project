@@ -14,15 +14,14 @@ O projeto combina:
 - **Autenticação administrativa:** Supabase Auth;
 - **Contingência:** Google Sheets como fila temporária de recuperação;
 - **Monitoramento:** Health Check e UptimeRobot;
-- **Hospedagem atual/canônica:** GitHub Pages; Vercel é uma alternativa futura e opcional.
+- **Hospedagem:** frontend estático e independente do provedor; GitHub Pages foi a escolha inicial.
 
 A arquitetura prioriza simplicidade, segurança, privacidade, baixo custo, manutenção e confiabilidade proporcional ao projeto.
 
-O frontend é estático e a arquitetura é independente do provedor de hospedagem.
-Não há migração obrigatória para Vercel. App Config centraliza a infraestrutura
-pública do browser; o preparador estático resolve metadados de root/subpath no
-artefato. O aceite no ambiente publicado permanece pendente, sem alterar regras
-de negócio. Instruções: [invite-app/README.md](invite-app/README.md#configuração-pública-e-publicação-portátil).
+App Config centraliza a infraestrutura pública do browser; o preparador estático
+resolve metadados de root/subpath no artefato. Outros provedores compatíveis com
+hospedagem estática podem publicar o mesmo frontend, sem alterar regras de
+negócio. Instruções: [invite-app/README.md](invite-app/README.md#configuração-pública-e-publicação-portátil).
 
 ## Arquitetura principal
 
@@ -34,13 +33,14 @@ de negócio. Instruções: [invite-app/README.md](invite-app/README.md#configura
                   ┌─────────────────────────┐
                   │ FRONTEND                │
                   │ HTML / CSS / JavaScript │
-                  │ GitHub Pages (atual)    │
+                  │ Hospedagem estática     │
                   └────────────┬────────────┘
                                │
                                ▼
                   ┌─────────────────────────┐
                   │ SUPABASE EDGE FUNCTIONS │
-                  │ RSVP / Admin / Health   │
+                  │ RSVP / Evento / Admin   │
+                  │ Health Check            │
                   └────────────┬────────────┘
                                │
                                ▼
@@ -70,6 +70,7 @@ O frontend público não acessa diretamente a lista de convidados. O RSVP passa 
 
 - abertura do convite digital com foco em dispositivos móveis;
 - conteúdo visual do casamento e informações do evento;
+- informações carregadas pela API pública Event Config, sem dados reais de fallback no Git;
 - formulário de confirmação de presença sem necessidade de criar conta;
 - confirmação somente após o processamento do RSVP.
 
@@ -89,8 +90,9 @@ O e-mail possui restrição `UNIQUE` no banco. A validação existe no frontend 
 A área administrativa utiliza Supabase Auth e permite:
 
 - autenticação por e-mail e senha;
-- listagem, edição e exclusão de convidados;
+- criação manual, listagem, edição e exclusão de convidados;
 - indicadores da lista;
+- edição centralizada da configuração pública do evento;
 - visualização e recuperação de registros da contingência.
 
 A autorização é verificada no backend. O frontend não decide quem é administrador, e o `service_role` permanece restrito às Edge Functions.
@@ -119,19 +121,22 @@ Os detalhes do fluxo de testes mobile estão em [android-emulator-local-devtools
 
 ## Baseline de testes
 
-O workflow [test.yml](.github/workflows/test.yml) prepara a validação em Linux
+O workflow [test.yml](.github/workflows/test.yml) executa a validação em Linux
 (`ubuntu-24.04`), com Node.js `22.14.0` e Deno `2.9.7`. Ele verifica a sintaxe dos
 JavaScript versionados, executa os testes das Functions e inclui explicitamente
 `invite-app/admin/scripts/guest-metrics.test.ts`, além de verificar whitespace.
-Também executa os testes Node de App Config e preparação portátil em `scripts/`.
+Também executa os testes Node de App Config, preparação portátil, Admin e Event
+Config em `scripts/`. A baseline atual é de **263 testes: 144 Deno e 119 Node**.
 
 Os testes usam dependências simuladas e dados sintéticos. Não exigem secrets de
 produção, não acessam banco ou Google Sheets reais e não fazem deploy. O
 workflow de deploy permanece independente, com gate Node antes da preparação.
-A baseline do Lote 1 passou no GitHub Actions em 08/10/2026; as mudanças do
-Lote 2 ainda precisam de revisão e execução remota.
+A regressão completa passou localmente e no GitHub Actions. A suíte SQL
+`supabase/tests/block3.sql`, separada do CI, também foi aprovada integralmente
+em PostgreSQL/Supabase local descartável, com as 15 migrations e ROLLBACK.
+Detalhes e evidências: [event-config.md](docs/event-config.md#validação-local).
 
-Permissões, comando local equivalente e a limitação do runner Deno no Windows
+Permissões, comando local equivalente e o registro histórico do runner no Windows
 estão descritos em [external-services.md](docs/external-services.md#deno).
 
 ## Roadmap
@@ -154,13 +159,12 @@ O desenvolvimento do projeto está organizado em 13 fases, que estruturam sua ev
 
 O [development_roadmap.md](docs/development_roadmap.md) é a fonte oficial para a ordem, o status e os próximos objetivos das fases.
 
-As Fases 1 a 8 têm suas entregas anteriores concluídas. As Fases 9, 10 e 12
-possuem implementação parcial; o ambiente GitHub Pages da Fase 11 já existe,
-e a publicação atual da Fase 13 ainda não representa o aceite final do escopo
-equalizado. App Config e preparação portátil estão implementadas no Lote 2.
-`event_config`, criação manual de convidados e
-minimização de PII nos logs são extensões aprovadas para lotes posteriores,
-não funcionalidades implementadas neste lote.
+O escopo funcional atual está implementado e publicado, incluindo App Config,
+Event Config, criação manual de convidados e minimização de PII nos logs.
+O roadmap distingue essas entregas validadas dos critérios de aceite manual
+ampliado de interface/acessibilidade ainda sem evidência consolidada e das
+melhorias opcionais. Publicação funcional não equivale a validar toda combinação
+de navegador, tela ou tecnologia assistiva.
 
 ## Documentação
 
@@ -171,6 +175,7 @@ não funcionalidades implementadas neste lote.
 | [external-services.md](docs/external-services.md) | Ferramentas e serviços externos |
 | [health-check.md](docs/health-check.md) | Arquitetura e operação do Health Check |
 | [admin-guest-management.md](docs/admin-guest-management.md) | Autenticação, autorização e gerenciamento administrativo |
+| [event-config.md](docs/event-config.md) | Configuração centralizada do evento, contratos e validações SQL |
 | [google-sheets-contingency-recovery.md](docs/google-sheets-contingency-recovery.md) | Recuperação da contingência |
 | [android-emulator-local-devtools.md](docs/android-emulator-local-devtools.md) | Testes locais no Android Emulator |
 | [README do invite-app](invite-app/README.md) | Orientações específicas do frontend |

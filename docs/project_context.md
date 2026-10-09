@@ -12,7 +12,7 @@ O convite **não utilizará fotos do casal**.
 
 ## 2. Identidade visual
 
-A identidade visual será construída principalmente através de:
+A identidade visual utiliza principalmente:
 
 - Monograma dos noivos;
 - Tipografia clássica e elegante;
@@ -27,9 +27,10 @@ A identidade visual será construída principalmente através de:
 
 ### Paleta de cores
 
-A paleta principal será composta por **tons de verde oliva**, combinados com tons neutros, principalmente off-white e outras tonalidades claras.
+A paleta principal utiliza **tons de verde oliva**, combinados com tons neutros, principalmente off-white e outras tonalidades claras.
 
-Os códigos exatos das cores serão definidos posteriormente.
+Os tokens de cores, tipografia e movimento estão definidos em
+`invite-app/styles/base/variables.css`; refinamentos devem preservar a identidade.
 
 A intenção é transmitir a aparência de um **convite físico sofisticado transformado em uma experiência digital interativa**.
 
@@ -67,7 +68,7 @@ Caso o convidado precise corrigir alguma informação depois do envio, poderá e
 
 ## 4. Frontend
 
-Tecnologias inicialmente definidas:
+Tecnologias definidas:
 
 - HTML;
 - CSS;
@@ -81,7 +82,7 @@ A aplicação deverá ser:
 - Visualmente sofisticada;
 - Independente de templates de plataformas de convite.
 
-Possíveis seções:
+Seções implementadas:
 
 - Abertura do convite;
 - Monograma;
@@ -92,21 +93,21 @@ Possíveis seções:
 - Local;
 - Mapa/localização;
 - Confirmação de presença;
-- Outras informações relevantes.
 
 ---
 
 ## 5. Hospedagem
 
-O frontend estático está publicado no **GitHub Pages**, a hospedagem
-atual/canônica do projeto.
+O **GitHub Pages** foi a hospedagem inicialmente adotada para o frontend.
+A arquitetura é estática e independente do provedor. Vercel foi uma das opções
+consideradas durante o desenvolvimento; serviços como Vercel, Cloudflare Pages
+ou Netlify são exemplos de alternativas compatíveis, não destinos preferenciais.
 
-A arquitetura deve permanecer independente do provedor de hospedagem estática.
-**Vercel é uma alternativa futura/opcional**, sem migração obrigatória ou
-dependência para concluir o projeto. Publicar em outro provedor deve exigir
-somente configuração operacional de URLs, origins/CORS e deploy, sem alterar
-regras de negócio. App Config e preparação de metadados root/subpath estão
-implementadas; o aceite no ambiente publicado e de origins permanece pendente.
+Publicar em outro provedor exige configuração operacional de URLs, origins/CORS
+e deploy, sem alterar regras de negócio. App Config deriva a base root/subpath;
+o preparador resolve metadados no artefato. O provedor e os ambientes efetivamente
+utilizados são registrados na documentação operacional, não requisitos fixos
+da arquitetura.
 
 Posteriormente poderá ser utilizado um domínio personalizado.
 
@@ -116,9 +117,9 @@ A solução deverá priorizar o plano gratuito sempre que for suficiente para o 
 
 ## 6. Banco de dados
 
-O banco de dados será hospedado no **Supabase**, utilizando PostgreSQL.
+O banco de dados utiliza PostgreSQL no **Supabase**.
 
-O Supabase também será utilizado para autenticação administrativa.
+O Supabase também fornece a autenticação administrativa.
 
 Arquitetura principal:
 
@@ -146,11 +147,11 @@ Supabase
 
 ## 7. RSVP / Lista de presença
 
-A confirmação de presença será realizada diretamente dentro da landing page.
+A confirmação de presença é realizada diretamente dentro da landing page.
 
 O convidado **não precisará criar conta ou fazer login**.
 
-Dados inicialmente necessários:
+Dados necessários:
 
 ```text
 nome
@@ -160,7 +161,7 @@ acompanhantes
 ```
 
 O campo `acompanhantes` representa a quantidade de acompanhantes informada pelo
-convidado e aceitará inicialmente valores inteiros entre `0` e `15`. O valor
+convidado e aceita valores inteiros entre `0` e `15`. O valor
 `0` indica que o convidado não levará acompanhantes. Esse limite deverá ser
 validado no frontend, na API/Edge Function e, quando aplicável, nas regras de
 negócio do backend.
@@ -264,7 +265,7 @@ O convidado não deverá conseguir:
 
 A landing page não deverá realizar operações administrativas diretamente no banco.
 
-O RSVP será enviado para uma **API / Edge Function**.
+O RSVP é enviado para uma **API / Edge Function**.
 
 Responsabilidades:
 
@@ -286,9 +287,9 @@ A API deve assumir que requisições podem ser feitas diretamente, sem utilizar 
 
 ## 12. Segurança da API e proteção contra abuso
 
-Como o RSVP será público, a API não deverá confiar no frontend.
+Como o RSVP é público, a API não deve confiar no frontend.
 
-Medidas previstas:
+Medidas adotadas:
 
 - Validação no frontend;
 - Validação novamente no backend;
@@ -300,7 +301,9 @@ Medidas previstas:
 - Proteção contra spam;
 - Tratamento de requisições inválidas;
 - Controle de erros;
-- Possível CAPTCHA/Turnstile, se necessário.
+
+CAPTCHA/Turnstile é uma melhoria opcional, condicionada à necessidade; não faz
+parte das medidas implementadas.
 
 A implementação deverá ser proporcional ao tamanho e à finalidade do projeto.
 
@@ -316,7 +319,9 @@ O projeto deverá utilizar:
 - Autorização;
 - HTTPS.
 
-O acesso público não deverá permitir leitura dos dados.
+O acesso público não deverá permitir leitura dos dados dos convidados. A leitura
+do DTO público do evento ocorre somente pela Function `event-config`, não por
+acesso direto à tabela.
 
 Credenciais privilegiadas nunca deverão ser expostas no frontend.
 
@@ -351,11 +356,11 @@ As operações administrativas deverão exigir autenticação e autorização ad
 ## 15. Área administrativa
 
 Existe uma área administrativa com autenticação e autorização no backend,
-listagem, edição e exclusão de convidados, indicadores e recuperação da
-contingência. A criação manual de convidados e a edição de `event_config`
-foram implementadas no Bloco 3, com backend implantado e painel aceito localmente.
+criação manual, listagem, edição e exclusão de convidados, indicadores,
+recuperação da contingência e edição de `event_config`. O painel e as APIs
+correspondentes estão implementados e integrados.
 
-Inicialmente deverá permitir visualizar:
+O painel permite visualizar:
 
 ```text
 Nome
@@ -364,18 +369,17 @@ Presença
 Acompanhantes
 ```
 
-Posteriormente poderá apresentar indicadores:
+Os indicadores implementados são:
 
 ```text
 Total de convidados
 Confirmados
-Não confirmados
-Recusaram
+Não poderão comparecer
 Total de acompanhantes
 Total de pessoas confirmadas
 ```
 
-Também poderá permitir:
+O administrador pode realizar:
 
 - Correção de dados;
 - Alteração de confirmação;
@@ -386,7 +390,7 @@ Também poderá permitir:
 
 ## 16. Supabase Auth
 
-O **Supabase Auth** será utilizado para autenticar o administrador.
+O **Supabase Auth** autentica os administradores.
 
 O convidado não terá conta.
 
@@ -539,7 +543,7 @@ Também deverá ser evitado o envio desnecessário de dados pessoais do convidad
 
 ## 21. Contingência com Google Sheets
 
-O **Google Sheets será utilizado como contingência/fila de emergência**, e não como segundo banco permanente.
+O **Google Sheets é utilizado como contingência/fila de emergência**, e não como segundo banco permanente.
 
 ### Fluxo normal
 
@@ -640,7 +644,8 @@ Regra fundamental:
 ```text
 INSERT realizado
       ↓
-"Presença confirmada!"
+Resposta confirmada (HTTP 201)
+Mensagem adequada à presença ou ausência informada
 ```
 
 ### Falha com contingência
@@ -786,8 +791,8 @@ Frontend
 → JavaScript
 
 Hospedagem
-→ GitHub Pages (atual/canônica)
-→ Outro provedor estático, como Vercel (opcional)
+→ Frontend estático independente do provedor
+→ GitHub Pages foi a escolha inicial
 
 Backend/API
 → Edge Function / API
@@ -842,8 +847,10 @@ passo de execução. Essas informações devem permanecer no
 - Cadastro de nome, e-mail, presença e acompanhantes;
 - E-mail único;
 - Área administrativa;
-- Leitura somente pelo administrador;
-- Alteração somente pelo administrador;
+- Criação manual e gerenciamento de convidados;
+- Configuração centralizada do evento e leitura pública por API;
+- Leitura dos convidados somente pelo administrador;
+- Alteração dos convidados e do evento somente pelo administrador;
 - Autenticação administrativa;
 - Confirmação de e-mail do administrador;
 - Monitoramento de saúde;
@@ -875,57 +882,35 @@ passo de execução. Essas informações devem permanecer no
 - CAPTCHA/Turnstile, caso não seja necessário;
 - Outras funcionalidades que não sejam essenciais ao RSVP.
 
-### Configuração pública e extensões planejadas
+### Configuração pública e separação de responsabilidades
 
-O Lote 2 implementa `scripts/shared/app-config.js` como fonte única de URL e
+`scripts/shared/app-config.js` é a fonte única de URL e
 chave pública Supabase do browser. A base da aplicação é derivada do módulo;
 metadados absolutos são preparados no artefato por `scripts/prepare-static-site.mjs`
 com `PUBLIC_SITE_URL` operacional. Não há secrets no módulo nem `.env` no browser.
 Detalhes de execução e limites: [invite-app/README.md](../invite-app/README.md#configuração-pública-e-publicação-portátil).
 
-O Bloco 3 implementa localmente o singleton `event_config`, sua API pública
-de leitura e API administrativa GET/PUT, criação manual de convidados e
-formulários independentes no painel. O backend foi implantado; a publicação
-do frontend permanece pendente.
-Validação de convidados é comum a RSVP, administração e recuperação; logs
-técnicos de RSVP não devem incluir dados pessoais nem erros externos brutos.
-Migrations adicionais mantêm RLS restritiva e evitam alterações automáticas
-nos dados históricos. Contratos e pré-requisitos: [event-config.md](event-config.md).
+Event Config contém 14 campos públicos do evento em um singleton no Supabase.
+A Function pública `event-config` oferece GET; `admin-manage-event-config`
+oferece GET/PUT com Auth, allowlist e Origin autorizado. O frontend consome uma
+Promise/GET por página, com timeout, validação e textContent; mantém estados
+loading/ready/not-configured/error, sem fallback pessoal nem cache persistente.
+Opcionais ausentes ficam ocultos. A recepção tem localização própria, sem herdar
+city/state da cerimônia. Contratos, limites e histórico de validação:
+[event-config.md](event-config.md).
 
-O Bloco 4 implementa localmente o consumo público dinâmico pela Function
-event-config: uma Promise/GET por página, timeout, validação e textContent,
-estados loading/ready/not-configured/error e opcionais ocultos quando ausentes.
-Não há fallback pessoal, acesso direto à tabela ou cache persistente. Datas são
-civis; metadata permanece genérica com markers do preparador estático.
-O contrato final de 14 campos é bride_name, groom_name, event_date, event_time,
-city, state, ceremony_name, ceremony_address, ceremony_maps_url, reception_name,
-reception_address, reception_city, reception_state e reception_maps_url.
-Mapas HTTPS são opcionais e independentes
-dos endereços; city/state mantêm o papel geográfico da cerimônia. A recepção
-possui cidade/estado próprios, opcionais (limites 150/100), sem cópia ou fallback
-da localização principal. Valores isolados são exibidos sem separador órfão.
-O monograma
-`invite-app/images/monograma_bd.webp` é identidade estática/versionada no cartão
-e na carta; a preview genérica é `invite-app/images/previa-link-envelope.webp`.
-O primeiro PUT real foi realizado pelo usuário e READY já foi alcançado no
-convite local. A migration de localização da recepção foi aplicada e somente
-as duas Functions de Event Config atualizadas, sem alteração automática do
-registro real. O preenchimento manual e a localização independente da recepção
-foram validados pelo usuário. Não houve PUT automático.
-Timestamps persistem como instantes absolutos no schema existente, sem conversão
-ou alteração histórica. O painel compartilha um formatador Intl.DateTimeFormat
-com America/Sao_Paulo explícito somente na apresentação de timestamps existentes.
-event_time permanece horário civil, sem conversão de timezone.
-O formulário administrativo é recolhível por botão nativo com aria-expanded e
-aria-controls, inicialmente recolhido, sem persistência do estado. O GET continua
-ocorrendo; expandir/recolher preserva os inputs. Feedback importante expande a
-seção, que não se recolhe automaticamente ao salvar.
-O aceite manual foi concluído em desktop e mobile aproximadamente 390px,
-incluindo localidades/mapas, monograma, timestamps, espaçamentos e collapsible.
-Publicação do frontend e integração com feature/landing-page permanecem pendentes.
-O convite continuará público;
-retirar dados reais do Git não os torna secretos quando exibidos em runtime.
-O status e os critérios de conclusão ficam no roadmap.
+Monograma e preview genérica são assets versionados, não campos configuráveis
+do evento. Datas/horários do evento são civis; timestamps de auditoria permanecem
+instantes absolutos. America/Sao_Paulo é aplicada somente à apresentação
+administrativa desses timestamps. O painel mantém formulários independentes
+e Event Config recolhível, sem persistência do estado de expansão.
+
+A validação de convidados é compartilhada por RSVP, administração e recuperação.
+Logs técnicos não devem conter PII nem erros externos brutos. Credenciais
+privilegiadas e allowlist administrativa pertencem exclusivamente ao backend.
+Dados reais do evento permanecem no Supabase, não no Git; porém, a API e o
+convite são públicos. Não versionar esses dados não os torna secretos em runtime.
+O status, os aceites realizados e os critérios restantes ficam no roadmap.
 
 ---
 

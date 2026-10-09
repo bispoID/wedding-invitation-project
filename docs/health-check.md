@@ -194,9 +194,9 @@ Esse monitor verifica a disponibilidade da página. O monitor do Supabase
 verifica a saúde da infraestrutura necessária ao RSVP. Eles têm objetivos
 diferentes.
 
-GitHub Pages é a hospedagem atual/canônica. Vercel é uma alternativa
-futura/opcional, não uma migração obrigatória nem infraestrutura atual. O
-monitor de health é independente do provedor de hospedagem estática.
+O frontend é estático e independente do provedor, com publicação atual no
+GitHub Pages. O monitor de health não depende desse provedor: consulta
+diretamente a Edge Function do Supabase.
 
 ## Limitações
 
@@ -241,11 +241,14 @@ isolamento, no mesmo Windows: 57 testes aprovados e zero falhas, incluindo os
 dez testes do health. A restrição de rede foi mantida; nenhuma dependência real
 do health foi acessada pelos testes unitários.
 
-O workflow `.github/workflows/test.yml` prepara a baseline completa em Linux,
-incluindo estes testes e as métricas administrativas. Sua criação não comprova
-que uma execução remota já passou; consulte os resultados do GitHub Actions.
+O workflow `.github/workflows/test.yml` executa a regressão em Linux, incluindo
+estes testes e as métricas administrativas. A baseline atual de 144 testes Deno
+(incluindo os dez de health) e 119 Node passou localmente e no GitHub Actions
+em 09/10/2026, no Bloco 7 (execução 37934156785). Os resultados anteriores são
+registros de validação, não garantia de disponibilidade futura.
 O contrato `GET`/`HEAD`, o RPC e o escopo de pré-requisitos do RSVP permanecem
-inalterados. `event_config` é uma extensão futura e não integra este health.
+inalterados. `event_config` já está implementado e publicado, mas não integra
+este health: o probe continua restrito aos pré-requisitos read-only do RSVP.
 
 ## Teste local
 

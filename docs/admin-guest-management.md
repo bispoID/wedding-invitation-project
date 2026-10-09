@@ -9,7 +9,7 @@ O dashboard lista os registros de `public.guests` pela Edge Function
 lista `ADMIN_AUTH_USER_IDS` antes de consultar os dados com `service_role`. O
 cliente do navegador não tem permissão de leitura direta nessa tabela.
 
-As operações de edição e exclusão passam pela Edge Function
+As operações de criação manual, edição e exclusão passam pela Edge Function
 `admin-manage-guests`; listagem e recuperação da contingência também verificam a
 mesma lista compartilhada no backend. Cada função valida o JWT e rejeita
 usuários cujo UUID não esteja autorizado.
@@ -17,8 +17,8 @@ usuários cujo UUID não esteja autorizado.
 ## Autorização administrativa
 
 As Edge Functions administrativas `admin-list-guests`,
-`admin-list-contingency`, `admin-manage-guests` e
-`admin-recover-contingency` exigem JWT válido (`verify_jwt=true`) e verificam a
+`admin-list-contingency`, `admin-manage-guests`, `admin-recover-contingency` e
+`admin-manage-event-config` exigem JWT válido (`verify_jwt=true`) e verificam a
 autorização exclusivamente no backend. Cada função compara o UUID do usuário
 validado com a lista de UUIDs mantida no secret `ADMIN_AUTH_USER_IDS`, separados
 por vírgulas. O backend remove espaços, normaliza maiúsculas e minúsculas e
@@ -58,7 +58,7 @@ editáveis) e DELETE são usados somente por `service_role`. Não há policies
 privilégios de leitura ou mutação na tabela. O privilégio de TRUNCATE também
 foi removido de `service_role`, `PUBLIC`, `anon` e `authenticated`.
 
-## Extensão local — Bloco 3 (ainda não publicada)
+## Criação de convidados e configuração do evento
 
 `admin-manage-guests` mantém POST/update/delete e acrescenta
 `{action:"create",guest:{name,email,attendance,companions}}`.
@@ -71,7 +71,7 @@ Validação compartilhada também atende RSVP e recuperação.
 
 O painel reutiliza o diálogo para criar/editar, desabilita controles durante
 envio e atualiza listagem/métricas depois da confirmação backend. A configuração
-do evento usa seção independente, GET/PUT e 12 campos completos; consulte
+do evento usa seção independente, GET/PUT e 14 campos completos; consulte
 [event-config.md](event-config.md) para contratos, segurança e pré-requisitos.
 Links do convite/previews derivam de APP_BASE_URL sem host/subpath fixo.
 Recuperação atualiza listas sem refresh geral que descarte edições do evento.
@@ -79,7 +79,7 @@ Recuperação atualiza listas sem refresh geral que descarte edições do evento
 ## Indicadores
 
 Os indicadores são calculados sobre a lista atualmente carregada e recalculados
-após uma nova listagem, edição ou exclusão:
+após uma nova listagem, criação, edição ou exclusão:
 
 - **Total de convidados:** número total de registros.
 - **Confirmados:** registros com `attendance=true`.

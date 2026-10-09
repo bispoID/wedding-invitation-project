@@ -1,8 +1,10 @@
 # Invite app
 
 Aplicação estática do convite virtual, com RSVP e área administrativa integrados.
-GitHub Pages é a hospedagem atual/canônica; Vercel é uma alternativa futura e
-opcional. A arquitetura deve permanecer independente do provedor estático.
+Inicialmente, o artefato foi publicado no GitHub Pages. A arquitetura do frontend
+permanece independente do provedor de hospedagem, permitindo sua publicação em
+outros serviços compatíveis, como Vercel, Cloudflare Pages ou Netlify, sem
+alterações nas regras de negócio.
 
 ## Arquitetura
 
@@ -13,25 +15,25 @@ opcional. A arquitetura deve permanecer independente do provedor estático.
 - **Assets de estilo:** imagens usadas pelo CSS também ficam centralizadas como tokens `--asset-*` em `styles/base/variables.css`.
 - **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` envia o RSVP à Supabase Edge Function.
 - **Modo desenvolvedor:** `scripts/devmode/preview.js` controla os previews estáticos e `styles/devmode/devmode.css` concentra os estilos do painel.
-- **Área administrativa:** `admin/` mantém o login Supabase Auth, a listagem de convidados restrita ao administrador por Edge Function e uma seção de contingência independente do fluxo público do convite e RSVP.
+- **Área administrativa:** `admin/` mantém login Supabase Auth, criação/listagem/edição/exclusão de convidados, indicadores, Event Config e contingência, sempre por Edge Functions com autorização no backend.
 
 Essa estrutura vanilla atende à aplicação atual e evita adicionar framework ou
 build system antes de existir uma necessidade real. A interface e a integração
-já possuem implementação significativa, mas o aceite final permanece pendente
-no roadmap.
+já estão implementadas e publicadas. O roadmap distingue o aceite funcional
+registrado dos critérios manuais ampliados de interface/acessibilidade.
 
 ## Como visualizar
 
 Sirva a pasta `invite-app` por HTTP (por exemplo, com o Live Server do VS Code) e acesse `index.html`. A área administrativa fica em `admin/login.html`.
 
 Os nomes e detalhes do evento são carregados pela Function pública `event-config`,
-sem dados pessoais de fallback no HTML. Esta implementação local ainda não foi
-publicada; a versão atualmente hospedada permanece anterior ao Bloco 4.
+sem dados pessoais de fallback no HTML. O mesmo consumo dinâmico está presente
+na versão publicada.
 
 ## Configuração da área administrativa
 
-O frontend público do Bloco 4 está implementado localmente, não publicado nem
-integrado com feature/landing-page. Os dados públicos vêm exclusivamente da
+O frontend público está integrado na branch `feature/landing-page` e publicado.
+Os dados públicos vêm exclusivamente da
 Function event-config: um GET/Promise por página, timeout de 12 segundos,
 loading/ready/not-configured/error, sem cache persistente ou fallback pessoal.
 O contrato final tem 14 campos públicos, incluindo reception_city,
@@ -57,14 +59,15 @@ O Event Config usa seção recolhível: botão nativo com aria-expanded/aria-con
 inicialmente recolhida, mantendo GET e valores dos inputs. Feedback importante
 expande a seção; salvar não a recolhe. Não há persistência do estado.
 Aceite manual concluído em desktop e mobile aproximadamente 390px, incluindo
-mapas, monograma, timestamp, espaçamentos e seção recolhível; frontend não publicado.
+mapas, monograma, timestamp, espaçamentos e seção recolhível. A publicação atual
+inclui essas funcionalidades.
 O RSVP funciona independente do carregamento dos dados.
 
-Extensão do Bloco 3, com backend implantado e painel aceito localmente: criação manual de convidados,
+Funcionalidades administrativas implementadas e publicadas: criação manual de convidados,
 configuração do evento e links portáteis para convite/previews. A configuração
 do evento é pública pela API, não um armazenamento de dados privados. O convite
-publicado ainda não consome dinamicamente esses dados; o consumo local foi
-implementado no Bloco 4. Requisitos e testes:
+publicado consome dinamicamente esses dados; o primeiro consumo foi implementado
+no Bloco 4. Requisitos e testes:
 [event-config.md](../docs/event-config.md).
 
 O frontend é estático e não carrega arquivos `.env`. Antes de usar o login, copie
@@ -88,7 +91,9 @@ autorização administrativa.
 
 O cliente `@supabase/supabase-js` é importado como módulo ES da versão fixada
 no CDN esm.sh, portanto o navegador precisa de acesso à internet. Nenhuma
-dependência npm ou etapa de build foi adicionada. A configuração e as páginas
+dependência npm de frontend ou bundler é necessária. A preparação do artefato
+usa Node.js, e o Supabase CLI é uma dependência de desenvolvimento na raiz.
+A configuração e as páginas
 administrativas devem ser servidas por HTTP; abrir por `file://` não é suportado.
 
 ## Configuração pública e publicação portátil
@@ -112,16 +117,18 @@ Open Graph e Twitter. Não modifica o HTML-fonte, os textos ou as imagens.
 URL HTTP(S) absoluta é obrigatória; credenciais, query e fragmento são rejeitados.
 Uma barra final é normalizada. Destino existente é recusado, sem limpeza automática.
 
-Para publicar em root, use, por exemplo, `https://example.vercel.app/`.
+Para publicar em root, use a URL operacional do provedor escolhido, por exemplo,
+`https://example.net/`. As fixtures também cobrem `https://example.vercel.app/`
+como exemplo concreto de portabilidade, não como destino preferencial.
 Sirva/publice o conteúdo de `_site`, não os marcadores do source. Em desenvolvimento,
 continue servindo `invite-app`: os marcadores não participam do comportamento do
 convite, mas os metadados de compartilhamento só ficam prontos no artefato.
 
 No Pages, a URL operacional vem de `actions/configure-pages`; a política de
 publicação continua na branch `feature/landing-page`. A branch de desenvolvimento
-não ganha trigger de deploy. Vercel permanece opcional; não há bundler ou leitura
+não ganha trigger de deploy. Não há bundler ou leitura
 de `.env` pelo browser. O consumo de `event_config` e a retirada dos dados pessoais
-hardcoded foram implementados no Bloco 4; sua publicação permanece pendente.
+hardcoded foram implementados no Bloco 4 e estão incluídos na publicação atual.
 
 Testes locais, sem rede, na raiz do repositório:
 
@@ -132,6 +139,10 @@ node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs scr
 O workflow de testes executa essa suíte além dos testes Deno existentes. O workflow
 Pages executa os testes de App Config e do preparador como gate antes da preparação, sem
 dependência circular ou duplicação da suíte Deno.
+
+A baseline completa contém 119 testes Node e 144 Deno, aprovada localmente e em
+Linux/CI. A suíte SQL integral foi aprovada separadamente em banco local
+descartável; consulte [event-config.md](../docs/event-config.md#validação-local).
 
 
 ## Modo desenvolvedor

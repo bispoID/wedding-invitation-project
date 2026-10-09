@@ -1,4 +1,4 @@
-# Configuração do evento — contrato final do Bloco 4
+# Configuração do evento
 
 O primeiro PUT real foi realizado pelo usuário e o convite local já alcançou
 READY. O checkpoint pós-READY adicionou a localização própria da recepção:
@@ -6,9 +6,9 @@ schema remoto e as duas Functions estão sincronizados no contrato de 14 campos.
 Na implantação, o registro real e seus timestamps anteriores foram preservados,
 com os dois campos novos inicialmente NULL. O usuário posteriormente concluiu
 o preenchimento manual e validou a localização independente da recepção.
-Este checkpoint não reaplica migrations, deploys ou PUT remoto.
-O frontend continua somente local, sem publicação ou integração com
-feature/landing-page. Dados cadastrados na Event Config são públicos pela API,
+O frontend dinâmico e o painel foram integrados e publicados no GitHub Pages
+no Bloco 5. Os checkpoints posteriores validaram as constraints de convidados
+e a suíte SQL local. Dados cadastrados na Event Config são públicos pela API,
 mesmo que não sejam versionados no Git.
 
 ## Separação de responsabilidades
@@ -113,7 +113,7 @@ após resposta confirmada, desabilita controles durante operações e preserva
 edições se o PUT falhar. Falha de GET oferece nova tentativa e não impede
 convidados/contingência. A recuperação não recarrega mais a página inteira.
 
-## Migrations aplicadas e pendências de validação
+## Histórico de implantação e validação
 
 As migrations e Functions do Bloco 3 foram implantadas no checkpoint operacional.
 A migration `20261009000200_replace_event_monogram_with_reception_map.sql` foi
@@ -155,10 +155,10 @@ confirmou o estado validado e a mesma contagem de convidados.
    SUPABASE_SERVICE_ROLE_KEY, ADMIN_AUTH_USER_IDS e ADMIN_ALLOWED_ORIGINS.
 6. Em checkpoints futuros, implantar somente as Functions autorizadas, preservando
    configurações JWT; as duas de Event Config já estão sincronizadas.
-7. Aceites dos checkpoints anteriores e revisão manual do Bloco 4 foram
-   concluídos; a suite SQL local integral foi aprovada no Bloco 7. A publicação
-   do frontend permanece pendente neste registro. GitHub Pages é hospedagem
-   atual; Vercel é opcional.
+7. Aceites funcionais dos checkpoints e revisão manual do Bloco 4 foram
+   concluídos; integração e publicação ocorreram no Bloco 5. A suíte SQL local
+   integral foi aprovada no Bloco 7. O frontend é estático e independente do
+   provedor; GitHub Pages foi a escolha inicial de publicação.
 
 ## Validação local
 
@@ -183,7 +183,7 @@ com `guests` e `event_config` vazias antes e depois. Produção não foi utiliza
 Testes de UI usam DOM simulado; não substituem aceite visual desktop/mobile
 ou integração com serviços publicados.
 
-## Frontend público dinâmico — Bloco 4 local
+## Frontend público dinâmico
 
 `scripts/event-config.js` consome apenas GET da Function, via FUNCTIONS_BASE_URL.
 A Promise compartilhada conserva sucesso/falha em memória: um GET por página,
@@ -210,15 +210,18 @@ nos dois slots originais; o antigo screenshot personalizado permanece removido.
 Metadata personalizada por evento exige preparação futura adequada a crawlers,
 não apenas atualização por JavaScript.
 
-Testes novos: `node --test scripts/event-config.test.mjs`, sem Supabase real.
+Testes de Event Config: `node --test scripts/event-config.test.mjs`, sem Supabase real.
 O primeiro PUT real e READY já foram informados pelo usuário. O GET remoto foi
 validado com HTTP 200, exatamente 14 campos, no-store e os dois campos novos NULL,
 sem reproduzir dados pessoais. O aceite manual já confirmou READY, cerimônia,
 recepção e sua localização independente, mapas, monograma nos dois locais,
 timestamp administrativo, espaçamentos, desktop e mobile aproximadamente 390px.
-O workflow Test baseline acompanha o commit de encerramento; integração com
-feature/landing-page e publicação/preview social real permanecem pendentes
-neste registro. A auditoria prévia e a VALIDATE dos convidados foram concluídas
+O frontend está integrado a feature/landing-page e publicado. A preparação
+da metadata genérica é coberta por testes; cache e apresentação em crawlers de
+compartilhamento exigem verificação manual própria, não comprovada pelos testes
+de DOM. A regressão de 144 testes Deno e 119 Node passou localmente e no CI Linux
+do Bloco 7 (execução 37934156785). A auditoria prévia e a VALIDATE dos convidados
+foram concluídas
 posteriormente no Bloco 6, sem alteração dos dados existentes; a suite SQL local
 integral foi aprovada no Bloco 7, exclusivamente em banco descartável.
 

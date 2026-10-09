@@ -60,8 +60,8 @@ Objetivo: preparar o repositório e a estrutura inicial da aplicação.
 
 Repositório organizado e pronto para receber as próximas camadas.
 
-**Entrega anterior concluída; extensão do Lote 2 implementada:** App Config e
-preparação portátil do artefato. Revisão e aceite publicado permanecem pendentes.
+**Estado: CONCLUÍDA.** Estrutura, App Config e preparação portátil do artefato
+implementadas, testadas e integradas à publicação.
 
 ---
 
@@ -81,7 +81,7 @@ Objetivo: criar a estrutura de dados necessária para o RSVP.
 
 Banco estruturado e capaz de armazenar os RSVPs.
 
-**Entrega anterior concluída; extensão implementada localmente no Bloco 3:**
+**Estado: CONCLUÍDA.** A extensão do Bloco 3 acrescentou
 schema singleton de `event_config` e limites de convidados originalmente NOT VALID.
 Migrations aplicadas nos checkpoints autorizados, incluindo localização própria
 da recepção. Auditoria histórica e VALIDATE concluídas no Bloco 6, sem correção
@@ -127,7 +127,7 @@ DELETE → permitido, se necessário
 
 Banco protegido e permissões funcionando de acordo com o modelo definido.
 
-**Entrega anterior concluída; extensão local do Bloco 3:** RLS/grants restritivos
+**Estado: CONCLUÍDA no escopo definido.** RLS/grants restritivos
 na migration de evento, DTO público limitado e Auth/allowlist/origem nas APIs
 administrativas. Testes simulados e verificações remotas de schema/HTTP passaram;
 a suite SQL local integral foi aprovada no Bloco 7 em banco descartável.
@@ -163,11 +163,11 @@ Objetivo: criar a camada responsável por receber e processar os RSVPs.
 
 A API consegue receber, validar e persistir um RSVP corretamente, com proteção contra abuso implementada e validada na Edge Function.
 
-**Entrega anterior concluída; extensão implantada do Bloco 3:** APIs de configuração
+**Estado: CONCLUÍDA.** APIs de configuração
 do evento, validação compartilhada e minimização dos logs implementadas e
 testadas offline. O algoritmo, chave, RPC e limites do rate limiting foram
 preservados. Backend implantado e aceite funcional concluído nos checkpoints;
-publicação do frontend atualizado permanece pendente.
+frontend atualizado integrado e publicado no Bloco 5.
 
 ---
 
@@ -195,7 +195,8 @@ Supabase
     ↓
 Persistência confirmada
     ↓
-"Presença confirmada!"
+Resposta confirmada (HTTP 201)
+Mensagem adequada à presença ou ausência informada
 ```
 
 Nunca apresentar sucesso falso.
@@ -204,8 +205,9 @@ Nunca apresentar sucesso falso.
 
 O convidado consegue confirmar presença de forma confiável.
 
-**Entrega anterior concluída; revalidação futura:** preservar os contratos e o
-comportamento do RSVP após as extensões de configuração e validação.
+**Estado: CONCLUÍDA.** Contratos preservados após as extensões, com reset do
+formulário após HTTP 201 e mensagem de sucesso adequada à presença ou ausência.
+Esses comportamentos integram a regressão automatizada.
 
 ---
 
@@ -278,8 +280,8 @@ O Google Sheets é uma contingência/fila de emergência, e não um segundo banc
 
 Um problema temporário de infraestrutura não causa perda silenciosa do RSVP.
 
-**Entrega anterior concluída; revalidação futura:** preservar reconciliação,
-lock e limpeza segura após as novas validações e minimização de logs.
+**Estado: CONCLUÍDA.** Reconciliação, lock e limpeza segura preservados após
+as validações compartilhadas e minimização de logs, com regressão offline.
 
 ---
 
@@ -305,7 +307,8 @@ Objetivo: criar o ambiente privado para gerenciamento dos convidados.
 - [x] 7D — Exibir e recalcular indicadores dos convidados.
 - [x] Implementar hardening de segurança para a área administrativa.
 - [x] Implementar autorização com JWT válido e `ADMIN_AUTH_USER_IDS`, com suporte a múltiplos administradores.
-- [x] Publicar as quatro Edge Functions administrativas com `verify_jwt=true`.
+- [x] Publicar as cinco Edge Functions administrativas com `verify_jwt=true`.
+- [x] Criar convidados manualmente e editar a configuração do evento pelo painel.
 - [x] Documentar a autorização e operação administrativa em `docs/admin-guest-management.md`.
 
 ### Indicadores
@@ -322,11 +325,11 @@ Total de pessoas confirmadas
 
 O administrador consegue visualizar e gerenciar a lista de forma privada.
 
-**Entrega anterior concluída; extensão do Bloco 3 com backend implantado:**
+**Estado: CONCLUÍDA.** A extensão do Bloco 3 acrescentou
 criação manual de convidados, edição de `event_config` e navegação para
 convite/previews. Asserções backend e UI simulada passaram; aceite funcional e
-visual local concluído, incluindo Event Config do Bloco 4. Publicação do frontend
-atualizado permanece pendente.
+visual registrado, incluindo Event Config do Bloco 4. Frontend atualizado
+integrado e publicado no Bloco 5; o micro-hotfix touch preserva focus-visible.
 
 ---
 
@@ -359,7 +362,7 @@ Não enviar uma notificação para cada RSVP realizado com sucesso.
 
 O administrador consegue saber quando o sistema precisa de atenção.
 
-**Resultado da Fase 8:**
+**Estado: CONCLUÍDA.**
 
 Health Check publicado na Supabase Edge Function `health` e validado no
 endpoint remoto. O monitor externo do UptimeRobot consulta o endpoint por
@@ -380,25 +383,22 @@ Esta fase vem depois da definição da base técnica, evitando construir a inter
 
 **Estado: PARCIAL.** Envelope/capa, animação, carta, tipografia, monograma,
 informações do evento, RSVP, responsividade e previews já possuem implementação
-significativa. Os itens abaixo permanecem como checklist de aceite final, não
-como afirmação de que a interface está vazia.
+e aceite visual registrado em desktop e mobile aproximadamente 390px. A fase
+permanece parcial pelos critérios manuais ampliados abaixo, não por ausência
+de interface ou de integração com os dados do evento.
 
-- [ ] Definir identidade visual.
-- [ ] Integrar monograma.
-- [ ] Definir tipografia.
-- [ ] Definir paleta de cores.
-- [ ] Criar envelope/capa.
-- [ ] Criar animação de abertura.
-- [ ] Criar estrutura do convite.
-- [ ] Inserir nomes dos noivos.
-- [ ] Inserir mensagem/conteúdo.
-- [ ] Inserir data e horário.
-- [ ] Inserir local.
-- [ ] Inserir mapa/localização.
-- [ ] Integrar RSVP.
-- [ ] Criar responsividade.
-- [ ] Criar animações e transições.
-- [ ] Refinar experiência mobile.
+- [x] Definir identidade visual.
+- [x] Integrar monograma estático nos dois slots.
+- [x] Definir tipografia e paleta nos tokens compartilhados.
+- [x] Criar envelope/capa e animação de abertura.
+- [x] Criar estrutura e mensagem do convite.
+- [x] Carregar nomes, data, horário e locais pela Event Config.
+- [x] Exibir mapas HTTPS e ocultar opcionais ausentes.
+- [x] Integrar RSVP.
+- [x] Criar responsividade, animações e transições.
+- [x] Aprovar os ajustes mobile registrados nos checkpoints.
+- [ ] Consolidar aceite manual de teclado no fluxo completo e redução de movimento.
+- [ ] Consolidar aceite de nomes longos e matriz ampliada de telas/navegadores.
 
 ### Direção visual
 
@@ -415,10 +415,10 @@ A experiência deve transmitir:
 
 Convite visualmente finalizado e funcional.
 
-**Critérios de conclusão:** validar desktop/mobile, teclado e redução de
-movimento; aprovar layout e nomes longos; nos lotes posteriores, integrar os
-dados de `event_config`, tratar loading/erro/campos opcionais e substituir
-conteúdo/assets personalizados versionados por alternativas genéricas.
+**Critérios de conclusão:** complementar o aceite desktop/mobile registrado
+com teclado, redução de movimento, nomes longos e matriz ampliada. Event Config,
+loading/erro/opcionais e metadata genérica já estão integrados. A existência de
+focus-visible e regras de redução de movimento não equivale a aceite manual.
 
 ---
 
@@ -426,9 +426,10 @@ conteúdo/assets personalizados versionados por alternativas genéricas.
 
 Objetivo: conectar todas as camadas.
 
-**Estado: PARCIAL.** RSVP, banco, Auth/admin, contingência e health já estão
-integrados no escopo atual. Falta o aceite ponta a ponta do escopo equalizado,
-incluindo as extensões ainda não implementadas. O checklist é de revalidação.
+**Estado: CONCLUÍDA no escopo funcional atual.** RSVP, banco, Auth/admin,
+contingência, health e Event Config estão integrados e publicados. Contratos,
+testes e aceites funcionais dos checkpoints sustentam a conclusão; a revisão
+documental não repete operações de produção nem simula novas falhas remotas.
 
 ```text
 Frontend
@@ -446,23 +447,23 @@ Monitoramento
 
 Checklist:
 
-- [ ] Frontend → API funcionando.
-- [ ] API → Supabase funcionando.
-- [ ] API → contingência funcionando.
-- [ ] Área administrativa → Auth funcionando.
-- [ ] Área administrativa → banco funcionando.
-- [ ] Monitoramento → serviços funcionando.
-- [ ] Variáveis de ambiente configuradas.
-- [ ] Segredos protegidos.
-- [ ] Fluxo completo validado.
+- [x] Frontend → API funcionando, incluindo consumo público de Event Config.
+- [x] API → Supabase funcionando.
+- [x] API → contingência e recuperação validadas nos checkpoints.
+- [x] Área administrativa → Auth e autorização no backend funcionando.
+- [x] Área administrativa → banco, CRUD e edição do evento funcionando.
+- [x] Monitoramento → serviços configurados e contratos validados.
+- [x] Variáveis operacionais configuradas nos ambientes utilizados.
+- [x] Credenciais privilegiadas restritas ao backend.
+- [x] Fluxo funcional integrado validado nos registros de aceite.
 
 **Resultado esperado:**
 
 Todo o sistema funciona como uma única aplicação.
 
-**Critérios de conclusão:** validar os contratos atuais e futuros de ponta a
-ponta, configuração única por carregamento, CRUD administrativo completo,
-edição do evento, erros e ausência de regressões no RSVP/contingência.
+**Critérios atendidos:** configuração única por carregamento, CRUD administrativo,
+edição do evento e regressão dos contratos de RSVP/contingência. Evoluções futuras
+exigem seu próprio aceite; não são extensões faltantes do escopo entregue.
 
 ---
 
@@ -471,22 +472,22 @@ edição do evento, erros e ausência de regressões no RSVP/contingência.
 Objetivo: validar a hospedagem atual e a portabilidade operacional do frontend
 estático, sem dependência de um provedor nas regras de negócio.
 
-**Estado: PARCIAL.** GitHub Pages é a hospedagem atual/canônica, com publicação
-implementada. O Lote 2 centraliza configuração pública e prepara metadados de
-root/subpath, com testes locais. O aceite publicado e de origins segue pendente.
+**Estado: CONCLUÍDA para o ambiente utilizado.** GitHub Pages foi a hospedagem
+inicialmente adotada, com publicação operacional validada. App Config centraliza
+infraestrutura pública; o preparador e os testes cobrem root/subpath.
 
 - [x] Implementar publicação de `invite-app` no GitHub Pages por workflow.
-- [ ] Validar paths na raiz e no subpath `/wedding-invitation-project/`.
-- [ ] Validar comunicação Frontend → Edge Functions no ambiente publicado.
+- [x] Validar root/subpath nos testes e o subpath publicado `/wedding-invitation-project/`.
+- [x] Validar comunicação Frontend → Edge Functions nos aceites publicados.
 - [x] Centralizar configuração pública e preparar URLs de metadados no Lote 2.
-- [ ] Validar origins/CORS dos ambientes efetivamente utilizados.
+- [x] Validar origins/CORS dos ambientes efetivamente utilizados.
 - [x] Documentar preparação e testes locais do artefato estático.
-- [ ] Validar configuração operacional de Preview/Production, quando necessária.
+- [x] Documentar configuração operacional e previews disponíveis.
 
-Vercel é uma alternativa futura/opcional. Caso adotada, configurar publicação
-do mesmo frontend e validar URLs/origins. Não é necessário criar conta, migrar
-ou publicar na Vercel para concluir esta fase. Domínio personalizado também
-permanece opcional.
+A arquitetura é independente do provedor. Outros serviços compatíveis podem
+publicar o mesmo artefato; novos ambientes exigem validar suas URLs/origins.
+Não é necessário adotar outro provedor, ambiente de preview separado ou domínio
+personalizado para concluir o ambiente definido.
 
 **Resultado esperado:**
 
@@ -500,108 +501,94 @@ para os testes finais no provedor estático escolhido.
 
 Objetivo: verificar funcionamento, segurança, confiabilidade e experiência.
 
-**Estado: PARCIAL.** Há testes das Functions, métricas administrativas e Node.
-O Lote 1 acrescentou a baseline em Linux/CI, sem
-representar aceite completo de segurança, integração ou interface.
+**Estado: PARCIAL quanto ao aceite manual ampliado.** Regressão automatizada
+e suíte SQL local estão aprovadas; falta consolidar a matriz de interface e
+acessibilidade das Fases 9/12. Testes simulados não substituem esse aceite nem
+representam uma auditoria de segurança exaustiva.
 
 ## Baseline automatizada
 
-**Bloco 4 — implementação e aceite local:** frontend consome Event Config com um GET por
-carregamento, estados explícitos, opcionais seguros e metadata genérica, sem
-fallback pessoal. Contrato final de 14 campos: bride_name, groom_name, event_date,
-event_time, city, state, ceremony_name, ceremony_address, ceremony_maps_url,
-reception_name, reception_address, reception_city, reception_state e
-reception_maps_url. Monograma BD estático nos dois slots originais; share preview
-genérica em previa-link-envelope.webp. Migration de localização aplicada e
-somente as duas Functions de Event Config publicadas (versão 3), com registro
-real/timestamps preservados na implantação e campos novos inicialmente NULL.
-O primeiro PUT real foi realizado pelo usuário e READY local já alcançado.
-A recepção não herda a localização principal. Timestamps continuam instantes
-absolutos; o painel usa America/Sao_Paulo somente na apresentação. event_time
-permanece horário civil sem conversão. #event-updated ganha margem superior
-de 12px, preservando a margem aprovada de #event-feedback.
-Backend do Bloco 3 implantado; reset RSVP validado e versionado.
-As 13 fases permanecem preservadas: este ajuste não conclui fases automaticamente.
-Aceite manual concluído: READY, cerimônia, recepção/localização independente,
-mapas, monograma nos dois locais, timestamps, espaçamentos, desktop e mobile
-aproximadamente 390px. Event Config recolhível aprovado, mantendo GET, valores,
-feedback visível e salvamento, sem persistir estado. Regressão final local:
-254 testes (144 Deno e 110 Node), typecheck, syntax e whitespace aprovados.
-O workflow Test baseline acompanha o commit de encerramento. Publicação do
-frontend e integração com feature/landing-page permanecem pendentes.
-VALIDATE versionado concluído no Bloco 6; suite SQL local integral aprovada no
-Bloco 7, exclusivamente em banco descartável local, sem usar produção.
+Baseline: **144 Deno e 119 Node, total 263, zero falhas**, com typecheck dos
+cinco entrypoints, syntax checks e whitespace. Passou localmente e no Linux/CI
+do Bloco 7, execução
+[37934156785](https://github.com/bispoID/wedding-invitation-project/actions/runs/37934156785).
+Publicação correspondente aprovada pelo workflow Pages, execução
+[37934156824](https://github.com/bispoID/wedding-invitation-project/actions/runs/37934156824).
+
+Os testes cobrem App Config, preparação portátil, contratos backend, validações,
+RSVP, métricas e UI administrativa/Event Config com DOM simulado. O Bloco 4
+registrou aceite visual desktop/mobile aproximadamente 390px, incluindo READY,
+localização própria da recepção, mapas, monograma, timestamps, espaçamentos e
+collapsible. Integração e publicação foram concluídas no Bloco 5; hotfixes de
+sucesso por ausência e tap highlight do Admin integram a versão publicada.
+Contratos detalhados: [event-config.md](event-config.md).
 
 - [x] Criar workflow independente `.github/workflows/test.yml` em Linux.
 - [x] Configurar descoberta de JavaScript versionado e `node --check`.
 - [x] Incluir testes das Functions e o teste de métricas explicitamente.
 - [x] Restringir permissões dos testes e dispensar secrets de produção.
 - [x] Configurar verificação de whitespace.
-- [x] Executar os oito arquivos localmente fora do isolamento: 57 testes aprovados em 08/10/2026.
-- [x] Confirmar baseline do Lote 1 no GitHub Actions: execução 37852513840, em 08/10/2026.
-- [x] Acrescentar testes Node de App Config e preparação portátil no Lote 2.
-- [x] Executar localmente o Lote 2: 26 testes Node novos e os 57 Deno existentes aprovados.
-- [ ] Confirmar a execução remota da extensão de testes do Lote 2 após revisão.
-- [x] Implementar e executar localmente testes do Bloco 3: 141 Deno e 44 Node,
-  incluindo os 83 da baseline anterior, sem remover cenários.
-- [x] Preparar CI para os testes administrativos novos, sem deploy.
+- [x] Confirmar baseline inicial do Lote 1: execução 37852513840, em 08/10/2026.
+- [x] Integrar testes de App Config, preparação portátil, Admin e Event Config ao CI.
+- [x] Aprovar a regressão atual de 263 testes localmente e em Linux.
 - [x] Executar `supabase/tests/block3.sql` em PostgreSQL local descartável:
   Bloco 7, em 09/10/2026, PostgreSQL 17.6/Supabase CLI 2.120.0 em Docker/WSL2;
   reset local sem seed, 15 migrations e duas execuções integrais com ROLLBACK
   aprovadas, sem utilizar produção.
-- [ ] Confirmar CI Linux do Bloco 3 e aceite visual/integrado após revisão.
+- [x] Registrar aceites funcionais e visuais dos checkpoints, sem apagar seus limites.
 
 O workflow utiliza Node.js `22.14.0` e Deno `2.9.7` em `ubuntu-24.04`. A execução
 Windows dentro do isolamento local apresentou panic de named pipe no runner;
-o mesmo comando passou fora do isolamento, com 57 testes e zero falhas.
-`--no-run` é checagem, não execução de asserções. A baseline Linux do Lote 1
-passou; a extensão do Lote 2 ainda não foi publicada. Comandos novos:
+o comando completo passou fora do isolamento e a regressão atual também está
+aprovada. `--no-run` é checagem, não execução de asserções. Comandos:
 [invite-app/README.md](../invite-app/README.md#configuração-pública-e-publicação-portátil).
 Comandos Deno e permissões: [external-services.md](external-services.md#baseline-linux--ci).
 
 ## RSVP
 
-- [ ] RSVP válido.
-- [ ] RSVP duplicado.
-- [ ] E-mail inválido.
-- [ ] Campos vazios.
-- [ ] Limite de acompanhantes.
-- [ ] Requisição manual à API.
+- [x] RSVP válido e contratos 201/202, incluindo reset e sucesso por ausência.
+- [x] RSVP duplicado.
+- [x] E-mail inválido, campos vazios e limites de acompanhantes.
+- [x] Requisição manual à API validada nos checkpoints anteriores.
+
+Validações automatizadas usam dependências simuladas. Não é necessário enviar
+RSVP de produção a cada fechamento documental.
 
 ## Segurança
 
-- [ ] Tentativa de `SELECT` público.
-- [ ] Tentativa de `UPDATE` público.
-- [ ] Tentativa de `DELETE` público.
-- [ ] Acesso à área administrativa sem autenticação.
-- [ ] Validação das policies.
-- [ ] Verificação de credenciais expostas.
+- [x] Restrições de acesso público verificadas nas migrations; a suíte SQL local
+  cobre RLS/grants de Event Config e constraints de convidados.
+- [x] Rejeição administrativa sem autenticação ou autorização nos testes backend.
+- [x] RLS e grants verificados no banco local com migrations versionadas.
+- [x] Revisão estática de credenciais no conteúdo textual versionado.
+
+Essas evidências não equivalem a pentest nem a auditoria de todo o histórico Git.
 
 ## Falhas
 
-- [ ] Falha do Supabase.
-- [ ] Falha da API.
-- [ ] Falha da contingência.
-- [ ] Erro inesperado.
-- [ ] Verificação dos alertas.
+- [x] Falha do Supabase/API e erro inesperado nos testes simulados.
+- [x] Contingência e falha dupla nos testes e registros anteriores de validação.
+- [x] Logs minimizados e contratos de health/alertas verificados.
+
+O monitor externo está configurado; sua disponibilidade instantânea não é uma
+constante documental. Não se provocam falhas de produção para fechar este bloco.
 
 ## Interface
 
-- [ ] Mobile.
-- [ ] Desktop.
-- [ ] Diferentes tamanhos de tela.
-- [ ] Animações.
-- [ ] Formulário.
-- [ ] Fluxo completo do convite.
+- [x] Mobile aproximadamente 390px e desktop nos aceites registrados.
+- [x] Formulários, estados e collapsible nos testes e aceites registrados.
+- [x] Animações implementadas e ajustes visuais registrados.
+- [ ] Consolidar matriz ampliada de telas/navegadores e nomes longos.
+- [ ] Consolidar aceite manual por teclado e redução de movimento no fluxo completo.
 
 **Resultado esperado:**
 
 Sistema validado antes da publicação.
 
 **Critérios de conclusão:** suíte executada em runtime funcional e evidências
-dos testes de RLS/CORS, RSVP, admin, contingência, health e interface. As futuras
-APIs de evento, limites e portabilidade deverão integrar esse aceite, sem
-testes destrutivos em produção.
+dos testes de RLS/CORS, RSVP, Admin, contingência, health e Event Config já
+existem. Completar os critérios manuais ampliados, sem testes destrutivos em
+produção e sem declarar aprovação universal de interface pela suíte automatizada.
 
 ---
 
@@ -609,22 +596,22 @@ testes destrutivos em produção.
 
 Objetivo: colocar o sistema em funcionamento real.
 
-**Estado: PUBLICADO; ACEITE FINAL PENDENTE.** O frontend atual já está publicado
-via GitHub Pages e a infraestrutura Supabase possui validações anteriores. A
-publicação existente não equivale ao aceite do escopo equalizado.
+**Estado: PUBLICADO E OPERACIONAL; ACEITE MANUAL AMPLIADO PENDENTE.** O escopo
+equalizado foi publicado no Bloco 5 e os checkpoints posteriores aprovaram
+hotfixes, constraints e SQL local. Os critérios manuais restantes das Fases 9/12
+não devem ser confundidos com falta de publicação ou integração funcional.
 
 - [x] Disponibilizar a publicação atual via GitHub Pages.
-- [ ] Publicar a versão equalizada somente após os critérios das Fases 10 a 12.
-- [ ] Revisar a configuração pública e operacional do ambiente escolhido.
-- [ ] Confirmar a configuração do Supabase de produção.
-- [ ] Configurar monitoramento.
-- [ ] Validar health check.
-- [ ] Realizar smoke checks não destrutivos no ambiente publicado.
-- [ ] Validar o RSVP completo em ambiente de teste com registros sintéticos.
-- [ ] Testar área administrativa.
-- [ ] Validar contingência.
-- [ ] Validar segurança.
-- [ ] Considerar domínio personalizado posteriormente.
+- [x] Publicar a versão equalizada e os hotfixes aprovados.
+- [x] Revisar a configuração pública e operacional do ambiente escolhido.
+- [x] Registrar a configuração Supabase validada nos checkpoints operacionais.
+- [x] Configurar monitoramento e validar o contrato do health check.
+- [x] Registrar os smoke checks e aceites publicados anteriores.
+- [x] Validar RSVP/Admin/contingência com cenários sintéticos nos checkpoints.
+- [x] Validar os controles de segurança definidos, incluindo suíte SQL local.
+- [ ] Consolidar o aceite manual ampliado das Fases 9/12.
+
+Domínio personalizado é melhoria opcional, não requisito de publicação.
 
 **Resultado esperado:**
 
@@ -632,7 +619,8 @@ Convite disponível para os convidados e infraestrutura pronta para uso real.
 
 **Critérios de conclusão:** versão equalizada aprovada, smoke checks,
 monitoramento, procedimentos operacionais e evidências de segurança/integração
-documentados. Vercel e domínio personalizado não são requisitos obrigatórios.
+documentados. A operação funcional está validada; a conclusão integral do
+roadmap também depende do aceite manual ampliado explicitamente preservado.
 
 ---
 
@@ -663,95 +651,62 @@ Não avançar simplesmente porque a implementação "parece pronta".
 # Ordem resumida para acompanhamento
 
 ```text
-[x] 01 — Base do projeto (entrega anterior; App Config/preparador implementados)
+[x] 01 — Base do projeto (App Config/preparador integrados à publicação)
 [x] 02 — Banco / Supabase (migrations aplicadas; auditoria/VALIDATE concluídas; SQL local aprovado)
 [x] 03 — Segurança / Permissões (extensão implantada; suite SQL local aprovada)
 [x] 04 — API / Edge Function (extensão implantada e aceite funcional concluído)
-[x] 05 — RSVP (entrega anterior; revalidação futura)
-[x] 06 — Contingência (entrega anterior; revalidação futura)
-[x] 07 — Área Administrativa (backend implantado e aceite local; frontend não publicado)
+[x] 05 — RSVP (contratos, reset e sucesso por ausência validados)
+[x] 06 — Contingência (recuperação e regressão validadas)
+[x] 07 — Área Administrativa (CRUD, Event Config e frontend publicados)
 [x] 08 — Monitoramento
-[ ] 09 — Interface / Design (PARCIAL)
-[ ] 10 — Integração (PARCIAL)
-[ ] 11 — Hospedagem estática / ambientes (PARCIAL; Pages implementado)
-[ ] 12 — Testes / qualidade (PARCIAL; baseline CI criada)
-[ ] 13 — Publicação / operação (PUBLICADO; ACEITE FINAL PENDENTE)
+[ ] 09 — Interface / Design (PARCIAL: aceite manual ampliado)
+[x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
+[x] 11 — Hospedagem estática / ambientes (CONCLUÍDA no ambiente utilizado)
+[ ] 12 — Testes / qualidade (263 testes e SQL aprovados; aceite manual ampliado)
+[ ] 13 — Publicação / operação (OPERACIONAL; aceite manual ampliado pendente)
 ```
 
 ---
 
 # Estado atual
 
-**Fase 6 — Contingência: concluída.**
+As Fases 1–8, 10 e 11 estão concluídas nos escopos definidos. App Config,
+Event Config, CRUD administrativo, RSVP e contingência estão integrados e
+publicados. O monitor externo utiliza HEAD a cada 15 minutos; sua saúde
+instantânea deve ser consultada no serviço, não presumida por este registro.
 
-**Fase 7 — Área administrativa: backend implantado e aceite local concluído; frontend atualizado não publicado.** A autenticação Supabase Auth e a
-proteção de sessão estão implementadas. A autorização é verificada no backend
-por JWT válido e associação do UUID à lista `ADMIN_AUTH_USER_IDS`; suporta
-múltiplos administradores e retorna 403 a usuários autenticados não autorizados.
-Listagem, edição e exclusão de convidados, os indicadores e a integração da
-contingência ao painel estão implementados. O Bloco 3 acrescenta criação manual,
-configuração do evento e previews; backend implantado, painel aceito localmente,
-sem nova publicação do frontend.
-O hardening de segurança foi realizado, mantendo
-`service_role` exclusivamente no backend. As quatro Edge Functions
-administrativas foram verificadas como ACTIVE e com `verify_jwt=true` na
-auditoria de 08/10/2026. Listagem, edição e exclusão administrativas foram
-validadas anteriormente com registros sintéticos temporários, removidos ao
-final.
+No Bloco 6, as constraints de convidados foram validadas após auditoria histórica
+sem violações, preservando dados. No Bloco 7, as 15 migrations e a suíte SQL
+integral passaram em banco local descartável, eliminando essa pendência técnica.
+Regressão atual: 144 Deno + 119 Node = 263, aprovada localmente e em Linux/CI.
 
-As entregas anteriores das Fases 1 a 8 estão concluídas. App Config e preparador
-estático foram implementados no Lote 2; extensões das Fases 2 a 7 foram
-implementadas no Bloco 3, com migrations/Functions aplicadas e aceite funcional
-informado. Primeiro PUT real realizado pelo usuário e READY local alcançado.
-VALIDATE versionado concluído no Bloco 6; suite SQL local integral aprovada no
-Bloco 7, exclusivamente em banco descartável local, sem usar produção.
+**Pendências de aceite não bloqueantes para a operação funcional:** Fases 9/12
+mantêm a revisão manual ampliada de teclado, redução de movimento, nomes longos
+e matriz de telas/navegadores. A Fase 13 já está publicada e operacional, mas
+preserva esse critério para o encerramento integral do roadmap. Não há evidência
+consolidada suficiente para marcar esses critérios como concluídos.
 
-**Fase 8 — Monitoramento: concluída.** A configuração oficial do UptimeRobot é
-`HEAD` a cada 15 minutos. Este lote equaliza somente sua documentação.
+**Melhorias opcionais, não dívidas técnicas do escopo vigente:** domínio próprio,
+outros provedores ou ambientes separados, MFA, CAPTCHA se necessário,
+observabilidade adicional e metadata personalizada para crawlers. Cada adoção
+exige avaliação e aceite próprios; nenhuma é iniciada por este fechamento.
 
-**Fases 9, 10 e 12: parciais.** Já há interface, integração e testes. O workflow
-Linux do Lote 1 passou; Test baseline permanece o gate Linux de regressão.
-O encerramento do Bloco 3 passou em 194 testes, CI Linux e aceite manual,
-com backend implantado. O Bloco 4 passou em 254 testes locais (144 Deno e 110 Node),
-incluindo os sete testes do collapsible; nenhuma cobertura legítima foi perdida.
-O aceite manual em desktop/mobile e da localização da recepção foi concluído.
-As fases seguem parciais: integração deliberada com feature/landing-page,
-publicação do frontend e aceites de operação publicados permanecem pendentes.
-
-**Fase 11: parcial.** Pages é atual/canônico; a portabilidade operacional foi
-testada localmente para configuração/metadados; aceite publicado ainda pendente.
-Vercel é alternativa opcional.
-
-**Fase 13: publicado, com aceite final pendente.** A publicação atual em Pages
-não encerra a equalização.
-
-`event_config`, criação manual e as extensões de backend dos Blocos 3/4 já foram
-implementados nos checkpoints autorizados. A validação histórica das constraints
-de convidados foi concluída no Bloco 6, após auditoria somente leitura sem violações.
-
-A proteção contra abuso / rate limiting está implementada na Supabase Edge
-Function e foi validada. O IP é obtido pelo header `x-forwarded-for`, seu hash
-SHA-256 é usado no controle persistido no Supabase, e os testes e o
-comportamento do rate limiting foram verificados.
-
-A Fase 5 — RSVP está concluída. O fluxo real de confirmação de presença foi implementado, testado e validado, incluindo validações do frontend, integração com a API, estado de carregamento, tratamento de erros, confirmação após persistência real e tratamento de e-mail duplicado.
-
-A Fase 6 — Contingência está concluída: contingência Google Sheets
-implementada; fallback e retorno HTTP 202 validados; falha dupla HTTP 500
-validada; logging administrativo via Supabase Logs implementado; procedimento
-de recuperação manual documentado; função temporária de teste removida.
+Arquitetura e requisitos estáveis: [project_context.md](project_context.md).
+Contratos/validações: [event-config.md](event-config.md),
+[admin-guest-management.md](admin-guest-management.md) e
+[health-check.md](health-check.md).
 
 ### Validação do rate limiting da Fase 4
 
 A proteção contra abuso foi implementada diretamente na **Supabase Edge
-Function** e não depende da Vercel. O rate limiting foi testado e validado,
+Function** e não depende do provedor estático. O rate limiting foi testado e validado,
 incluindo o uso do IP encaminhado em `x-forwarded-for`, hash SHA-256 e
 armazenamento persistente no Supabase.
 
 O fluxo esperado é:
 
 ```text
-Frontend estático (GitHub Pages atual; outro provedor opcional)
+Frontend estático (independente do provedor)
         ↓
 Supabase Edge Function
         ↓
