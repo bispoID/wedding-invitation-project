@@ -82,7 +82,7 @@ export function initRsvp() {
       });
 
       if (response.status === 201) {
-        setSuccessState(rsvpForm, submitButton, feedback);
+        setSuccessState(rsvpForm, submitButton, feedback, payload.attendance);
         companionsInput.disabled = companionsInitiallyDisabled;
         return;
       }
@@ -143,13 +143,19 @@ function setLoadingState(form, button, feedback) {
  * @param {HTMLFormElement} form
  * @param {HTMLButtonElement} button
  * @param {HTMLElement} feedback
+ * @param {boolean} attendance Resposta enviada no RSVP confirmado.
  * @returns {void}
  */
-function setSuccessState(form, button, feedback) {
+function setSuccessState(form, button, feedback, attendance) {
   form.reset();
   button.disabled = false;
   form.setAttribute('aria-busy', 'false');
-  setFeedback(feedback, 'Presença confirmada! Agradecemos pela sua confirmação.');
+  setFeedback(
+    feedback,
+    attendance
+      ? 'Presença confirmada! Agradecemos pela sua confirmação.'
+      : 'Resposta confirmada! Agradecemos por nos avisar.'
+  );
 }
 
 /**

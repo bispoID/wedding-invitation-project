@@ -65,11 +65,12 @@ test('RSVP 201 resets defaults, preserves success and allows second submit witho
     assert.doesNotMatch(ui.feedback.textContent, /Presença confirmada/);
     await ui.submit();
     assert.equal(ui.requests.length, 1);
+    assert.equal(ui.requests[0].payload.attendance, true);
     assert.equal(ui.resets(), 0);
     ui.companions.disabled = true;
     ui.requests[0].resolve(new Response(null, { status: 201 }));
     await first;
-    assert.match(ui.feedback.textContent, /Presença confirmada/);
+    assert.equal(ui.feedback.textContent, 'Presença confirmada! Agradecemos pela sua confirmação.');
     assert.deepEqual(ui.fields, { name: '', email: '', attendance: '', companions: '0' });
     assert.equal(ui.companions.disabled, false);
     assert.equal(ui.button.disabled, false);
@@ -87,9 +88,31 @@ test('RSVP 201 resets defaults, preserves success and allows second submit witho
   });
 });
 
-for (const status of [400, 409, 429, 500, 200, 202]) {
-  test(`RSVP HTTP ${status} does not reset and allows retry`, async () => {
+test('RSVP absent 201 uses submitted attendance, sends zero companions and resets the form', async () => {
+  await withRsvpForm(async (ui) => {
+    Object.assign(ui.fields, { attendance: 'no', companions: '0' });
+    const sending = ui.submit();
+    assert.equal(ui.requests.length, 1);
+    assert.deepEqual(ui.requests[0].payload, {
+      name: 'Synthetic RSVP', email: 'rsvp@example.invalid', attendance: false, companions: 0,
+    });
+    // A later form change must not replace the response that was actually sent.
+    ui.fields.attendance = 'yes';
+    ui.requests[0].resolve(new Response(null, { status: 201 }));
+    await sending;
+    assert.equal(ui.feedback.textContent, 'Resposta confirmada! Agradecemos por nos avisar.');
+    assert.deepEqual(ui.fields, { name: '', email: '', attendance: '', companions: '0' });
+    assert.equal(ui.resets(), 1);
+    assert.equal(ui.companions.disabled, false);
+    assert.equal(ui.button.disabled, false);
+    assert.equal(ui.attrs['aria-busy'], undefined);
+  });
+});
+
+for (const attendance of ['yes', 'no']) for (const status of [400, 409, 429, 500, 200, 202]) {
+  test(`RSVP attendance=${attendance} HTTP ${status} does not reset and allows retry`, async () => {
     await withRsvpForm(async (ui) => {
+      Object.assign(ui.fields, { attendance, companions: attendance === 'yes' ? '2' : '0' });
       const initial = { ...ui.fields };
       const sending = ui.submit();
       ui.requests[0].resolve(Response.json({ success: false }, { status }));
@@ -98,6 +121,7 @@ for (const status of [400, 409, 429, 500, 200, 202]) {
       assert.equal(ui.resets(), 0);
       assert.equal(ui.button.disabled, false);
       assert.equal(ui.attrs['aria-busy'], undefined);
+      assert.doesNotMatch(ui.feedback.textContent, /Presença confirmada|Resposta confirmada/);
       const retry = ui.submit();
       assert.equal(ui.requests.length, 2);
       ui.requests[1].resolve(Response.json({ success: false }, { status }));
@@ -120,15 +144,16 @@ test('RSVP network failure retains entered data and enables retry', async () => 
   });
 });
 
-test('RSVP confirmed contingency preserves existing behavior without reset', async () => {
+for (const attendance of ['yes', 'no']) test(`RSVP attendance=${attendance} confirmed contingency preserves existing behavior without reset`, async () => {
   await withRsvpForm(async (ui) => {
+    Object.assign(ui.fields, { attendance, companions: attendance === 'yes' ? '2' : '0' });
     const initial = { ...ui.fields };
     const sending = ui.submit();
     ui.requests[0].resolve(Response.json({ success: false, contingency: true, error: 'RSVP_SAVED_TO_CONTINGENCY' }, { status: 202 }));
     await sending;
     assert.deepEqual(ui.fields, initial);
     assert.equal(ui.resets(), 0);
-    assert.match(ui.feedback.textContent, /processada posteriormente/);
+    assert.equal(ui.feedback.textContent, 'Sua confirmação foi recebida e salva. Devido a uma instabilidade, ela será processada posteriormente.');
     assert.equal(ui.button.disabled, true);
     assert.equal(ui.attrs['aria-busy'], 'false');
     await ui.submit();
