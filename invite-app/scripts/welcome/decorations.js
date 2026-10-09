@@ -25,6 +25,12 @@ let floralSealAnimation = null;
  */
 export function animateFloralSealExit(decorations) {
 
+  // A redução via CSS não afeta animações criadas pela Web Animations API.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    resetFloralSealAnimations();
+    return;
+  }
+
   /*
    * A animação fica no contêiner, e não em cada imagem, para que flores
    * e selo mantenham a mesma trajetória e o mesmo centro visual.

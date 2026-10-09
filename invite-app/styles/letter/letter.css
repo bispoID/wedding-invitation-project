@@ -214,6 +214,30 @@
   white-space: nowrap;
 }
 
+/* A carta pode crescer verticalmente; somente títulos que não cabem quebram. */
+#letter-title.has-long-names {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  font-size: clamp(1.5rem, 8cqw, 2.75rem);
+  line-height: 1.35;
+  white-space: normal;
+}
+
+#letter-title.has-long-names .script-name {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+#letter-title.has-long-names .script-name--amp {
+  font-size: 0.75em;
+  margin: 0.15em 0;
+}
+
 /* Ornamento horizontal que encerra visualmente o cabeçalho. */
 .ornament {
   display: flex;

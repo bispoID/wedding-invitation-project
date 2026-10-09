@@ -381,11 +381,13 @@ Objetivo: desenvolver a experiência visual do convite.
 
 Esta fase vem depois da definição da base técnica, evitando construir a interface sobre uma arquitetura ainda instável.
 
-**Estado: PARCIAL.** Envelope/capa, animação, carta, tipografia, monograma,
-informações do evento, RSVP, responsividade e previews já possuem implementação
-e aceite visual registrado em desktop e mobile aproximadamente 390px. A fase
-permanece parcial pelos critérios manuais ampliados abaixo, não por ausência
-de interface ou de integração com os dados do evento.
+**Estado: CONCLUÍDA no escopo visual e manual validado.** Envelope/capa,
+animação, carta, tipografia, monograma, informações do evento, RSVP,
+responsividade e previews estão implementados. Os aceites ampliados de teclado,
+redução de movimento e nomes longos foram informados pelo responsável pelo QA
+e consolidados em [qa-final-evidence.md](qa-final-evidence.md), em 09/10/2026.
+As correções ainda estão no working tree; sua publicação e verificação pertencem
+à Fase 13. A aprovação não implica cobertura universal de navegadores.
 
 - [x] Definir identidade visual.
 - [x] Integrar monograma estático nos dois slots.
@@ -397,8 +399,8 @@ de interface ou de integração com os dados do evento.
 - [x] Integrar RSVP.
 - [x] Criar responsividade, animações e transições.
 - [x] Aprovar os ajustes mobile registrados nos checkpoints.
-- [ ] Consolidar aceite manual de teclado no fluxo completo e redução de movimento.
-- [ ] Consolidar aceite de nomes longos e matriz ampliada de telas/navegadores.
+- [x] Consolidar aceite manual de teclado no fluxo completo e redução de movimento.
+- [x] Consolidar aceite de nomes longos e matriz ampliada de telas/navegadores.
 
 ### Direção visual
 
@@ -415,10 +417,13 @@ A experiência deve transmitir:
 
 Convite visualmente finalizado e funcional.
 
-**Critérios de conclusão:** complementar o aceite desktop/mobile registrado
-com teclado, redução de movimento, nomes longos e matriz ampliada. Event Config,
-loading/erro/opcionais e metadata genérica já estão integrados. A existência de
-focus-visible e regras de redução de movimento não equivale a aceite manual.
+**Critérios atendidos:** aceites manuais relatados de teclado, redução de
+movimento, nomes longos, zoom de 200% e larguras 320/375/390/699/700/1000 px nos
+cenários informados; Edge/Chrome/Firefox Desktop e celular real aprovados.
+Safari/iOS e redução de movimento especificamente no celular real não têm
+evidência. Event Config, loading/erro/opcionais e metadata genérica já estão
+integrados. A fonte manual e os limites estão no documento de evidências;
+focus-visible e testes simulados, isoladamente, não substituem aceite visual.
 
 ---
 
@@ -501,14 +506,22 @@ para os testes finais no provedor estático escolhido.
 
 Objetivo: verificar funcionamento, segurança, confiabilidade e experiência.
 
-**Estado: PARCIAL quanto ao aceite manual ampliado.** Regressão automatizada
-e suíte SQL local estão aprovadas; falta consolidar a matriz de interface e
-acessibilidade das Fases 9/12. Testes simulados não substituem esse aceite nem
-representam uma auditoria de segurança exaustiva.
+**Estado: CONCLUÍDA no escopo de QA local e manual relatado.** Regressão
+automatizada e aceites ampliados estão consolidados em
+[qa-final-evidence.md](qa-final-evidence.md). A suíte SQL local aprovada no Bloco
+7 permanece como evidência anterior; não foi repetida, pois não houve mudança
+de migration/schema. CI e verificação da versão consolidada após publicação
+continuam como gates da Fase 13. Testes simulados não equivalem a aceite visual
+nem representam uma auditoria de segurança exaustiva.
 
 ## Baseline automatizada
 
-Baseline: **144 Deno e 119 Node, total 263, zero falhas**, com typecheck dos
+Regressão local consolidada em 09/10/2026: **144 Deno e 212 Node, total 356,
+zero falhas**, com typecheck de oito entrypoints, syntax de 35 arquivos
+JavaScript e whitespace aprovados. Inclui as suítes adicionadas durante o QA.
+Não houve push ou CI desta versão ainda não commitada.
+
+Baseline histórica do Bloco 7: **144 Deno e 119 Node, total 263, zero falhas**, com typecheck dos
 cinco entrypoints, syntax checks e whitespace. Passou localmente e no Linux/CI
 do Bloco 7, execução
 [37934156785](https://github.com/bispoID/wedding-invitation-project/actions/runs/37934156785).
@@ -530,7 +543,8 @@ Contratos detalhados: [event-config.md](event-config.md).
 - [x] Configurar verificação de whitespace.
 - [x] Confirmar baseline inicial do Lote 1: execução 37852513840, em 08/10/2026.
 - [x] Integrar testes de App Config, preparação portátil, Admin e Event Config ao CI.
-- [x] Aprovar a regressão atual de 263 testes localmente e em Linux.
+- [x] Aprovar a baseline histórica de 263 testes localmente e em Linux no Bloco 7.
+- [x] Aprovar a regressão local consolidada de 356 testes, incluindo as correções de QA.
 - [x] Executar `supabase/tests/block3.sql` em PostgreSQL local descartável:
   Bloco 7, em 09/10/2026, PostgreSQL 17.6/Supabase CLI 2.120.0 em Docker/WSL2;
   reset local sem seed, 15 migrations e duas execuções integrais com ROLLBACK
@@ -539,8 +553,9 @@ Contratos detalhados: [event-config.md](event-config.md).
 
 O workflow utiliza Node.js `22.14.0` e Deno `2.9.7` em `ubuntu-24.04`. A execução
 Windows dentro do isolamento local apresentou panic de named pipe no runner;
-o comando completo passou fora do isolamento e a regressão atual também está
-aprovada. `--no-run` é checagem, não execução de asserções. Comandos:
+o comando completo passou fora do isolamento. Nesta consolidação, a repetição
+integral fora do isolamento também aprovou 144 testes Deno com rede negada.
+`--no-run` é checagem, não execução de asserções. Comandos:
 [invite-app/README.md](../invite-app/README.md#configuração-pública-e-publicação-portátil).
 Comandos Deno e permissões: [external-services.md](external-services.md#baseline-linux--ci).
 
@@ -578,8 +593,14 @@ constante documental. Não se provocam falhas de produção para fechar este blo
 - [x] Mobile aproximadamente 390px e desktop nos aceites registrados.
 - [x] Formulários, estados e collapsible nos testes e aceites registrados.
 - [x] Animações implementadas e ajustes visuais registrados.
-- [ ] Consolidar matriz ampliada de telas/navegadores e nomes longos.
-- [ ] Consolidar aceite manual por teclado e redução de movimento no fluxo completo.
+- [x] Consolidar matriz ampliada de telas/navegadores e nomes longos.
+- [x] Consolidar aceite manual por teclado e redução de movimento no fluxo completo.
+
+As evidências manuais foram informadas pelo responsável pelo QA, não repetidas
+pelo agente nesta consolidação. Não há matriz completa por cenário/navegador,
+versões desktop, navegador/SO do celular real ou evidência de Safari/iOS e de
+redução de movimento especificamente nesse celular. Esses limites de cobertura
+estão registrados sem serem tratados automaticamente como defeitos.
 
 **Resultado esperado:**
 
@@ -587,8 +608,10 @@ Sistema validado antes da publicação.
 
 **Critérios de conclusão:** suíte executada em runtime funcional e evidências
 dos testes de RLS/CORS, RSVP, Admin, contingência, health e Event Config já
-existem. Completar os critérios manuais ampliados, sem testes destrutivos em
-produção e sem declarar aprovação universal de interface pela suíte automatizada.
+existem. Os critérios manuais ampliados foram consolidados conforme o relato,
+sem testes destrutivos em produção e sem declarar aprovação universal de
+interface pela suíte automatizada. Publicação e verificação da versão final
+permanecem pendentes na Fase 13.
 
 ---
 
@@ -596,10 +619,12 @@ produção e sem declarar aprovação universal de interface pela suíte automat
 
 Objetivo: colocar o sistema em funcionamento real.
 
-**Estado: PUBLICADO E OPERACIONAL; ACEITE MANUAL AMPLIADO PENDENTE.** O escopo
-equalizado foi publicado no Bloco 5 e os checkpoints posteriores aprovaram
-hotfixes, constraints e SQL local. Os critérios manuais restantes das Fases 9/12
-não devem ser confundidos com falta de publicação ou integração funcional.
+**Estado: PARCIAL — versão anterior publicada e operacional; publicação e
+verificação do QA consolidado pendentes.** O escopo equalizado foi publicado no
+Bloco 5 e os checkpoints posteriores aprovaram hotfixes, constraints e SQL
+local. Os aceites das Fases 9/12 estão consolidados, mas suas correções ainda
+não foram commitadas/publicadas. A conclusão integral exige CI, publicação e
+verificação dessa versão, sem confundir o working tree com a versão operacional.
 
 - [x] Disponibilizar a publicação atual via GitHub Pages.
 - [x] Publicar a versão equalizada e os hotfixes aprovados.
@@ -609,7 +634,10 @@ não devem ser confundidos com falta de publicação ou integração funcional.
 - [x] Registrar os smoke checks e aceites publicados anteriores.
 - [x] Validar RSVP/Admin/contingência com cenários sintéticos nos checkpoints.
 - [x] Validar os controles de segurança definidos, incluindo suíte SQL local.
-- [ ] Consolidar o aceite manual ampliado das Fases 9/12.
+- [x] Consolidar o aceite manual ampliado das Fases 9/12.
+- [ ] Aprovar o workflow Test baseline para o commit consolidado de QA.
+- [ ] Publicar a versão consolidada pelo workflow previsto, com deploy aprovado.
+- [ ] Verificar a versão publicada e registrar SHA, runs e aceite da publicação.
 
 Domínio personalizado é melhoria opcional, não requisito de publicação.
 
@@ -620,7 +648,8 @@ Convite disponível para os convidados e infraestrutura pronta para uso real.
 **Critérios de conclusão:** versão equalizada aprovada, smoke checks,
 monitoramento, procedimentos operacionais e evidências de segurança/integração
 documentados. A operação funcional está validada; a conclusão integral do
-roadmap também depende do aceite manual ampliado explicitamente preservado.
+roadmap depende da publicação e da verificação das correções de QA consolidadas.
+Nenhum deploy foi executado durante esta consolidação documental.
 
 ---
 
@@ -659,18 +688,19 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 06 — Contingência (recuperação e regressão validadas)
 [x] 07 — Área Administrativa (CRUD, Event Config e frontend publicados)
 [x] 08 — Monitoramento
-[ ] 09 — Interface / Design (PARCIAL: aceite manual ampliado)
+[x] 09 — Interface / Design (CONCLUÍDA no escopo visual e manual relatado)
 [x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
 [x] 11 — Hospedagem estática / ambientes (CONCLUÍDA no ambiente utilizado)
-[ ] 12 — Testes / qualidade (263 testes e SQL aprovados; aceite manual ampliado)
-[ ] 13 — Publicação / operação (OPERACIONAL; aceite manual ampliado pendente)
+[x] 12 — Testes / qualidade (356 testes locais; SQL anterior e aceites manuais consolidados)
+[ ] 13 — Publicação / operação (PARCIAL: publicar e verificar o QA consolidado)
 ```
 
 ---
 
 # Estado atual
 
-As Fases 1–8, 10 e 11 estão concluídas nos escopos definidos. App Config,
+As Fases 1–12 estão concluídas nos escopos definidos, com as evidências e limites
+das Fases 9/12 registrados em [qa-final-evidence.md](qa-final-evidence.md). App Config,
 Event Config, CRUD administrativo, RSVP e contingência estão integrados e
 publicados. O monitor externo utiliza HEAD a cada 15 minutos; sua saúde
 instantânea deve ser consultada no serviço, não presumida por este registro.
@@ -678,13 +708,16 @@ instantânea deve ser consultada no serviço, não presumida por este registro.
 No Bloco 6, as constraints de convidados foram validadas após auditoria histórica
 sem violações, preservando dados. No Bloco 7, as 15 migrations e a suíte SQL
 integral passaram em banco local descartável, eliminando essa pendência técnica.
-Regressão atual: 144 Deno + 119 Node = 263, aprovada localmente e em Linux/CI.
+Baseline histórica do Bloco 7: 144 Deno + 119 Node = 263, aprovada localmente e
+em Linux/CI. Regressão local do QA consolidado: 144 Deno + 212 Node = 356, zero
+falhas; novo CI ainda não executado, pois não houve push.
 
-**Pendências de aceite não bloqueantes para a operação funcional:** Fases 9/12
-mantêm a revisão manual ampliada de teclado, redução de movimento, nomes longos
-e matriz de telas/navegadores. A Fase 13 já está publicada e operacional, mas
-preserva esse critério para o encerramento integral do roadmap. Não há evidência
-consolidada suficiente para marcar esses critérios como concluídos.
+**Pendência real para o encerramento:** aprovar CI, publicar e verificar a versão
+consolidada de QA. A Fase 13 permanece parcial; a versão anterior continua como
+registro operacional publicado. O QA manual ampliado foi informado como aprovado
+e consolidado, respeitando a ausência de evidência específica para Safari/iOS e
+redução de movimento no celular real. Não há defeito aberto identificado nos
+gates locais; esses limites de cobertura não são garantia de aprovação universal.
 
 **Melhorias opcionais, não dívidas técnicas do escopo vigente:** domínio próprio,
 outros provedores ou ambientes separados, MFA, CAPTCHA se necessário,

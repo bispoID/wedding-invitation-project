@@ -22,14 +22,25 @@ export function initRsvp() {
   const feedback = document.querySelector('.form-feedback');
   const submitButton = rsvpForm?.querySelector('button[type="submit"]');
   const companionsInput = rsvpForm?.querySelector('#companions');
+  const attendanceInput = rsvpForm?.querySelector('#attendance');
 
-  if (!rsvpForm || !feedback || !submitButton || !companionsInput) {
+  if (!rsvpForm || !feedback || !submitButton || !companionsInput || !attendanceInput) {
     return;
   }
 
   let isSubmitting = false;
   let isSubmitted = false;
-  const companionsInitiallyDisabled = companionsInput.disabled;
+
+  const syncCompanions = () => {
+    const isAbsent = attendanceInput.value === 'no';
+    if (isAbsent) {
+      companionsInput.value = '0';
+    }
+    companionsInput.disabled = isAbsent;
+  };
+
+  attendanceInput.addEventListener('change', syncCompanions);
+  syncCompanions();
 
   rsvpForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -37,6 +48,8 @@ export function initRsvp() {
     if (isSubmitting || isSubmitted) {
       return;
     }
+
+    syncCompanions();
 
     // Mantém a validação nativa do navegador como primeira camada.
     if (!rsvpForm.checkValidity()) {
@@ -48,7 +61,8 @@ export function initRsvp() {
     const name = String(formData.get('name') ?? '').trim();
     const email = String(formData.get('email') ?? '').trim().toLowerCase();
     const attendanceValue = String(formData.get('attendance') ?? '');
-    const companions = Number(formData.get('companions'));
+    // Campos disabled não entram no FormData; ausência sempre envia zero.
+    const companions = attendanceValue === 'yes' ? Number(formData.get('companions')) : 0;
 
     // Validações adicionais necessárias para montar um payload confiável.
     if (!name || !email || !['yes', 'no'].includes(attendanceValue)) {
@@ -83,7 +97,7 @@ export function initRsvp() {
 
       if (response.status === 201) {
         setSuccessState(rsvpForm, submitButton, feedback, payload.attendance);
-        companionsInput.disabled = companionsInitiallyDisabled;
+        syncCompanions();
         return;
       }
 

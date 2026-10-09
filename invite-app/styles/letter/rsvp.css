@@ -160,6 +160,20 @@
   font-size: 4cqw;
 }
 
+.rsvp-form select:focus-visible {
+  outline: 2px solid var(--color-heading);
+  outline-offset: 4px;
+}
+
+.rsvp-form #companions:disabled {
+  background: rgb(var(--color-text-muted-rgb) / 12%);
+  color: var(--color-text-secondary);
+  border-color: rgb(var(--color-text-muted-rgb) / 55%);
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
 .rsvp-form .button {
   position:
     relative;

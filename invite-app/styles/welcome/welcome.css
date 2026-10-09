@@ -15,7 +15,8 @@
 
   padding: 4rem 1.5rem;
 
-  overflow: hidden;
+  /* Recorta as decorações sem permitir rolagem além do fundo da capa. */
+  overflow: clip;
 
   background:
     radial-gradient(
@@ -83,7 +84,8 @@
 
   background-repeat: no-repeat;
 
-  background-size: auto 100%;
+  /* O asset quadrado cobre a largura sem mudar o zoom original de 2.1. */
+  background-size: auto max(100%, calc(100vw / 2.1));
 
   pointer-events: none;
 }
@@ -201,6 +203,36 @@
   color: var(--color-accent);
 
   font-style: italic;
+}
+
+/* Somente nomes que não caberiam com uma fonte legível usam este estado. */
+.welcome__copy.has-long-names #welcome-title {
+  white-space: normal;
+  line-height: 1.4;
+  transform: none;
+}
+
+.welcome__copy.has-long-names #welcome-title .script-name {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.welcome__copy.has-long-names #welcome-title .script-name--amp {
+  font-size: 0.75em;
+  margin: 0.15em 0;
+}
+
+.welcome__copy.has-long-names .eyebrow {
+  width: 100%;
+  max-width: 100%;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  margin-bottom: 0.75rem;
+  transform: none;
 }
 
 .welcome__ramas {

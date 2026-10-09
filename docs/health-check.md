@@ -242,7 +242,7 @@ dez testes do health. A restrição de rede foi mantida; nenhuma dependência re
 do health foi acessada pelos testes unitários.
 
 O workflow `.github/workflows/test.yml` executa a regressão em Linux, incluindo
-estes testes e as métricas administrativas. A baseline atual de 144 testes Deno
+estes testes e as métricas administrativas. A baseline histórica do Bloco 7 de 144 testes Deno
 (incluindo os dez de health) e 119 Node passou localmente e no GitHub Actions
 em 09/10/2026, no Bloco 7 (execução 37934156785). Os resultados anteriores são
 registros de validação, não garantia de disponibilidade futura.

@@ -203,6 +203,46 @@
   line-height: 1;
 }
 
+/* O estado longo usa a área interna da moldura sem mudar o cartão externo. */
+.envelope__card-inner.has-long-names {
+  padding-bottom: 16cqw;
+}
+
+.envelope__card-inner.has-long-names > * {
+  flex-shrink: 0;
+}
+
+.envelope__card-names.has-long-names {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: start;
+  width: 65%;
+  max-width: 100%;
+  min-width: 0;
+  gap: 0.35em;
+  margin-bottom: 3cqw;
+  font-size: clamp(1rem, 5.5cqw, 1.5rem);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.envelope__card-names.has-long-names .script-name {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.envelope__card-names.has-long-names .script-name--amp {
+  align-self: center;
+  font-size: 0.8em;
+}
+
+.envelope__card-inner.has-long-names .envelope__message {
+  margin-top: auto;
+  padding-top: 4cqw;
+}
+
 .envelope__card-ornament {
   display: flex;
 

@@ -126,15 +126,21 @@ O workflow [test.yml](.github/workflows/test.yml) executa a validação em Linux
 JavaScript versionados, executa os testes das Functions e inclui explicitamente
 `invite-app/admin/scripts/guest-metrics.test.ts`, além de verificar whitespace.
 Também executa os testes Node de App Config, preparação portátil, Admin e Event
-Config em `scripts/`. A baseline atual é de **263 testes: 144 Deno e 119 Node**.
+Config em `scripts/`. O QA consolidado passou localmente com **356 testes:
+144 Deno e 212 Node**, incluindo as regressões de acessibilidade, movimento
+e nomes longos. Suas correções ainda aguardam commit, CI e publicação.
 
 Os testes usam dependências simuladas e dados sintéticos. Não exigem secrets de
 produção, não acessam banco ou Google Sheets reais e não fazem deploy. O
 workflow de deploy permanece independente, com gate Node antes da preparação.
-A regressão completa passou localmente e no GitHub Actions. A suíte SQL
+A baseline histórica do Bloco 7, de **263 testes (144 Deno e 119 Node)**, passou
+localmente e no GitHub Actions; não representa CI das correções de QA pendentes.
+A suíte SQL
 `supabase/tests/block3.sql`, separada do CI, também foi aprovada integralmente
 em PostgreSQL/Supabase local descartável, com as 15 migrations e ROLLBACK.
-Detalhes e evidências: [event-config.md](docs/event-config.md#validação-local).
+Detalhes SQL: [event-config.md](docs/event-config.md#validação-local).
+Regressão e aceites manuais consolidados:
+[qa-final-evidence.md](docs/qa-final-evidence.md).
 
 Permissões, comando local equivalente e o registro histórico do runner no Windows
 estão descritos em [external-services.md](docs/external-services.md#deno).

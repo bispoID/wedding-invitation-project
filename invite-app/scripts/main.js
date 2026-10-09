@@ -1,4 +1,5 @@
 import { initEventConfig } from './event-config.js';
+import { initInvitationNames } from './shared/invitation-names.js';
 
 import {
   initRsvp,
@@ -49,5 +50,6 @@ initEnvelope({
 initLocationChurchAnimation();
 
 initWelcomeTypography();
+initInvitationNames();
 initRsvp();
 void initEventConfig();

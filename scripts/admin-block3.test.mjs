@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import './envelope-motion.test.mjs';
+import './welcome-typography.test.mjs';
+import './welcome-wallpaper.test.mjs';
+import './invitation-names.test.mjs';
 
 const load = async (path, replacements = []) => {
   let code = await readFile(new URL('../' + path, import.meta.url), 'utf8');
@@ -24,18 +28,31 @@ const rsvpModule = await load('invite-app/scripts/letter/rsvp.js', [
   ["import { FUNCTIONS_BASE_URL } from '../shared/app-config.js';", "const FUNCTIONS_BASE_URL = 'https://example.invalid/functions/v1/';"],
 ]);
 
-async function withRsvpForm(run) {
+async function withRsvpForm(run, initialFields = {}) {
   const previous = { document: globalThis.document, FormData: globalThis.FormData, fetch: globalThis.fetch };
-  const fields = { name: 'Synthetic RSVP', email: 'rsvp@example.invalid', attendance: 'yes', companions: '2' };
+  const fields = { name: 'Synthetic RSVP', email: 'rsvp@example.invalid', attendance: 'yes', companions: '2', ...initialFields };
   const button = { disabled: false };
-  const companions = { disabled: false, focus() {} };
+  let focusCalls = 0;
+  const companions = {
+    disabled: false,
+    get value() { return fields.companions; },
+    set value(value) { fields.companions = value; },
+    focus() { focusCalls++; },
+  };
+  const attendance = {
+    events: {},
+    get value() { return fields.attendance; },
+    set value(value) { fields.attendance = value; },
+    addEventListener(type, listener) { this.events[type] = listener; },
+  };
   const feedback = { textContent: '' };
   const attrs = {};
-  let submit, resets = 0;
+  const formEvents = {};
+  let resets = 0;
   const requests = [];
   const form = {
-    querySelector: (selector) => selector === '#companions' ? companions : button,
-    addEventListener: (_, listener) => { submit = listener; },
+    querySelector: (selector) => selector === '#companions' ? companions : selector === '#attendance' ? attendance : button,
+    addEventListener: (type, listener) => { formEvents[type] = listener; },
     checkValidity: () => true,
     reportValidity() {},
     setAttribute: (name, value) => { attrs[name] = value; },
@@ -43,18 +60,178 @@ async function withRsvpForm(run) {
     reset() { resets++; Object.assign(fields, { name: '', email: '', attendance: '', companions: '0' }); },
   };
   globalThis.document = { querySelector: (selector) => selector === '.rsvp-form' ? form : feedback };
-  globalThis.FormData = class { get(name) { return fields[name]; } };
+  globalThis.FormData = class {
+    constructor() {
+      this.values = { ...fields };
+      if (companions.disabled) delete this.values.companions;
+    }
+    get(name) { return this.values[name] ?? null; }
+  };
   globalThis.fetch = (url, options) => new Promise((resolve, reject) => {
     requests.push({ url, payload: JSON.parse(options.body), resolve, reject });
   });
   try {
     rsvpModule.initRsvp();
-    await run({ fields, button, companions, feedback, attrs, requests,
-      submit: () => submit({ preventDefault() {} }), resets: () => resets });
+    await run({ fields, button, companions, attendance, feedback, attrs, requests, formEvents,
+      setAttendance(value) { attendance.value = value; attendance.events.change({ target: attendance }); },
+      focusCalls: () => focusCalls,
+      submit: () => formEvents.submit({ preventDefault() {} }), resets: () => resets });
   } finally {
     Object.assign(globalThis, previous);
   }
 }
+
+for (const attendance of ['', 'no', 'yes']) test(`RSVP initializes coherent companions for attendance=${attendance || 'empty'}`, async () => {
+  await withRsvpForm(async (ui) => {
+    assert.equal(ui.companions.disabled, attendance === 'no');
+    assert.equal(ui.companions.value, attendance === 'no' ? '0' : '3');
+    assert.equal(ui.focusCalls(), 0);
+  }, { attendance, companions: '3' });
+});
+
+for (const companions of ['0', '3', '15']) test(`RSVP empty attendance switches to yes preserving companions=${companions}`, async () => {
+  await withRsvpForm(async (ui) => {
+    assert.equal(ui.companions.disabled, false);
+    assert.equal(ui.companions.value, '0');
+    ui.companions.value = companions;
+    ui.setAttendance('yes');
+    assert.equal(ui.companions.value, companions);
+    assert.equal(ui.companions.disabled, false);
+    const sending = ui.submit();
+    assert.equal(ui.requests[0].payload.attendance, true);
+    assert.equal(ui.requests[0].payload.companions, Number(companions));
+    ui.requests[0].resolve(new Response(null, { status: 409 }));
+    await sending;
+    assert.equal(ui.companions.value, companions);
+  }, { attendance: '', companions: '0' });
+});
+
+test('RSVP empty attendance switches to no clearing companions and disabling the field', async () => {
+  await withRsvpForm(async (ui) => {
+    ui.setAttendance('no');
+    assert.equal(ui.companions.value, '0');
+    assert.equal(ui.companions.disabled, true);
+    assert.equal(ui.focusCalls(), 0);
+  }, { attendance: '', companions: '3' });
+});
+
+test('RSVP no switches to empty with enabled zero companions', async () => {
+  await withRsvpForm(async (ui) => {
+    ui.setAttendance('');
+    assert.equal(ui.companions.value, '0');
+    assert.equal(ui.companions.disabled, false);
+    assert.equal(ui.focusCalls(), 0);
+  }, { attendance: 'no', companions: '3' });
+});
+
+test('RSVP requires attendance before submitting and preserves companions entered while empty', async () => {
+  await withRsvpForm(async (ui) => {
+    await ui.submit();
+    assert.equal(ui.requests.length, 0);
+    assert.equal(ui.companions.value, '3');
+    assert.equal(ui.companions.disabled, false);
+    assert.match(ui.feedback.textContent, /Verifique os dados/);
+  }, { attendance: '', companions: '3' });
+});
+
+test('RSVP yes with three companions switches to no with zero and disabled companions', async () => {
+  await withRsvpForm(async (ui) => {
+    ui.companions.value = '3';
+    ui.setAttendance('no');
+    assert.equal(ui.companions.value, '0');
+    assert.equal(ui.companions.disabled, true);
+    assert.equal(ui.focusCalls(), 0);
+    assert.deepEqual(Object.keys(ui.attendance.events), ['change']);
+    assert.deepEqual(Object.keys(ui.formEvents), ['submit']);
+    assert.equal(new FormData().get('companions'), null);
+    const sending = ui.submit();
+    assert.equal(ui.requests[0].payload.attendance, false);
+    assert.equal(ui.requests[0].payload.companions, 0);
+    ui.requests[0].resolve(Response.json({ error: 'Synthetic validation error' }, { status: 400 }));
+    await sending;
+    assert.equal(ui.companions.value, '0');
+    assert.equal(ui.companions.disabled, true);
+  });
+});
+
+test('RSVP no switches to yes with enabled zero companions and preserves the selected count', async () => {
+  await withRsvpForm(async (ui) => {
+    ui.setAttendance('yes');
+    assert.equal(ui.companions.disabled, false);
+    assert.equal(ui.companions.value, '0');
+    ui.companions.value = '3';
+    const sending = ui.submit();
+    assert.equal(ui.requests[0].payload.attendance, true);
+    assert.equal(ui.requests[0].payload.companions, 3);
+    ui.requests[0].resolve(new Response(null, { status: 409 }));
+    await sending;
+    assert.equal(ui.companions.value, '3');
+    ui.setAttendance('no');
+    ui.setAttendance('yes');
+    assert.equal(ui.companions.value, '0');
+    assert.equal(ui.companions.disabled, false);
+    assert.equal(ui.focusCalls(), 0);
+  }, { attendance: 'no', companions: '5' });
+});
+
+for (const staleCompanions of ['5', '-1', 'invalid']) test(`RSVP absence normalizes tampered FormData companions=${staleCompanions} to zero`, async () => {
+  await withRsvpForm(async (ui) => {
+    const SnapshotFormData = globalThis.FormData;
+    globalThis.FormData = class extends SnapshotFormData {
+      get(name) { return name === 'companions' ? staleCompanions : super.get(name); }
+    };
+    const sending = ui.submit();
+    assert.equal(ui.requests.length, 1);
+    assert.equal(ui.requests[0].payload.attendance, false);
+    assert.equal(ui.requests[0].payload.companions, 0);
+    ui.requests[0].resolve(new Response(null, { status: 409 }));
+    await sending;
+  }, { attendance: 'no' });
+});
+
+test('RSVP companions retain native keyboard semantics and start enabled while attendance remains required', async () => {
+  const html = await readFile(new URL('../invite-app/index.html', import.meta.url), 'utf8');
+  const select = html.match(/<select\b[^>]*id="attendance"[^>]*>/)?.[0];
+  const input = html.match(/<input\b[^>]*id="companions"[^>]*>/)?.[0];
+  assert.ok(select);
+  assert.ok(input);
+  assert.doesNotMatch(input, /\bdisabled\b/);
+  assert.match(select, /\brequired\b/);
+  assert.match(input, /value="0"/);
+  assert.match(input, /aria-describedby="companions-hint"/);
+  assert.doesNotMatch(select + input, /tabindex|onkey(?:down|up|press)/);
+});
+
+test('RSVP disabled companions styling is scoped and uses existing readable olive tokens without layout changes', async () => {
+  const css = await readFile(new URL('../invite-app/styles/letter/rsvp.css', import.meta.url), 'utf8');
+  const rule = css.match(/\.rsvp-form #companions:disabled\s*\{([^}]*)\}/);
+  assert.ok(rule);
+  assert.deepEqual(rule[1].split(';').map((declaration) => declaration.trim()).filter(Boolean), [
+    'background: rgb(var(--color-text-muted-rgb) / 12%)',
+    'color: var(--color-text-secondary)',
+    'border-color: rgb(var(--color-text-muted-rgb) / 55%)',
+    '-webkit-text-fill-color: currentColor',
+    'opacity: 1',
+    'cursor: not-allowed',
+  ]);
+});
+
+for (const companions of ['-1', '16', '1.5', 'invalid']) test(`RSVP attendance=yes still rejects companions=${companions} and permits correction`, async () => {
+  await withRsvpForm(async (ui) => {
+    await ui.submit();
+    assert.equal(ui.requests.length, 0);
+    assert.equal(ui.companions.disabled, false);
+    assert.equal(ui.companions.value, companions);
+    assert.equal(ui.focusCalls(), 1);
+    assert.match(ui.feedback.textContent, /entre 0 e 15/);
+    ui.companions.value = '3';
+    const sending = ui.submit();
+    assert.equal(ui.requests.length, 1);
+    assert.equal(ui.requests[0].payload.companions, 3);
+    ui.requests[0].resolve(new Response(null, { status: 409 }));
+    await sending;
+  }, { companions });
+});
 
 test('RSVP 201 resets defaults, preserves success and allows second submit without double-submit', async () => {
   await withRsvpForm(async (ui) => {
@@ -77,6 +254,7 @@ test('RSVP 201 resets defaults, preserves success and allows second submit witho
     assert.equal(ui.attrs['aria-busy'], undefined);
     assert.equal(ui.resets(), 1);
     Object.assign(ui.fields, { name: 'Second synthetic RSVP', email: 'second@example.invalid', attendance: 'yes', companions: '1' });
+    ui.setAttendance('yes');
     const second = ui.submit();
     assert.equal(ui.requests.length, 2);
     assert.equal(ui.requests[1].payload.email, 'second@example.invalid');
@@ -84,13 +262,16 @@ test('RSVP 201 resets defaults, preserves success and allows second submit witho
     ui.requests[1].resolve(new Response(null, { status: 201 }));
     await second;
     assert.equal(ui.resets(), 2);
+    assert.equal(ui.companions.value, '0');
+    assert.equal(ui.companions.disabled, false);
     assert.equal(ui.button.disabled, false);
   });
 });
 
 test('RSVP absent 201 uses submitted attendance, sends zero companions and resets the form', async () => {
   await withRsvpForm(async (ui) => {
-    Object.assign(ui.fields, { attendance: 'no', companions: '0' });
+    ui.companions.value = '3';
+    ui.setAttendance('no');
     const sending = ui.submit();
     assert.equal(ui.requests.length, 1);
     assert.deepEqual(ui.requests[0].payload, {
@@ -118,6 +299,7 @@ for (const attendance of ['yes', 'no']) for (const status of [400, 409, 429, 500
       ui.requests[0].resolve(Response.json({ success: false }, { status }));
       await sending;
       assert.deepEqual(ui.fields, initial);
+      assert.equal(ui.companions.disabled, attendance === 'no');
       assert.equal(ui.resets(), 0);
       assert.equal(ui.button.disabled, false);
       assert.equal(ui.attrs['aria-busy'], undefined);
@@ -559,6 +741,22 @@ test('event form has accessible optional reception location and isolated approve
   const main = await readFile(new URL('../invite-app/admin/scripts/main.js', import.meta.url), 'utf8');
   assert.match(main, /formatTimestamp\(guest.created_at\)/);
   assert.match(main, /formatTimestamp\(record.created_at\)/);
+});
+
+test('RSVP attendance select preserves native semantics and has scoped visible keyboard focus', async () => {
+  const html = await readFile(new URL('../invite-app/index.html', import.meta.url), 'utf8');
+  const css = await readFile(new URL('../invite-app/styles/letter/rsvp.css', import.meta.url), 'utf8');
+  assert.match(html, /<label\s+for="attendance"\s*>/);
+  assert.match(html, /<select\s+id="attendance"\s+name="attendance"\s+required\s*>/);
+  assert.match(html, /<option value="yes">/);
+  assert.match(html, /<option value="no">/);
+  const focusRule = css.match(/\.rsvp-form select:focus-visible\s*\{([^}]*)\}/);
+  assert.ok(focusRule, 'The RSVP select needs a focus-visible rule that overrides its outline reset');
+  assert.deepEqual(focusRule[1].split(';').map((declaration) => declaration.trim()).filter(Boolean), [
+    'outline: 2px solid var(--color-heading)',
+    'outline-offset: 4px',
+  ]);
+  assert.ok(focusRule.index > css.indexOf('.rsvp-form select {'));
 });
 
 test('admin touch highlight is limited to interactive controls and preserves visible keyboard focus', async () => {
