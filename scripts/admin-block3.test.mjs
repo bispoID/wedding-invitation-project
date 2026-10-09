@@ -560,3 +560,17 @@ test('event form has accessible optional reception location and isolated approve
   assert.match(main, /formatTimestamp\(guest.created_at\)/);
   assert.match(main, /formatTimestamp\(record.created_at\)/);
 });
+
+test('admin touch highlight is limited to interactive controls and preserves visible keyboard focus', async () => {
+  const css = await readFile(new URL('../invite-app/admin/styles/main.css', import.meta.url), 'utf8');
+  const dashboard = await readFile(new URL('../invite-app/admin/styles/dashboard.css', import.meta.url), 'utf8');
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*-webkit-tap-highlight-color[^{}]*)\}/g)];
+  assert.equal(rules.length, 1);
+  assert.deepEqual(rules[0][1].trim().split(/\s*,\s*/).sort(), ['a', 'button', 'input', 'select']);
+  assert.equal(rules[0][2].trim(), '-webkit-tap-highlight-color: transparent;');
+  assert.match(css, /\.button:focus-visible,\s*input:focus-visible,\s*select:focus-visible\s*\{\s*outline: 3px solid var\(--admin-focus\);\s*outline-offset: 2px;/);
+  assert.match(dashboard, /\.event-toggle:focus-visible\s*\{\s*outline: 3px solid var\(--admin-focus\);\s*outline-offset: 2px;/);
+  assert.doesNotMatch(css + dashboard, /outline(?:-style)?\s*:\s*(?:none|0\b)/);
+  assert.match(css, /\.button:hover\s*\{/);
+  assert.match(css, /\.button:active:not\(:disabled\)\s*\{/);
+});
