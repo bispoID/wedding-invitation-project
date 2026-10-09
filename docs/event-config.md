@@ -131,11 +131,14 @@ As migrations já aplicadas não foram editadas.
 2. Aplicada no Bloco 3: `20261009000000_create_event_config.sql`, que exige
    o mecanismo `public.set_updated_at()` das migrations anteriores.
 3. Aplicada no Bloco 3: `20261009000100_add_guest_length_constraints.sql`.
-   CHECKs name/email usam btrim e NOT VALID: não varrem dados históricos,
-   mas são exigidos nas novas inserções/atualizações. Nenhum dado é corrigido,
-   truncado ou removido automaticamente.
-4. Antes de criar/aplicar outra migration com VALIDATE CONSTRAINT, executar
-   auditoria somente leitura dos históricos, por exemplo:
+   CHECKs name/email usam btrim e foram criados como NOT VALID: nessa etapa,
+   não houve varredura histórica, mas os limites já eram exigidos nas novas
+   inserções/atualizações. Nenhum dado foi corrigido, truncado ou removido.
+4. Concluída no Bloco 6: auditoria histórica somente leitura, sem violações,
+   seguida de `20261009000400_validate_guest_length_constraints.sql`.
+   `guests_name_length` e `guests_email_length` estão com `convalidated=true`;
+   limites, expressões e dados existentes foram preservados. A auditoria
+   verifica as condições exatas dos CHECKs, sem retornar nomes ou e-mails:
 
 ```sql
 select count(*) as invalid_name_count from public.guests
@@ -144,11 +147,9 @@ select count(*) as invalid_email_count from public.guests
 where char_length(btrim(email)) not between 1 and 320;
 ```
 
-Resolver violações por procedimento explicitamente aprovado e só então criar
-uma migration posterior com `VALIDATE CONSTRAINT guests_name_length` e
-`VALIDATE CONSTRAINT guests_email_length`. Este bloco não cria essa migration
-porque os históricos não foram auditados; registros antigos excessivos podem
-precisar de correção autorizada para serem editados.
+O Bloco 6 executou somente VALIDATE das duas constraints existentes, sem
+recriá-las ou corrigir, truncar ou excluir registros. A verificação posterior
+confirmou o estado validado e a mesma contagem de convidados.
 
 5. Conferir variáveis backend SUPABASE_URL, SUPABASE_ANON_KEY,
    SUPABASE_SERVICE_ROLE_KEY, ADMIN_AUTH_USER_IDS e ADMIN_ALLOWED_ORIGINS.
@@ -209,8 +210,8 @@ recepção e sua localização independente, mapas, monograma nos dois locais,
 timestamp administrativo, espaçamentos, desktop e mobile aproximadamente 390px.
 O workflow Test baseline acompanha o commit de encerramento; integração com
 feature/landing-page, publicação/preview social real e suite SQL local integral
-permanecem pendentes. VALIDATE dos convidados continua separado, exigindo
-auditoria prévia autorizada.
+permanecem pendentes. A auditoria prévia e a VALIDATE dos convidados foram
+concluídas posteriormente no Bloco 6, sem alteração dos dados existentes.
 
 ## Painel administrativo recolhível
 

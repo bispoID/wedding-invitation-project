@@ -82,10 +82,10 @@ Objetivo: criar a estrutura de dados necessária para o RSVP.
 Banco estruturado e capaz de armazenar os RSVPs.
 
 **Entrega anterior concluída; extensão implementada localmente no Bloco 3:**
-schema singleton de `event_config` e limites de convidados com NOT VALID.
+schema singleton de `event_config` e limites de convidados originalmente NOT VALID.
 Migrations aplicadas nos checkpoints autorizados, incluindo localização própria
-da recepção. Suite SQL local integral e auditoria/VALIDATE dos históricos seguem
-pendentes; nenhum dado histórico foi corrigido automaticamente.
+da recepção. Auditoria histórica e VALIDATE concluídas no Bloco 6, sem correção
+dos dados existentes. A suite SQL local integral permanece pendente.
 
 ---
 
@@ -528,7 +528,7 @@ feedback visível e salvamento, sem persistir estado. Regressão final local:
 254 testes (144 Deno e 110 Node), typecheck, syntax e whitespace aprovados.
 O workflow Test baseline acompanha o commit de encerramento. Publicação do
 frontend e integração com feature/landing-page permanecem pendentes.
-VALIDATE versionado e suite SQL local integral continuam pendências separadas.
+VALIDATE versionado concluído no Bloco 6; suite SQL local integral permanece pendente.
 
 - [x] Criar workflow independente `.github/workflows/test.yml` em Linux.
 - [x] Configurar descoberta de JavaScript versionado e `node --check`.
@@ -659,7 +659,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 
 ```text
 [x] 01 — Base do projeto (entrega anterior; App Config/preparador implementados)
-[x] 02 — Banco / Supabase (migrations aplicadas; SQL local/auditoria/VALIDATE pendentes)
+[x] 02 — Banco / Supabase (migrations aplicadas; auditoria/VALIDATE concluídas; SQL local pendente)
 [x] 03 — Segurança / Permissões (extensão implantada; suite SQL local pendente)
 [x] 04 — API / Edge Function (extensão implantada e aceite funcional concluído)
 [x] 05 — RSVP (entrega anterior; revalidação futura)
@@ -698,7 +698,7 @@ As entregas anteriores das Fases 1 a 8 estão concluídas. App Config e preparad
 estático foram implementados no Lote 2; extensões das Fases 2 a 7 foram
 implementadas no Bloco 3, com migrations/Functions aplicadas e aceite funcional
 informado. Primeiro PUT real realizado pelo usuário e READY local alcançado.
-VALIDATE versionado e suite SQL local integral continuam pendentes.
+VALIDATE versionado concluído no Bloco 6; suite SQL local integral permanece pendente.
 
 **Fase 8 — Monitoramento: concluída.** A configuração oficial do UptimeRobot é
 `HEAD` a cada 15 minutos. Este lote equaliza somente sua documentação.
@@ -721,7 +721,7 @@ não encerra a equalização.
 
 `event_config`, criação manual e as extensões de backend dos Blocos 3/4 já foram
 implementados nos checkpoints autorizados. A validação histórica das constraints
-de convidados permanece uma extensão futura separada.
+de convidados foi concluída no Bloco 6, após auditoria somente leitura sem violações.
 
 A proteção contra abuso / rate limiting está implementada na Supabase Edge
 Function e foi validada. O IP é obtido pelo header `x-forwarded-for`, seu hash

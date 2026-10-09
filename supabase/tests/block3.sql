@@ -42,8 +42,8 @@ begin
     end if;
   end loop;
   if (select count(*) from pg_constraint where conrelid = 'public.guests'::regclass
-    and conname in ('guests_name_length', 'guests_email_length') and not convalidated) <> 2 then
-    raise exception 'Guest length constraints must initially be NOT VALID';
+    and conname in ('guests_name_length', 'guests_email_length') and convalidated) <> 2 then
+    raise exception 'Guest length constraints must be validated after all migrations';
   end if;
 end $$;
 -- A disposable local database is required, so existing config is removed only
