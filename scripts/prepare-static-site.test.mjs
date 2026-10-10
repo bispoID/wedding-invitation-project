@@ -62,7 +62,7 @@ for (const base of ['https://example.github.io/wedding-invitation-project/', 'ht
     assert.equal(html, resolveMetadata(originalHtml, base));
     assert.ok(html.includes(`href="${base}"`));
     assert.ok(html.includes(`content="${base}"`));
-    assert.equal(html.split(`${base}images/previa-link-envelope.webp`).length - 1, 2);
+    assert.equal(html.split(`${base}images/preview-link.webp`).length - 1, 2);
     assert.ok(!html.includes('__PUBLIC_'));
     assert.equal(await readFile(new URL('index.html', sourceDir), 'utf8'), originalHtml);
     assert.deepEqual(await readdir(outputDir), await readdir(sourceDir));

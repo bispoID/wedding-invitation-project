@@ -37,7 +37,7 @@ export function resolveMetadata(html, publicSiteUrl) {
   const siteUrl = normalizePublicSiteUrl(publicSiteUrl);
   const replacements = new Map([
     ['__PUBLIC_SITE_URL__', siteUrl],
-    ['__PUBLIC_SHARE_IMAGE_URL__', new URL('images/previa-link-envelope.webp', siteUrl).href],
+    ['__PUBLIC_SHARE_IMAGE_URL__', new URL('images/preview-link.webp', siteUrl).href],
   ]);
   for (const [marker, value] of replacements) {
     if (html.split(marker).length - 1 !== 2) {

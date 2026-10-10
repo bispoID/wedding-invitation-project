@@ -47,7 +47,7 @@ no cartão e na carta. Endereços e mapas são opcionais; city/state mantêm a
 posição geográfica da cerimônia, sem fallback para a recepção. Esta possui
 cidade/estado próprios opcionais, sem placeholders ou separadores órfãos.
 Metadata estática é genérica e usa
-`images/previa-link-envelope.webp`; os markers PUBLIC_SITE_URL permanecem.
+`images/preview-link.webp`; os markers PUBLIC_SITE_URL permanecem.
 O contrato completo está em [event-config.md](../docs/event-config.md).
 O primeiro PUT real foi realizado pelo usuário e READY já foi alcançado.
 A nova migration de localização e as duas Functions foram implantadas em

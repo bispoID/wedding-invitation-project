@@ -204,8 +204,8 @@ dados dispara
 
 Metadata estática e título administrativo são genéricos. PUBLIC_SITE_URL e seus
 markers continuam resolvidos no artefato; a imagem social usa o asset genérico
-`invite-app/images/previa-link-envelope.webp`, preservado sem alterações, com
-MIME image/webp e dimensões 611 × 867. O monograma estático BD foi restaurado
+`invite-app/images/preview-link.webp`, com MIME image/webp e dimensões 583 × 899.
+O monograma estático BD foi restaurado
 nos dois slots originais; o antigo screenshot personalizado permanece removido.
 Metadata personalizada por evento exige preparação futura adequada a crawlers,
 não apenas atualização por JavaScript.
