@@ -7,7 +7,3 @@
 export {
   initRsvp
 } from './letter/rsvp.js';
-
-export {
-  initLocationChurchAnimation
-} from './letter/location-church.js';

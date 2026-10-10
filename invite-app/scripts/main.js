@@ -2,8 +2,7 @@ import { initEventConfig } from './event-config.js';
 import { initInvitationNames } from './shared/invitation-names.js';
 
 import {
-  initRsvp,
-  initLocationChurchAnimation
+  initRsvp
 } from './letter.js';
 
 import {
@@ -45,9 +44,6 @@ initEnvelope({
   devSkipWelcome: devMode && resolvedPreviewTarget === 'letter',
   devPreview: devMode ? resolvedPreviewTarget : null
 });
-
-/* Inicia depois do preview, que pode deixar a carta visível sem abrir o envelope. */
-initLocationChurchAnimation();
 
 initWelcomeTypography();
 initInvitationNames();

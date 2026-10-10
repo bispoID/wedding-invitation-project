@@ -185,15 +185,16 @@
     3.6cqw;
 }
 
-.location-card__church {
+.location-card__church,
+.location-card__reception-image {
   position: relative;
   left: 50%;
 
   display: block;
 
-  /* Fallback antes do primeiro cálculo e quando movimento reduzido está ativo. */
-  width: var(--location-church-width, 53cqw);
+  width: 60cqw;
   height: auto;
+  opacity: 0.90;
 
   margin: 3cqw 0;
 
