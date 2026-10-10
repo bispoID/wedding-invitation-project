@@ -115,9 +115,11 @@ $env:PUBLIC_SITE_URL = 'https://example.github.io/wedding-invitation-project/'
 node scripts/prepare-static-site.mjs
 ```
 
-Ele copia `invite-app` para um `_site` novo e resolve somente os marcadores
-`__PUBLIC_SITE_URL__` e `__PUBLIC_SHARE_IMAGE_URL__` nos metadados canonical,
-Open Graph e Twitter. Não modifica o HTML-fonte, os textos ou as imagens.
+Ele copia `invite-app` para um `_site` novo, resolve os marcadores
+`__PUBLIC_SITE_URL__` e `__PUBLIC_SHARE_IMAGE_URL__` e tenta obter a configuração
+pública do evento para preencher `title`, Open Graph e Twitter no artefato. Não
+modifica o HTML-fonte, os textos ou as imagens. Se o Event Config não estiver
+disponível, mantém o título genérico e continua a preparação.
 URL HTTP(S) absoluta é obrigatória; credenciais, query e fragmento são rejeitados.
 Uma barra final é normalizada. Destino existente é recusado, sem limpeza automática.
 
@@ -126,7 +128,8 @@ Para publicar em root, use a URL operacional do provedor escolhido, por exemplo,
 como exemplo concreto de portabilidade, não como destino preferencial.
 Sirva/publice o conteúdo de `_site`, não os marcadores do source. Em desenvolvimento,
 continue servindo `invite-app`: os marcadores não participam do comportamento do
-convite, mas os metadados de compartilhamento só ficam prontos no artefato.
+convite, e os metadados personalizados de compartilhamento só ficam prontos no
+artefato preparado.
 
 No Pages, a URL operacional vem de `actions/configure-pages`; a política de
 publicação continua na branch `feature/landing-page`. A branch de desenvolvimento

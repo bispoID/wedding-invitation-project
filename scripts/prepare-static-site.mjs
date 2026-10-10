@@ -1,8 +1,12 @@
 import { cp, readFile, lstat, realpath, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { buildInvitationTitle, DEFAULT_INVITATION_TITLE } from '../invite-app/scripts/event-config.js';
+import { FUNCTIONS_BASE_URL } from '../invite-app/scripts/shared/app-config.js';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
+const DEFAULT_EVENT_CONFIG_URL = new URL('event-config', FUNCTIONS_BASE_URL).href;
+const EVENT_CONFIG_TIMEOUT_MS = 12_000;
 
 export function normalizePublicSiteUrl(value) {
   if (typeof value !== 'string' || !value.trim()) {
@@ -33,8 +37,42 @@ function escapeAttribute(value) {
     .replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }
 
-export function resolveMetadata(html, publicSiteUrl) {
+function replaceInvitationTitle(html, invitationTitle) {
+  const safeTitle = escapeAttribute(invitationTitle);
+  const titleTags = [
+    [/(<meta property="og:title" content=")[^"]*(" \/>)/, 'og:title'],
+    [/(<meta name="twitter:title" content=")[^"]*(" \/>)/, 'twitter:title'],
+    [/(<title>)[^<]*(<\/title>)/, 'title'],
+  ];
+  for (const [pattern, label] of titleTags) {
+    if (!pattern.test(html)) throw new Error(`Missing static ${label} metadata.`);
+    html = html.replace(pattern, (_, prefix, suffix) => `${prefix}${safeTitle}${suffix}`);
+  }
+  return html;
+}
+
+export async function resolveInvitationTitle(eventConfigUrl, fetchImpl = globalThis.fetch) {
+  if (!eventConfigUrl || typeof fetchImpl !== 'function') return DEFAULT_INVITATION_TITLE;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), EVENT_CONFIG_TIMEOUT_MS);
+  try {
+    const response = await fetchImpl(eventConfigUrl, {
+      method: 'GET', cache: 'no-store', signal: controller.signal,
+    });
+    if (!response || response.status !== 200) return DEFAULT_INVITATION_TITLE;
+    return buildInvitationTitle((await response.json())?.config);
+  } catch {
+    return DEFAULT_INVITATION_TITLE;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+export function resolveMetadata(html, publicSiteUrl, invitationTitle = DEFAULT_INVITATION_TITLE) {
   const siteUrl = normalizePublicSiteUrl(publicSiteUrl);
+  const title = typeof invitationTitle === 'string' && invitationTitle.trim()
+    ? invitationTitle : DEFAULT_INVITATION_TITLE;
+  html = replaceInvitationTitle(html, title);
   const replacements = new Map([
     ['__PUBLIC_SITE_URL__', siteUrl],
     ['__PUBLIC_SHARE_IMAGE_URL__', new URL('images/preview-link.webp', siteUrl).href],
@@ -58,6 +96,8 @@ function isWithin(parent, child) {
 
 export async function prepareStaticSite({
   publicSiteUrl,
+  eventConfigUrl,
+  fetchImpl,
   sourceDir = resolve(projectRoot, 'invite-app'),
   outputDir = resolve(projectRoot, '_site'),
 } = {}) {
@@ -81,7 +121,8 @@ export async function prepareStaticSite({
     throw new Error('Source index.html must be a regular file, not a symlink.');
   }
   const originalHtml = await readFile(sourceIndex, 'utf8');
-  const preparedHtml = resolveMetadata(originalHtml, siteUrl);
+  const invitationTitle = await resolveInvitationTitle(eventConfigUrl, fetchImpl);
+  const preparedHtml = resolveMetadata(originalHtml, siteUrl, invitationTitle);
   await cp(source, output, { recursive: true, errorOnExist: true, force: false });
   await writeFile(resolve(output, 'index.html'), preparedHtml, 'utf8');
   return { siteUrl, outputDir: output };
@@ -89,7 +130,10 @@ export async function prepareStaticSite({
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
   try {
-    const result = await prepareStaticSite({ publicSiteUrl: process.env.PUBLIC_SITE_URL });
+    const result = await prepareStaticSite({
+      publicSiteUrl: process.env.PUBLIC_SITE_URL,
+      eventConfigUrl: process.env.EVENT_CONFIG_URL || DEFAULT_EVENT_CONFIG_URL,
+    });
     console.log(`Prepared ${result.outputDir} for ${result.siteUrl}`);
   } catch (error) {
     console.error(`Static site preparation failed: ${error.message}`);

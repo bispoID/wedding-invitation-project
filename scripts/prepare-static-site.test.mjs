@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { normalizePublicSiteUrl, prepareStaticSite, resolveMetadata } from './prepare-static-site.mjs';
+import { normalizePublicSiteUrl, prepareStaticSite, resolveInvitationTitle, resolveMetadata } from './prepare-static-site.mjs';
 
 const sourceDir = new URL('../invite-app/', import.meta.url);
 const originalHtml = await readFile(new URL('index.html', sourceDir), 'utf8');
@@ -50,6 +50,49 @@ test('metadata markers are mandatory, counted and fully resolved', () => {
 test('metadata URLs escape HTML attribute delimiters', () => {
   const html = resolveMetadata(originalHtml, 'https://example.com/a&b/');
   assert.ok(html.includes('https://example.com/a&amp;b/'));
+});
+
+test('build-time Event Config title replaces static social metadata without changing source fallback', async () => {
+  const eventConfigUrl = 'https://example.invalid/functions/v1/event-config';
+  const invitationTitle = await resolveInvitationTitle(eventConfigUrl, async (url, options) => {
+    assert.equal(url, eventConfigUrl);
+    assert.equal(options.method, 'GET');
+    assert.equal(options.cache, 'no-store');
+    return Response.json({ success: true, config: { bride_name: 'NOME_FIXTURE_A', groom_name: 'NOME_FIXTURE_B' } });
+  });
+  const html = resolveMetadata(originalHtml, 'https://example.com/', invitationTitle);
+  assert.equal(invitationTitle, 'Um convite especial — NOME_FIXTURE_A & NOME_FIXTURE_B ♡');
+  assert.equal((html.match(/NOME_FIXTURE/g) ?? []).length, 6);
+  assert.doesNotMatch(html, /Um convite especial — Nosso Dia ♡/);
+  assert.match(html, /<meta property="og:title" content="Um convite especial — NOME_FIXTURE_A &amp; NOME_FIXTURE_B ♡" \/>/);
+  assert.equal((await readFile(new URL('index.html', sourceDir), 'utf8')), originalHtml);
+});
+
+test('build-time Event Config title falls back without blocking publication', async () => {
+  const invitationTitle = await resolveInvitationTitle('https://example.invalid/functions/v1/event-config', async () => {
+    throw new Error('Synthetic offline failure');
+  });
+  assert.equal(invitationTitle, 'Um convite especial — Nosso Dia ♡');
+  assert.doesNotMatch(resolveMetadata(originalHtml, 'https://example.com/', invitationTitle), /NOME_FIXTURE/);
+});
+
+test('prepared artifact embeds the build-time title and keeps source generic', async (t) => {
+  const temporary = await mkdtemp(join(tmpdir(), 'wedding-lot2-'));
+  t.after(() => rm(temporary, { recursive: true, force: true }));
+  const outputDir = join(temporary, 'site');
+  await prepareStaticSite({
+    publicSiteUrl: 'https://example.com/',
+    eventConfigUrl: 'https://example.invalid/functions/v1/event-config',
+    fetchImpl: async () => Response.json({
+      success: true,
+      config: { bride_name: 'NOME_FIXTURE_A', groom_name: 'NOME_FIXTURE_B' },
+    }),
+    sourceDir: fileURLToPath(sourceDir), outputDir,
+  });
+  const html = await readFile(join(outputDir, 'index.html'), 'utf8');
+  assert.equal((html.match(/NOME_FIXTURE/g) ?? []).length, 6);
+  assert.match(html, /Um convite especial — NOME_FIXTURE_A &amp; NOME_FIXTURE_B ♡/);
+  assert.equal(await readFile(new URL('index.html', sourceDir), 'utf8'), originalHtml);
 });
 
 for (const base of ['https://example.github.io/wedding-invitation-project/', 'https://example.vercel.app/']) {

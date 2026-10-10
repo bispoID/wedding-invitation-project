@@ -422,7 +422,7 @@ Convite visualmente finalizado e funcional.
 movimento, nomes longos, zoom de 200% e larguras 320/375/390/699/700/1000 px nos
 cenários informados; Edge/Chrome/Firefox Desktop e celular real aprovados.
 Safari/iOS e redução de movimento especificamente no celular real não têm
-evidência. Event Config, loading/erro/opcionais e metadata genérica já estão
+evidência. Event Config, loading/erro/opcionais e metadata genérica/build-time já estão
 integrados. A fonte manual e os limites estão no documento de evidências;
 focus-visible e testes simulados, isoladamente, não substituem aceite visual.
 
@@ -736,8 +736,8 @@ redução de movimento no celular real. Não há defeito aberto identificado nos
 gates locais; esses limites de cobertura não são garantia de aprovação universal.
 
 **Melhorias opcionais, não dívidas técnicas do escopo vigente:** domínio próprio,
-outros provedores ou ambientes separados, MFA, CAPTCHA se necessário,
-observabilidade adicional e metadata personalizada para crawlers. Cada adoção
+outros provedores ou ambientes separados, MFA, CAPTCHA se necessário e
+observabilidade adicional. Cada adoção
 exige avaliação e aceite próprios; nenhuma é iniciada por este fechamento.
 
 Arquitetura e requisitos estáveis: [project_context.md](project_context.md).

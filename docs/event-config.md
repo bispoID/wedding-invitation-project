@@ -202,13 +202,17 @@ texto fica oculto. Não há fallback da localização principal. A aplicação d
 dados dispara
 `invitation:content-updated` para recálculo de tipografia/geometria.
 
-Metadata estática e título administrativo são genéricos. PUBLIC_SITE_URL e seus
+O HTML-fonte mantém metadata estática e fallback genéricos. PUBLIC_SITE_URL e seus
 markers continuam resolvidos no artefato; a imagem social usa o asset genérico
 `invite-app/images/preview-link.webp`, com MIME image/webp e dimensões 583 × 899.
 O monograma estático BD foi restaurado
 nos dois slots originais; o antigo screenshot personalizado permanece removido.
-Metadata personalizada por evento exige preparação futura adequada a crawlers,
-não apenas atualização por JavaScript.
+Durante a preparação, `prepare-static-site.mjs` faz um GET público de
+`event-config` e aplica `bride_name`/`groom_name` em `title`, `og:title` e
+`twitter:title` somente no `_site` publicado. Se a configuração estiver
+indisponível ou incompleta, o artefato mantém o fallback genérico e a publicação
+continua. O GET de build é separado do GET do navegador, que continua necessário
+para preencher o conteúdo do convite; nenhum nome real é versionado no Git.
 
 Testes de Event Config: `node --test scripts/event-config.test.mjs`, sem Supabase real.
 O primeiro PUT real e READY já foram informados pelo usuário. O GET remoto foi
@@ -232,13 +236,11 @@ Após o único GET compartilhado de `event-config`, o frontend atualiza `documen
 Os valores são aplicados por APIs seguras do DOM; nomes ausentes ou falha no carregamento
 mantêm o título genérico definido no HTML.
 
-O HTML-fonte e o artefato gerado por `prepare-static-site.mjs` continuam com metadata
-genérica. Isso preserva o fallback e evita inserir nomes reais no código versionado, mas
-significa que crawlers de compartilhamento que não executam JavaScript, como os usados
-por algumas prévias de WhatsApp/Facebook, não verão o título personalizado. Uma evolução
-compatível com a arquitetura estática seria resolver os nomes em tempo de build durante
-a preparação do artefato, com fallback genérico; isso exigiria uma decisão operacional
-própria e não foi introduzido nesta alteração.
+O HTML-fonte continua com metadata genérica para desenvolvimento, fallback e controle
+de privacidade. No artefato preparado, os crawlers de compartilhamento que não executam
+JavaScript, como os usados por algumas prévias de WhatsApp/Facebook, recebem o título
+personalizado quando o GET de build consegue obter os dois nomes. O fallback genérico
+permanece disponível para falha, 404 ou dados incompletos.
 
 ## Painel administrativo recolhível
 
