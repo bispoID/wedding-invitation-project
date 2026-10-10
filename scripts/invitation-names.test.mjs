@@ -5,8 +5,8 @@ import { initInvitationNames } from '../invite-app/scripts/shared/invitation-nam
 
 const load = (path) => readFile(new URL('../' + path, import.meta.url), 'utf8');
 const LONG_NAMES = [
-  'Ana Carolina Fernanda de Albuquerque Montenegro',
-  'Gabriel Henrique dos Santos de Oliveira Filho',
+  'NOME_FIXTURE_A_LONGO',
+  'NOME_FIXTURE_B_LONGO',
 ];
 const eventSource = (await load('invite-app/scripts/event-config.js'))
   .replace("import { FUNCTIONS_BASE_URL } from './shared/app-config.js';", "const FUNCTIONS_BASE_URL = 'https://example.invalid/functions/v1/';");
@@ -39,7 +39,7 @@ async function withNames(options, run) {
       copy: () => [...values],
     };
   };
-  const names = options.names ?? ['Lia', 'Caio'];
+  const names = options.names ?? ['AAA', 'BBBB'];
   const span = (textContent, field) => ({ textContent, style: {}, dataset: field ? { eventField: field } : {} });
   const containers = {}, titles = {};
   function makeTitle(kind, children, probe = false) {
@@ -157,7 +157,7 @@ async function withNames(options, run) {
   }
 }
 
-for (const viewport of [320, 390]) for (const names of [['Lia', 'Caio'], ['Ana Maria', 'Luís']]) {
+for (const viewport of [320, 390]) for (const names of [['AAA', 'BBBB'], ['A B', 'C D']]) {
   test(`Card and letter preserve fitting short/compound names at ${viewport}px: ${names.join(' & ')}`, async () => {
     await withNames({ viewport, names }, async (ui) => {
       ui.flush();
@@ -203,7 +203,7 @@ test('Card and letter use independent geometric thresholds, not a shared name-le
 
 test('Long to short to long content updates restore the original component states', async () => {
   await withNames({ names: LONG_NAMES }, async (ui) => {
-    ui.flush(); ui.setNames(['Lia', 'Caio']); ui.flush();
+    ui.flush(); ui.setNames(['AAA', 'BBBB']); ui.flush();
     assert.equal(ui.titles.card.classList.contains('has-long-names'), false);
     assert.equal(ui.containers.card.classList.contains('has-long-names'), false);
     assert.equal(ui.titles.letter.classList.contains('has-long-names'), false);

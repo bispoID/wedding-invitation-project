@@ -10,6 +10,18 @@ const LIMITS = { bride_name: 200, groom_name: 200, city: 150, state: 100, ceremo
   ceremony_address: 500, reception_name: 200, reception_address: 500, reception_city: 150, reception_state: 100, ceremony_maps_url: 2048, reception_maps_url: 2048 };
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 export const CONTENT_UPDATED = 'invitation:content-updated';
+export const DEFAULT_INVITATION_TITLE = 'Um convite especial — Nosso Dia ♡';
+
+export function buildInvitationTitle(config = {}) {
+  const brideName = typeof config.bride_name === 'string' ? config.bride_name.trim() : '';
+  const groomName = typeof config.groom_name === 'string' ? config.groom_name.trim() : '';
+
+  if (!brideName || !groomName) {
+    return DEFAULT_INVITATION_TITLE;
+  }
+
+  return `Um convite especial — ${brideName} & ${groomName} ♡`;
+}
 
 export function isHttpsUrl(value) {
   if (typeof value !== 'string' || !/^https:\/\/[^/]/i.test(value) || /[\s\\]/.test(value) || /%(?![a-f\d]{2})/i.test(value)) return false;
@@ -68,6 +80,19 @@ export function loadEventConfig() {
 
 function contentUpdated(root) { root.dispatchEvent(new CustomEvent(CONTENT_UPDATED)); }
 
+export function updateDocumentMetadata(root, config) {
+  const documentRoot = root?.ownerDocument ?? root;
+  if (!documentRoot) return;
+
+  const title = buildInvitationTitle(config);
+  documentRoot.title = title;
+
+  for (const selector of ['meta[property="og:title"]', 'meta[name="twitter:title"]']) {
+    const element = documentRoot.querySelector?.(selector);
+    if (element) element.setAttribute('content', title);
+  }
+}
+
 export function applyEventConfig(root, config) {
   const values = { ...config, ...formatCivilDate(config.event_date), location: `${config.city} · ${config.state}` };
   values.reception_location = [config.reception_city, config.reception_state].filter(Boolean).join(' · ');
@@ -100,6 +125,7 @@ export async function initEventConfig(root = document) {
     const config = await loadEventConfig();
     if (!config) { setState('not-configured', 'As informações do evento ainda não estão disponíveis.'); return; }
     applyEventConfig(root, config);
+    updateDocumentMetadata(root, config);
     setState('ready', '');
   } catch {
     setState('error', 'Não foi possível carregar as informações do evento.');

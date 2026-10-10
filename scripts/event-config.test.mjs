@@ -24,12 +24,24 @@ class Element {
 function root() {
   const state = new Element({ eventState: 'loading' });
   const status = new Element();
+  const genericTitle = 'Um convite especial — Nosso Dia ♡';
+  const ogTitle = new Element();
+  const twitterTitle = new Element();
+  ogTitle.setAttribute('content', genericTitle);
+  twitterTitle.setAttribute('content', genericTitle);
+  const ownerDocument = {
+    title: genericTitle,
+    querySelector: (selector) => ({
+      'meta[property="og:title"]': ogTitle,
+      'meta[name="twitter:title"]': twitterTitle,
+    })[selector] ?? null,
+  };
   const fields = Object.fromEntries([...Object.keys(fixture), 'location', 'reception_location', 'date_month', 'date_day', 'date_year'].map((key) => [key, new Element({ eventField: key })]));
   const optional = Object.fromEntries(['ceremony_address', 'reception_name', 'reception_address', 'reception_location'].map((key) => [key, new Element({ eventOptional: key })]));
   const map = new Element({ eventMap: 'ceremony_maps_url' });
   const receptionMap = new Element({ eventMap: 'reception_maps_url' });
   const events = [];
-  return { state, status, fields, optional, map, receptionMap, events,
+  return { state, status, fields, optional, map, receptionMap, events, ownerDocument, ogTitle, twitterTitle,
     querySelector: () => state,
     querySelectorAll: (selector) => ({
       '[data-event-status]': [status], '[data-event-field]': Object.values(fields),
@@ -70,11 +82,35 @@ test('event config loading precedes response; ready uses textContent and dispatc
     assert.equal(dom.state.attrs['aria-busy'], 'false');
   });
 });
+test('event config success updates document and social titles from the validated names', async () => {
+  await withFetch(async () => valid(), async (api) => {
+    const dom = root();
+    await api.initEventConfig(dom);
+    const expected = api.buildInvitationTitle(fixture);
+    assert.equal(dom.ownerDocument.title, expected);
+    assert.equal(dom.ogTitle.attrs.content, expected);
+    assert.equal(dom.twitterTitle.attrs.content, expected);
+  });
+});
+test('invitation title falls back when either name is missing', async () => {
+  const api = await module();
+  assert.equal(api.buildInvitationTitle({ bride_name: 'NOME_FIXTURE_A' }), api.DEFAULT_INVITATION_TITLE);
+  assert.equal(api.buildInvitationTitle({ groom_name: 'NOME_FIXTURE_B' }), api.DEFAULT_INVITATION_TITLE);
+});
 test('event config 404 contract produces not-configured without fallback', async () => {
   await withFetch(async () => Response.json({ success: false, error: 'EVENT_CONFIG_NOT_FOUND' }, { status: 404 }), async (api, calls) => {
     const dom = root(); await api.initEventConfig(dom); await api.loadEventConfig();
     assert.equal(dom.state.dataset.eventState, 'not-configured'); assert.equal(dom.status.hidden, false);
     assert.equal(dom.fields.bride_name.textContent, ''); assert.equal(calls(), 1);
+  });
+});
+test('event config failure preserves the generic document and social titles', async () => {
+  await withFetch(async () => new Response(null, { status: 503 }), async (api) => {
+    const dom = root();
+    await api.initEventConfig(dom);
+    assert.equal(dom.ownerDocument.title, api.DEFAULT_INVITATION_TITLE);
+    assert.equal(dom.ogTitle.attrs.content, api.DEFAULT_INVITATION_TITLE);
+    assert.equal(dom.twitterTitle.attrs.content, api.DEFAULT_INVITATION_TITLE);
   });
 });
 for (const status of [401, 500, 503]) test(`event config HTTP ${status} error, no second fetch`, async () => {
@@ -155,7 +191,8 @@ test('integration preserves devmode and independent RSVP; generic metadata and n
   const html = await readFile(new URL('../invite-app/index.html', import.meta.url), 'utf8');
   assert.match(main, /initRsvp\(\);/); assert.match(main, /void initEventConfig\(\);/);
   assert.match(main, /\['cover', 'envelope-card', 'letter'\]/);
-  assert.doesNotMatch(html, /Bruna|Diego|Fortaleza|Local a confirmar|Endereço a confirmar/);
+  assert.match(html, /Um convite especial/);
+  assert.doesNotMatch(html, /NOME_FIXTURE_A|NOME_FIXTURE_B|CIDADE_FIXTURE|LOCAL_FIXTURE|ENDERECO_FIXTURE/);
   assert.match(html, /__PUBLIC_SITE_URL__/); assert.match(html, /__PUBLIC_SHARE_IMAGE_URL__/);
   assert.doesNotMatch(source, /innerHTML|localStorage|sessionStorage|service_role/);
 });

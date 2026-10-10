@@ -225,6 +225,21 @@ foram concluídas
 posteriormente no Bloco 6, sem alteração dos dados existentes; a suite SQL local
 integral foi aprovada no Bloco 7, exclusivamente em banco descartável.
 
+## Título dinâmico e metadata social
+
+Após o único GET compartilhado de `event-config`, o frontend atualiza `document.title`,
+`og:title` e `twitter:title` para `Um convite especial — {bride_name} & {groom_name} ♡`.
+Os valores são aplicados por APIs seguras do DOM; nomes ausentes ou falha no carregamento
+mantêm o título genérico definido no HTML.
+
+O HTML-fonte e o artefato gerado por `prepare-static-site.mjs` continuam com metadata
+genérica. Isso preserva o fallback e evita inserir nomes reais no código versionado, mas
+significa que crawlers de compartilhamento que não executam JavaScript, como os usados
+por algumas prévias de WhatsApp/Facebook, não verão o título personalizado. Uma evolução
+compatível com a arquitetura estática seria resolver os nomes em tempo de build durante
+a preparação do artefato, com fallback genérico; isso exigiria uma decisão operacional
+própria e não foi introduzido nesta alteração.
+
 ## Painel administrativo recolhível
 
 O título Configuração do evento contém um button nativo com aria-expanded e

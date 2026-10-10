@@ -5,8 +5,8 @@ import { initWelcomeTypography } from '../invite-app/scripts/welcome/typography.
 import { fitTextToContainer } from '../invite-app/scripts/shared/typography.js';
 
 const LONG_NAMES = [
-  'Ana Carolina Fernanda de Albuquerque Montenegro',
-  'Gabriel Henrique dos Santos de Oliveira Filho',
+  'NOME_FIXTURE_A_LONGO',
+  'NOME_FIXTURE_B_LONGO',
 ];
 const eventSource = (await readFile(new URL('../invite-app/scripts/event-config.js', import.meta.url), 'utf8'))
   .replace("import { FUNCTIONS_BASE_URL } from './shared/app-config.js';", "const FUNCTIONS_BASE_URL = 'https://example.invalid/functions/v1/';");
@@ -202,7 +202,7 @@ test('Welcome fallback scales its legibility floor with the root font instead of
 
 for (const names of [
   LONG_NAMES,
-  ['Maria Áurea da Conceição de Albuquerque', 'João Luís de Oliveira e Vasconcelos'],
+  ['NOME_COMPOSTO_LONGO_A', 'NOME_COMPOSTO_LONGO_B'],
   ['A'.repeat(150), 'M'.repeat(150)],
 ]) test(`Welcome wrapping preserves complete ordered spans for ${names[0].slice(0, 24)}`, async () => {
   await withWelcomeTypography({ names, naturalWidthAt64: 3000 }, async (ui) => {
