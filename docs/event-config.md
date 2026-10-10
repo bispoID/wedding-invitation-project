@@ -204,7 +204,7 @@ dados dispara
 
 O HTML-fonte mantém metadata estática e fallback genéricos. PUBLIC_SITE_URL e seus
 markers continuam resolvidos no artefato; a imagem social usa o asset genérico
-`invite-app/images/preview-link.webp`, com MIME image/webp e dimensões 583 × 899.
+`invite-app/images/preview-link.webp`, com MIME image/webp e dimensões 661 × 879.
 O monograma estático BD foi restaurado
 nos dois slots originais; o antigo screenshot personalizado permanece removido.
 Durante a preparação, `prepare-static-site.mjs` faz um GET público de

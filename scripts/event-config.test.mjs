@@ -218,8 +218,8 @@ test('static monogram occupies its original two slots and share preview is the s
   assert.doesNotMatch(html + source, /data-event-monogram|event-monogram-fallback|share-preview\.jpeg/);
   assert.match(preparer, /images\/preview-link\.webp/);
   assert.match(html, /og:image:type" content="image\/webp"/);
-  assert.match(html, /og:image:width" content="583"/);
-  assert.match(html, /og:image:height" content="899"/);
+  assert.match(html, /og:image:width" content="661"/);
+  assert.match(html, /og:image:height" content="879"/);
   assert.ok((await readFile(new URL('../invite-app/images/monograma_bd.webp', import.meta.url))).length > 0);
   assert.ok((await readFile(new URL('../invite-app/images/preview-link.webp', import.meta.url))).length > 0);
 });
