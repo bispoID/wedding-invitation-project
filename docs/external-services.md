@@ -118,8 +118,10 @@ production (produção / Vercel)
 
 As três branches foram criadas a partir do commit estável publicado
 `d3f35d9` (`d3f35d98d594ae1885bb94135204a872c5809dec`). As branches remotas
-`staging` e `production` foram publicadas no GitHub e atualmente apontam para o
-commit de separação `1e19f5b` (`1e19f5bc86a2a80aebcc9b2a5cceb2f247cc6e57`).
+`staging` e `production` foram publicadas no GitHub. A separação funcional foi
+introduzida no commit `1e19f5b`
+(`1e19f5bc86a2a80aebcc9b2a5cceb2f247cc6e57`) e a ponta atual das duas branches
+é o commit documental `45743be` (`45743be143928ada43ec5b5cbabe6ac8c44589ec`).
 A publicação do Pages fica limitada a `staging` por push; o workflow também
 recusa execuções manuais selecionadas em outra branch e faz checkout explícito
 de `staging`.
