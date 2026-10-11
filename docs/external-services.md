@@ -116,16 +116,27 @@ staging (homologação / GitHub Pages)
 production (produção / Vercel)
 ```
 
-As três branches foram criadas localmente a partir do commit estável publicado
-`d3f35d9` (`d3f35d98d594ae1885bb94135204a872c5809dec`). A publicação do Pages
-fica limitada a `staging` por push; o workflow também recusa execuções manuais
-selecionadas em outra branch e faz checkout explícito de `staging`.
+As três branches foram criadas a partir do commit estável publicado
+`d3f35d9` (`d3f35d98d594ae1885bb94135204a872c5809dec`). As branches remotas
+`staging` e `production` foram publicadas no GitHub e atualmente apontam para o
+commit de separação `1e19f5b` (`1e19f5bc86a2a80aebcc9b2a5cceb2f247cc6e57`).
+A publicação do Pages fica limitada a `staging` por push; o workflow também
+recusa execuções manuais selecionadas em outra branch e faz checkout explícito
+de `staging`.
+
+O workflow foi executado após a publicação e o job de testes passou. A execução
+do Pages falhou imediatamente no ambiente do GitHub, sem etapas de job/log
+disponíveis pelo conector; por isso ainda é necessário revisar a configuração
+do Pages/ambiente `github-pages` para permitir a publicação a partir de
+`staging` e então repetir a execução manual.
 
 O projeto Vercel `bruna-e-diego` ainda tem a Production Branch operacional
 associada a `feature/landing-page`, conforme o deployment `READY` desse commit.
-Essa alteração não foi feita automaticamente. Para concluir a transição, um
-responsável deve abrir as configurações do projeto na Vercel e trocar
-**Production Branch** para `production`, salvando a mudança sem iniciar um novo
+Após o push, a Vercel gerou previews `READY` para `staging` e `production`, mas
+eles ainda não são deployments de produção. O conector disponível não expõe o
+campo de Production Branch e rejeitou a tentativa de atualização por esquema;
+por isso a alteração ainda precisa ser feita manualmente nas configurações do
+projeto, trocando **Production Branch** para `production` sem iniciar um novo
 deploy nesta etapa. Depois, a primeira publicação em `production` deve ser
 verificada pelo commit e pelo alvo `production`.
 

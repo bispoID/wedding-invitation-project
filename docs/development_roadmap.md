@@ -492,20 +492,22 @@ e os testes cobrem root/subpath.
 - [x] Documentar configuração operacional e previews disponíveis.
 - [x] Preparar localmente `staging` e `production` a partir do commit estável.
 - [x] Restringir localmente o workflow Pages à branch `staging`.
-- [ ] Publicar as novas branches no GitHub e ajustar a Production Branch da Vercel.
+- [x] Publicar as novas branches no GitHub no commit de separação `1e19f5b`.
+- [ ] Ajustar a Production Branch da Vercel para `production` e concluir a validação do Pages.
 
 A arquitetura é independente do provedor. Outros serviços compatíveis podem
 publicar o mesmo artefato; novos ambientes exigem validar suas URLs/origins.
 Esta transição não altera o Supabase de produção, o domínio ou as regras de
-negócio. A conclusão da separação depende somente da promoção remota autorizada
-e da configuração manual da Production Branch na Vercel.
+negócio. A conclusão da separação depende da configuração manual da Production
+Branch na Vercel e da correção da configuração do Pages para `staging`.
 
-**Resultado esperado:**
+**Resultado atual:**
 
-GitHub Pages validado, configuração operacional documentada e portabilidade de
-paths verificada, sem modificar regras de negócio. A aplicação está pronta para
-homologação em `staging`; a publicação remota de `production` ainda aguarda
-autorização.
+Branches remotas publicadas, configuração operacional documentada e
+portabilidade de paths verificada, sem modificar regras de negócio. O código
+está preparado para homologação em `staging`; a publicação efetiva do Pages e
+a troca da Production Branch da Vercel continuam pendentes de configuração
+externa.
 
 ---
 
@@ -711,7 +713,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 08 — Monitoramento
 [x] 09 — Interface / Design (CONCLUÍDA no escopo visual e manual relatado)
 [x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
-[~] 11 — Hospedagem estática / ambientes (publicação inicial validada; separação remota pendente)
+[~] 11 — Hospedagem estática / ambientes (branches separadas; Pages e Vercel pendentes de configuração)
 [x] 12 — Testes / qualidade (356 testes locais; SQL anterior e aceites manuais consolidados)
 [x] 13 — Publicação / operação (QA publicado; CI, smoke checks e aceite visual final aprovados)
 ```

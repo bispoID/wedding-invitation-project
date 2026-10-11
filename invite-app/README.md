@@ -9,8 +9,14 @@ alterações nas regras de negócio.
 O fluxo de ambientes é `feature/landing-page` (desenvolvimento local/Codex) →
 `staging` (homologação no GitHub Pages) → `production` (produção na Vercel).
 As branches `staging` e `production` foram preparadas localmente a partir do
-commit estável publicado; a promoção remota e a troca da Production Branch da
-Vercel permanecem pendentes de autorização.
+commit estável publicado e já foram publicadas no GitHub no commit de separação
+`1e19f5b`. A Production Branch da Vercel ainda precisa ser trocada manualmente
+para `production`; os pushes recentes geraram apenas previews `READY`.
+
+O job de testes do GitHub passou após a publicação. O job do Pages falhou
+imediatamente sem etapas/logs disponíveis pelo conector, então a configuração
+do Pages/ambiente `github-pages` precisa ser revisada antes da homologação
+publicada em `staging`.
 
 ## Arquitetura
 
