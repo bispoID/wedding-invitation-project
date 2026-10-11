@@ -6,6 +6,12 @@ permanece independente do provedor de hospedagem, permitindo sua publicação em
 outros serviços compatíveis, como Vercel, Cloudflare Pages ou Netlify, sem
 alterações nas regras de negócio.
 
+O fluxo de ambientes é `feature/landing-page` (desenvolvimento local/Codex) →
+`staging` (homologação no GitHub Pages) → `production` (produção na Vercel).
+As branches `staging` e `production` foram preparadas localmente a partir do
+commit estável publicado; a promoção remota e a troca da Production Branch da
+Vercel permanecem pendentes de autorização.
+
 ## Arquitetura
 
 - **Apresentação:** `index.html`, com HTML semântico e acessível.
@@ -36,7 +42,10 @@ na versão publicada.
 
 ## Configuração da área administrativa
 
-O frontend público está integrado na branch `feature/landing-page` e publicado.
+O frontend público está integrado na branch `feature/landing-page`; a branch de
+homologação publicada pelo GitHub Pages é `staging`, e a produção da Vercel deve
+ser promovida somente pela branch `production` após a configuração manual do
+projeto.
 Os dados públicos vêm exclusivamente da
 Function event-config: um GET/Promise por página, timeout de 12 segundos,
 loading/ready/not-configured/error, sem cache persistente ou fallback pessoal.
@@ -132,8 +141,8 @@ convite, e os metadados personalizados de compartilhamento só ficam prontos no
 artefato preparado.
 
 No Pages, a URL operacional vem de `actions/configure-pages`; a política de
-publicação continua na branch `feature/landing-page`. A branch de desenvolvimento
-não ganha trigger de deploy. Não há bundler ou leitura
+publicação fica restrita à branch `staging`. A branch de desenvolvimento e a
+branch `production` não ganham trigger de deploy do Pages. Não há bundler ou leitura
 de `.env` pelo browser. O consumo de `event_config` e a retirada dos dados pessoais
 hardcoded foram implementados no Bloco 4 e estão incluídos na publicação atual.
 

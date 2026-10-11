@@ -14,9 +14,21 @@ O projeto combina:
 - **Autenticação administrativa:** Supabase Auth;
 - **Contingência:** Google Sheets como fila temporária de recuperação;
 - **Monitoramento:** Health Check e UptimeRobot;
-- **Hospedagem:** frontend estático e independente do provedor; GitHub Pages foi a escolha inicial.
+- **Hospedagem:** frontend estático e independente do provedor; homologação no GitHub Pages e produção na Vercel.
 
 A arquitetura prioriza simplicidade, segurança, privacidade, baixo custo, manutenção e confiabilidade proporcional ao projeto.
+
+## Fluxo de ambientes
+
+```text
+feature/landing-page → staging → production
+ desenvolvimento        homologação   produção
+ local/Codex             GitHub Pages  Vercel
+```
+
+O workflow do GitHub Pages publica somente `staging`. A Production Branch da
+Vercel precisa ser ajustada manualmente para `production` antes da primeira
+promoção remota; nenhuma configuração externa é alterada por este checkout.
 
 App Config centraliza a infraestrutura pública do browser; o preparador estático
 resolve metadados de root/subpath no artefato. Outros provedores compatíveis com

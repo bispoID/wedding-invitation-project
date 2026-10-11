@@ -478,9 +478,10 @@ exigem seu próprio aceite; não são extensões faltantes do escopo entregue.
 Objetivo: validar a hospedagem atual e a portabilidade operacional do frontend
 estático, sem dependência de um provedor nas regras de negócio.
 
-**Estado: CONCLUÍDA para o ambiente utilizado.** GitHub Pages foi a hospedagem
-inicialmente adotada, com publicação operacional validada. App Config centraliza
-infraestrutura pública; o preparador e os testes cobrem root/subpath.
+**Estado: EM TRANSIÇÃO.** A publicação inicial no GitHub Pages continua validada;
+nesta tarefa, a separação entre desenvolvimento, homologação e produção foi
+preparada localmente. App Config centraliza infraestrutura pública; o preparador
+e os testes cobrem root/subpath.
 
 - [x] Implementar publicação de `invite-app` no GitHub Pages por workflow.
 - [x] Validar root/subpath nos testes e o subpath publicado `/wedding-invitation-project/`.
@@ -489,17 +490,22 @@ infraestrutura pública; o preparador e os testes cobrem root/subpath.
 - [x] Validar origins/CORS dos ambientes efetivamente utilizados.
 - [x] Documentar preparação e testes locais do artefato estático.
 - [x] Documentar configuração operacional e previews disponíveis.
+- [x] Preparar localmente `staging` e `production` a partir do commit estável.
+- [x] Restringir localmente o workflow Pages à branch `staging`.
+- [ ] Publicar as novas branches no GitHub e ajustar a Production Branch da Vercel.
 
 A arquitetura é independente do provedor. Outros serviços compatíveis podem
 publicar o mesmo artefato; novos ambientes exigem validar suas URLs/origins.
-Não é necessário adotar outro provedor, ambiente de preview separado ou domínio
-personalizado para concluir o ambiente definido.
+Esta transição não altera o Supabase de produção, o domínio ou as regras de
+negócio. A conclusão da separação depende somente da promoção remota autorizada
+e da configuração manual da Production Branch na Vercel.
 
 **Resultado esperado:**
 
 GitHub Pages validado, configuração operacional documentada e portabilidade de
-paths verificada, sem modificar regras de negócio. A aplicação está pronta
-para os testes finais no provedor estático escolhido.
+paths verificada, sem modificar regras de negócio. A aplicação está pronta para
+homologação em `staging`; a publicação remota de `production` ainda aguarda
+autorização.
 
 ---
 
@@ -705,7 +711,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 08 — Monitoramento
 [x] 09 — Interface / Design (CONCLUÍDA no escopo visual e manual relatado)
 [x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
-[x] 11 — Hospedagem estática / ambientes (CONCLUÍDA no ambiente utilizado)
+[~] 11 — Hospedagem estática / ambientes (publicação inicial validada; separação remota pendente)
 [x] 12 — Testes / qualidade (356 testes locais; SQL anterior e aceites manuais consolidados)
 [x] 13 — Publicação / operação (QA publicado; CI, smoke checks e aceite visual final aprovados)
 ```

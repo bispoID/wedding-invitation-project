@@ -3,7 +3,7 @@ name: Deploy invite-app to GitHub Pages
 on:
   push:
     branches:
-      - feature/landing-page
+      - staging
   workflow_dispatch:
 
 permissions:
@@ -17,6 +17,8 @@ concurrency:
 
 jobs:
   deploy:
+    # A execução manual também só pode publicar o ambiente de homologação.
+    if: github.ref == 'refs/heads/staging'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -26,6 +28,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: staging
 
       - name: Configure GitHub Pages
         id: pages

@@ -88,7 +88,7 @@ adotada para o frontend.
 **Uso no projeto:**
 
 - preparação de `invite-app` em `_site`, com `PUBLIC_SITE_URL` operacional;
-- publicação do artefato pelo workflow `deploy-pages` em `feature/landing-page`;
+- publicação do artefato pelo workflow `deploy-pages` somente em `staging`;
 - URL atualmente monitorada:
   `https://bispoid.github.io/wedding-invitation-project`.
 
@@ -103,6 +103,37 @@ mantendo as regras de negócio nas Supabase Edge Functions.
 **Referência oficial:**
 
 - [GitHub Pages Documentation](https://docs.github.com/en/pages)
+
+## Separação de branches e ambientes
+
+O fluxo operacional preparado localmente é:
+
+```text
+feature/landing-page (desenvolvimento local/Codex)
+        ↓ promoção explícita
+staging (homologação / GitHub Pages)
+        ↓ promoção explícita
+production (produção / Vercel)
+```
+
+As três branches foram criadas localmente a partir do commit estável publicado
+`d3f35d9` (`d3f35d98d594ae1885bb94135204a872c5809dec`). A publicação do Pages
+fica limitada a `staging` por push; o workflow também recusa execuções manuais
+selecionadas em outra branch e faz checkout explícito de `staging`.
+
+O projeto Vercel `bruna-e-diego` ainda tem a Production Branch operacional
+associada a `feature/landing-page`, conforme o deployment `READY` desse commit.
+Essa alteração não foi feita automaticamente. Para concluir a transição, um
+responsável deve abrir as configurações do projeto na Vercel e trocar
+**Production Branch** para `production`, salvando a mudança sem iniciar um novo
+deploy nesta etapa. Depois, a primeira publicação em `production` deve ser
+verificada pelo commit e pelo alvo `production`.
+
+Enquanto essa configuração não for alterada, novos pushes em
+`feature/landing-page` podem continuar sendo interpretados pela integração Git
+da Vercel como produção. Branches não produtivas também podem gerar previews
+conforme a configuração padrão da integração; isso não promove código a
+produção depois da troca da Production Branch.
 
 ## Node.js e npm
 
