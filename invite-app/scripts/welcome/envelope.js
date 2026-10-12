@@ -124,6 +124,7 @@ function createInvitationController({
     welcome.classList.remove(
       'is-opening-envelope',
       'is-opening-card',
+      'is-opening-invitation',
       'is-dev-preview-card'
     );
 
@@ -155,6 +156,7 @@ function createInvitationController({
 
     isOpening = true;
     seal.setAttribute('aria-disabled', 'true');
+    welcome.classList.add('is-opening-invitation');
 
     schedule(() => {
       // Etapa 1: CSS inicia a aba superior; a Web Animation move o selo e flores.
@@ -201,7 +203,8 @@ function createInvitationController({
 
     welcome.classList.remove(
       'is-opening-envelope',
-      'is-opening-card'
+      'is-opening-card',
+      'is-opening-invitation'
     );
 
     resetFloralSealAnimations();

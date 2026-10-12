@@ -48,6 +48,29 @@
   display: none;
 }
 
+/* O texto desaparece e reaparece suavemente, sem deslocamento lateral. */
+@keyframes open-invitation-blink {
+
+  0%,
+  100% {
+    --open-invitation-mask-alpha: 1;
+  }
+
+  50% {
+    --open-invitation-mask-alpha: 0;
+  }
+}
+
+/* Mantém a instrução transparente durante a abertura do envelope. */
+.welcome.is-opening-envelope
+  .open-invitation > span,
+.welcome.is-opening-invitation
+  .open-invitation > span {
+  animation: none;
+
+  --open-invitation-mask-alpha: 0;
+}
+
 @keyframes flap-open {
 
   0% {

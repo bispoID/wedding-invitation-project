@@ -48,14 +48,6 @@
       calc(100vw - 2rem)
     );
   }
-
-  /* Espaçamento da instrução abaixo do envelope. */
-  .open-invitation {
-    margin:
-      1rem
-      0
-      0;
-  }
 }
 /* =========================================================
    MOBILE COM ALTURA REDUZIDA
@@ -85,17 +77,6 @@
         18rem,
         calc(100vw - 2rem)
       );
-  }
-
-  .envelope-stage {
-    margin:
-      0.25rem
-      0
-      0.65rem;
-  }
-
-  .open-invitation {
-    margin-top: 1.5rem;
   }
 }
 /* =========================================================
@@ -135,14 +116,6 @@
     font-size: 10.2rem;
 
     transform: translateX(-15px);
-  }
-
-  /* Espaçamento da instrução abaixo do envelope. */
-  .open-invitation {
-    margin:
-      1.9rem
-      0
-      0;
   }
 
   .letter {

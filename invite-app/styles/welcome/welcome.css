@@ -322,9 +322,9 @@
   aspect-ratio: 7 / 10;
 
   margin:
-    0.5rem
+    2.5cqw
     0
-    1.3rem;
+    5cqw;
 }
 
 /* Segundo envelope, posicionado atrás e sem animação. */
@@ -387,7 +387,7 @@
   align-items: center;
 
   margin:
-    0.8rem
+    2cqw
     0
     0;
 
@@ -411,4 +411,59 @@
   text-transform: uppercase;
 
   pointer-events: none;
+}
+
+/* O pisca-pisca de transparência atua somente sobre a frase. */
+@property --open-invitation-mask-alpha {
+  syntax: "<number>";
+
+  inherits: false;
+
+  initial-value: 1;
+}
+
+.open-invitation > span {
+  display: inline-block;
+
+  color: var(--color-page-background);
+
+  text-shadow: none;
+
+  --open-invitation-mask-alpha: 1;
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgb(255 255 255 / var(--open-invitation-mask-alpha)) 0%,
+    rgb(255 255 255 / var(--open-invitation-mask-alpha)) 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    rgb(255 255 255 / var(--open-invitation-mask-alpha)) 0%,
+    rgb(255 255 255 / var(--open-invitation-mask-alpha)) 100%
+  );
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+
+  animation:
+    open-invitation-blink
+    1500ms
+    linear
+    infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .open-invitation > span {
+    animation: none;
+
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }
