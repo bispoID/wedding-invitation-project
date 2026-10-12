@@ -24,13 +24,15 @@ const SELECTORS = Object.freeze({
   letter: '.letter',
   seal: '.envelope__seal',
   backButton: '.back-to-cover',
-  decorations: '.envelope__decorations'
+  decorations: '.envelope__decorations',
+  cardControl: '.card-pause-control'
 });
 
 /* Os valores reais ficam em styles/base/variables.css. */
 const TIMING_VARIABLES = Object.freeze({
   openingPause: '--motion-opening-pause',
   cardStart: '--motion-card-start',
+  cardDuration: '--motion-card-duration',
   letterEnter: '--motion-letter-enter'
 });
 
@@ -38,16 +40,30 @@ const TIMING_VARIABLES = Object.freeze({
 /**
  * Obtém os marcos da sequência diretamente dos tokens CSS.
  *
- * @returns {{openingPause: number, cardStart: number, letterEnter: number}} Marcos em ms.
+ * @returns {{openingPause: number, cardStart: number, cardDuration: number, letterEnter: number}} Marcos em ms.
  */
 function readAnimationTiming() {
   // CSS é a fonte de verdade para que a animação visual e os timers coincidam.
   return {
     openingPause: readMilliseconds(TIMING_VARIABLES.openingPause),
     cardStart: readMilliseconds(TIMING_VARIABLES.cardStart),
+    cardDuration: readMilliseconds(TIMING_VARIABLES.cardDuration),
     letterEnter: readMilliseconds(TIMING_VARIABLES.letterEnter)
   };
 }
+
+
+/* Estados explícitos evitam que um callback antigo revele a carta após a espera. */
+const FLOW_STATES = Object.freeze({
+  IDLE: 'idle',
+  OPENING: 'opening',
+  CARD_PRESENTING: 'card-presenting',
+  CARD_PRESENTED: 'card-presented',
+  WAITING_FOR_CARD_COMPLETION: 'waiting-for-card-completion',
+  WAITING_FOR_CONTINUE: 'waiting-for-continue',
+  TRANSITION_AUTHORIZED: 'transition-authorized',
+  COMPLETED: 'completed'
+});
 
 
 /**
@@ -59,6 +75,7 @@ function readAnimationTiming() {
  * @param {HTMLElement} elements.seal Selo interativo.
  * @param {HTMLElement} elements.backButton Botão de retorno para a capa.
  * @param {HTMLElement} elements.decorations Grupo de flores e selo.
+ * @param {HTMLButtonElement} elements.cardControl Controle de espera do cartão.
  * @returns {void}
  */
 function createInvitationController({
@@ -66,16 +83,23 @@ function createInvitationController({
   letter,
   seal,
   backButton,
-  decorations
+  decorations,
+  cardControl
 }) {
 
   /*
-   * A sequência tem duas etapas agendadas. Guardar os IDs permite cancelar
-   * callbacks antigos quando o usuário retorna para a capa.
+   * Os IDs ficam separados porque a espera cancela somente a revelação da
+   * carta, preservando o timer que acompanha o movimento natural do cartão.
    */
-  let isOpening = false;
   const animationTiming = readAnimationTiming();
   const pendingTimers = new Set();
+  let flowState = FLOW_STATES.IDLE;
+  let openingTimerId = null;
+  let cardStartTimerId = null;
+  let cardCompletionTimerId = null;
+  let letterTimerId = null;
+  let cardAnimationComplete = false;
+  let flowRunId = 0;
 
 
   /**
@@ -83,7 +107,7 @@ function createInvitationController({
    *
    * @param {Function} callback Etapa que deve ser executada.
    * @param {number} delay Atraso em milissegundos.
-   * @returns {void}
+   * @returns {number} ID do timer criado.
    */
   function schedule(callback, delay) {
     const timerId = window.setTimeout(() => {
@@ -92,6 +116,23 @@ function createInvitationController({
     }, delay);
 
     pendingTimers.add(timerId);
+    return timerId;
+  }
+
+
+  /**
+   * Cancela um timer específico sem tocar nas outras etapas da abertura.
+   *
+   * @param {number|null} timerId ID do timer ou null.
+   * @returns {void}
+   */
+  function cancelTimer(timerId) {
+    if (timerId === null) {
+      return;
+    }
+
+    window.clearTimeout(timerId);
+    pendingTimers.delete(timerId);
   }
 
 
@@ -106,6 +147,196 @@ function createInvitationController({
     );
 
     pendingTimers.clear();
+
+    openingTimerId = null;
+    cardStartTimerId = null;
+    cardCompletionTimerId = null;
+    letterTimerId = null;
+  }
+
+
+  /**
+   * Coloca o controle em seu estado inicial e o retira da navegação.
+   *
+   * @returns {void}
+   */
+  function resetCardControl() {
+    cardControl.hidden = true;
+    cardControl.disabled = false;
+    cardControl.removeAttribute('data-dev-preview');
+    cardControl.textContent = 'Pausar';
+    cardControl.setAttribute(
+      'aria-label',
+      'Pausar antes de abrir a carta'
+    );
+    cardControl.removeAttribute('aria-disabled');
+  }
+
+
+  /**
+   * Exibe o botão quando o cartão começa a sair do envelope.
+   *
+   * @returns {void}
+   */
+  function showWaitControl() {
+    cardControl.hidden = false;
+    cardControl.disabled = false;
+    cardControl.textContent = 'Pausar';
+    cardControl.setAttribute(
+      'aria-label',
+      'Pausar antes de abrir a carta'
+    );
+    cardControl.removeAttribute('aria-disabled');
+  }
+
+
+  /**
+   * Atualiza o mesmo botão para a ação de retomada, preservando seu foco.
+   *
+   * @returns {void}
+   */
+  function showContinueControl() {
+    cardControl.hidden = false;
+    cardControl.textContent = 'Continuar';
+    cardControl.setAttribute(
+      'aria-label',
+      'Continuar para a carta'
+    );
+  }
+
+
+  /**
+   * Finaliza visualmente o controle antes de revelar a carta.
+   *
+   * @returns {void}
+   */
+  function hideCardControl() {
+    cardControl.hidden = true;
+    cardControl.disabled = false;
+    cardControl.removeAttribute('aria-disabled');
+  }
+
+
+  /**
+   * Revela a carta somente depois que o cartão concluiu seu movimento.
+   *
+   * @returns {void}
+   */
+  function revealLetter() {
+    if (
+      flowState === FLOW_STATES.COMPLETED ||
+      !cardAnimationComplete
+    ) {
+      return;
+    }
+
+    flowState = FLOW_STATES.TRANSITION_AUTHORIZED;
+    hideCardControl();
+    welcome.hidden = true;
+    showLetter(letter);
+    flowState = FLOW_STATES.COMPLETED;
+  }
+
+
+  /**
+   * Autoriza a carta uma única vez e aguarda o término natural do cartão.
+   *
+   * @returns {void}
+   */
+  function authorizeLetterTransition() {
+    if (
+      flowState !== FLOW_STATES.WAITING_FOR_CARD_COMPLETION &&
+      flowState !== FLOW_STATES.WAITING_FOR_CONTINUE
+    ) {
+      return;
+    }
+
+    flowState = FLOW_STATES.TRANSITION_AUTHORIZED;
+    cardControl.disabled = true;
+    cardControl.setAttribute('aria-disabled', 'true');
+
+    if (cardAnimationComplete) {
+      revealLetter();
+    }
+  }
+
+
+  /**
+   * Suspende apenas a passagem automática para a carta.
+   *
+   * @returns {void}
+   */
+  function requestCardPause() {
+    if (
+      flowState !== FLOW_STATES.CARD_PRESENTING &&
+      flowState !== FLOW_STATES.CARD_PRESENTED
+    ) {
+      return;
+    }
+
+    cancelTimer(letterTimerId);
+    letterTimerId = null;
+    showContinueControl();
+
+    flowState = cardAnimationComplete
+      ? FLOW_STATES.WAITING_FOR_CONTINUE
+      : FLOW_STATES.WAITING_FOR_CARD_COMPLETION;
+  }
+
+
+  /**
+   * Roteia as duas ações do botão sem criar controles concorrentes.
+   *
+   * @returns {void}
+   */
+  function handleCardControl() {
+    if (cardControl.getAttribute?.('data-dev-preview') === 'true') {
+      return;
+    }
+
+    if (
+      flowState === FLOW_STATES.CARD_PRESENTING ||
+      flowState === FLOW_STATES.CARD_PRESENTED
+    ) {
+      requestCardPause();
+      return;
+    }
+
+    if (
+      flowState === FLOW_STATES.WAITING_FOR_CARD_COMPLETION ||
+      flowState === FLOW_STATES.WAITING_FOR_CONTINUE
+    ) {
+      authorizeLetterTransition();
+    }
+  }
+
+
+  /**
+   * Registra o fim natural da animação CSS do cartão.
+   *
+   * @returns {void}
+   */
+  function completeCardPresentation(runId) {
+    if (runId !== flowRunId) {
+      return;
+    }
+
+    cardCompletionTimerId = null;
+    cardAnimationComplete = true;
+
+    if (flowState === FLOW_STATES.WAITING_FOR_CARD_COMPLETION) {
+      flowState = FLOW_STATES.WAITING_FOR_CONTINUE;
+      return;
+    }
+
+    if (flowState === FLOW_STATES.TRANSITION_AUTHORIZED) {
+      revealLetter();
+      return;
+    }
+
+    if (flowState === FLOW_STATES.CARD_PRESENTING) {
+      flowState = FLOW_STATES.CARD_PRESENTED;
+    }
   }
 
 
@@ -116,7 +347,9 @@ function createInvitationController({
    * @returns {void}
    */
   function resetInvitationState() {
+    flowRunId += 1;
     cancelScheduledSteps();
+    resetCardControl();
 
     welcome.hidden = false;
     letter.hidden = true;
@@ -131,7 +364,8 @@ function createInvitationController({
     letter.classList.remove('is-entering');
     resetFloralSealAnimations();
 
-    isOpening = false;
+    flowState = FLOW_STATES.IDLE;
+    cardAnimationComplete = false;
     seal.removeAttribute('aria-disabled');
   }
 
@@ -141,24 +375,39 @@ function createInvitationController({
    *
    * 1. Abre a aba superior e move as decorações.
    * 2. Libera a saída do cartão no marco configurado.
-   * 3. Oculta a capa e revela a carta.
+   * 3. Inicia a saída do cartão e agenda sua conclusão natural.
+   * 4. Oculta a capa e revela a carta.
    *
-   * O lock isOpening protege as etapas contra cliques ou teclas repetidas.
+   * O estado explícito protege as etapas contra cliques ou teclas repetidas.
    *
    * @returns {void}
    */
   function openInvitation() {
 
     // O selo é o único gatilho e não pode iniciar duas sequências ao mesmo tempo.
-    if (isOpening) {
+    if (flowState !== FLOW_STATES.IDLE) {
       return;
     }
 
-    isOpening = true;
+    flowState = FLOW_STATES.OPENING;
+    cardAnimationComplete = false;
+    const runId = flowRunId + 1;
+    const cardCompletionDelay = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+      ? 0
+      : animationTiming.cardDuration;
+    flowRunId = runId;
     seal.setAttribute('aria-disabled', 'true');
     welcome.classList.add('is-opening-invitation');
 
-    schedule(() => {
+    openingTimerId = schedule(() => {
+      if (runId !== flowRunId) {
+        return;
+      }
+
+      openingTimerId = null;
+
       // Etapa 1: CSS inicia a aba superior; a Web Animation move o selo e flores.
       welcome.classList.add(
         'is-opening-envelope'
@@ -167,17 +416,43 @@ function createInvitationController({
       animateFloralSealExit(decorations);
 
       // Etapa 2: o cartão começa a sair depois que a aba já avançou.
-      schedule(() => {
+      cardStartTimerId = schedule(() => {
+        if (runId !== flowRunId) {
+          return;
+        }
+
+        cardStartTimerId = null;
+        flowState = FLOW_STATES.CARD_PRESENTING;
+        showWaitControl();
+
         welcome.classList.add(
           'is-opening-card'
+        );
+
+        cardCompletionTimerId = schedule(
+          () => completeCardPresentation(runId),
+          cardCompletionDelay
         );
       }, animationTiming.cardStart);
 
       // Etapa 3: a capa é ocultada e a carta recebe o foco.
-      schedule(() => {
-        welcome.hidden = true;
-        showLetter(letter);
-        isOpening = false;
+      letterTimerId = schedule(() => {
+        if (runId !== flowRunId) {
+          return;
+        }
+
+        letterTimerId = null;
+
+        // Um callback antigo nunca pode furar uma espera já solicitada.
+        if (
+          flowState !== FLOW_STATES.CARD_PRESENTING &&
+          flowState !== FLOW_STATES.CARD_PRESENTED
+        ) {
+          return;
+        }
+
+        flowState = FLOW_STATES.TRANSITION_AUTHORIZED;
+        revealLetter();
       }, animationTiming.letterEnter);
     }, animationTiming.openingPause);
   }
@@ -195,22 +470,7 @@ function createInvitationController({
     }
 
     // A operação é idempotente: cliques repetidos após o primeiro são ignorados.
-    cancelScheduledSteps();
-
-    hideLetter(letter);
-
-    welcome.hidden = false;
-
-    welcome.classList.remove(
-      'is-opening-envelope',
-      'is-opening-card',
-      'is-opening-invitation'
-    );
-
-    resetFloralSealAnimations();
-
-    isOpening = false;
-    seal.removeAttribute('aria-disabled');
+    resetInvitationState();
 
     window.scrollTo({
       top: 0,
@@ -248,6 +508,13 @@ function createInvitationController({
     'click',
     returnToCover
   );
+
+  cardControl.addEventListener(
+    'click',
+    handleCardControl
+  );
+
+  resetInvitationState();
 
   return {
     resetInvitationState
@@ -289,12 +556,14 @@ export function initEnvelope({ devSkipWelcome = false, devPreview = null } = {})
     applyDeveloperPreview({
       welcome: elements.welcome,
       letter: elements.letter,
+      cardControl: elements.cardControl,
       mode: devPreview
     });
 
     initDeveloperPreviewControls({
       welcome: elements.welcome,
       letter: elements.letter,
+      cardControl: elements.cardControl,
       activeMode: devPreview,
       resetInvitationState: invitationController.resetInvitationState
     });

@@ -402,6 +402,9 @@ A aprovação não implica cobertura universal de navegadores.
 - [x] Aprovar os ajustes mobile registrados nos checkpoints.
 - [x] Consolidar aceite manual de teclado no fluxo completo e redução de movimento.
 - [x] Consolidar aceite de nomes longos e matriz ampliada de telas/navegadores.
+- [x] Adicionar o controle `Pausar / Continuar` para a apresentação do cartão,
+  com identidade visual compartilhada com o RSVP, dimensionamento proporcional,
+  área segura móvel, foco acessível e preview estático no modo desenvolvedor.
 
 ### Direção visual
 
@@ -548,6 +551,11 @@ registrou aceite visual desktop/mobile aproximadamente 390px, incluindo READY,
 localização própria da recepção, mapas, monograma, timestamps, espaçamentos e
 collapsible. Integração e publicação foram concluídas no Bloco 5; hotfixes de
 sucesso por ausência e tap highlight do Admin integram a versão publicada.
+O fluxo do envelope também possui cobertura específica para o controle manual da
+apresentação do cartão: pausa da revelação automática, continuação após o
+movimento natural, proteção contra callbacks antigos e restauração ao retornar
+para a capa. Essa alteração é local e ainda não altera as evidências históricas
+de CI, Pages ou do aceite da versão publicada na Fase 13.
 Contratos detalhados: [event-config.md](event-config.md).
 
 - [x] Criar workflow independente `.github/workflows/test.yml` em Linux.
@@ -559,6 +567,8 @@ Contratos detalhados: [event-config.md](event-config.md).
 - [x] Integrar testes de App Config, preparação portátil, Admin e Event Config ao CI.
 - [x] Aprovar a baseline histórica de 263 testes localmente e em Linux no Bloco 7.
 - [x] Aprovar a regressão local consolidada de 356 testes, incluindo as correções de QA.
+- [x] Cobrir o fluxo `Pausar / Continuar` e seus estados de transição em
+  `scripts/envelope-motion.test.mjs`.
 - [x] Executar `supabase/tests/block3.sql` em PostgreSQL local descartável:
   Bloco 7, em 09/10/2026, PostgreSQL 17.6/Supabase CLI 2.120.0 em Docker/WSL2;
   reset local sem seed, 15 migrations e duas execuções integrais com ROLLBACK

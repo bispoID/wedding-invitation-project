@@ -25,7 +25,8 @@ publicada em `staging`.
 - **Comportamento:** `scripts/main.js`, que inicializa os módulos de envelope, título, RSVP e Event Config.
 - **Tokens compartilhados:** os tempos e curvas de movimento ficam em `styles/base/variables.css`; `scripts/shared/css.js` permite que o JavaScript reutilize esses valores.
 - **Assets de estilo:** imagens usadas pelo CSS também ficam centralizadas como tokens `--asset-*` em `styles/base/variables.css`.
-- **Interações:** `scripts/welcome/envelope.js` bloqueia reentrância durante a abertura e `scripts/letter/rsvp.js` envia o RSVP à Supabase Edge Function.
+- **Interações:** `scripts/welcome/envelope.js` coordena a abertura, o controle manual `Pausar / Continuar`, o foco da carta e o retorno idempotente à capa; `scripts/letter/rsvp.js` envia o RSVP à Supabase Edge Function.
+- **Controles visuais:** `.button` e `.card-pause-control` compartilham identidade visual, tokens de cor, marca d’água floral, estados de foco e dimensionamento proporcional; o botão do cartão também respeita a área segura inferior em telas móveis.
 - **Modo desenvolvedor:** `scripts/devmode/preview.js` controla os previews estáticos e `styles/devmode/devmode.css` concentra os estilos do painel.
 - **Área administrativa:** `admin/` mantém login Supabase Auth, criação/listagem/edição/exclusão de convidados, indicadores, Event Config e contingência, sempre por Edge Functions com autorização no backend.
 
@@ -171,6 +172,14 @@ aprovada localmente e em Linux/CI no Bloco 7. A suíte SQL integral foi aprovada
 separadamente em banco local
 descartável; consulte [event-config.md](../docs/event-config.md#validação-local).
 
+O controle do cartão possui cobertura específica em
+`scripts/envelope-motion.test.mjs`: a execução local direta validou a exibição de
+“Pausar”, a suspensão da revelação automática, a troca para “Continuar”, a espera
+pela conclusão natural do cartão, a proteção contra cliques repetidos e a
+restauração do estado ao retornar para a capa. O runner paralelo do Node pode
+apresentar `spawn EPERM` no Windows; nesse caso, os arquivos de teste devem ser
+executados individualmente, sem tratar a falha do runner como aprovação.
+
 
 ## Modo desenvolvedor
 
@@ -197,4 +206,17 @@ Também é possível usar a URL:
 ?devmode=cover
 ```
 
-Esse modo foi pensado para inspeção de layout e ajustes visuais sem precisar executar a sequência de abertura a cada carregamento.
+No preview `?devmode=envelope-card`, o cartão aparece estaticamente e o botão
+“Pausar” é exibido apenas para inspeção visual. O clique é intencionalmente inerte
+nesse modo: a apresentação não inicia a sequência funcional nem revela a carta.
+Nos previews `cover` e `letter`, o controle permanece oculto. Em telas pequenas,
+o painel de desenvolvimento ocupa a faixa superior e o controle do cartão fica
+ancorado na faixa inferior segura, evitando sobreposição entre os controles.
+
+No fluxo real, “Pausar” aparece quando o cartão começa a sair do envelope. A
+animação do cartão continua até o fim, enquanto a revelação automática da carta
+é suspensa. O cartão permanece apresentado por tempo indeterminado e o botão
+muda para “Continuar”. Ao continuar, a carta é revelada sem reiniciar o
+movimento do cartão. Sem interação, os marcos automáticos originais permanecem.
+O botão usa navegação nativa por teclado, `focus-visible`, gerenciamento de foco
+na carta e respeita `prefers-reduced-motion`.

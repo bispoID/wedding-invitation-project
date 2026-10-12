@@ -377,6 +377,8 @@
 
 /* Instrução de abertura posicionada abaixo do envelope. */
 .open-invitation {
+  position: relative;
+
   display: flex;
 
   width: max-content;
@@ -411,6 +413,70 @@
   text-transform: uppercase;
 
   pointer-events: none;
+}
+
+/* Controle de espera posicionado fora do fluxo horizontal do envelope. */
+.card-pause-control {
+  position: absolute;
+  top: calc(100% + 2.75cqw);
+  left: 50%;
+  z-index: 12;
+
+  width: 40cqw;
+  margin: 0;
+
+  cursor: pointer;
+  line-height: 1;
+  transform: translateX(-50%);
+  pointer-events: auto;
+
+  animation:
+    card-pause-control-enter
+    500ms
+    var(--ease-smooth)
+    both;
+}
+
+.card-pause-control:hover:not(:disabled),
+.card-pause-control:focus-visible:not(:disabled) {
+  transform: translate(-50%, -2px);
+}
+
+.welcome.is-dev-preview-card .card-pause-control {
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes card-pause-control-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0.35rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+/* Reserva o espaço do controle no fluxo para impedir cortes em telas curtas. */
+@media (max-width: 699px) {
+
+  .open-invitation {
+    padding-bottom:
+      calc(
+        13cqw
+        + 2.75cqw
+        + env(safe-area-inset-bottom, 0px)
+      );
+  }
+
+  .card-pause-control {
+    position: fixed;
+    top: auto;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    max-width: calc(100vw - 2rem);
+  }
 }
 
 /* O pisca-pisca de transparência atua somente sobre a frase. */
@@ -465,5 +531,9 @@
 
     -webkit-mask-image: none;
     mask-image: none;
+  }
+
+  .card-pause-control {
+    animation: none;
   }
 }

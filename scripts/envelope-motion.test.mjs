@@ -38,10 +38,12 @@ async function withEnvelopeMotion(reduced, run) {
 
   const welcome = element(), letter = element(true), seal = element();
   const backButton = element(), decorations = element(), letterTitle = element();
-  const elements = { welcome, letter, seal, backButton, decorations, letterTitle };
+  const cardControl = element(true);
+  const elements = { welcome, letter, seal, backButton, decorations, letterTitle, cardControl };
   const selectors = {
     '.welcome': welcome, '.letter': letter, '.envelope__seal': seal,
     '.back-to-cover': backButton, '.envelope__decorations': decorations,
+    '.card-pause-control': cardControl,
   };
   letter.querySelector = (selector) => selector === '#letter-title' ? letterTitle : null;
   decorations.animate = (frames, options) => {
@@ -173,11 +175,14 @@ for (const reduced of [false, true]) for (const trigger of ['click', 'Enter', ' 
       assert.equal(ui.welcome.classList.contains('is-opening-card'), false);
       ui.advance(1);
       assert.equal(ui.welcome.classList.contains('is-opening-card'), true);
+      assert.equal(ui.cardControl.hidden, false);
+      assert.equal(ui.cardControl.textContent, 'Pausar');
       ui.advance(4799);
       assert.equal(ui.letter.hidden, true);
       ui.advance(1);
       assert.equal(ui.welcome.hidden, true);
       assert.equal(ui.letter.hidden, false);
+      assert.equal(ui.cardControl.hidden, true);
       assert.equal(ui.letter.classList.contains('is-entering'), true);
       assert.deepEqual(ui.letterTitle.focusCalls, [{ preventScroll: true }]);
       assert.equal(ui.timers.size, 0);
@@ -187,6 +192,8 @@ for (const reduced of [false, true]) for (const trigger of ['click', 'Enter', ' 
       assert.equal(ui.welcome.classList.contains('is-opening-envelope'), false);
       assert.equal(ui.welcome.classList.contains('is-opening-card'), false);
       assert.equal(ui.letter.classList.contains('is-entering'), false);
+      assert.equal(ui.cardControl.hidden, true);
+      assert.equal(ui.cardControl.textContent, 'Pausar');
       assert.equal(ui.seal.attrs['aria-disabled'], undefined);
       assert.deepEqual(ui.seal.focusCalls, [{ preventScroll: true }]);
       assert.equal(ui.animations[0]?.cancelCalls ?? 0, reduced ? 0 : 1);
@@ -201,6 +208,69 @@ for (const reduced of [false, true]) for (const trigger of ['click', 'Enter', ' 
   });
 }
 
+for (const reduced of [false, true]) {
+  test(`Envelope ${reduced ? 'reduce' : 'no-preference'} wait pauses only the letter transition`, async () => {
+    await withEnvelopeMotion(reduced, async (ui) => {
+      ui.seal.events.click();
+      ui.advance(600 + 4700);
+
+      ui.cardControl.events.click();
+      assert.equal(ui.cardControl.textContent, 'Continuar');
+      assert.equal(ui.cardControl.hidden, false);
+      assert.equal(ui.welcome.classList.contains('is-opening-card'), true);
+
+      ui.advance(3300);
+      assert.equal(ui.letter.hidden, true);
+      assert.equal(ui.cardControl.hidden, false);
+
+      ui.advance(60000);
+      assert.equal(ui.letter.hidden, true, 'The card must remain available without a timeout');
+
+      ui.cardControl.events.click();
+      assert.equal(ui.welcome.hidden, true);
+      assert.equal(ui.letter.hidden, false);
+      assert.equal(ui.cardControl.hidden, true);
+      assert.equal(ui.timers.size, 0);
+    });
+  });
+}
+
+test('Envelope continue requested during card movement waits for its natural completion and ignores repeats', async () => {
+  await withEnvelopeMotion(false, async (ui) => {
+    ui.seal.events.click();
+    ui.advance(600 + 4700);
+
+    ui.cardControl.events.click();
+    ui.cardControl.events.click();
+    ui.cardControl.events.click();
+    assert.equal(ui.letter.hidden, true);
+    assert.equal(ui.cardControl.disabled, true);
+
+    ui.advance(3299);
+    assert.equal(ui.letter.hidden, true);
+    ui.advance(1);
+    assert.equal(ui.letter.hidden, false);
+    assert.equal(ui.letterTitle.focusCalls.length, 1);
+
+    ui.cardControl.events.click();
+    assert.equal(ui.letterTitle.focusCalls.length, 1, 'Repeated continue must not reveal twice');
+  });
+});
+
+test('Envelope wait near the automatic deadline prevents an old letter callback', async () => {
+  await withEnvelopeMotion(false, async (ui) => {
+    ui.seal.events.click();
+    ui.advance(600 + 9499);
+    assert.equal(ui.letter.hidden, true);
+
+    ui.cardControl.events.click();
+    ui.advance(1);
+    assert.equal(ui.letter.hidden, true);
+    ui.advance(60000);
+    assert.equal(ui.letter.hidden, true);
+  });
+});
+
 test('Envelope seal and flowers use static WebP assets and retain native keyboard and touch hooks', async () => {
   const html = await readFile(new URL('../invite-app/index.html', import.meta.url), 'utf8');
   const css = await readFile(new URL('../invite-app/styles/welcome/envelope.css', import.meta.url), 'utf8');
@@ -211,6 +281,11 @@ test('Envelope seal and flowers use static WebP assets and retain native keyboar
   assert.match(seal, /aria-label="[^"]+"/);
   assert.match(css, /\.envelope__seal:focus-visible\s*\{[^}]*outline:/);
   assert.match(css, /touch-action:\s*manipulation/);
+  const pauseControl = html.match(/<button\b[^>]*class="card-pause-control"[^>]*>[\s\S]*?<\/button>/)?.[0];
+  assert.ok(pauseControl);
+  assert.match(pauseControl, /type="button"/);
+  assert.match(pauseControl, /hidden/);
+  assert.match(pauseControl, />\s*Pausar\s*</);
   for (const file of ['flores_sempre_vivas.webp', 'selo_de_cera_carta_800x800.webp']) {
     assert.ok(html.includes(`src="./images/${file}"`));
     const bytes = await readFile(new URL('../invite-app/images/' + file, import.meta.url));

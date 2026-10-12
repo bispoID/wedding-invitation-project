@@ -45,6 +45,14 @@
 
 .welcome.is-dev-preview-card
   .open-invitation {
+  display: flex;
+  width: 40cqw;
+}
+
+.welcome.is-dev-preview-card
+  .open-invitation > span,
+.welcome.is-dev-preview-card
+  .open-invitation > .welcome__ramas {
   display: none;
 }
 

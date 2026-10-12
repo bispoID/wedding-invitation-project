@@ -4,12 +4,30 @@ import { resetFloralSealAnimations } from '../welcome/decorations.js';
 /**
  * Ajusta a apresentação do fluxo em desenvolvimento para previews estáticos.
  *
- * @param {{welcome: HTMLElement, letter: HTMLElement, mode: string}} params
+ * @param {{welcome: HTMLElement, letter: HTMLElement, cardControl?: HTMLButtonElement, mode: string}} params
  * @returns {void}
  */
-export function applyDeveloperPreview({ welcome, letter, mode }) {
+export function applyDeveloperPreview({ welcome, letter, cardControl, mode }) {
   if (!mode) {
     return;
+  }
+
+  const isCardPreview = mode === 'envelope-card';
+
+  if (cardControl) {
+    cardControl.hidden = !isCardPreview;
+
+    if (isCardPreview) {
+      cardControl.setAttribute('data-dev-preview', 'true');
+      cardControl.disabled = false;
+      cardControl.textContent = 'Pausar';
+      cardControl.setAttribute(
+        'aria-label',
+        'Pausar antes de abrir a carta'
+      );
+    } else {
+      cardControl.removeAttribute('data-dev-preview');
+    }
   }
 
   resetFloralSealAnimations();
@@ -46,12 +64,13 @@ export function applyDeveloperPreview({ welcome, letter, mode }) {
 /**
  * Cria um painel de preview que permite alternar rapidamente entre capa, cartão e carta.
  *
- * @param {{welcome: HTMLElement, letter: HTMLElement, activeMode?: string, resetInvitationState: Function}} params
+ * @param {{welcome: HTMLElement, letter: HTMLElement, cardControl?: HTMLButtonElement, activeMode?: string, resetInvitationState: Function}} params
  * @returns {void}
  */
 export function initDeveloperPreviewControls({
   welcome,
   letter,
+  cardControl,
   activeMode = 'cover',
   resetInvitationState
 }) {
@@ -91,7 +110,12 @@ export function initDeveloperPreviewControls({
       window.history.replaceState({}, '', url);
 
       resetInvitationState();
-      applyDeveloperPreview({ welcome, letter, mode: nextMode });
+      applyDeveloperPreview({
+        welcome,
+        letter,
+        cardControl,
+        mode: nextMode
+      });
 
       [...panel.querySelectorAll('button[data-preview]')].forEach((item) => {
         const isSelected = item.getAttribute('data-preview') === nextMode;
@@ -119,6 +143,7 @@ export function initDeveloperPreviewControls({
     applyDeveloperPreview({
       welcome,
       letter,
+      cardControl,
       mode: 'cover'
     });
   });
