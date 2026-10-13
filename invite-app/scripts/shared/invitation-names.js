@@ -25,10 +25,8 @@ function measureOriginalNames(title, container) {
 }
 
 export function initInvitationNames() {
-  const card = document.querySelector('.envelope__card-inner');
   const letter = document.querySelector('.letter__header');
   const targets = [
-    { container: card, title: card?.querySelector('.envelope__card-names'), widthRatio: 0.65 },
     { container: letter, title: letter?.querySelector('#letter-title'), widthRatio: 1 },
   ].filter(({ container, title }) => container && title);
   if (!targets.length) return;
@@ -43,7 +41,6 @@ export function initInvitationNames() {
       if (!Number.isFinite(originalWidth) || originalWidth <= 0) continue;
       const wrapped = originalWidth > availableWidth + 1;
       title.classList.toggle(LONG_NAMES_CLASS, wrapped);
-      if (container === card) container.classList.toggle(LONG_NAMES_CLASS, wrapped);
     }
   };
   const schedule = () => {
