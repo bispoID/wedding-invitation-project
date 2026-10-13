@@ -165,6 +165,8 @@ function createInvitationController({
     cardControl.disabled = false;
     cardControl.removeAttribute('data-dev-preview');
     cardControl.textContent = 'Pausar';
+    cardControl.setAttribute('data-card-symbol', '⏸');
+    cardControl.setAttribute('data-card-control-state', 'pause');
     cardControl.setAttribute(
       'aria-label',
       'Pausar antes de abrir a carta'
@@ -182,6 +184,8 @@ function createInvitationController({
     cardControl.hidden = false;
     cardControl.disabled = false;
     cardControl.textContent = 'Pausar';
+    cardControl.setAttribute('data-card-symbol', '⏸');
+    cardControl.setAttribute('data-card-control-state', 'pause');
     cardControl.setAttribute(
       'aria-label',
       'Pausar antes de abrir a carta'
@@ -198,6 +202,8 @@ function createInvitationController({
   function showContinueControl() {
     cardControl.hidden = false;
     cardControl.textContent = 'Continuar';
+    cardControl.setAttribute('data-card-symbol', '▶');
+    cardControl.setAttribute('data-card-control-state', 'continue');
     cardControl.setAttribute(
       'aria-label',
       'Continuar para a carta'
@@ -291,6 +297,23 @@ function createInvitationController({
    */
   function handleCardControl() {
     if (cardControl.getAttribute?.('data-dev-preview') === 'true') {
+      const isPauseState = cardControl.getAttribute('data-card-control-state') !== 'continue';
+
+      cardControl.textContent = isPauseState ? 'Continuar' : 'Pausar';
+      cardControl.setAttribute(
+        'data-card-symbol',
+        isPauseState ? '▶' : '⏸'
+      );
+      cardControl.setAttribute(
+        'data-card-control-state',
+        isPauseState ? 'continue' : 'pause'
+      );
+      cardControl.setAttribute(
+        'aria-label',
+        isPauseState
+          ? 'Continuar para a carta'
+          : 'Pausar antes de abrir a carta'
+      );
       return;
     }
 

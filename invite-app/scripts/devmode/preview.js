@@ -21,6 +21,8 @@ export function applyDeveloperPreview({ welcome, letter, cardControl, mode }) {
       cardControl.setAttribute('data-dev-preview', 'true');
       cardControl.disabled = false;
       cardControl.textContent = 'Pausar';
+      cardControl.setAttribute('data-card-symbol', '⏸');
+      cardControl.setAttribute('data-card-control-state', 'pause');
       cardControl.setAttribute(
         'aria-label',
         'Pausar antes de abrir a carta'

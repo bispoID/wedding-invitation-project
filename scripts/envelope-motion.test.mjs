@@ -30,6 +30,7 @@ async function withEnvelopeMotion(reduced, run) {
         contains: (name) => classes.has(name),
       },
       setAttribute(name, value) { this.attrs[name] = value; },
+      getAttribute(name) { return this.attrs[name]; },
       removeAttribute(name) { delete this.attrs[name]; },
       addEventListener(type, listener) { this.events[type] = listener; },
       focus(options) { this.focusCalls.push(options); },
@@ -149,6 +150,29 @@ test('Envelope decoration reset remains idempotent and supports another normal o
   });
 });
 
+test('Envelope developer preview toggles the control label without starting the flow', async () => {
+  await withEnvelopeMotion(false, async (ui) => {
+    ui.cardControl.hidden = false;
+    ui.cardControl.setAttribute('data-dev-preview', 'true');
+
+    ui.cardControl.events.click();
+    assert.equal(ui.cardControl.textContent, 'Continuar');
+    assert.equal(ui.cardControl.attrs['data-card-symbol'], '▶');
+    assert.equal(ui.cardControl.attrs['data-card-control-state'], 'continue');
+    assert.equal(ui.cardControl.attrs['aria-label'], 'Continuar para a carta');
+    assert.equal(ui.welcome.classList.contains('is-opening-card'), false);
+    assert.equal(ui.letter.hidden, true);
+    assert.equal(ui.timers.size, 0);
+
+    ui.cardControl.events.click();
+    assert.equal(ui.cardControl.textContent, 'Pausar');
+    assert.equal(ui.cardControl.attrs['data-card-symbol'], '⏸');
+    assert.equal(ui.cardControl.attrs['data-card-control-state'], 'pause');
+    assert.equal(ui.cardControl.attrs['aria-label'], 'Pausar antes de abrir a carta');
+    assert.equal(ui.timers.size, 0);
+  });
+});
+
 for (const reduced of [false, true]) for (const trigger of ['click', 'Enter', ' ']) {
   test(`Envelope ${reduced ? 'reduce' : 'no-preference'} preserves opening, letter focus and return via ${trigger === ' ' ? 'Space' : trigger}`, async () => {
     await withEnvelopeMotion(reduced, async (ui) => {
@@ -177,6 +201,7 @@ for (const reduced of [false, true]) for (const trigger of ['click', 'Enter', ' 
       assert.equal(ui.welcome.classList.contains('is-opening-card'), true);
       assert.equal(ui.cardControl.hidden, false);
       assert.equal(ui.cardControl.textContent, 'Pausar');
+      assert.equal(ui.cardControl.attrs['data-card-symbol'], '⏸');
       ui.advance(4799);
       assert.equal(ui.letter.hidden, true);
       ui.advance(1);
@@ -216,6 +241,7 @@ for (const reduced of [false, true]) {
 
       ui.cardControl.events.click();
       assert.equal(ui.cardControl.textContent, 'Continuar');
+      assert.equal(ui.cardControl.attrs['data-card-symbol'], '▶');
       assert.equal(ui.cardControl.hidden, false);
       assert.equal(ui.welcome.classList.contains('is-opening-card'), true);
 
@@ -274,6 +300,7 @@ test('Envelope wait near the automatic deadline prevents an old letter callback'
 test('Envelope seal and flowers use static WebP assets and retain native keyboard and touch hooks', async () => {
   const html = await readFile(new URL('../invite-app/index.html', import.meta.url), 'utf8');
   const css = await readFile(new URL('../invite-app/styles/welcome/envelope.css', import.meta.url), 'utf8');
+  const welcomeCss = await readFile(new URL('../invite-app/styles/welcome/welcome.css', import.meta.url), 'utf8');
   const seal = html.match(/<img\b[^>]*class="envelope__seal"[^>]*>/)?.[0];
   assert.ok(seal);
   assert.match(seal, /role="button"/);
@@ -285,7 +312,10 @@ test('Envelope seal and flowers use static WebP assets and retain native keyboar
   assert.ok(pauseControl);
   assert.match(pauseControl, /type="button"/);
   assert.match(pauseControl, /hidden/);
+  assert.match(pauseControl, /data-card-symbol="⏸"/);
   assert.match(pauseControl, />\s*Pausar\s*</);
+  assert.match(welcomeCss, /\.card-pause-control::after\s*\{[^}]*content:\s*attr\(data-card-symbol\)/);
+  assert.match(welcomeCss, /\.card-pause-control\[data-card-symbol="⏸"\]::after\s*\{[^}]*transform:\s*translateY\(-0\.22cqw\)/);
   for (const file of ['flores_sempre_vivas.webp', 'selo_de_cera_carta_800x800.webp']) {
     assert.ok(html.includes(`src="./images/${file}"`));
     const bytes = await readFile(new URL('../invite-app/images/' + file, import.meta.url));

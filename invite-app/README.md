@@ -207,8 +207,9 @@ Também é possível usar a URL:
 ```
 
 No preview `?devmode=envelope-card`, o cartão aparece estaticamente e o botão
-“Pausar” é exibido apenas para inspeção visual. O clique é intencionalmente inerte
-nesse modo: a apresentação não inicia a sequência funcional nem revela a carta.
+“Pausar” é exibido apenas para inspeção visual. O clique alterna a apresentação
+entre “Pausar” e “Continuar”, mas permanece sem efeito funcional: a sequência não
+é iniciada e a carta não é revelada nesse modo.
 Nos previews `cover` e `letter`, o controle permanece oculto. Em telas pequenas,
 o painel de desenvolvimento ocupa a faixa superior e o controle do cartão fica
 ancorado na faixa inferior segura, evitando sobreposição entre os controles.

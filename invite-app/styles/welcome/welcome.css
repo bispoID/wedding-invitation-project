@@ -425,6 +425,8 @@
   width: 40cqw;
   margin: 0;
 
+  gap: 1.5cqw;
+
   cursor: pointer;
   line-height: 1;
   transform: translateX(-50%);
@@ -435,6 +437,22 @@
     500ms
     var(--ease-smooth)
     both;
+}
+
+.card-pause-control::after {
+  display: inline-block;
+
+  content: attr(data-card-symbol);
+
+  font-family: var(--font-sans);
+  font-size: 1em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.card-pause-control[data-card-symbol="⏸"]::after {
+  transform: translateY(-0.22cqw);
 }
 
 .card-pause-control:hover:not(:disabled),
