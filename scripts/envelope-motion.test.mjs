@@ -314,8 +314,10 @@ test('Envelope seal and flowers use static WebP assets and retain native keyboar
   assert.match(pauseControl, /hidden/);
   assert.match(pauseControl, /data-card-symbol="⏸"/);
   assert.match(pauseControl, />\s*Pausar\s*</);
-  assert.match(welcomeCss, /\.card-pause-control::after\s*\{[^}]*content:\s*attr\(data-card-symbol\)/);
-  assert.match(welcomeCss, /\.card-pause-control\[data-card-symbol="⏸"\]::after\s*\{[^}]*transform:\s*translateY\(-0\.22cqw\)/);
+  assert.match(welcomeCss, /\.card-pause-control::after\s*\{[^}]*background:\s*linear-gradient/);
+  assert.match(welcomeCss, /\.card-pause-control::after\s*\{[^}]*width:\s*2\.15cqw[^}]*height:\s*3cqw/);
+  assert.match(welcomeCss, /\.card-pause-control::after\s*\{[^}]*transform:\s*translateY\(-0\.1cqw\)/);
+  assert.match(welcomeCss, /\.card-pause-control\[data-card-symbol="▶"\]::after\s*\{[^}]*border-left:\s*2\.25cqw\s+solid\s+currentColor/);
   for (const file of ['flores_sempre_vivas.webp', 'selo_de_cera_carta_800x800.webp']) {
     assert.ok(html.includes(`src="./images/${file}"`));
     const bytes = await readFile(new URL('../invite-app/images/' + file, import.meta.url));

@@ -442,7 +442,20 @@
 .card-pause-control::after {
   display: inline-block;
 
-  content: attr(data-card-symbol);
+  width: 2.15cqw;
+  height: 3cqw;
+
+  transform: translateY(-0.1cqw);
+
+  background:
+    linear-gradient(
+      to right,
+      currentColor 0 36%,
+      transparent 36% 64%,
+      currentColor 64% 100%
+    );
+
+  content: "";
 
   font-family: var(--font-sans);
   font-size: 1em;
@@ -451,8 +464,17 @@
   letter-spacing: 0;
 }
 
-.card-pause-control[data-card-symbol="⏸"]::after {
-  transform: translateY(-0.22cqw);
+.card-pause-control[data-card-symbol="▶"]::after {
+  width: 0;
+  height: 0;
+
+  background: none;
+
+  border-top: 1.5cqw solid transparent;
+  border-right: 0;
+  border-bottom: 1.5cqw solid transparent;
+  border-left: 2.25cqw solid currentColor;
+  border-radius: 0;
 }
 
 .card-pause-control:hover:not(:disabled),
