@@ -9,6 +9,10 @@ O dashboard lista os registros de `public.guests` pela Edge Function
 lista `ADMIN_AUTH_USER_IDS` antes de consultar os dados com `service_role`. O
 cliente do navegador não tem permissão de leitura direta nessa tabela.
 
+A listagem paginada e a pesquisa são executadas no servidor. O navegador recebe
+somente a página solicitada e os indicadores agregados globais; o endpoint não
+carrega a tabela completa no cliente.
+
 As operações de criação manual, edição e exclusão passam pela Edge Function
 `admin-manage-guests`; listagem e recuperação da contingência também verificam a
 mesma lista compartilhada no backend. Cada função valida o JWT e rejeita
@@ -76,16 +80,93 @@ do evento usa seção independente, GET/PUT e 14 campos completos; consulte
 Links do convite/previews derivam de APP_BASE_URL sem host/subpath fixo.
 Recuperação atualiza listas sem refresh geral que descarte edições do evento.
 
-## Indicadores
+## Pesquisa, paginação e contrato da listagem
 
-Os indicadores são calculados sobre a lista atualmente carregada e recalculados
-após uma nova listagem, criação, edição ou exclusão:
+O painel exibe a pesquisa acima da tabela com o placeholder `Pesquisar por nome
+ou e-mail...`. O termo é aplicado a `name` e `email` com comparação
+case-insensitive, preservando Unicode, e a consulta é disparada 300 ms após a
+última digitação. O termo é enviado como parâmetro, não como trecho de SQL ou
+filtro montado pelo usuário; `%`, `_` e `\\` são tratados como texto literal na
+função SQL. Uma pesquisa nova retorna à primeira página. Respostas de uma
+consulta anterior são descartadas quando uma consulta mais recente já foi
+iniciada. Durante uma nova consulta, a tabela e os indicadores confirmados
+permanecem estáveis até a resposta; estados vazios aguardam a nova resposta
+antes de exibir novamente a mensagem de vazio.
+
+A página padrão tem 10 registros. Os tamanhos permitidos são 10, 20 e 50. A
+interface informa a faixa exibida, a quantidade total encontrada e as páginas,
+desabilitando `Anterior`/`Próxima` nos limites. O backend rejeita página fora de
+`1..100000`, tamanhos diferentes de 10/20/50 e termos com mais de 320 caracteres.
+A ordenação é determinística por `created_at DESC, id DESC`.
+
+Uma chamada paginada usa `GET /functions/v1/admin-list-guests?page=1&page_size=10`
+e pode incluir `search`. A resposta mantém `success` e `records` e acrescenta.
+Respostas de dados e erros administrativos usam `Cache-Control: private,
+no-store`; o preflight `OPTIONS` mantém seu cache CORS separado:
+
+```json
+{
+  "success": true,
+  "records": [],
+  "pagination": {
+    "page": 1,
+    "page_size": 10,
+    "total": 47,
+    "total_pages": 5
+  },
+  "metrics": {
+    "totalGuests": 47,
+    "confirmedGuests": 32,
+    "declinedGuests": 15,
+    "totalCompanions": 21,
+    "confirmedPeople": 53
+  }
+}
+```
+
+Os cinco indicadores são calculados pela RPC protegida
+`public.admin_list_guests` diretamente sobre `public.guests`, sem depender do
+filtro ou da página visível:
 
 - **Total de convidados:** número total de registros.
 - **Confirmados:** registros com `attendance=true`.
 - **Não poderão comparecer:** registros com `attendance=false`.
 - **Total de acompanhantes:** soma de `companions` de todos os registros.
 - **Pessoas confirmadas:** convidados confirmados mais seus acompanhantes.
+
+A migration `20261013010000_create_admin_guest_list.sql` cria essa RPC como
+`security definer`, revoga execução de `public`, `anon`, `authenticated` e
+`service_role` antes de concedê-la somente a `service_role`. Ela ainda não foi
+aplicada remotamente nesta tarefa.
+
+Sem parâmetros de paginação, o endpoint mantém temporariamente a resposta
+completa para compatibilidade com versões antigas do dashboard durante uma
+publicação em duas etapas. O frontend novo sempre envia `page` e `page_size`,
+portanto usa o caminho paginado.
+
+Os estados da interface são distintos: `Nenhum convidado cadastrado.` quando o
+total global é zero; `Nenhum convidado encontrado para esta pesquisa.` quando o
+filtro não encontra registros; e uma mensagem de erro com ação `Tentar
+novamente` em falhas de comunicação. CRUD e recuperação de contingência
+recarregam a página atual, preservando pesquisa e tamanho sempre que possível;
+se a exclusão tornar a página inválida, a última página válida é carregada.
+
+## Testes locais e publicação segura
+
+Os testes utilizam somente fixtures sintéticas. A cobertura inclui validação e
+encaminhamento dos parâmetros, busca Unicode/caracteres especiais, paginação,
+totais, estados de autorização/origem e contrato da resposta no handler Deno;
+no frontend inclui debounce, mudança de página/tamanho, respostas fora de
+ordem, páginas vazias, erros, métricas globais e marcação acessível.
+
+A migration deve ser aplicada primeiro em um banco de desenvolvimento/UAT
+descartável e validada antes de qualquer ambiente compartilhado. Em produção,
+a ordem segura é: aplicar a migration/RPC, publicar a Edge Function e confirmar
+o endpoint administrativo com um administrador autorizado; somente depois
+publicar o frontend. O backend novo continua aceitando o cliente antigo sem
+parâmetros, mas o frontend novo depende dos campos `pagination` e `metrics`.
+Esta implementação local não autoriza `supabase db push`, deploy de Edge
+Function, deploy Vercel/Pages, alteração de secrets ou testes destrutivos.
 
 ## Contingência
 

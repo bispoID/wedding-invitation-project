@@ -109,6 +109,76 @@
   font-weight: 700;
 }
 
+.guests-list-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 16px;
+  margin: 20px 0 16px;
+}
+
+.guest-search-control,
+.guest-page-size-control {
+  display: grid;
+  gap: 8px;
+  color: var(--admin-text);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.guest-search-input {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.guest-search-input input,
+.guest-page-size-control select {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-input);
+  color: var(--admin-text);
+}
+
+.guest-search-input input {
+  width: 100%;
+  min-width: 0;
+}
+
+.guest-page-size-control select {
+  min-width: 132px;
+}
+
+.guest-search-input .button {
+  flex: 0 0 auto;
+}
+
+.guests-range {
+  margin: 16px 0 0;
+  color: var(--admin-text-muted);
+  line-height: 1.5;
+}
+
+.guests-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.guests-pagination span {
+  color: var(--admin-text-muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+#guests-retry {
+  margin-top: 16px;
+}
+
 .guests-table-container {
   overflow-x: auto;
   border: 1px solid var(--admin-border);
@@ -378,6 +448,14 @@
   .admin-identity-email {
     max-width: 100%;
   }
+
+  .guests-list-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .guest-page-size-control select {
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -387,6 +465,17 @@
 
   .admin-card {
     overflow: hidden;
+  }
+
+  .guest-search-input,
+  .guests-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .guest-search-input .button,
+  .guests-pagination .button {
+    width: 100%;
   }
 
   .guest-dialog-actions {

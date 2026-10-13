@@ -133,11 +133,46 @@
                 <p id="metric-confirmed-people">—</p>
               </article>
             </div>
+            <div class="guests-list-toolbar">
+              <div class="guest-search-control">
+                <label for="guest-search">Pesquisar convidados</label>
+                <div class="guest-search-input">
+                  <input
+                    id="guest-search"
+                    type="search"
+                    placeholder="Pesquisar por nome ou e-mail..."
+                    autocomplete="off"
+                    spellcheck="false"
+                    aria-controls="guests-table-body"
+                  />
+                  <button
+                    class="button button--secondary button--small"
+                    id="guest-search-clear"
+                    type="button"
+                    aria-label="Limpar pesquisa"
+                    hidden
+                  >
+                    Limpar
+                  </button>
+                </div>
+              </div>
+              <label class="guest-page-size-control" for="guest-page-size">
+                Convidados por página
+                <select id="guest-page-size" aria-controls="guests-table-body">
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+              </label>
+            </div>
             <div id="guests-content">
               <p class="feedback" id="guests-loading" role="status" hidden>
                 Carregando convidados...
               </p>
               <p class="feedback feedback--error" id="guests-error" role="alert" hidden></p>
+              <button class="button button--secondary" id="guests-retry" type="button" hidden>
+                Tentar novamente
+              </button>
               <p class="feedback feedback--success" id="guests-feedback" role="status" aria-live="polite" hidden></p>
               <p class="guests-placeholder" id="guests-empty" role="status" hidden>
                 Nenhum convidado cadastrado.
@@ -164,6 +199,16 @@
                   <tbody id="guests-table-body"></tbody>
                 </table>
               </div>
+              <p class="guests-range" id="guests-range" role="status" aria-live="polite" hidden></p>
+              <nav class="guests-pagination" id="guests-pagination" aria-label="Paginação de convidados" hidden>
+                <button class="button button--secondary" id="guests-previous" type="button">
+                  Anterior
+                </button>
+                <span id="guests-page-status" aria-live="polite"></span>
+                <button class="button button--secondary" id="guests-next" type="button">
+                  Próxima
+                </button>
+              </nav>
             </div>
           </section>
 

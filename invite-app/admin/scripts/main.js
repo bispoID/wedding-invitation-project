@@ -1,13 +1,14 @@
 import { getCurrentSession, signIn, signOut } from './auth.js';
 import { getPendingContingency, manageGuest, recoverContingency } from './contingency.js';
 import { getGuests } from './guests.js';
-import { calculateGuestMetrics } from './guest-metrics.js';
+import { createGuestListController, GUEST_PAGE_SIZES } from './guest-list-controller.js';
 import { validateGuest } from './guest-validation.js';
 import { initializeEventConfig } from './event-config.js';
 import { initializeInvitationLinks } from './navigation.js';
 import { formatTimestamp } from './date-time.js';
 
 const page = document.body.dataset.page;
+let guestListController;
 
 if (page === 'login') {
   initializeLogin();
@@ -100,6 +101,7 @@ async function initializeDashboard() {
     });
 
     initializeGuestEditor();
+    initializeGuestList();
     initializeInvitationLinks();
     void initializeEventConfig();
     await Promise.all([loadGuests(), loadContingency()]);
@@ -109,48 +111,140 @@ async function initializeDashboard() {
   }
 }
 
+function initializeGuestList() {
+  const searchInput = document.querySelector('#guest-search');
+  const pageSizeSelect = document.querySelector('#guest-page-size');
+  const clearButton = document.querySelector('#guest-search-clear');
+  const retryButton = document.querySelector('#guests-retry');
+  const previousButton = document.querySelector('#guests-previous');
+  const nextButton = document.querySelector('#guests-next');
+
+  pageSizeSelect.replaceChildren();
+  for (const pageSize of GUEST_PAGE_SIZES) {
+    const option = document.createElement('option');
+    option.value = String(pageSize);
+    option.textContent = String(pageSize);
+    pageSizeSelect.append(option);
+  }
+  pageSizeSelect.value = '10';
+
+  guestListController = createGuestListController({
+    fetchGuests: getGuests,
+    onStateChange: renderGuestList,
+  });
+
+  searchInput.addEventListener('input', () => {
+    document.querySelector('#guests-feedback').hidden = true;
+    guestListController.setSearch(searchInput.value);
+  });
+  clearButton.addEventListener('click', () => {
+    searchInput.value = '';
+    document.querySelector('#guests-feedback').hidden = true;
+    guestListController.setSearch('');
+    searchInput.focus();
+  });
+  pageSizeSelect.addEventListener('change', () => {
+    void guestListController.setPageSize(pageSizeSelect.value);
+  });
+  previousButton.addEventListener('click', () => {
+    const { page } = guestListController.getState();
+    void guestListController.setPage(page - 1);
+  });
+  nextButton.addEventListener('click', () => {
+    const { page } = guestListController.getState();
+    void guestListController.setPage(page + 1);
+  });
+  retryButton.addEventListener('click', () => {
+    void guestListController.reload();
+  });
+}
+
 async function loadGuests() {
+  return guestListController?.reload();
+}
+
+function renderGuestList(state) {
   const loadingMessage = document.querySelector('#guests-loading');
   const errorMessage = document.querySelector('#guests-error');
+  const retryButton = document.querySelector('#guests-retry');
   const emptyMessage = document.querySelector('#guests-empty');
   const tableContainer = document.querySelector('#guests-table-container');
   const tableBody = document.querySelector('#guests-table-body');
-  const feedbackMessage = document.querySelector('#guests-feedback');
+  const searchInput = document.querySelector('#guest-search');
+  const clearButton = document.querySelector('#guest-search-clear');
+  const pageSizeSelect = document.querySelector('#guest-page-size');
+  const rangeMessage = document.querySelector('#guests-range');
+  const pagination = document.querySelector('#guests-pagination');
+  const pageStatus = document.querySelector('#guests-page-status');
+  const previousButton = document.querySelector('#guests-previous');
+  const nextButton = document.querySelector('#guests-next');
+  const content = document.querySelector('#guests-content');
 
-  loadingMessage.hidden = false;
-  errorMessage.hidden = true;
-  emptyMessage.hidden = true;
-  tableContainer.hidden = true;
-  tableBody.replaceChildren();
-  feedbackMessage.hidden = true;
+  loadingMessage.hidden = !state.loading;
+  retryButton.hidden = !state.error;
+  errorMessage.hidden = !state.error;
+  content.setAttribute('aria-busy', String(state.loading));
+  searchInput.value = state.search;
+  clearButton.hidden = !state.search;
+  pageSizeSelect.value = String(state.pageSize);
 
-  try {
-    const guests = await getGuests();
-    updateGuestMetrics(guests);
-    loadingMessage.hidden = true;
-
-    if (guests.length === 0) {
-      emptyMessage.hidden = false;
-      return;
-    }
-
-    for (const guest of guests) {
-      tableBody.append(createGuestRow(guest));
-    }
-
-    tableContainer.hidden = false;
-  } catch (error) {
-    console.error('Erro ao carregar convidados:', error);
-    loadingMessage.hidden = true;
-    showError(
-      errorMessage,
-      'Não foi possível carregar a lista de convidados. Tente atualizar a página.'
-    );
+  if (state.error) {
+    console.error('Erro ao carregar convidados:', state.error);
+    showError(errorMessage, 'Não foi possível carregar a lista de convidados. Tente novamente.');
+    tableContainer.hidden = true;
+    emptyMessage.hidden = true;
+    pagination.hidden = true;
+    rangeMessage.hidden = true;
+    return;
   }
+
+  if (state.metrics) {
+    updateGuestMetrics(state.metrics);
+  }
+
+  if (!state.loaded) {
+    tableContainer.hidden = true;
+    emptyMessage.hidden = true;
+    pagination.hidden = true;
+    rangeMessage.hidden = true;
+    return;
+  }
+
+  if (state.loading) {
+    if (state.records.length === 0) {
+      emptyMessage.hidden = true;
+      pagination.hidden = true;
+      rangeMessage.hidden = true;
+    }
+    return;
+  }
+
+  tableBody.replaceChildren();
+  for (const guest of state.records) {
+    tableBody.append(createGuestRow(guest));
+  }
+
+  const hasResults = state.records.length > 0;
+  tableContainer.hidden = !hasResults;
+  emptyMessage.hidden = hasResults;
+  if (!hasResults) {
+    emptyMessage.textContent = state.search
+      ? 'Nenhum convidado encontrado para esta pesquisa.'
+      : 'Nenhum convidado cadastrado.';
+  }
+
+  const { firstRecord, lastRecord, page, total, totalPages } = state.pagination;
+  rangeMessage.hidden = total === 0;
+  if (total > 0) {
+    rangeMessage.textContent = `Exibindo ${firstRecord}–${lastRecord} de ${total} convidados`;
+  }
+  pagination.hidden = total === 0;
+  pageStatus.textContent = `Página ${page} de ${totalPages}`;
+  previousButton.disabled = page <= 1;
+  nextButton.disabled = page >= totalPages;
 }
 
-function updateGuestMetrics(guests) {
-  const metrics = calculateGuestMetrics(guests);
+function updateGuestMetrics(metrics) {
   document.querySelector('#metric-total').textContent = String(metrics.totalGuests);
   document.querySelector('#metric-confirmed').textContent = String(metrics.confirmedGuests);
   document.querySelector('#metric-declined').textContent = String(metrics.declinedGuests);

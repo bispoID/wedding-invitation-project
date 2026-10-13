@@ -1,6 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { parseAdminUserIds } from "../_shared/admin-auth.ts";
-import { createGuestListHandler } from "./handler.ts";
+import {
+  createGuestListHandler,
+  type GuestListQuery,
+  type GuestListResult,
+} from "./handler.ts";
 
 const REQUEST_TIMEOUT_MS = 12_000;
 
@@ -70,7 +74,7 @@ const handler = createGuestListHandler({
     const { data, error } = await authClient.auth.getUser(match[1]);
     return error ? null : data.user?.id ?? null;
   },
-  async listGuests() {
+  async listGuests(query: GuestListQuery): Promise<GuestListResult> {
     const serviceClient = createClient(
       supabaseUrl,
       requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
@@ -82,17 +86,23 @@ const handler = createGuestListHandler({
         global: { fetch: fetchWithTimeout },
       },
     );
-    const { data, error } = await serviceClient
-      .from("guests")
-      .select("id, name, email, attendance, companions, created_at")
-      .order("created_at", { ascending: false });
+    const { data, error } = await serviceClient.rpc("admin_list_guests", {
+      p_page: query.page,
+      p_page_size: query.pageSize,
+      p_search: query.search,
+      p_include_all: query.includeAll,
+    });
 
     if (error) {
       console.error("Guest database query failed", { code: error.code });
       throw new Error("Guest query failed");
     }
 
-    return data ?? [];
+    if (!data || typeof data !== "object") {
+      throw new Error("Guest query returned an invalid result");
+    }
+
+    return data as GuestListResult;
   },
 });
 

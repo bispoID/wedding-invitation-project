@@ -331,6 +331,17 @@ convite/previews. Asserções backend e UI simulada passaram; aceite funcional e
 visual registrado, incluindo Event Config do Bloco 4. Frontend atualizado
 integrado e publicado no Bloco 5; o micro-hotfix touch preserva focus-visible.
 
+### Extensão local posterior — pesquisa e paginação de convidados (13/10/2026)
+
+Foi implementada localmente uma listagem administrativa paginada (10/20/50),
+pesquisa dinâmica por nome/e-mail com debounce, indicadores agregados
+independentes do filtro e respostas administrativas `private, no-store`. A
+alteração inclui a RPC protegida `public.admin_list_guests`, a estabilização dos
+indicadores durante carregamentos e testes sintéticos. A migration foi aplicada
+e validada em PostgreSQL local descartável com Docker; ainda não foi aplicada
+remotamente. O aceite de produção permanece pendente: não houve deploy,
+`db push`, alteração remota ou uso de dados reais nesta extensão.
+
 ---
 
 # FASE 8 — Monitoramento
