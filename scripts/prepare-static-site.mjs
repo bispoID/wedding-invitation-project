@@ -4,10 +4,17 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { buildInvitationTitle, DEFAULT_INVITATION_TITLE } from '../invite-app/scripts/event-config.js';
 import { FUNCTIONS_BASE_URL } from '../invite-app/scripts/shared/app-config.js';
 
+/**
+ * Prepara um artefato portátil do frontend para publicação.
+ * O diretório de origem nunca é sobrescrito; metadados públicos são resolvidos
+ * no clone de saída e o título pode ser enriquecido por Event Config sem
+ * tornar a falha do endpoint um bloqueio de publicação.
+ */
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const DEFAULT_EVENT_CONFIG_URL = new URL('event-config', FUNCTIONS_BASE_URL).href;
 const EVENT_CONFIG_TIMEOUT_MS = 12_000;
 
+/** Normaliza URL pública e rejeita credenciais, query, fragmento e encoding inválido. */
 export function normalizePublicSiteUrl(value) {
   if (typeof value !== 'string' || !value.trim()) {
     throw new Error('PUBLIC_SITE_URL is required.');
@@ -32,11 +39,13 @@ export function normalizePublicSiteUrl(value) {
   return url.href;
 }
 
+/** Escapa valores antes de inseri-los em atributos HTML. */
 function escapeAttribute(value) {
   return value.replaceAll('&', '&amp;').replaceAll('"', '&quot;')
     .replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }
 
+/** Substitui o fallback de título nos três metadados estáticos conhecidos. */
 function replaceInvitationTitle(html, invitationTitle) {
   const safeTitle = escapeAttribute(invitationTitle);
   const titleTags = [
@@ -51,6 +60,7 @@ function replaceInvitationTitle(html, invitationTitle) {
   return html;
 }
 
+/** Consulta título build-time e retorna o fallback sem bloquear o build. */
 export async function resolveInvitationTitle(eventConfigUrl, fetchImpl = globalThis.fetch) {
   if (!eventConfigUrl || typeof fetchImpl !== 'function') return DEFAULT_INVITATION_TITLE;
   const controller = new AbortController();
@@ -68,6 +78,7 @@ export async function resolveInvitationTitle(eventConfigUrl, fetchImpl = globalT
   }
 }
 
+/** Resolve marcadores de publicação e garante que nenhum placeholder permaneça. */
 export function resolveMetadata(html, publicSiteUrl, invitationTitle = DEFAULT_INVITATION_TITLE) {
   const siteUrl = normalizePublicSiteUrl(publicSiteUrl);
   const title = typeof invitationTitle === 'string' && invitationTitle.trim()
@@ -94,6 +105,7 @@ function isWithin(parent, child) {
   return path === '' || (!isAbsolute(path) && path !== '..' && !path.startsWith(`..${sep}`));
 }
 
+/** Copia a árvore para saída nova após validar sobreposição e metadados. */
 export async function prepareStaticSite({
   publicSiteUrl,
   eventConfigUrl,
@@ -128,6 +140,7 @@ export async function prepareStaticSite({
   return { siteUrl, outputDir: output };
 }
 
+/** Impede DEV de cair silenciosamente no endpoint de produção. */
 export function resolveBuildEventConfigUrl({ appEnv = process.env.APP_ENV, eventConfigUrl } = {}) {
   if (eventConfigUrl) return eventConfigUrl;
   if (appEnv === 'dev') {

@@ -1,5 +1,10 @@
 import { readFile } from 'node:fs/promises';
 
+/**
+ * Smoke/integration test contra o stack DEV já iniciado.
+ * Todas as entidades criadas usam e-mails sintéticos e são removidas ao final;
+ * o primeiro guard impede que um endpoint remoto seja usado por acidente.
+ */
 const state = JSON.parse(await readFile('.dev/state.json', 'utf8'));
 const admin = JSON.parse(await readFile('.dev/admin.json', 'utf8'));
 const frontend = JSON.parse(await readFile('invite-app/dev-config.json', 'utf8'));
@@ -10,8 +15,10 @@ if (!['localhost', '127.0.0.1', '10.0.2.2'].includes(apiUrl.hostname)) {
 }
 
 const origin = 'http://127.0.0.1:5500';
+/** Constrói URLs apenas dentro do API URL previamente validado como local. */
 const functionUrl = (name) => `${apiUrl.origin}/functions/v1/${name}`;
 
+/** Faz requisição JSON e conserva status para asserções de contrato. */
 async function jsonRequest(url, init = {}) {
   const response = await fetch(url, { ...init, cache: 'no-store' });
   let body = null;
@@ -19,12 +26,14 @@ async function jsonRequest(url, init = {}) {
   return { response, body };
 }
 
+/** Produz uma falha legível quando um passo HTTP diverge do cenário. */
 function assertStatus(result, expected, label) {
   if (result.response.status !== expected) {
     throw new Error(`${label}: expected HTTP ${expected}, got ${result.response.status}`);
   }
 }
 
+/** Monta headers comuns às chamadas administrativas autenticadas. */
 function adminHeaders(accessToken) {
   return {
     apikey: frontend.supabaseAnonKey,

@@ -2,6 +2,11 @@ import { createServer } from 'node:http';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
+/**
+ * Sidecar JSON somente local para substituir Google Sheets no DEV.
+ * O token compartilhado com as Edge Functions e as escritas serializadas
+ * mantêm o fixture isolado sem transformar este servidor em uma API pública.
+ */
 const host = process.env.LOCAL_CONTINGENCY_HOST || '127.0.0.1';
 const port = Number(process.env.LOCAL_CONTINGENCY_PORT || 54328);
 const token = process.env.LOCAL_CONTINGENCY_TOKEN?.trim();
@@ -13,6 +18,7 @@ if (!token) {
 
 let writeQueue = Promise.resolve();
 
+/** Lê a fila local; arquivo ausente representa uma fila vazia. */
 async function readRecords() {
   try {
     const value = JSON.parse(await readFile(filePath, 'utf8'));
@@ -23,6 +29,7 @@ async function readRecords() {
   }
 }
 
+/** Serializa gravações e troca o arquivo de forma atômica. */
 function persistRecords(records) {
   writeQueue = writeQueue.then(async () => {
     await mkdir(dirname(filePath), { recursive: true });
@@ -33,6 +40,7 @@ function persistRecords(records) {
   return writeQueue;
 }
 
+/** Responde JSON sem cache para o adapter do provider local. */
 function sendJson(response, status, body) {
   response.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
@@ -41,6 +49,7 @@ function sendJson(response, status, body) {
   response.end(JSON.stringify(body));
 }
 
+/** Lê JSON com limite de tamanho para preservar o caráter de fixture local. */
 async function readBody(request) {
   const chunks = [];
   let length = 0;
@@ -52,6 +61,7 @@ async function readBody(request) {
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
 
+/** Emula a numeração de linhas usada pelo provider Google Sheets. */
 function withRowNumbers(records) {
   return records.map((record, index) => ({ ...record, rowNumber: index + 2 }));
 }

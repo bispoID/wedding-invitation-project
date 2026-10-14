@@ -5,6 +5,14 @@ import { openSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+/**
+ * Orquestra o ambiente DEV local sem operar o projeto Supabase remoto.
+ *
+ * O fluxo mantém estado operacional e credenciais sintéticas em `.dev/`
+ * (ignorado pelo Git), gera a configuração pública local e inicia o sidecar
+ * de contingência junto das Edge Functions locais. Comandos potencialmente
+ * remotos são recusados em `runSupabase` antes de serem executados.
+ */
 const projectRoot = resolve(fileURLToPath(new URL('../', import.meta.url)));
 const devDir = resolve(projectRoot, '.dev');
 const statePath = resolve(devDir, 'state.json');
@@ -26,14 +34,17 @@ const localHostnames = new Set(['localhost', '127.0.0.1', '0.0.0.0', '10.0.2.2']
 const cli = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const cliEnv = { ...process.env, SUPABASE_TELEMETRY_DISABLED: '1' };
 
+/** Interrompe o comando com uma mensagem orientada à correção local. */
 function fail(message) {
   throw new Error(message);
 }
 
+/** Lê JSON de estado gerado pelo próprio ambiente DEV. */
 async function readJson(path) {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
+/** Persiste JSON privado com permissões restritivas e diretório criado. */
 async function writeJson(path, value) {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, { encoding: 'utf8', mode: 0o600 });
@@ -52,6 +63,7 @@ async function updateState(values) {
   await writeJson(statePath, { ...(await readState()), ...values });
 }
 
+/** Executa apenas comandos Supabase explicitamente locais e permitidos. */
 function runSupabase(args, options = {}) {
   const blocked = [
     '--linked', '--project-ref', '--db-url', 'deploy', 'link', 'secrets', 'push',
@@ -68,6 +80,7 @@ function runSupabase(args, options = {}) {
   });
 }
 
+/** Obtém endpoints e chaves sintéticas do stack local em execução. */
 function statusEnv() {
   let output;
   try {
@@ -91,6 +104,7 @@ function localApiUrl(status) {
   return status.API_URL.replace(/\/$/, '');
 }
 
+/** Monta a allowlist CORS para hosts de navegador local e emulador Android. */
 function createOrigins(frontendHost) {
   const hosts = new Set([...localHostnames, frontendHost]);
   return [...hosts].flatMap((host) => [
@@ -99,6 +113,7 @@ function createOrigins(frontendHost) {
   ]).join(',');
 }
 
+/** Reutiliza ou cria o segredo local do sidecar, sem compartilhá-lo com produção. */
 async function ensureToken() {
   const state = await readState();
   if (typeof state.localContingencyToken === 'string' && state.localContingencyToken) {
@@ -109,6 +124,7 @@ async function ensureToken() {
   return token;
 }
 
+/** Gera a configuração pública que o navegador local carregará. */
 async function ensureFrontendConfig(status) {
   const frontendHost = process.env.DEV_FRONTEND_HOST?.trim() || '127.0.0.1';
   if (!localHostnames.has(frontendHost)) {
@@ -123,6 +139,7 @@ async function ensureFrontendConfig(status) {
   return frontendHost;
 }
 
+/** Monta variáveis da Edge Runtime apontando para Docker/sidecar locais. */
 function functionsEnv(status, adminUserId, token, frontendHost) {
   const values = {
     APP_ENV: 'dev',
@@ -147,6 +164,7 @@ async function writeFunctionsEnv(status, adminUserId, token, frontendHost) {
   });
 }
 
+/** Executa GET/JSON sem cache e tolera respostas sem corpo. */
 async function requestJson(url, init = {}) {
   const response = await fetch(url, { ...init, cache: 'no-store' });
   let body = null;
@@ -163,6 +181,7 @@ async function signInAdmin(status, email, password) {
   return result.response.ok ? result.body : null;
 }
 
+/** Cria ou recupera um usuário administrativo sintético do Supabase local. */
 async function ensureAdmin(status) {
   let existing = null;
   try { existing = await readJson(adminPath); } catch (error) {
@@ -219,6 +238,7 @@ async function ensureAdmin(status) {
   return { email, password, id: userId };
 }
 
+/** Confere o contrato de 14 campos antes de gravar o snapshot local. */
 function validateEventConfig(config) {
   if (!config || typeof config !== 'object') fail('Event Config response did not contain an object.');
   const keys = Object.keys(config).sort();
@@ -238,6 +258,7 @@ function validateEventConfig(config) {
   return Object.fromEntries(EVENT_FIELDS.map((field) => [field, config[field]]));
 }
 
+/** Obtém a configuração pública uma única vez quando não há snapshot local. */
 async function fetchPublicEventConfig() {
   const appConfig = await import('../invite-app/scripts/shared/app-config.js');
   const eventConfigUrl = new URL('event-config', appConfig.FUNCTIONS_BASE_URL).href;
@@ -251,6 +272,7 @@ async function fetchPublicEventConfig() {
   return config;
 }
 
+/** Prefere o snapshot ignorado e evita novos acessos ao endpoint público. */
 async function loadEventConfig() {
   try {
     const saved = await readJson(eventConfigPath);
@@ -261,6 +283,7 @@ async function loadEventConfig() {
   }
 }
 
+/** Faz upsert da fotografia sintética no singleton local e verifica os campos. */
 async function seedEventConfig(status, config) {
   const { response, body } = await requestJson(`${localApiUrl(status)}/rest/v1/event_config?on_conflict=id`, {
     method: 'POST',
@@ -283,6 +306,7 @@ async function seedEventConfig(status, config) {
   console.log(`Seeded local Event Config (${EVENT_FIELDS.length} fields compared; values omitted).`);
 }
 
+/** Inicia um processo local desacoplado e direciona stdout/stderr a um log DEV. */
 async function spawnDetached(command, args, logPath, env) {
   await mkdir(dirname(logPath), { recursive: true });
   const output = openSync(logPath, 'a');
@@ -298,6 +322,7 @@ async function spawnDetached(command, args, logPath, env) {
   return child.pid;
 }
 
+/** Inicia o provider local de contingência se ainda não estiver saudável. */
 async function startSidecar(token) {
   const health = await requestJson('http://127.0.0.1:54328/health', {
     headers: { 'X-Dev-Contingency-Token': token },
@@ -313,6 +338,7 @@ async function startSidecar(token) {
   await updateState({ contingencyPid: pid });
 }
 
+/** Inicia as Edge Functions locais e aguarda o gateway sair do estado 502. */
 async function startFunctions() {
   const state = await readState();
   if (state.functionsPid) {
@@ -333,6 +359,7 @@ async function startFunctions() {
   fail(`Local Edge Functions did not become reachable. Inspect ${functionsLogPath}.`);
 }
 
+/** Encerra um processo filho conhecido, tolerando processo já finalizado. */
 async function stopPid(pid) {
   if (!Number.isInteger(pid)) return;
   if (process.platform === 'win32') {
@@ -349,6 +376,7 @@ async function stopFunctionsAndSidecar() {
   await updateState({ functionsPid: null, contingencyPid: null });
 }
 
+/** Sobe Supabase, Auth sintético, sidecar, funções e seed local. */
 async function up() {
   runSupabase(['start'], { stdio: 'pipe' });
   const status = statusEnv();
@@ -362,12 +390,14 @@ async function up() {
   console.log(`DEV ready: frontend backend ${frontendHost}:54321; admin ${admin.email}; production services untouched.`);
 }
 
+/** Recria apenas o banco local e reaplica o bootstrap DEV. */
 async function reset() {
   await stopFunctionsAndSidecar();
   runSupabase(['db', 'reset', '--local', '--no-seed']);
   await up();
 }
 
+/** Para serviços locais, mantendo snapshots para a próxima inicialização. */
 async function down() {
   await stopFunctionsAndSidecar();
   runSupabase(['stop']);
@@ -388,6 +418,7 @@ async function rotateToken() {
   console.log('Local DEV contingency token rotated.');
 }
 
+/** Verifica API, health, Event Config e contingência local. */
 async function health() {
   const status = statusEnv();
   const state = await readState();
