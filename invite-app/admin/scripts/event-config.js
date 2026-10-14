@@ -7,12 +7,23 @@ export const EVENT_FIELDS = [
   'reception_address', 'reception_city', 'reception_state', 'reception_maps_url',
 ];
 const optional = new Set(['ceremony_address', 'ceremony_maps_url', 'reception_name', 'reception_address', 'reception_city', 'reception_state', 'reception_maps_url']);
+
+/** Lê os campos do formulário e preserva opcionais vazios como `null`. */
 export function readEventForm(form) {
   return Object.fromEntries(EVENT_FIELDS.map((field) => {
     const value = form.elements.namedItem(field).value.trim();
     return [field, optional.has(field) && !value ? null : value];
   }));
 }
+
+/**
+ * Executa GET/PUT da configuração pelo contrato administrativo.
+ *
+ * @param {'GET'|'PUT'} method Operação solicitada.
+ * @param {Record<string, unknown>|undefined} config Corpo usado no PUT.
+ * @param {Function} invoke Dependência injetável para os testes.
+ * @returns {Promise<Record<string, unknown>|null>} Configuração devolvida pelo backend.
+ */
 export async function requestEventConfig(method, config, invoke = callAdminFunction) {
   const result = await invoke('admin-manage-event-config', {
     method, ...(method === 'PUT' ? { body: { config } } : {}),
@@ -24,6 +35,8 @@ export async function requestEventConfig(method, config, invoke = callAdminFunct
   }
   return result.config;
 }
+
+/** Inicializa expansão, carregamento, validação e persistência do painel de evento. */
 export async function initializeEventConfig(root = document, request = requestEventConfig) {
   const toggle = root.querySelector('#event-toggle');
   const content = root.querySelector('#event-content');

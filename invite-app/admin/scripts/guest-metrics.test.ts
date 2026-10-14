@@ -1,5 +1,6 @@
 import { calculateGuestMetrics } from "./guest-metrics.js";
 
+// Fixture mistura presenças e recusas para verificar totais e pessoas confirmadas.
 Deno.test("guest metrics calculate counts and confirmed people", () => {
   const metrics = calculateGuestMetrics([
     { attendance: true, companions: 2 },
@@ -19,6 +20,7 @@ Deno.test("guest metrics calculate counts and confirmed people", () => {
   }
 });
 
+// O caso vazio protege o estado inicial do dashboard contra NaN/undefined.
 Deno.test("empty guest list produces zero metrics", () => {
   const metrics = calculateGuestMetrics([]);
 

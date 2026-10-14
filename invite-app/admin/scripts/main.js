@@ -7,6 +7,7 @@ import { initializeEventConfig } from './event-config.js';
 import { initializeInvitationLinks } from './navigation.js';
 import { formatTimestamp } from './date-time.js';
 
+/** Ponto de entrada do painel: seleciona login ou dashboard pelo atributo HTML. */
 const page = document.body.dataset.page;
 let guestListController;
 
@@ -16,6 +17,7 @@ if (page === 'login') {
   initializeDashboard();
 }
 
+/** Verifica sessão existente e conecta o formulário ao Supabase Auth. */
 async function initializeLogin() {
   const form = document.querySelector('#login-form');
   const button = document.querySelector('#login-button');
@@ -65,6 +67,7 @@ async function initializeLogin() {
   });
 }
 
+/** Valida sessão, conecta logout e inicializa os módulos independentes do painel. */
 async function initializeDashboard() {
   const loadingMessage = document.querySelector('#dashboard-loading');
   const errorMessage = document.querySelector('#dashboard-error');
@@ -111,6 +114,7 @@ async function initializeDashboard() {
   }
 }
 
+/** Conecta filtros, paginação e retry ao controlador de estado da lista. */
 function initializeGuestList() {
   const searchInput = document.querySelector('#guest-search');
   const pageSizeSelect = document.querySelector('#guest-page-size');
@@ -159,10 +163,12 @@ function initializeGuestList() {
   });
 }
 
+/** Solicita a página atual sem descartar filtros mantidos pelo controlador. */
 async function loadGuests() {
   return guestListController?.reload();
 }
 
+/** Renderiza loading, erro, vazio, métricas, tabela e controles de paginação. */
 function renderGuestList(state) {
   const loadingMessage = document.querySelector('#guests-loading');
   const errorMessage = document.querySelector('#guests-error');
@@ -244,6 +250,7 @@ function renderGuestList(state) {
   nextButton.disabled = page >= totalPages;
 }
 
+/** Atualiza os cinco indicadores derivados apresentados no cabeçalho da lista. */
 function updateGuestMetrics(metrics) {
   document.querySelector('#metric-total').textContent = String(metrics.totalGuests);
   document.querySelector('#metric-confirmed').textContent = String(metrics.confirmedGuests);
@@ -252,6 +259,7 @@ function updateGuestMetrics(metrics) {
   document.querySelector('#metric-confirmed-people').textContent = String(metrics.confirmedPeople);
 }
 
+/** Cria uma linha segura por textContent e conecta ações ao registro original. */
 function createGuestRow(guest) {
   const row = document.createElement('tr');
   const attendance = guest.attendance ? 'Confirmado' : 'Não poderá comparecer';
@@ -286,6 +294,7 @@ function createGuestRow(guest) {
   return row;
 }
 
+/** Inicializa o diálogo único usado para criar e editar convidados. */
 function initializeGuestEditor() {
   const dialog = document.querySelector('#guest-dialog');
   const form = document.querySelector('#guest-form');
@@ -350,6 +359,7 @@ function initializeGuestEditor() {
   });
 }
 
+/** Preenche o diálogo em modo de criação ou edição e move o foco para o nome. */
 function openGuestEditor(guest = null) {
   const dialog = document.querySelector('#guest-dialog');
   const form = document.querySelector('#guest-form');
@@ -369,6 +379,7 @@ function openGuestEditor(guest = null) {
   form.elements.name.focus();
 }
 
+/** Confirma a exclusão e atualiza a lista apenas após o backend confirmar. */
 async function deleteGuestRecord(guest, button) {
   const confirmed = window.confirm(
     `Excluir o convidado "${guest.name}" (${guest.email})? Esta ação não pode ser desfeita.`
@@ -394,6 +405,7 @@ async function deleteGuestRecord(guest, button) {
   }
 }
 
+/** Converte códigos de erro administrativos em mensagens úteis ao operador. */
 function getGuestMutationMessage(error) {
   if (error?.code === 'EMAIL_ALREADY_REGISTERED') {
     return 'Este e-mail já está associado a outro convidado. Os dados atuais foram preservados.';
@@ -404,6 +416,7 @@ function getGuestMutationMessage(error) {
     : 'Não foi possível salvar a alteração.';
 }
 
+/** Publica feedback persistente do módulo de convidados. */
 function setGuestFeedback(message, type) {
   const feedbackMessage = document.querySelector('#guests-feedback');
   feedbackMessage.className = `feedback feedback--${type}`;
@@ -411,6 +424,7 @@ function setGuestFeedback(message, type) {
   feedbackMessage.hidden = false;
 }
 
+/** Carrega a fila e preserva feedback quando chamada após uma recuperação. */
 async function loadContingency({ preserveFeedback = false } = {}) {
   const loadingMessage = document.querySelector('#contingency-loading');
   const errorMessage = document.querySelector('#contingency-error');
@@ -453,6 +467,7 @@ async function loadContingency({ preserveFeedback = false } = {}) {
   }
 }
 
+/** Cria uma linha da fila sem interpretar dados fora do contrato permitido. */
 function createContingencyRow(record) {
   const row = document.createElement('tr');
   const attendance = record.attendance === true
@@ -486,6 +501,7 @@ function createContingencyRow(record) {
   return row;
 }
 
+/** Coordena recuperação, mensagens de conflito e refresh de convidados/contingência. */
 async function handleRecovery(record, button) {
   button.disabled = true;
   button.textContent = 'Recuperando...';
@@ -536,6 +552,7 @@ async function handleRecovery(record, button) {
   }
 }
 
+/** Publica feedback da operação de contingência. */
 function setContingencyFeedback(message, type) {
   const feedbackMessage = document.querySelector('#contingency-feedback');
   feedbackMessage.className = `feedback feedback--${type}`;
@@ -543,12 +560,14 @@ function setContingencyFeedback(message, type) {
   feedbackMessage.hidden = false;
 }
 
+/** Cria célula textual para evitar interpretar dados remotos como HTML. */
 function createCell(value) {
   const cell = document.createElement('td');
   cell.textContent = value;
   return cell;
 }
 
+/** Exibe uma mensagem em um elemento de feedback já existente no HTML. */
 function showError(element, message) {
   element.textContent = message;
   element.hidden = false;

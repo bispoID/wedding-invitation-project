@@ -2,10 +2,12 @@ export const DEFAULT_GUEST_PAGE_SIZE = 10;
 export const GUEST_PAGE_SIZES = [10, 20, 50];
 export const GUEST_SEARCH_DEBOUNCE_MS = 300;
 
+/** Valida inteiros usados no contrato de paginação e métricas. */
 function isNonNegativeInteger(value) {
   return Number.isInteger(value) && value >= 0;
 }
 
+/** Valida a forma mínima da resposta antes de alterar o estado da lista. */
 function validateResponse(result) {
   if (!result || !Array.isArray(result.records)) {
     throw new Error('A função retornou uma lista de convidados inválida.');
@@ -31,6 +33,7 @@ function validateResponse(result) {
   return { records: result.records, total: result.total, metrics };
 }
 
+/** Calcula limites exibidos e total de páginas para uma resposta paginada. */
 export function getGuestPagination(total, page, pageSize) {
   const totalPages = total === 0 ? 0 : Math.ceil(total / pageSize);
   const currentPage = totalPages === 0 ? 1 : Math.min(page, totalPages);
@@ -40,6 +43,11 @@ export function getGuestPagination(total, page, pageSize) {
   return { page: currentPage, pageSize, total, totalPages, firstRecord, lastRecord };
 }
 
+/**
+ * Cria o estado assíncrono da lista de convidados.
+ * Pesquisa é debounced; cada requisição recebe uma geração para que respostas
+ * antigas não sobrescrevam resultados mais novos.
+ */
 export function createGuestListController({
   fetchGuests,
   onStateChange,

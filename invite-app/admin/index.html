@@ -45,6 +45,8 @@
             <a data-invitation-mode="envelope-card" target="_blank" rel="noopener noreferrer">Preview: envelope</a>
             <a data-invitation-mode="letter" target="_blank" rel="noopener noreferrer">Preview: carta</a>
           </nav>
+
+          <!-- A configuração é pública no convite, mas só o administrador autenticado pode editá-la. -->
           <section class="event-panel" aria-labelledby="event-title">
             <h2 id="event-title">
               <button id="event-toggle" class="event-toggle" type="button" aria-expanded="false" aria-controls="event-content">
@@ -108,6 +110,7 @@
             </div>
           </section>
 
+          <!-- Lista, métricas e paginação são alimentadas pela mesma fonte paginada. -->
           <section class="guests-panel" aria-labelledby="guests-title">
             <h2 id="guests-title">Convidados</h2>
             <button class="button" id="guest-create" type="button">Criar convidado</button>
@@ -212,6 +215,7 @@
             </div>
           </section>
 
+          <!-- A contingência é uma fila operacional: recuperar confirma persistência antes de remover a linha. -->
           <section class="contingency-panel" aria-labelledby="contingency-title">
             <h2 id="contingency-title">Contingência</h2>
             <p class="feedback" id="contingency-loading" role="status" hidden>

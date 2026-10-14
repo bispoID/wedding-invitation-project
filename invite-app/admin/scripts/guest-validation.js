@@ -1,4 +1,9 @@
 // Keep these rules equivalent to backend _shared/guest-validation.ts.
+/**
+ * Replica no navegador a validação definitiva do backend para feedback rápido.
+ * A função normaliza nome/e-mail e zera acompanhantes quando a presença é
+ * negativa; a Edge Function repete a validação antes de persistir.
+ */
 export function validateGuest(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return { error: 'INVALID_NAME' };
   if (typeof value.name !== 'string' || !value.name.trim() || [...value.name.trim()].length > 200) return { error: 'INVALID_NAME' };

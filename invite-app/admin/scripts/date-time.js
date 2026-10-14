@@ -5,6 +5,11 @@ const formatter = new Intl.DateTimeFormat('pt-BR', {
 });
 
 // Presentation only: never use this formatter for civil event_date/event_time.
+/**
+ * Formata timestamps persistidos (UTC/ISO) para a zona do casamento.
+ * Datas civis do evento não passam por este caminho para não sofrerem
+ * conversão de fuso.
+ */
 export function formatTimestamp(value) {
   if (typeof value !== 'string' || !value.trim()) return '—';
   const date = new Date(value);

@@ -1,6 +1,7 @@
 import { callAdminFunction } from './functions.js';
 export { AdminFunctionError } from './functions.js';
 
+/** Carrega somente registros pendentes da contingência autorizada. */
 export async function getPendingContingency() {
   const result = await callAdminFunction('admin-list-contingency', {
     method: 'GET',
@@ -13,12 +14,14 @@ export async function getPendingContingency() {
   return result.records;
 }
 
+/** Solicita ao backend a recuperação idempotente de um request da contingência. */
 export async function recoverContingency(requestId) {
   return callAdminFunction('admin-recover-contingency', {
     body: { request_id: requestId },
   });
 }
 
+/** Executa create/update/delete e valida a confirmação explícita da API. */
 export async function manageGuest(action, id, guest) {
   const result = await callAdminFunction('admin-manage-guests', {
     body: { action, ...(action !== 'create' ? { id } : {}), ...(['create', 'update'].includes(action) ? { guest } : {}) },

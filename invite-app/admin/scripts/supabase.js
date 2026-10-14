@@ -2,6 +2,11 @@ import { SUPABASE_PUBLIC_KEY, SUPABASE_URL } from '../../scripts/shared/app-conf
 
 let supabaseClientPromise;
 
+/**
+ * Carrega o SDK sob demanda e compartilha uma única instância do cliente.
+ * O cache da Promise evita downloads concorrentes e é limpo quando o import
+ * falha, permitindo uma nova tentativa após corrigir a conectividade.
+ */
 export async function getSupabaseClient() {
   if (!SUPABASE_PUBLIC_KEY.trim()) {
     throw new Error(

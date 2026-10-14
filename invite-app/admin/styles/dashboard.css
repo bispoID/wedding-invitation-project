@@ -1,3 +1,4 @@
+/* Layout do dashboard; regras de cada painel permanecem separadas abaixo. */
 .dashboard-header {
   display: flex;
   align-items: center;

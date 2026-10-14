@@ -2,6 +2,11 @@ import { getSupabaseClient } from "./supabase.js";
 
 export const DEFAULT_GUEST_PAGE_SIZE = 10;
 
+/**
+ * Busca uma página de convidados pela Edge Function administrativa.
+ * O painel recebe também métricas calculadas no banco para não inferir totais
+ * a partir de uma página parcial.
+ */
 export async function getGuests({ page = 1, pageSize = DEFAULT_GUEST_PAGE_SIZE, search = '' } = {}) {
   const supabase = await getSupabaseClient();
   const params = new URLSearchParams({

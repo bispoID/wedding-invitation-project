@@ -1,5 +1,10 @@
 import { getSupabaseClient } from './supabase.js';
 
+/**
+ * Erro normalizado das Edge Functions administrativas.
+ * O painel usa `code` e `status` para exibir mensagens específicas sem
+ * depender da implementação interna do SDK.
+ */
 export class AdminFunctionError extends Error {
   constructor(code, message, status) {
     super(message);
@@ -9,6 +14,10 @@ export class AdminFunctionError extends Error {
   }
 }
 
+/**
+ * Invoca uma função administrativa e converte respostas HTTP de erro em
+ * `AdminFunctionError` quando o SDK disponibiliza a resposta original.
+ */
 export async function callAdminFunction(name, options) {
   const supabase = await getSupabaseClient();
   const { data, error } = await supabase.functions.invoke(name, options);
