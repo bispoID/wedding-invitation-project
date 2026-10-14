@@ -175,6 +175,10 @@
   text-align: center;
 }
 
+.guests-pagination .button:disabled {
+  cursor: not-allowed;
+}
+
 #guests-retry {
   margin-top: 16px;
 }

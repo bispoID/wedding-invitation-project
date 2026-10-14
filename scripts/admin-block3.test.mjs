@@ -772,3 +772,11 @@ test('admin touch highlight is limited to interactive controls and preserves vis
   assert.match(css, /\.button:hover\s*\{/);
   assert.match(css, /\.button:active:not\(:disabled\)\s*\{/);
 });
+
+test('admin pagination uses a boundary cursor without changing async button feedback', async () => {
+  const css = await readFile(new URL('../invite-app/admin/styles/main.css', import.meta.url), 'utf8');
+  const dashboard = await readFile(new URL('../invite-app/admin/styles/dashboard.css', import.meta.url), 'utf8');
+
+  assert.match(dashboard, /\.guests-pagination \.button:disabled\s*\{\s*cursor:\s*not-allowed;\s*\}/);
+  assert.match(css, /\.button:disabled\s*\{\s*cursor:\s*wait;/);
+});
