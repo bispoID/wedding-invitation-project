@@ -1,3 +1,11 @@
+/**
+ * Configuração pública consumida pelo navegador.
+ *
+ * Hosts públicos usam exclusivamente o projeto remoto. Hosts locais exigem o
+ * arquivo `dev-config.json`, gerado pelo setup DEV, e falham fechados quando
+ * ele não existe ou aponta para fora da rede local. Nenhuma chave privilegiada
+ * deve ser adicionada a este módulo.
+ */
 // Public browser configuration. Never put service_role or backend secrets here.
 const PRODUCTION_CONFIG = Object.freeze({
   appEnv: 'remote',
@@ -22,6 +30,14 @@ function isLocalSupabaseUrl(value) {
   }
 }
 
+/**
+ * Resolve a configuração pelo host atual, mantendo DEV e remoto separados.
+ *
+ * @param {string} hostname Host usado para a decisão de ambiente.
+ * @param {Record<string, unknown>|undefined} devConfig Configuração local injetada pelo bootstrap.
+ * @returns {{appEnv: string, supabaseUrl: string, supabaseAnonKey: string}} Configuração pública efetiva.
+ * @throws {Error} Quando um host local não possui configuração DEV válida.
+ */
 export function resolveRuntimeConfig(
   hostname = globalThis.location?.hostname ?? '',
   devConfig = globalThis.__INVITATION_DEV_CONFIG__,

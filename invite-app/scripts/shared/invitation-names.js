@@ -24,6 +24,13 @@ function measureOriginalNames(title, container) {
   }
 }
 
+/**
+ * Reavalia a composição dos nomes quando conteúdo, fontes ou geometria mudam.
+ * A medição usa um clone invisível para preservar os spans acessíveis do
+ * título real e aplica apenas a classe que habilita a quebra natural.
+ *
+ * @returns {void}
+ */
 export function initInvitationNames() {
   const letter = document.querySelector('.letter__header');
   const targets = [

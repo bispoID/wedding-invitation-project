@@ -1,5 +1,7 @@
 import { resetFloralSealAnimations } from '../welcome/decorations.js';
 
+// Este módulo só é ativado por `?devmode=...`; não participa do fluxo público
+// quando o parâmetro não foi solicitado.
 
 /**
  * Ajusta a apresentação do fluxo em desenvolvimento para previews estáticos.

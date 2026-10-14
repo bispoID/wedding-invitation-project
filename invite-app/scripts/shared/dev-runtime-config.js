@@ -1,3 +1,10 @@
+/**
+ * Bootstrap exclusivo para hosts locais.
+ *
+ * O arquivo gerado contém somente o endpoint e a chave pública anon do
+ * Supabase local. Ele é carregado antes de `app-config.js` calcular a URL das
+ * funções, sem participar de páginas publicadas em GitHub Pages ou Vercel.
+ */
 const LOCAL_HOSTNAMES = new Set([
   'localhost',
   '127.0.0.1',

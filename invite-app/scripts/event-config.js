@@ -12,6 +12,14 @@ const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Jul
 export const CONTENT_UPDATED = 'invitation:content-updated';
 export const DEFAULT_INVITATION_TITLE = 'Um convite especial — Nosso Dia ♡';
 
+/**
+ * Cria o título textual usado no documento e nos metadados de compartilhamento.
+ * Nomes incompletos mantêm o fallback genérico para não publicar um título
+ * parcialmente preenchido.
+ *
+ * @param {Record<string, unknown>} config Configuração pública do evento.
+ * @returns {string} Título pronto para uso em HTML.
+ */
 export function buildInvitationTitle(config = {}) {
   const brideName = typeof config.bride_name === 'string' ? config.bride_name.trim() : '';
   const groomName = typeof config.groom_name === 'string' ? config.groom_name.trim() : '';
@@ -23,12 +31,27 @@ export function buildInvitationTitle(config = {}) {
   return `Um convite especial — ${brideName} & ${groomName} ♡`;
 }
 
+/**
+ * Verifica se um link de mapa pode ser exposto como navegação externa.
+ * Credenciais, espaços e codificação inválida são rejeitados antes de o valor
+ * chegar a um atributo `href`.
+ *
+ * @param {unknown} value Valor recebido da configuração do evento.
+ * @returns {boolean} Se o valor é uma URL HTTPS sem credenciais.
+ */
 export function isHttpsUrl(value) {
   if (typeof value !== 'string' || !/^https:\/\/[^/]/i.test(value) || /[\s\\]/.test(value) || /%(?![a-f\d]{2})/i.test(value)) return false;
   try { const url = new URL(value); return url.protocol === 'https:' && !!url.hostname && !url.username && !url.password; }
   catch { return false; }
 }
 
+/**
+ * Converte uma data civil sem aplicar conversão de fuso horário.
+ *
+ * @param {unknown} value Data no formato `AAAA-MM-DD`.
+ * @returns {{date_month: string, date_day: string, date_year: string}} Partes para a apresentação.
+ * @throws {Error} `INVALID_CONFIG` quando a data não existe.
+ */
 export function formatCivilDate(value) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new Error('INVALID_CONFIG');
   const [year, month, day] = value.split('-').map(Number);
@@ -38,6 +61,15 @@ export function formatCivilDate(value) {
   return { date_month: MONTHS[month - 1], date_day: String(day), date_year: String(year) };
 }
 
+/**
+ * Valida e normaliza o contrato retornado pela Edge Function pública.
+ * Campos opcionais viram `null`; campos textuais são aparados e limites são
+ * aplicados antes de qualquer atualização do DOM.
+ *
+ * @param {unknown} payload Resposta JSON completa da API.
+ * @returns {Record<string, string|null>} Configuração normalizada.
+ * @throws {Error} `INVALID_CONFIG` quando o contrato ou seus campos são inválidos.
+ */
 export function validateConfig(payload) {
   if (!payload || payload.success !== true || !payload.config || typeof payload.config !== 'object' || Array.isArray(payload.config)) throw new Error('INVALID_CONFIG');
   const config = {};
@@ -78,8 +110,10 @@ export function loadEventConfig() {
   return configPromise;
 }
 
+/** Notifica os módulos tipográficos de que o conteúdo dinâmico foi atualizado. */
 function contentUpdated(root) { root.dispatchEvent(new CustomEvent(CONTENT_UPDATED)); }
 
+/** Atualiza título e metadados sociais sem alterar o restante do documento. */
 export function updateDocumentMetadata(root, config) {
   const documentRoot = root?.ownerDocument ?? root;
   if (!documentRoot) return;
@@ -93,6 +127,11 @@ export function updateDocumentMetadata(root, config) {
   }
 }
 
+/**
+ * Projeta a configuração validada nos elementos declarativos da página.
+ * Os atributos `data-event-*` mantêm este módulo independente da estrutura
+ * específica de cada bloco visual.
+ */
 export function applyEventConfig(root, config) {
   const values = { ...config, ...formatCivilDate(config.event_date), location: `${config.city} · ${config.state}` };
   values.reception_location = [config.reception_city, config.reception_state].filter(Boolean).join(' · ');

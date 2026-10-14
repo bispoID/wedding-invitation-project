@@ -8,6 +8,9 @@ const ERROR_MESSAGES = {
   500: 'Não foi possível registrar sua confirmação agora. Tente novamente em instantes.',
 };
 
+// A resposta 201 encerra o fluxo; 202 representa uma confirmação preservada
+// na contingência e mantém o formulário bloqueado para evitar duplicidade.
+
 /**
  * Inicializa o formulário de RSVP e conecta o frontend à Edge Function.
  *
