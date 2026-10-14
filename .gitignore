@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!supabase/functions/.env.example
 
 # Dependencies
 node_modules/
@@ -10,6 +11,11 @@ node_modules/
 dist/
 build/
 .vercel/
+_site/
+
+# Local DEV environment, credentials, event snapshot and contingency data
+.dev/
+invite-app/dev-config.json
 
 # Logs
 *.log

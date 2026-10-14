@@ -1,4 +1,13 @@
 {
+  "scripts": {
+    "dev:up": "node scripts/dev-environment.mjs up",
+    "dev:down": "node scripts/dev-environment.mjs down",
+    "dev:reset": "node scripts/dev-environment.mjs reset",
+    "dev:health": "node scripts/dev-environment.mjs health",
+    "dev:test": "node scripts/dev-environment.mjs test",
+    "dev:rotate-token": "node scripts/dev-environment.mjs rotate-token",
+    "dev:integration": "node scripts/dev-integration.mjs"
+  },
   "devDependencies": {
     "supabase": "^2.120.0"
   }

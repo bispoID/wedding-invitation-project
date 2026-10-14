@@ -1,10 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { parseAdminUserIds } from "../_shared/admin-auth.ts";
-import {
-  deleteContingencyRow,
-  GoogleSheetsError,
-  readContingencyRows,
-} from "../_shared/google-sheets.ts";
+import { getContingencyProvider } from "../_shared/contingency.ts";
 import { createRecoveryHandler } from "./handler.ts";
 import type {
   ContingencyRecord,
@@ -121,19 +117,9 @@ const handler = createRecoveryHandler({
       },
       async readRows() {
         try {
-          return await readContingencyRows() as ContingencyRecord[];
+          return await getContingencyProvider().read() as ContingencyRecord[];
         } catch (error) {
-          if (error instanceof GoogleSheetsError) {
-            console.error("Google Sheets read failed", {
-              reason: error.reason,
-              status: error.status ?? null,
-              columns: error.columns,
-            });
-          } else {
-            console.error("Google Sheets read failed", {
-              reason: "unexpected_error",
-            });
-          }
+          console.error("Contingency read failed", { reason: "provider_error" });
           throw error;
         }
       },
@@ -158,7 +144,7 @@ const handler = createRecoveryHandler({
         }
       },
       async deleteRow(rowNumber) {
-        await deleteContingencyRow(rowNumber);
+        await getContingencyProvider().delete(rowNumber);
       },
     });
   },

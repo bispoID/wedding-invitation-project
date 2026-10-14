@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { normalizePublicSiteUrl, prepareStaticSite, resolveInvitationTitle, resolveMetadata } from './prepare-static-site.mjs';
+import { normalizePublicSiteUrl, prepareStaticSite, resolveBuildEventConfigUrl, resolveInvitationTitle, resolveMetadata } from './prepare-static-site.mjs';
 
 const sourceDir = new URL('../invite-app/', import.meta.url);
 const originalHtml = await readFile(new URL('index.html', sourceDir), 'utf8');
@@ -45,6 +45,17 @@ test('metadata markers are mandatory, counted and fully resolved', () => {
   assert.throws(() => resolveMetadata(originalHtml.replace('__PUBLIC_SITE_URL__', ''), 'https://example.com/'), /exactly two/);
   assert.throws(() => resolveMetadata(`${originalHtml}__PUBLIC_UNKNOWN__`, 'https://example.com/'), /Unresolved/);
   assert.ok(!resolveMetadata(originalHtml, 'https://example.com/').includes('__PUBLIC_'));
+});
+
+test('DEV static preparation never defaults to the production Event Config endpoint', () => {
+  assert.throws(
+    () => resolveBuildEventConfigUrl({ appEnv: 'dev' }),
+    /refusing the production endpoint/,
+  );
+  assert.equal(
+    resolveBuildEventConfigUrl({ appEnv: 'dev', eventConfigUrl: 'http://127.0.0.1:54321/functions/v1/event-config' }),
+    'http://127.0.0.1:54321/functions/v1/event-config',
+  );
 });
 
 test('metadata URLs escape HTML attribute delimiters', () => {

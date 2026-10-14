@@ -117,7 +117,19 @@ A Edge Function pública `health` verifica os pré-requisitos operacionais do RS
 
 ## Desenvolvimento local
 
-Para testar o frontend localmente sem realizar um novo deploy:
+O DEV isolado usa Docker/Supabase local, Auth local e uma contingência JSON local.
+Para inicializar o ambiente completo, sem publicar ou escrever em serviços
+remotos:
+
+```powershell
+npm run dev:up
+```
+
+Os comandos de reset, saúde, testes e parada estão documentados em
+[local-development.md](docs/local-development.md). A arquitetura e a matriz de
+ambientes estão em [environments.md](docs/environments.md).
+
+Para testar somente o frontend localmente sem realizar um novo deploy:
 
 ```powershell
 python -m http.server 8000 --bind 0.0.0.0

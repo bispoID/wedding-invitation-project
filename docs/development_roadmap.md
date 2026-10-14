@@ -528,6 +528,12 @@ Esta transição não altera o Supabase de produção, o domínio ou as regras d
 negócio. A conclusão da separação depende da configuração manual da Production
 Branch na Vercel e da correção da configuração do Pages para `staging`.
 
+Na branch `feature/dev-environment-isolation`, o escopo complementar de DEV
+foi implementado localmente com Supabase em Docker, configuração de frontend
+fail-closed, Auth sintético, snapshot público de Event Config e contingência
+JSON. Essa implementação não promove a branch nem altera UAT/PRD; sua integração
+futura segue revisão explícita para `feature/landing-page`.
+
 **Resultado atual:**
 
 Branches remotas publicadas, configuração operacional documentada e

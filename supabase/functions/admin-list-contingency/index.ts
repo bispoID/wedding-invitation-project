@@ -1,9 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { parseAdminUserIds } from "../_shared/admin-auth.ts";
-import {
-  GoogleSheetsError,
-  readContingencyRows,
-} from "../_shared/google-sheets.ts";
+import { getContingencyProvider } from "../_shared/contingency.ts";
 import { createListHandler } from "./handler.ts";
 
 const REQUEST_TIMEOUT_MS = 12_000;
@@ -78,19 +75,9 @@ const handler = createListHandler({
   },
   async listRows() {
     try {
-      return await readContingencyRows();
+      return await getContingencyProvider().read();
     } catch (error) {
-      if (error instanceof GoogleSheetsError) {
-        console.error("Google Sheets list read failed", {
-          reason: error.reason,
-          status: error.status ?? null,
-          columns: error.columns,
-        });
-      } else {
-        console.error("Google Sheets list read failed", {
-          reason: "unexpected_error",
-        });
-      }
+      console.error("Contingency list read failed", { reason: "provider_error" });
       throw error;
     }
   },

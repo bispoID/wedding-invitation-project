@@ -128,11 +128,22 @@ export async function prepareStaticSite({
   return { siteUrl, outputDir: output };
 }
 
+export function resolveBuildEventConfigUrl({ appEnv = process.env.APP_ENV, eventConfigUrl } = {}) {
+  if (eventConfigUrl) return eventConfigUrl;
+  if (appEnv === 'dev') {
+    throw new Error('EVENT_CONFIG_URL is required for DEV static preparation; refusing the production endpoint.');
+  }
+  return DEFAULT_EVENT_CONFIG_URL;
+}
+
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
   try {
     const result = await prepareStaticSite({
       publicSiteUrl: process.env.PUBLIC_SITE_URL,
-      eventConfigUrl: process.env.EVENT_CONFIG_URL || DEFAULT_EVENT_CONFIG_URL,
+      eventConfigUrl: resolveBuildEventConfigUrl({
+        appEnv: process.env.APP_ENV,
+        eventConfigUrl: process.env.EVENT_CONFIG_URL,
+      }),
     });
     console.log(`Prepared ${result.outputDir} for ${result.siteUrl}`);
   } catch (error) {

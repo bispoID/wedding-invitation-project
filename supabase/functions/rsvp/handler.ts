@@ -7,7 +7,8 @@ export interface RsvpOptions {
     request: Request,
   ): Promise<{ data: { allowed: boolean } | null; error: unknown }>;
   insertGuest(guest: GuestData): Promise<{ error: { code?: string } | null }>;
-  saveToGoogleSheets(record: ContingencyRsvp): Promise<void>;
+  saveToGoogleSheets?(record: ContingencyRsvp): Promise<void>;
+  saveToContingency?(record: ContingencyRsvp): Promise<void>;
   notifyAdmin(alert: AdminAlert): void;
 }
 function safeFailureCode(code: unknown): string {
@@ -149,7 +150,10 @@ export function createRsvpHandler(options: RsvpOptions) {
 
       // Only persistence failures reach the temporary contingency queue.
       try {
-        await options.saveToGoogleSheets({
+        const saveToContingency = options.saveToContingency ??
+          options.saveToGoogleSheets;
+        if (!saveToContingency) throw new Error("CONTINGENCY_NOT_CONFIGURED");
+        await saveToContingency({
           request_id: requestId,
           created_at: createdAt,
           name,

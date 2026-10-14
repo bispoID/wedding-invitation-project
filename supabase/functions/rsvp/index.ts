@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { saveToGoogleSheets } from "./google-sheets.ts";
+import { getContingencyProvider } from "../_shared/contingency.ts";
 import { notifyAdmin } from "./notify-admin.ts";
 import { createRsvpHandler } from "./handler.ts";
 
@@ -52,6 +52,6 @@ Deno.serve(createRsvpHandler({
     const { error } = await client().from("guests").insert(guest);
     return { error };
   },
-  saveToGoogleSheets,
+  saveToContingency: getContingencyProvider().append,
   notifyAdmin,
 }));

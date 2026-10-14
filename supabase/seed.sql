@@ -1,0 +1,50 @@
+-- Synthetic DEV-only seed. Real event data is loaded by scripts/dev-environment.mjs
+-- from the ignored local snapshot after the public Event Config GET.
+insert into public.event_config (
+  id,
+  bride_name,
+  groom_name,
+  event_date,
+  event_time,
+  city,
+  state,
+  ceremony_name,
+  ceremony_address,
+  ceremony_maps_url,
+  reception_name,
+  reception_address,
+  reception_city,
+  reception_state,
+  reception_maps_url
+) values (
+  1,
+  'Pessoa A',
+  'Pessoa B',
+  '2030-01-01',
+  '12:30',
+  'Cidade sintética',
+  'Estado sintético',
+  'Cerimônia sintética',
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null
+)
+on conflict (id) do update set
+  bride_name = excluded.bride_name,
+  groom_name = excluded.groom_name,
+  event_date = excluded.event_date,
+  event_time = excluded.event_time,
+  city = excluded.city,
+  state = excluded.state,
+  ceremony_name = excluded.ceremony_name,
+  ceremony_address = excluded.ceremony_address,
+  ceremony_maps_url = excluded.ceremony_maps_url,
+  reception_name = excluded.reception_name,
+  reception_address = excluded.reception_address,
+  reception_city = excluded.reception_city,
+  reception_state = excluded.reception_state,
+  reception_maps_url = excluded.reception_maps_url;

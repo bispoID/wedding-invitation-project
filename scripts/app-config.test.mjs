@@ -43,3 +43,29 @@ test('RSVP and admin consume the shared configuration without duplicated infrast
   assert.ok(!rsvp.includes('supabase.co'));
   assert.ok(!admin.includes('supabase.co'));
 });
+
+test('local browser hosts require an explicit DEV configuration', async () => {
+  const config = await loadConfig(new URL('scripts/shared/app-config.js', 'http://localhost:5500/invite-app/').href);
+  assert.throws(
+    () => config.resolveRuntimeConfig('127.0.0.1', undefined),
+    /DEV Supabase configuration is missing or invalid/,
+  );
+
+  const local = config.resolveRuntimeConfig('10.0.2.2', {
+    appEnv: 'dev',
+    supabaseUrl: 'http://10.0.2.2:54321',
+    supabaseAnonKey: 'synthetic-local-anon-key',
+  });
+
+  assert.equal(local.appEnv, 'dev');
+  assert.equal(local.supabaseUrl, 'http://10.0.2.2:54321');
+  assert.equal(local.supabaseAnonKey, 'synthetic-local-anon-key');
+  assert.throws(
+    () => config.resolveRuntimeConfig('localhost', {
+      appEnv: 'dev',
+      supabaseUrl: 'https://bkkienyemqlkueygknzl.supabase.co',
+      supabaseAnonKey: 'synthetic-key',
+    }),
+    /DEV Supabase configuration is missing or invalid/,
+  );
+});
