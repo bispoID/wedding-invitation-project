@@ -1,5 +1,6 @@
--- Synthetic DEV-only seed. Real event data is loaded by scripts/dev-environment.mjs
--- from the ignored local snapshot after the public Event Config GET.
+-- Seed sintética exclusiva do DEV. Ela garante uma linha válida para o reset
+-- local; o setup substitui seus valores pela fotografia pública ignorada em
+-- .dev/ após um único GET da Event Config.
 insert into public.event_config (
   id,
   bride_name,

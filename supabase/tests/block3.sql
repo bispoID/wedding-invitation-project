@@ -1,6 +1,8 @@
 -- LOCAL DISPOSABLE DATABASE ONLY, after all migrations. No remote execution.
 -- Run with psql -v ON_ERROR_STOP=1 -f supabase/tests/block3.sql <local connection>.
 begin;
+-- 1. O contrato estrutural e os grants devem refletir o fechamento do acesso
+--    direto à Event Config e as constraints de convidados.
 do $$
 declare role_name text; tested_column_name text;
 begin
@@ -46,8 +48,8 @@ begin
     raise exception 'Guest length constraints must be validated after all migrations';
   end if;
 end $$;
--- A disposable local database is required, so existing config is removed only
--- inside this rolled-back transaction by its owner (never by service_role).
+-- 2. A base local é preparada dentro desta transação; todo dado sintético é
+--    descartado no ROLLBACK final, sem usar service_role para DELETE/TRUNCATE.
 delete from public.event_config;
 set local role service_role;
 insert into public.event_config (id, bride_name, groom_name, event_date, event_time, city, state, ceremony_name)
@@ -71,6 +73,9 @@ do $$ begin
   exception when insufficient_privilege then null; end;
 end $$;
 reset role;
+-- 3. Constraints, trigger de timestamp e RLS são exercitados com dados
+--    sintéticos; cada bloco espera uma falha específica quando a regra deve
+--    rejeitar a operação.
 do $$ begin
   begin
     insert into public.event_config (id, bride_name, groom_name, event_date, event_time, city, state, ceremony_name)
