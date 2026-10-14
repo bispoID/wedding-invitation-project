@@ -4,6 +4,7 @@ import {
   readContingencyRows,
 } from "./google-sheets.ts";
 
+// Usa credenciais sintéticas e fetch controlado para cobrir OAuth e leitura sem rede real.
 function assertEquals<T>(actual: T, expected: T, message: string): void {
   if (actual !== expected) {
     throw new Error(`${message}: expected ${expected}, received ${actual}`);

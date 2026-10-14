@@ -7,6 +7,7 @@ import {
   GUEST_SEARCH_DEBOUNCE_MS,
 } from '../invite-app/admin/scripts/guest-list-controller.js';
 
+// Cobre debounce, paginação, métricas, concorrência e descarte de respostas obsoletas.
 const metrics = {
   totalGuests: 47,
   confirmedGuests: 32,

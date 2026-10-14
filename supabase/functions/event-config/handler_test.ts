@@ -1,5 +1,7 @@
 import { createEventConfigHandler } from "./handler.ts";
 import { fixture } from "../_shared/event-fixture.ts";
+
+// O provider em memória confirma que o endpoint público é somente GET/OPTIONS.
 function assert(value: unknown) {
   if (!value) throw new Error("Assertion failed");
 }

@@ -3,6 +3,7 @@ import {
   createHealthHandler,
 } from "./handler.ts";
 
+// Verifica GET/HEAD, falha genérica, logger sem dados sensíveis e dependência RPC.
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) throw new Error(message);
 }

@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
+// Contratos estáticos que impedem o frontend local e a contingência DEV de
+// usar endpoints, chaves ou comandos privilegiados/remotos.
 const root = new URL('../', import.meta.url);
 const read = (path) => readFile(new URL(path, root), 'utf8');
 

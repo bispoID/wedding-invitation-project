@@ -12,7 +12,7 @@ const eventSource = (await readFile(new URL('../invite-app/scripts/event-config.
   .replace("import { FUNCTIONS_BASE_URL } from './shared/app-config.js';", "const FUNCTIONS_BASE_URL = 'https://example.invalid/functions/v1/';");
 const { applyEventConfig } = await import('data:text/javascript;base64,' + Buffer.from(eventSource).toString('base64'));
 
-// Geometry is deliberately modeled: these tests are not browser/font visual acceptance.
+// Geometria é modelada deliberadamente; estes testes não substituem aceite visual.
 async function withWelcomeTypography(options, run) {
   const globals = ['window', 'document', 'ResizeObserver', 'CustomEvent', 'fetch'];
   const previous = globals.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)]);

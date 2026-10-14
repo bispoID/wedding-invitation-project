@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { normalizePublicSiteUrl, prepareStaticSite, resolveBuildEventConfigUrl, resolveInvitationTitle, resolveMetadata } from './prepare-static-site.mjs';
 
+// Verifica que o build copia uma árvore portátil e só substitui metadados na saída.
 const sourceDir = new URL('../invite-app/', import.meta.url);
 const originalHtml = await readFile(new URL('index.html', sourceDir), 'utf8');
 

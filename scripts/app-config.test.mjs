@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
+// Verifica resolução de base URL, isolamento DEV e ausência de chaves privilegiadas.
 const configSource = await readFile(new URL('../invite-app/scripts/shared/app-config.js', import.meta.url), 'utf8');
 
 async function loadConfig(moduleUrl) {

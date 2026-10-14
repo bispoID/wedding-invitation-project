@@ -6,6 +6,8 @@ const valid = {
   attendance: true,
   companions: 2,
 };
+
+// Mantém o contrato TypeScript alinhado à validação duplicada do navegador.
 function assert(value: unknown) {
   if (!value) throw new Error("Assertion failed");
 }

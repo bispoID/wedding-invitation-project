@@ -7,6 +7,7 @@ const SECOND_ADMIN_ID = "94827da7-58a1-46f3-8a8d-c82d324d5d7c";
 const OTHER_USER_ID = "f8c06c53-1c6b-4c6c-9acd-cdbb1451541a";
 const ORIGIN = "http://localhost:5500";
 
+// Cobre CORS, método, JWT/allowlist, filtro pending e normalização de linhas.
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);

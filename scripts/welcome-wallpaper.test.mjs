@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
+// Inspeção estática do contrato de wallpaper, breakpoints, asset e overflow.
 const load = (path, encoding = 'utf8') => readFile(new URL('../' + path, import.meta.url), encoding);
 const welcomeCSS = await load('invite-app/styles/welcome/welcome.css');
 const responsiveCSS = await load('invite-app/styles/responsive.css');

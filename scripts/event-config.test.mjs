@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
+// Exercita validação, deduplicação da Promise, projeção DOM e estados de erro.
 const source = await readFile(new URL('../invite-app/scripts/event-config.js', import.meta.url), 'utf8');
 let sequence = 0;
 async function module() {

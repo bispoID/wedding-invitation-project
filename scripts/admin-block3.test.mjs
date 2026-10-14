@@ -6,6 +6,8 @@ import './welcome-typography.test.mjs';
 import './welcome-wallpaper.test.mjs';
 import './invitation-names.test.mjs';
 
+// Suíte agregadora do frontend/admin: carrega fixtures de DOM e cobre os
+// contratos que não dependem de navegador, rede ou Supabase remoto.
 const load = async (path, replacements = []) => {
   let code = await readFile(new URL('../' + path, import.meta.url), 'utf8');
   for (const [from, to] of replacements) code = code.replace(from, to);

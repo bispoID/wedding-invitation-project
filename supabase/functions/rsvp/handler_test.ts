@@ -1,5 +1,7 @@
 import { createRsvpHandler, type RsvpOptions } from "./handler.ts";
 import { notifyAdmin } from "./notify-admin.ts";
+
+// Cobre rate limit antes do parse, validação, duplicate, contingência e alertas.
 const guest = {
   name: "Nome Á Sintético",
   email: "test@example.invalid",

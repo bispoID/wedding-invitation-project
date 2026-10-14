@@ -5,6 +5,7 @@ import {
 } from "./handler.ts";
 import { parseAdminUserIds } from "../_shared/admin-auth.ts";
 
+// Verifica autenticação, allowlist, validação, CRUD e mapeamento de conflito único.
 const ADMIN_ID = "c2d806a4-3438-4f24-8d1d-62c50a17c531";
 const SECOND_ADMIN_ID = "94827da7-58a1-46f3-8a8d-c82d324d5d7c";
 const OTHER_USER_ID = "f8c06c53-1c6b-4c6c-9acd-cdbb1451541a";

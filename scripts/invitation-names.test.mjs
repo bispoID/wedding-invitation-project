@@ -12,7 +12,7 @@ const eventSource = (await load('invite-app/scripts/event-config.js'))
   .replace("import { FUNCTIONS_BASE_URL } from './shared/app-config.js';", "const FUNCTIONS_BASE_URL = 'https://example.invalid/functions/v1/';");
 const { applyEventConfig } = await import('data:text/javascript;base64,' + Buffer.from(eventSource).toString('base64'));
 
-// Layout/font metrics are modeled deliberately; these tests are not visual acceptance.
+// Layout/font metrics are modeled deliberadamente; não são aceite visual em navegador.
 async function withNames(options, run) {
   const globals = ['window', 'document', 'CustomEvent', 'fetch'];
   const previous = globals.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)]);

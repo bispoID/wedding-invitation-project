@@ -1,5 +1,7 @@
 import { createEventAdminHandler, type EventAdminOptions } from "./handler.ts";
 import { fixture } from "../_shared/event-fixture.ts";
+
+// Isola o handler com dependências em memória para cobrir GET, PUT e rejeições.
 const admin = "c2d806a4-3438-4f24-8d1d-62c50a17c531";
 const origin = "https://admin.example.invalid";
 function assert(value: unknown) {

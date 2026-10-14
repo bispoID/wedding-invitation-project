@@ -4,6 +4,8 @@ import {
   validateEventConfig,
 } from "./event-validation.ts";
 import { fixture } from "./event-fixture.ts";
+
+// Valida limites, opcionais, datas, horários, URLs HTTPS e DTO vindo do banco.
 function assert(value: unknown) {
   if (!value) throw new Error("Assertion failed");
 }

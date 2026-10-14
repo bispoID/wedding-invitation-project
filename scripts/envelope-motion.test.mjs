@@ -7,6 +7,7 @@ import {
   resetFloralSealAnimations,
 } from '../invite-app/scripts/welcome/decorations.js';
 
+// Modela timers, WAAPI e reduced-motion para testar a máquina de estados sem renderizador.
 const variables = await readFile(new URL('../invite-app/styles/base/variables.css', import.meta.url), 'utf8');
 const tokens = Object.fromEntries([...variables.matchAll(/(--[\w-]+):\s*([^;]+);/g)]
   .map(([, name, value]) => [name, value.trim()]));
