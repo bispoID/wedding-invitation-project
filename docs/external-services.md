@@ -120,8 +120,9 @@ As três branches foram criadas a partir do commit estável publicado
 `d3f35d9` (`d3f35d98d594ae1885bb94135204a872c5809dec`). As branches remotas
 `staging` e `production` foram publicadas no GitHub. A separação funcional foi
 introduzida no commit `1e19f5b`
-(`1e19f5bc86a2a80aebcc9b2a5cceb2f247cc6e57`) e a ponta atual das duas branches
-é o commit documental `45743be` (`45743be143928ada43ec5b5cbabe6ac8c44589ec`).
+(`1e19f5bc86a2a80aebcc9b2a5cceb2f247cc6e57`). Esses commits permanecem como
+referência histórica da separação; a referência de produção deste
+encerramento é registrada abaixo.
 A publicação do Pages fica limitada a `staging` por push; o workflow também
 recusa execuções manuais selecionadas em outra branch e faz checkout explícito
 de `staging`.
@@ -132,21 +133,16 @@ disponíveis pelo conector; por isso ainda é necessário revisar a configuraç�
 do Pages/ambiente `github-pages` para permitir a publicação a partir de
 `staging` e então repetir a execução manual.
 
-O projeto Vercel `bruna-e-diego` ainda tem a Production Branch operacional
-associada a `feature/landing-page`, conforme o deployment `READY` desse commit.
-Após o push, a Vercel gerou previews `READY` para `staging` e `production`, mas
-eles ainda não são deployments de produção. O conector disponível não expõe o
-campo de Production Branch e rejeitou a tentativa de atualização por esquema;
-por isso a alteração ainda precisa ser feita manualmente nas configurações do
-projeto, trocando **Production Branch** para `production` sem iniciar um novo
-deploy nesta etapa. Depois, a primeira publicação em `production` deve ser
-verificada pelo commit e pelo alvo `production`.
+No encerramento desta funcionalidade, a Production Branch da Vercel está
+associada a `production`. A publicação final foi gerada pela integração Git com
+o commit `b5995cf53be3085f9b1d418b8cddf08154afd303`, deployment
+`dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`, alvo `production` e estado `READY`.
+O domínio associado é `bruna-e-diego.vercel.app`.
 
-Enquanto essa configuração não for alterada, novos pushes em
-`feature/landing-page` podem continuar sendo interpretados pela integração Git
-da Vercel como produção. Branches não produtivas também podem gerar previews
-conforme a configuração padrão da integração; isso não promove código a
-produção depois da troca da Production Branch.
+Branches não produtivas permanecem fora do escopo desta publicação e podem
+gerar previews conforme a configuração da integração. A pendência do GitHub
+Pages para `staging` permanece independente da publicação Vercel descrita
+acima.
 
 ## Node.js e npm
 

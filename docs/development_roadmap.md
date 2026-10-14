@@ -331,16 +331,28 @@ convite/previews. Asserções backend e UI simulada passaram; aceite funcional e
 visual registrado, incluindo Event Config do Bloco 4. Frontend atualizado
 integrado e publicado no Bloco 5; o micro-hotfix touch preserva focus-visible.
 
-### Extensão local posterior — pesquisa e paginação de convidados (13/10/2026)
+### Extensão concluída — pesquisa e paginação de convidados (13/10/2026)
 
-Foi implementada localmente uma listagem administrativa paginada (10/20/50),
-pesquisa dinâmica por nome/e-mail com debounce, indicadores agregados
-independentes do filtro e respostas administrativas `private, no-store`. A
-alteração inclui a RPC protegida `public.admin_list_guests`, a estabilização dos
-indicadores durante carregamentos e testes sintéticos. A migration foi aplicada
-e validada em PostgreSQL local descartável com Docker; ainda não foi aplicada
-remotamente. O aceite de produção permanece pendente: não houve deploy,
-`db push`, alteração remota ou uso de dados reais nesta extensão.
+Foi implementada, validada e publicada uma listagem administrativa paginada
+(10/20/50), pesquisa dinâmica por nome/e-mail com debounce, indicadores
+agregados independentes do filtro e respostas administrativas `private,
+no-store`. A alteração inclui a RPC protegida `public.admin_list_guests`, a
+estabilização dos indicadores durante carregamentos e testes com fixtures
+sintéticas.
+
+A migration `20261013010000_create_admin_guest_list.sql` foi aplicada e
+validada no PostgreSQL local descartável e posteriormente aplicada em
+produção. A Edge Function `admin-list-guests` foi publicada na versão 8 e
+validada com autenticação, autorização, pesquisa, paginação e métricas. O
+frontend foi publicado na Vercel pela branch `production` no commit
+`b5995cf53be3085f9b1d418b8cddf08154afd303`, deployment
+`dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`.
+
+O hotfix do cursor dos botões de paginação desabilitados foi incluído no mesmo
+encerramento e publicado com a versão final. O aceite visual autenticado foi
+confirmado pelo responsável. Este registro encerra somente o escopo de
+pesquisa, paginação, métricas e cursor administrativo; não altera os critérios
+ou pendências de outras fases.
 
 ---
 
@@ -507,7 +519,8 @@ e os testes cobrem root/subpath.
 - [x] Preparar localmente `staging` e `production` a partir do commit estável.
 - [x] Restringir localmente o workflow Pages à branch `staging`.
 - [x] Publicar as novas branches no GitHub no commit de separação `1e19f5b`.
-- [ ] Ajustar a Production Branch da Vercel para `production` e concluir a validação do Pages.
+- [x] Ajustar a Production Branch da Vercel para `production` e validar a publicação deste escopo.
+- [ ] Concluir a validação do GitHub Pages para `staging`.
 
 A arquitetura é independente do provedor. Outros serviços compatíveis podem
 publicar o mesmo artefato; novos ambientes exigem validar suas URLs/origins.
@@ -518,10 +531,13 @@ Branch na Vercel e da correção da configuração do Pages para `staging`.
 **Resultado atual:**
 
 Branches remotas publicadas, configuração operacional documentada e
-portabilidade de paths verificada, sem modificar regras de negócio. O código
-está preparado para homologação em `staging`; a publicação efetiva do Pages e
-a troca da Production Branch da Vercel continuam pendentes de configuração
-externa.
+portabilidade de paths verificada, sem modificar regras de negócio. A
+Production Branch da Vercel está configurada como `production`, e a publicação
+final deste escopo foi validada pelo commit
+`b5995cf53be3085f9b1d418b8cddf08154afd303` e pelo deployment
+`dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`. A publicação do Pages e a configuração do
+ambiente `github-pages` permanecem pendentes e independentes deste
+encerramento.
 
 ---
 
@@ -734,7 +750,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 08 — Monitoramento
 [x] 09 — Interface / Design (CONCLUÍDA no escopo visual e manual relatado)
 [x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
-[~] 11 — Hospedagem estática / ambientes (branches separadas; Pages e Vercel pendentes de configuração)
+[~] 11 — Hospedagem estática / ambientes (Vercel deste escopo validada; Pages e demais configurações independentes ainda pendentes)
 [x] 12 — Testes / qualidade (356 testes locais; SQL anterior e aceites manuais consolidados)
 [x] 13 — Publicação / operação (QA publicado; CI, smoke checks e aceite visual final aprovados)
 ```

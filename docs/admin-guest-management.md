@@ -136,8 +136,9 @@ filtro ou da página visível:
 
 A migration `20261013010000_create_admin_guest_list.sql` cria essa RPC como
 `security definer`, revoga execução de `public`, `anon`, `authenticated` e
-`service_role` antes de concedê-la somente a `service_role`. Ela ainda não foi
-aplicada remotamente nesta tarefa.
+`service_role` antes de concedê-la somente a `service_role`. Ela foi validada
+em PostgreSQL local descartável e aplicada em produção. A Edge Function
+`admin-list-guests` que usa essa RPC está publicada na versão 8.
 
 Sem parâmetros de paginação, o endpoint mantém temporariamente a resposta
 completa para compatibilidade com versões antigas do dashboard durante uma
@@ -160,13 +161,19 @@ no frontend inclui debounce, mudança de página/tamanho, respostas fora de
 ordem, páginas vazias, erros, métricas globais e marcação acessível.
 
 A migration deve ser aplicada primeiro em um banco de desenvolvimento/UAT
-descartável e validada antes de qualquer ambiente compartilhado. Em produção,
-a ordem segura é: aplicar a migration/RPC, publicar a Edge Function e confirmar
-o endpoint administrativo com um administrador autorizado; somente depois
-publicar o frontend. O backend novo continua aceitando o cliente antigo sem
-parâmetros, mas o frontend novo depende dos campos `pagination` e `metrics`.
-Esta implementação local não autoriza `supabase db push`, deploy de Edge
-Function, deploy Vercel/Pages, alteração de secrets ou testes destrutivos.
+descartável e validada antes de qualquer ambiente compartilhado. Neste
+encerramento, a ordem operacional foi: validar a migration/RPC localmente,
+aplicá-la em produção, publicar a Edge Function e confirmar o endpoint com
+autenticação e autorização administrativas; somente depois o frontend foi
+publicado pela branch `production` da Vercel. O backend continua aceitando o
+cliente antigo sem parâmetros, mas o frontend novo depende dos campos
+`pagination` e `metrics`.
+
+A publicação final desta funcionalidade corresponde ao commit
+`b5995cf53be3085f9b1d418b8cddf08154afd303` e ao deployment Vercel
+`dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`. O hotfix do cursor dos botões desabilitados
+foi incluído nessa publicação. Novas alterações remotas continuam exigindo
+validação e autorização próprias.
 
 ## Contingência
 

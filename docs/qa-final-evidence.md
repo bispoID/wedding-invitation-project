@@ -1,15 +1,36 @@
 # QA final — evidências técnicas e manuais
 
-Consolidação: **09/10/2026**. Projeto: `wedding-invitation-project`.
-Branch: `feature/landing-page`.
-HEAD de referência: `1d9939a28d27c83e9eb7f3336378f6aaa1c698ac`.
+Consolidação documental final: **13/10/2026**. Projeto:
+`wedding-invitation-project`.
+Branch de produção: `production`.
+HEAD final deste escopo: `b5995cf53be3085f9b1d418b8cddf08154afd303`.
 
-O HEAD acima identifica a referência anterior à consolidação. As correções de
-QA foram versionadas e publicadas no commit
-`9d34e6c8c79c5553f8fc3177a5becca53a5a32db`; os resultados estão na seção de
-publicação abaixo. O responsável confirmou o aceite visual final dessa
-publicação em 09/10/2026, conforme o registro de encerramento.
-O [roadmap](development_roadmap.md) é a fonte oficial do estado das 13 fases.
+Este documento preserva abaixo o histórico da consolidação anterior de
+09/10/2026, originalmente registrada em `feature/landing-page`, e acrescenta
+o encerramento específico da pesquisa e paginação administrativa. O
+[roadmap](development_roadmap.md) continua sendo a fonte oficial do estado das
+13 fases.
+
+## Encerramento da pesquisa e paginação administrativa
+
+O escopo foi concluído, publicado e aprovado manualmente. A migration
+`20261013010000_create_admin_guest_list.sql` foi aplicada em produção após
+validação local, e a RPC `public.admin_list_guests` foi validada com os
+privilégios previstos. A Edge Function `admin-list-guests` está ativa na versão
+8.
+
+O frontend publicado pela branch `production` mantém pesquisa dinâmica,
+paginação server-side em 10/20/50 registros, indicadores globais, estados de
+erro e recuperação. O hotfix do cursor dos botões de paginação desabilitados
+foi publicado no commit
+`b5995cf53be3085f9b1d418b8cddf08154afd303`, deployment Vercel
+`dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`, com alvo `production` e estado `READY`.
+
+O aceite visual autenticado dos estados de paginação foi confirmado pelo
+responsável. Esse registro encerra a funcionalidade de pesquisa, paginação,
+métricas e cursor administrativo. Não reabre nem declara concluídos aceites
+independentes, como a configuração do GitHub Pages ou outras limitações de
+cobertura descritas no histórico abaixo.
 
 ## Origem e alcance das evidências
 
