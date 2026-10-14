@@ -5,6 +5,7 @@ import { EVENT_FIELDS } from "../_shared/event-validation.ts";
 
 const REQUEST_TIMEOUT_MS = 12_000;
 
+// O entrypoint injeta Auth e persistência; o handler conserva o contrato HTTP.
 function requireEnv(name: string): string {
   const value = Deno.env.get(name);
 
@@ -15,6 +16,7 @@ function requireEnv(name: string): string {
   return value;
 }
 
+/** Valida origens permitidas antes de iniciar o endpoint administrativo. */
 function configuredOrigins(): string[] {
   const value = requireEnv("ADMIN_ALLOWED_ORIGINS");
 
@@ -33,6 +35,7 @@ function configuredOrigins(): string[] {
   });
 }
 
+/** Impõe timeout às chamadas do SDK para evitar funções presas. */
 function fetchWithTimeout(
   input: RequestInfo | URL,
   init: RequestInit = {},

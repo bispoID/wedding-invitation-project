@@ -7,6 +7,7 @@ import {
   type ReadOnlySupabaseClient,
 } from "./handler.ts";
 
+/** Mantém a função publicada viva quando configuração local está incompleta. */
 function unavailableDependencies(
   dependency: string,
 ): HealthDependencies {
@@ -17,6 +18,7 @@ function unavailableDependencies(
   };
 }
 
+/** Cria o cliente somente leitura usado pelo probe de saúde. */
 function createDependencies(): HealthDependencies {
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");

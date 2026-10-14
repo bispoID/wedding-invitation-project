@@ -15,6 +15,7 @@ export interface RecoveryHandlerOptions {
   createDependencies(): Promise<RecoveryDependencies>;
 }
 
+/** Resposta de recuperação com CORS e headers de cache explícitos. */
 function jsonResponse(
   body: Record<string, unknown>,
   status: number,
@@ -33,6 +34,7 @@ function jsonResponse(
   });
 }
 
+/** Converte estados de recuperação em mensagens e status HTTP estáveis. */
 function errorResponse(
   code: string,
   status: number,
@@ -74,6 +76,7 @@ function errorResponse(
   );
 }
 
+/** Protege a recuperação com origem, JWT, allowlist e request_id UUID. */
 export function createRecoveryHandler(
   options: RecoveryHandlerOptions,
 ): (request: Request) => Promise<Response> {

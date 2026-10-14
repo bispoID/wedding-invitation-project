@@ -1,5 +1,6 @@
 import { eventDto } from "../_shared/event-validation.ts";
 
+/** Expõe somente leitura pública da configuração validada do evento. */
 export function createEventConfigHandler(
   read: () => Promise<Record<string, unknown> | null>,
 ) {

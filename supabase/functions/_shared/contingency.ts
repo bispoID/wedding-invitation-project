@@ -14,6 +14,7 @@ export interface ContingencyProvider {
   delete(rowNumber: number): Promise<void>;
 }
 
+/** Falha normalizada para diferenciar configuração e operações do provider. */
 export class ContingencyProviderError extends Error {
   constructor(
     readonly provider: "local" | "google-sheets",
@@ -32,6 +33,7 @@ function requireLocalEnv(name: string): string {
   return value;
 }
 
+/** Executa chamada autenticada ao sidecar de contingência no DEV local. */
 async function localRequest(
   path: string,
   init: RequestInit,
@@ -58,6 +60,7 @@ async function localRequest(
   }
 }
 
+/** Adapta o protocolo HTTP do sidecar à interface usada pelos handlers. */
 function createLocalProvider(): ContingencyProvider {
   return {
     async append(record) {
@@ -101,6 +104,11 @@ function createLocalProvider(): ContingencyProvider {
   };
 }
 
+/**
+ * Seleciona o provider por ambiente. DEV exige o sidecar local; uma seleção
+ * `local` fora de DEV é rejeitada para impedir escrita acidental no provider
+ * usado pelos ambientes publicados.
+ */
 export function getContingencyProvider(): ContingencyProvider {
   const appEnv = Deno.env.get("APP_ENV")?.trim().toLowerCase();
   const configuredProvider = Deno.env.get("CONTINGENCY_PROVIDER")?.trim().toLowerCase();

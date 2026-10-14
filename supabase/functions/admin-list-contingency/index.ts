@@ -5,6 +5,7 @@ import { createListHandler } from "./handler.ts";
 
 const REQUEST_TIMEOUT_MS = 12_000;
 
+// O entrypoint monta dependências de runtime; regras HTTP ficam em handler.ts.
 function requireEnv(name: string): string {
   const value = Deno.env.get(name);
 
@@ -15,6 +16,7 @@ function requireEnv(name: string): string {
   return value;
 }
 
+/** Valida a allowlist CORS antes de iniciar o servidor da função. */
 function configuredOrigins(): string[] {
   const value = requireEnv("ADMIN_ALLOWED_ORIGINS");
 
@@ -33,6 +35,7 @@ function configuredOrigins(): string[] {
   });
 }
 
+/** Evita que Auth e provider mantenham uma requisição presa indefinidamente. */
 function fetchWithTimeout(
   input: RequestInfo | URL,
   init: RequestInit = {},

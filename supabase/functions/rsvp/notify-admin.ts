@@ -5,6 +5,7 @@ export interface AdminAlert {
   contingency_status: "pending" | "failed";
 }
 
+/** Registra alertas operacionais sem alterar a resposta do RSVP ao convidado. */
 export function notifyAdmin(alert: AdminAlert): void {
   try {
     console.error("RSVP contingency alert", {

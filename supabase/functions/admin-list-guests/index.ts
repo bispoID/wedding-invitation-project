@@ -8,6 +8,7 @@ import {
 
 const REQUEST_TIMEOUT_MS = 12_000;
 
+// O entrypoint injeta Auth e RPC; o contrato HTTP permanece testável no handler.
 function requireEnv(name: string): string {
   const value = Deno.env.get(name);
 
@@ -18,6 +19,7 @@ function requireEnv(name: string): string {
   return value;
 }
 
+/** Valida a allowlist de origens do painel antes de aceitar requisições. */
 function configuredOrigins(): string[] {
   const value = requireEnv("ADMIN_ALLOWED_ORIGINS");
 
@@ -36,6 +38,7 @@ function configuredOrigins(): string[] {
   });
 }
 
+/** Aplica timeout comum às chamadas Auth e PostgREST/RPC. */
 function fetchWithTimeout(
   input: RequestInfo | URL,
   init: RequestInit = {},

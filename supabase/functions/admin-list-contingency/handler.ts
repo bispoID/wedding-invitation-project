@@ -20,6 +20,7 @@ export interface ListHandlerOptions {
   listRows(): Promise<ContingencyRow[]>;
 }
 
+/** Resposta do endpoint de leitura com CORS e cache não persistente. */
 function jsonResponse(
   body: Record<string, unknown>,
   status: number,
@@ -38,6 +39,7 @@ function jsonResponse(
   });
 }
 
+/** Mapeia falhas do provider para mensagens operacionais não sensíveis. */
 function errorResponse(
   code: string,
   status: number,
@@ -63,6 +65,7 @@ function errorResponse(
   );
 }
 
+/** Normaliza booleanos armazenados como boolean ou texto na planilha. */
 function toAttendance(value: unknown): boolean | null {
   if (typeof value === "boolean") {
     return value;
@@ -77,6 +80,7 @@ function toAttendance(value: unknown): boolean | null {
   return null;
 }
 
+/** Normaliza acompanhantes sem aceitar valores negativos ou fracionários. */
 function toCompanions(value: unknown): number | null {
   const companions = typeof value === "number"
     ? value
@@ -87,6 +91,7 @@ function toCompanions(value: unknown): number | null {
   return Number.isInteger(companions) && companions >= 0 ? companions : null;
 }
 
+/** Converte serial de data do Sheets sem alterar timestamps ISO existentes. */
 function toIsoTimestamp(value: string): string {
   if (!/^\d{5}(?:\.\d+)?$/.test(value)) {
     return value;
@@ -104,6 +109,7 @@ function toIsoTimestamp(value: string): string {
   return Number.isNaN(timestamp.getTime()) ? value : timestamp.toISOString();
 }
 
+/** Projeta a linha interna no DTO mínimo exibido pelo painel. */
 function toAdminRecord(row: ContingencyRow): AdminContingencyRecord {
   return {
     request_id: row.requestId,
@@ -118,6 +124,7 @@ function toAdminRecord(row: ContingencyRow): AdminContingencyRecord {
   };
 }
 
+/** Lista pendências após CORS, JWT e allowlist administrativa. */
 export function createListHandler(
   options: ListHandlerOptions,
 ): (request: Request) => Promise<Response> {

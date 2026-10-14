@@ -11,11 +11,18 @@ export interface RsvpOptions {
   saveToContingency?(record: ContingencyRsvp): Promise<void>;
   notifyAdmin(alert: AdminAlert): void;
 }
+
+/** Mantém códigos internos fora das respostas públicas do RSVP. */
 function safeFailureCode(code: unknown): string {
   return typeof code === "string" && /^[0-9A-Z]{5}$/.test(code)
     ? code
     : "DATABASE_ERROR";
 }
+
+/**
+ * Cria o handler HTTP do RSVP. A ordem é CORS/método, rate limit, validação,
+ * persistência primária e contingência quando o banco não aceita o registro.
+ */
 export function createRsvpHandler(options: RsvpOptions) {
   const corsHeaders = options.corsHeaders;
   return async (req: Request): Promise<Response> => {

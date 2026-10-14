@@ -69,6 +69,7 @@ export type RecoveryResult = {
   contingency_removed: true;
 };
 
+/** Lê booleanos heterogêneos vindos do provider de contingência. */
 function readBoolean(value: unknown): boolean | null {
   if (typeof value === "boolean") {
     return value;
@@ -84,6 +85,7 @@ function readBoolean(value: unknown): boolean | null {
   return null;
 }
 
+/** Lê acompanhantes dentro do mesmo limite do contrato de convidados. */
 function readCompanions(value: unknown): number | null {
   const companions = typeof value === "number"
     ? value
@@ -96,6 +98,7 @@ function readCompanions(value: unknown): number | null {
     : null;
 }
 
+/** Valida a linha antes de transformá-la em entidade persistível. */
 function parseContingencyRecord(row: ContingencyRecord): GuestRecord {
   const parsed = validateGuest({
     name: row.name,
@@ -107,6 +110,7 @@ function parseContingencyRecord(row: ContingencyRecord): GuestRecord {
   return parsed.guest;
 }
 
+/** Compara os quatro campos que definem a identidade de uma confirmação. */
 function recordsMatch(left: GuestRecord, right: GuestRecord): boolean {
   return left.name === right.name &&
     left.email === right.email &&
@@ -114,6 +118,7 @@ function recordsMatch(left: GuestRecord, right: GuestRecord): boolean {
     left.companions === right.companions;
 }
 
+/** Impede recuperar request inexistente ou ambíguo. */
 function findExactlyOneRow(
   rows: ContingencyRecord[],
   requestId: string,
@@ -131,12 +136,14 @@ function findExactlyOneRow(
   return matches[0];
 }
 
+/** Só a fila `pending` pode entrar no fluxo de recuperação. */
 function assertPendingRow(row: ContingencyRecord): void {
   if (row.status.trim().toLowerCase() !== "pending") {
     throw new RecoveryError("INVALID_STATUS");
   }
 }
 
+/** Detecta alterações na fonte antes de remover sua linha. */
 function assertSameContingencyData(
   original: GuestRecord,
   current: ContingencyRecord,
@@ -148,6 +155,7 @@ function assertSameContingencyData(
   }
 }
 
+/** Reconhece corrida de insert sem mascarar outros erros do banco. */
 function isUniqueViolation(error: unknown): boolean {
   return typeof error === "object" &&
     error !== null &&
@@ -155,6 +163,11 @@ function isUniqueViolation(error: unknown): boolean {
     error.code === "23505";
 }
 
+/**
+ * Recupera uma confirmação com lock, verificação de idempotência e limpeza
+ * confirmada. Se a persistência vencer mas a exclusão falhar, retorna estado
+ * explícito para que a operação possa ser repetida sem duplicar o convidado.
+ */
 export async function recoverContingencyRecord(
   requestId: string,
   dependencies: RecoveryDependencies,

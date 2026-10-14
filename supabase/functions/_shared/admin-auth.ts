@@ -1,6 +1,7 @@
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+/** Erro de configuração: a allowlist administrativa precisa ser explícita. */
 export class AdminConfigurationError extends Error {
   constructor() {
     super("ADMIN_AUTH_USER_IDS is missing or invalid");
@@ -8,6 +9,7 @@ export class AdminConfigurationError extends Error {
   }
 }
 
+/** Converte a variável CSV de administradores em uma allowlist de UUIDs. */
 export function parseAdminUserIds(
   configuredUserIds: string | undefined,
 ): ReadonlySet<string> {
@@ -29,6 +31,7 @@ export function parseAdminUserIds(
   return new Set(userIds);
 }
 
+/** Confere a identidade autenticada e o membership na allowlist. */
 export function isAuthorizedAdmin(
   authenticatedUserId: string | null,
   adminUserIds: ReadonlySet<string>,

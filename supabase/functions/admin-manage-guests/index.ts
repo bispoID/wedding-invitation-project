@@ -4,6 +4,7 @@ import { createGuestAdminHandler } from "./handler.ts";
 
 const REQUEST_TIMEOUT_MS = 12_000;
 
+// O entrypoint injeta clientes Auth/service-role; validação e autorização estão no handler.
 function requireEnv(name: string): string {
   const value = Deno.env.get(name);
 
@@ -14,6 +15,7 @@ function requireEnv(name: string): string {
   return value;
 }
 
+/** Valida a allowlist de origens do painel. */
 function configuredOrigins(): string[] {
   const value = requireEnv("ADMIN_ALLOWED_ORIGINS");
 
@@ -32,6 +34,7 @@ function configuredOrigins(): string[] {
   });
 }
 
+/** Impõe limite de espera a Auth e operações de banco. */
 function fetchWithTimeout(
   input: RequestInfo | URL,
   init: RequestInit = {},

@@ -4,6 +4,7 @@ import { getContingencyProvider } from "../_shared/contingency.ts";
 import { notifyAdmin } from "./notify-admin.ts";
 import { createRsvpHandler } from "./handler.ts";
 
+// O IP bruto não é persistido: somente o hash estável chega à função de rate limit.
 async function hashIp(ip: string): Promise<string> {
   const secret = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
@@ -16,6 +17,7 @@ async function hashIp(ip: string): Promise<string> {
     .join("");
 }
 
+/** Obtém o primeiro endereço do proxy para manter uma chave por cliente. */
 function getClientIp(req: Request): string {
   // Use the first forwarded address as the client key for per-IP throttling.
   const forwardedFor = req.headers.get("x-forwarded-for");
@@ -27,6 +29,7 @@ function getClientIp(req: Request): string {
   return "unknown";
 }
 
+/** Cria o cliente service role usado pelo RPC de rate limit e pelo insert. */
 function client() {
   return createClient(
     Deno.env.get("SUPABASE_URL")!,

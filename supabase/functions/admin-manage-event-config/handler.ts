@@ -15,6 +15,8 @@ export interface EventAdminOptions {
     upsert(config: EventConfig): Promise<Record<string, unknown>>;
   };
 }
+
+/** Mantém somente os campos públicos e o timestamp operacional da linha. */
 function adminDto(row: Record<string, unknown>) {
   const config = eventDto(row);
   return {
@@ -25,6 +27,7 @@ function adminDto(row: Record<string, unknown>) {
       : {}),
   };
 }
+/** Endpoint GET/PUT protegido para leitura e atualização do evento. */
 export function createEventAdminHandler(options: EventAdminOptions) {
   return async (request: Request): Promise<Response> => {
     const origin = request.headers.get("origin");

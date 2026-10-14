@@ -36,6 +36,7 @@ const optionalText: Record<string, number> = {
   reception_maps_url: 2048,
 };
 
+/** Valida links de mapa antes de permitir navegação externa no frontend. */
 export function isHttpsUrl(value: string): boolean {
   if (
     !/^https:\/\/[^/]/i.test(value) || /[\s\\]/.test(value) ||
@@ -50,6 +51,7 @@ export function isHttpsUrl(value: string): boolean {
   }
 }
 
+/** Valida, normaliza e tipa a configuração editável do evento. */
 export function validateEventConfig(
   value: unknown,
 ): { config: EventConfig } | { error: string; field?: string } {
@@ -105,6 +107,7 @@ export function validateEventConfig(
   return { config };
 }
 
+/** Converte uma linha do banco para o DTO validado público/administrativo. */
 export function eventDto(row: Record<string, unknown>): EventConfig {
   const candidate = Object.fromEntries(
     EVENT_FIELDS.map((field) => [field, row[field]]),

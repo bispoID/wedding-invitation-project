@@ -38,6 +38,7 @@ export interface ContingencyRow {
   syncedAt: string;
 }
 
+/** Erro sem dados sensíveis para mapear falhas do provider de contingência. */
 export class GoogleSheetsError extends Error {
   constructor(
     readonly operation: "authentication" | "append" | "read" | "delete",
@@ -92,6 +93,7 @@ function getRequiredEnv(name: string): string {
   return value;
 }
 
+/** Codifica segmentos do JWT no formato base64url exigido pelo OAuth. */
 function encodeBase64Url(value: string): string {
   return btoa(value)
     .replace(/\+/g, "-")
@@ -99,6 +101,7 @@ function encodeBase64Url(value: string): string {
     .replace(/=+$/, "");
 }
 
+/** Adiciona timeout e preserva eventual AbortSignal do chamador. */
 function timedFetch(
   input: string | URL,
   init: RequestInit,
@@ -111,6 +114,7 @@ function timedFetch(
   return fetch(input, { ...init, signal });
 }
 
+/** Cria um token OAuth de curta duração a partir do service account. */
 async function getGoogleConfig(): Promise<GoogleConfig> {
   const serviceAccountBase64 = getRequiredEnv(
     "GOOGLE_SERVICE_ACCOUNT_JSON_B64",
@@ -220,6 +224,7 @@ async function getGoogleConfig(): Promise<GoogleConfig> {
   }
 }
 
+/** Executa uma requisição autenticada da Sheets API com erro estável. */
 async function sheetsRequest(
   config: GoogleConfig,
   url: string,
@@ -253,6 +258,7 @@ async function sheetsRequest(
   }
 }
 
+/** Acrescenta um RSVP pendente na worksheet de contingência. */
 export async function appendContingencyRsvp(
   rsvp: ContingencyRsvp,
 ): Promise<void> {
@@ -286,6 +292,7 @@ export async function appendContingencyRsvp(
   );
 }
 
+/** Lê, valida cabeçalhos e normaliza linhas da worksheet RSVP. */
 export async function readContingencyRows(): Promise<ContingencyRow[]> {
   const config = await getGoogleConfig();
   const range = encodeURIComponent(`'${WORKSHEET_NAME}'!A:Z`);
@@ -377,6 +384,7 @@ export async function readContingencyRows(): Promise<ContingencyRow[]> {
   });
 }
 
+/** Remove uma linha depois de a recuperação confirmar a persistência. */
 export async function deleteContingencyRow(rowNumber: number): Promise<void> {
   if (!Number.isInteger(rowNumber) || rowNumber < 2) {
     throw new GoogleSheetsError("delete");

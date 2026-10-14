@@ -10,6 +10,7 @@ import type {
 
 const REQUEST_TIMEOUT_MS = 12_000;
 
+// O entrypoint injeta Auth, banco e provider; o fluxo de recuperação é testável separadamente.
 function requireEnv(name: string): string {
   const value = Deno.env.get(name);
 
@@ -20,6 +21,7 @@ function requireEnv(name: string): string {
   return value;
 }
 
+/** Valida a allowlist de origens do painel. */
 function configuredOrigins(): string[] {
   const value = requireEnv("ADMIN_ALLOWED_ORIGINS");
 
@@ -38,6 +40,7 @@ function configuredOrigins(): string[] {
   });
 }
 
+/** Impõe timeout às chamadas de Auth e Supabase usadas na recuperação. */
 function fetchWithTimeout(
   input: RequestInfo | URL,
   init: RequestInit = {},

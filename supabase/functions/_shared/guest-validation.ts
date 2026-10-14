@@ -5,12 +5,14 @@ export interface GuestData {
   companions: number;
 }
 
+/** Testa objetos JSON sem aceitar arrays como payload de entidade. */
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 export type GuestValidation = { guest: GuestData } | { error: string };
 
+/** Valida e normaliza o contrato de convidado usado por RSVP e administração. */
 export function validateGuest(value: unknown): GuestValidation {
   if (!isRecord(value)) return { error: "INVALID_NAME" };
   if (

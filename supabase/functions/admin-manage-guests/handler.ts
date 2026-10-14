@@ -26,6 +26,7 @@ export interface GuestAdminHandlerOptions {
   createDependencies(): GuestAdminDependencies;
 }
 
+/** Resposta comum do endpoint de mutação com CORS explícito. */
 function response(
   body: Record<string, unknown>,
   status: number,
@@ -44,6 +45,7 @@ function response(
   });
 }
 
+/** Converte falhas de validação/autorização/banco em contrato HTTP estável. */
 function errorResponse(
   code: string,
   status: number,
@@ -77,6 +79,7 @@ function errorResponse(
   );
 }
 
+/** Coordena autenticação, validação e a mutação de um convidado. */
 export function createGuestAdminHandler(
   options: GuestAdminHandlerOptions,
 ): (request: Request) => Promise<Response> {

@@ -44,6 +44,7 @@ export interface GuestListHandlerOptions {
   listGuests(query: GuestListQuery): Promise<GuestListResult>;
 }
 
+/** Monta respostas com headers de CORS e cache privado do painel. */
 function response(
   body: Record<string, unknown>,
   status: number,
@@ -63,6 +64,7 @@ function response(
   });
 }
 
+/** Traduz códigos internos em mensagens seguras para o administrador. */
 function errorResponse(
   code: string,
   status: number,
@@ -87,12 +89,14 @@ function errorResponse(
   );
 }
 
+/** Aceita somente inteiros positivos seguros vindos da query string. */
 function parsePositiveInteger(value: string | null): number | null {
   if (!value || !/^[1-9]\d*$/.test(value)) return null;
   const parsed = Number(value);
   return Number.isSafeInteger(parsed) ? parsed : null;
 }
 
+/** Interpreta paginação/pesquisa e preserva compatibilidade com a listagem total. */
 export function parseGuestListQuery(request: Request): GuestListQuery | null {
   const url = new URL(request.url);
   const hasPagingOrSearch = ["page", "page_size", "search"].some((key) =>
@@ -131,6 +135,11 @@ export function parseGuestListQuery(request: Request): GuestListQuery | null {
   return { page, pageSize, search, includeAll: false };
 }
 
+/**
+ * Cria o endpoint administrativo de convidados.
+ * A autenticação JWT e a allowlist antecedem a RPC de service role; a RPC
+ * devolve registros, totais e métricas como uma unidade consistente.
+ */
 export function createGuestListHandler(
   options: GuestListHandlerOptions,
 ): (request: Request) => Promise<Response> {

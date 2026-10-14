@@ -26,6 +26,7 @@ const jsonHeaders = {
   "Cache-Control": "no-store",
 };
 
+/** Serializa respostas públicas; HEAD mantém status e headers sem corpo. */
 function jsonResponse(
   body: Record<string, string>,
   status: number,
@@ -37,6 +38,7 @@ function jsonResponse(
   });
 }
 
+/** Adapta a RPC somente leitura de saúde à interface testável do handler. */
 export function createHealthDependencies(
   client: ReadOnlySupabaseClient,
 ): HealthDependencies {
@@ -51,6 +53,10 @@ export function createHealthDependencies(
   };
 }
 
+/**
+ * Cria o probe GET/HEAD do serviço.
+ * O corpo é genérico e os logs registram apenas o rótulo da dependência falha.
+ */
 export function createHealthHandler(
   dependencies: HealthDependencies,
   logger: HealthLogger = (event, details) => console.error(event, details),
