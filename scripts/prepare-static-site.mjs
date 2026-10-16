@@ -13,6 +13,7 @@ import { FUNCTIONS_BASE_URL } from '../invite-app/scripts/shared/app-config.js';
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const DEFAULT_EVENT_CONFIG_URL = new URL('event-config', FUNCTIONS_BASE_URL).href;
 const EVENT_CONFIG_TIMEOUT_MS = 12_000;
+const LOCAL_DEV_CONFIG_NAME = 'dev-config.json';
 
 /** Normaliza URL pública e rejeita credenciais, query, fragmento e encoding inválido. */
 export function normalizePublicSiteUrl(value) {
@@ -135,7 +136,12 @@ export async function prepareStaticSite({
   const originalHtml = await readFile(sourceIndex, 'utf8');
   const invitationTitle = await resolveInvitationTitle(eventConfigUrl, fetchImpl);
   const preparedHtml = resolveMetadata(originalHtml, siteUrl, invitationTitle);
-  await cp(source, output, { recursive: true, errorOnExist: true, force: false });
+  await cp(source, output, {
+    recursive: true,
+    errorOnExist: true,
+    force: false,
+    filter: (entry) => resolve(entry) !== resolve(source, LOCAL_DEV_CONFIG_NAME),
+  });
   await writeFile(resolve(output, 'index.html'), preparedHtml, 'utf8');
   return { siteUrl, outputDir: output };
 }

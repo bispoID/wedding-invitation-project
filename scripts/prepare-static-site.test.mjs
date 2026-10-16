@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, readdir, rm, mkdir, writeFile } from 'node:fs/promises';
+import { access, cp, mkdtemp, readFile, readdir, rm, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +15,7 @@ async function assertCopiedTree(source, output, prefix = '') {
     const path = join(prefix, entry.name);
     if (entry.isDirectory()) {
       await assertCopiedTree(join(source, entry.name), join(output, entry.name), path);
-    } else if (path !== 'index.html') {
+    } else if (path !== 'index.html' && path !== 'dev-config.json') {
       assert.deepEqual(await readFile(join(output, entry.name)),
         await readFile(join(source, entry.name)), `Copied file changed: ${path}`);
     }
@@ -120,7 +120,10 @@ for (const base of ['https://example.github.io/wedding-invitation-project/', 'ht
     assert.equal(html.split(`${base}images/preview-link.webp`).length - 1, 2);
     assert.ok(!html.includes('__PUBLIC_'));
     assert.equal(await readFile(new URL('index.html', sourceDir), 'utf8'), originalHtml);
-    assert.deepEqual(await readdir(outputDir), await readdir(sourceDir));
+    assert.deepEqual(
+      await readdir(outputDir),
+      (await readdir(sourceDir)).filter((entry) => entry !== 'dev-config.json'),
+    );
     await assertCopiedTree(fileURLToPath(sourceDir), outputDir);
     await assert.rejects(prepareStaticSite({ publicSiteUrl: base, outputDir }), /already exists/);
   });
@@ -136,6 +139,20 @@ test('preparer rejects source/output overlap before writing', async (t) => {
     await assert.rejects(prepareStaticSite({ publicSiteUrl: 'https://example.com/', sourceDir: source, outputDir }), /overlap/);
   }
   assert.equal(await readFile(join(source, 'index.html'), 'utf8'), originalHtml);
+});
+
+test('prepared artifacts exclude the ignored local DEV browser config', async (t) => {
+  const temporary = await mkdtemp(join(tmpdir(), 'wedding-lot2-'));
+  t.after(() => rm(temporary, { recursive: true, force: true }));
+  const sourceDir = join(temporary, 'source');
+  const outputDir = join(temporary, 'site');
+  await cp(fileURLToPath(new URL('../invite-app/', import.meta.url)), sourceDir, { recursive: true });
+  await writeFile(join(sourceDir, 'dev-config.json'), JSON.stringify({
+    appEnv: 'dev', supabaseUrl: 'http://127.0.0.1:54321', supabaseAnonKey: 'synthetic-local-key',
+  }));
+
+  await prepareStaticSite({ publicSiteUrl: 'https://example.com/', sourceDir, outputDir });
+  await assert.rejects(access(join(outputDir, 'dev-config.json')), { code: 'ENOENT' });
 });
 
 test('missing or invalid configuration creates no artifact', async (t) => {
