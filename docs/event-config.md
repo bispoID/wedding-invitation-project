@@ -164,7 +164,7 @@ confirmou o estado validado e a mesma contagem de convidados.
 
 ```text
 deno test --no-prompt --deny-net --allow-env=GOOGLE_SERVICE_ACCOUNT_JSON_B64,GOOGLE_SPREADSHEET_ID supabase/functions invite-app/admin/scripts/guest-metrics.test.ts
-node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs scripts/admin-block3.test.mjs scripts/event-config.test.mjs
+npm run test:node
 ```
 
 Asserções unitárias e integrações simuladas, sem banco/Sheets reais.

@@ -13,6 +13,11 @@ Não é necessário instalar CLI globalmente. Os comandos usam
 
 ## Inicialização
 
+Em uma revalidação sem autorização para consultar PRD, confirme primeiro que
+`.dev/event-config.json` existe. Se estiver ausente, interrompa antes de `dev:up`:
+o bootstrap inicial descrito abaixo possui um GET público condicionado à ausência
+do snapshot. Não remova nem atualize esse arquivo para repetir os testes.
+
 Na raiz do projeto:
 
 ```powershell
@@ -33,6 +38,12 @@ Esse comando, somente localmente:
 
 O comando não executa `db push`, reset vinculado, deploy de Functions, alteração
 de secrets, Google Sheets ou qualquer escrita em serviço remoto.
+
+Com o snapshot existente, nenhuma nova consulta remota de Event Config é feita.
+A prontidão das Functions exige HTTP 200 no health, não apenas a ausência de
+502. Antes de encerrar um PID persistido, o script confere se a linha de comando
+corresponde ao servidor de Functions ou ao sidecar; um PID reutilizado por outro
+aplicativo não deve ser encerrado.
 
 Endpoints usuais do Supabase local:
 
@@ -77,15 +88,25 @@ Functions locais usam `host.docker.internal` para alcançar o host a partir do
 Edge Runtime em container. Essa diferença é necessária no Docker Desktop e não
 é um endpoint remoto.
 
+O sidecar escuta em `0.0.0.0:54328` para permitir o acesso pelo container;
+`127.0.0.1` é o endereço usado no host, não uma restrição de bind. Mantenha o
+token em `.dev/` e não exponha essa porta fora do ambiente de desenvolvimento.
+
 ## Manutenção
 
 ```powershell
 npm run dev:health
-npm run dev:reset
 npm run dev:test
-npm run dev:down
+npm run dev:integration
 ```
 
+`dev:test` delega a `npm run test:node`, a mesma seleção usada pelo CI, sem
+Docker. Health e integração exigem o stack local já iniciado. A integração usa
+somente entidades sintéticas e remove os convidados e a pendência criados no
+caminho de sucesso; uma interrupção antes da limpeza exige inspeção local.
+
+Para encerrar o stack explicitamente, use `npm run dev:down`. **Não execute
+`npm run dev:reset` como rotina de validação:** ele remove dados locais.
 `dev:reset` executa `supabase db reset --local --no-seed`, reaplica as migrations
 no banco Docker local, recria o administrador, reinicia as Functions e repopula
 o Event Config a partir do snapshot ignorado. Não use `--linked`.
@@ -94,6 +115,21 @@ Logs das Functions e da contingência ficam em `.dev/functions.log` e
 `.dev/contingency.log`. O snapshot de Event Config contém somente a configuração
 pública autorizada; convidados, RSVPs, bloqueios e rate limits de PRD nunca são
 copiados.
+
+## SQL local
+
+Com as migrations aplicadas, execute somente no container deste projeto:
+
+```powershell
+Get-Content -Raw supabase/tests/block3.sql | docker exec -i supabase_db_wedding-invitation-project psql -X -U postgres -d postgres -v ON_ERROR_STOP=1
+Get-Content -Raw supabase/tests/dev-rpc.sql | docker exec -i supabase_db_wedding-invitation-project psql -X -U postgres -d postgres -v ON_ERROR_STOP=1
+```
+
+As duas suítes usam transação com `ROLLBACK`; não precisam de reset e não
+alteram migrations históricas. Não substitua o destino por banco remoto.
+`block3.sql` valida Event Config; `dev-rpc.sql` complementa as permissões,
+health, rate limiting, paginação, busca e métricas globais. Resultados datados
+e limites de validação: [qa-final-evidence.md](qa-final-evidence.md#validação-final-do-dev--16102026).
 
 ## Preparação estática
 

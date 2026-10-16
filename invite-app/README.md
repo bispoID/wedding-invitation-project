@@ -156,14 +156,20 @@ hardcoded foram implementados no Bloco 4 e estão incluídos na publicação atu
 Testes locais, sem rede, na raiz do repositório:
 
 ```text
-node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs scripts/admin-block3.test.mjs scripts/event-config.test.mjs
+npm run test:node
 ```
 
+O workflow de testes e `npm run dev:test` usam a mesma seleção, incluindo
+paginação e isolamento DEV. Não use o glob como contagem de testes distintos:
+ele repete as suítes importadas pelo agregador Admin. Comandos e resultados
+vigentes: [testing-strategy.md](../docs/testing-strategy.md) e
+[QA DEV](../docs/qa-final-evidence.md#validação-final-do-dev--16102026).
 O workflow de testes executa essa suíte além dos testes Deno existentes. O workflow
 Pages executa os testes de App Config e do preparador como gate antes da preparação, sem
 dependência circular ou duplicação da suíte Deno.
 
-O QA consolidado aprovou localmente e em Linux/CI **212 testes Node e 144 Deno (356)**,
+O checkpoint histórico de QA `9d34e6c` aprovou localmente e em Linux/CI
+**212 testes Node e 144 Deno (356)**,
 incluindo as suítes de movimento, tipografia, wallpaper e nomes no cartão/carta
 importadas por `admin-block3.test.mjs`. CI e publicação do commit consolidado
 `9d34e6c` estão registrados em [qa-final-evidence.md](../docs/qa-final-evidence.md).

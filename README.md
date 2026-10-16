@@ -149,21 +149,23 @@ O workflow [test.yml](.github/workflows/test.yml) executa a validação em Linux
 (`ubuntu-24.04`), com Node.js `22.14.0` e Deno `2.9.7`. Ele verifica a sintaxe dos
 JavaScript versionados, executa os testes das Functions e inclui explicitamente
 `invite-app/admin/scripts/guest-metrics.test.ts`, além de verificar whitespace.
-Também executa os testes Node de App Config, preparação portátil, Admin e Event
-Config em `scripts/`. O QA consolidado passou localmente e em Linux/CI com **356 testes:
-144 Deno e 212 Node**, incluindo as regressões de acessibilidade, movimento
-e nomes longos. Suas correções foram versionadas e publicadas; o aceite visual
-final da publicação foi aprovado pelo responsável pelo QA.
+Também executa `npm run test:node`, a seleção canônica de App Config,
+preparação portátil, Admin, paginação, Event Config e isolamento DEV.
+`npm run dev:test` reutiliza essa seleção sem duplicar as suítes importadas pelo
+agregador Admin. Comandos e descoberta: [testing-strategy.md](docs/testing-strategy.md).
+Resultados vigentes são registrados por data em
+[qa-final-evidence.md](docs/qa-final-evidence.md#validação-final-do-dev--16102026),
+sem confundir execução local com CI remoto ou publicação.
 
 Os testes usam dependências simuladas e dados sintéticos. Não exigem secrets de
 produção, não acessam banco ou Google Sheets reais e não fazem deploy. O
 workflow de deploy permanece independente, com gate Node antes da preparação.
 A baseline histórica do Bloco 7, de **263 testes (144 Deno e 119 Node)**, passou
-localmente e no GitHub Actions; o novo CI de 356 testes está registrado nas
-evidências do QA final.
-A suíte SQL
-`supabase/tests/block3.sql`, separada do CI, também foi aprovada integralmente
-em PostgreSQL/Supabase local descartável, com as 15 migrations e ROLLBACK.
+localmente e no GitHub Actions. O checkpoint histórico `9d34e6c` aprovou
+**356 testes (144 Deno e 212 Node)** localmente e em Linux/CI; sua publicação e
+aceite visual continuam preservados nas evidências do QA final.
+As suítes SQL `supabase/tests/block3.sql` e `supabase/tests/dev-rpc.sql`,
+separadas do CI, validam o banco local em transações com ROLLBACK.
 Detalhes SQL: [event-config.md](docs/event-config.md#validação-local).
 Regressão e aceites manuais consolidados:
 [qa-final-evidence.md](docs/qa-final-evidence.md).

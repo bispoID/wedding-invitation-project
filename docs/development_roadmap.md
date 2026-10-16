@@ -534,7 +534,17 @@ fail-closed, Auth sintético, snapshot público de Event Config e contingência
 JSON. Essa implementação não promove a branch nem altera UAT/PRD; sua integração
 futura segue revisão explícita para `feature/landing-page`.
 
-**Resultado atual:**
+Em 16/10/2026, a validação final local do DEV aprovou health, Auth, RSVP,
+administração, paginação, recuperação de contingência, as duas suítes SQL e
+as suítes Node/Deno. O CI e `dev:test` passam a compartilhar `npm run test:node`,
+incluindo isolamento sem duplicar suítes. A prontidão das Functions e o
+tratamento de PIDs reutilizados foram corrigidos. Artefatos root/subpath foram
+validados sem consultas a PRD. Evidências, contagens e ressalvas operacionais:
+[qa-final-evidence.md](qa-final-evidence.md#validação-final-do-dev--16102026).
+Isso não constitui merge, execução do CI remoto ou publicação. O isolamento
+remoto de UAT continua fora deste escopo.
+
+**Resultado do checkpoint anterior de publicação (registro histórico):**
 
 Branches remotas publicadas, configuração operacional documentada e
 portabilidade de paths verificada, sem modificar regras de negócio. A
@@ -757,7 +767,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 09 — Interface / Design (CONCLUÍDA no escopo visual e manual relatado)
 [x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
 [~] 11 — Hospedagem estática / ambientes (Vercel deste escopo validada; Pages e demais configurações independentes ainda pendentes)
-[x] 12 — Testes / qualidade (356 testes locais; SQL anterior e aceites manuais consolidados)
+[x] 12 — Testes / qualidade (baseline histórica e aceites consolidados; validações posteriores em `qa-final-evidence.md`)
 [x] 13 — Publicação / operação (QA publicado; CI, smoke checks e aceite visual final aprovados)
 ```
 

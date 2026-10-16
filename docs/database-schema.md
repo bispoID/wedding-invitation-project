@@ -49,3 +49,12 @@ lista de convidados retorna paginação e métricas como uma operação única.
 local descartável: verifica RLS, grants, singleton, constraints, trigger e
 independência dos campos opcionais; termina com `ROLLBACK`. Ele não deve ser
 executado contra um projeto remoto.
+
+`supabase/tests/dev-rpc.sql` complementa a validação com RLS das tabelas de
+convidados/rate limit/locks, ausência de privilégios diretos do browser e grants
+das RPCs para `service_role`. Exercita health, a janela de dez requisições,
+bloqueio e expiração do rate limit, paginação sem sobreposição, busca literal,
+`include_all`, métricas globais e rejeição de página inválida. Também termina
+com `ROLLBACK`, usando somente fixtures sintéticas. Comandos e evidências em
+[local-development.md](local-development.md#sql-local) e
+[qa-final-evidence.md](qa-final-evidence.md#validação-final-do-dev--16102026).

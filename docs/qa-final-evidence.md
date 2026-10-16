@@ -243,3 +243,152 @@ checkpoint posterior autorizou commit, push e publicação de frontend, realizad
 conforme o registro acima. Não houve consulta/escrita de dados remotos ou envio
 de RSVP. Supabase, banco, migrations, Functions, Auth, secrets, Google Sheets e
 UptimeRobot não foram modificados.
+
+## Validação final do DEV — 16/10/2026
+
+### Escopo e ponto de retomada
+
+Validação exclusivamente local na branch `feature/dev-environment-isolation`,
+a partir de `703d3a541aa57e0f53782ca5f97b581477c6749d`
+(`fix(build): exclude local DEV config from static artifacts`). Na retomada,
+as alterações em workflow, package, orquestrador, testes de isolamento, helper
+de processos e suíte SQL foram preservadas. Não houve reset, merge, push,
+deploy, alteração de outras branches ou escrita em serviços remotos.
+
+O aceite visual do convite e do Admin foi informado pelo responsável no prompt
+desta tarefa. Não foi repetido nem convertido em uma nova prova de navegador.
+As evidências operacionais aprovadas antes da interrupção foram conservadas;
+a retomada concluiu os testes Node, Deno, artefatos e documentação pendentes.
+
+### Docker, integração e SQL
+
+- Docker Engine 29.8.2 e Supabase CLI 2.120.0; serviços de banco, Auth, gateway,
+  REST, storage, realtime, Studio, pg-meta, inbucket e analytics disponíveis.
+- Functions inicialmente retornavam 503, mas o bootstrap aceitava qualquer
+  resposta diferente de 502. A correção exige HTTP 200. Um PID persistido havia
+  sido reutilizado por um aplicativo Lenovo; agora o tipo de comando é conferido
+  antes de encerrar o processo. O aplicativo alheio não foi encerrado.
+- `npm run dev:up` concluiu após a correção, reutilizando o snapshot existente.
+  Não houve `dev:reset`, novo GET de Event Config em PRD ou cópia de convidados.
+- `npm run dev:health`: aprovado para API/Functions, Event Config e sidecar.
+- `npm run dev:integration`: Auth sintético, contrato Event Config de 14 campos,
+  bloqueio de Admin sem sessão, RSVP 201, duplicidade 409, inválido 400, criação,
+  edição, listagem/busca paginada, contingência local e recuperação aprovados.
+  A pendência foi removida; consulta SQL posterior confirmou zero convidados
+  residuais com os padrões sintéticos da integração.
+- API/Functions em `127.0.0.1:54321`, PostgreSQL em `54322`, Studio em `54323`,
+  inbucket em `54324` e contingência em `54328`. As Functions alcançam o host
+  por `host.docker.internal`; o sidecar escuta `0.0.0.0` com token local.
+- As 16 versões de migrations locais correspondem às 16 versões aplicadas.
+  Nenhuma migration histórica foi alterada; essa comparação não é uma
+  certificação criptográfica das statements armazenadas pelo banco.
+- `block3.sql`: execução integral com `ON_ERROR_STOP=1`, incluindo RLS, grants,
+  singleton, constraints, opcionais, trigger e negação de acesso indevido;
+  todos os blocos concluídos, encerrados em `ROLLBACK`, exit code 0.
+- `dev-rpc.sql`: RLS de convidados/rate limits/locks, privilégios do browser e
+  grants das RPCs aprovados; health aprovado; dez requisições permitidas, décima
+  primeira bloqueada e janela expirada renovada; paginação 10+2 sem sobreposição,
+  busca literal `%_`, `include_all`, métricas globais e página inválida aprovados.
+  Todos os blocos concluídos, encerrados em `ROLLBACK`, exit code 0.
+
+As suítes SQL foram passadas pelo stdin a
+`docker exec -i supabase_db_wedding-invitation-project psql -X -U postgres -d postgres -v ON_ERROR_STOP=1`.
+São validações locais transacionais, não uma execução de migrations remotas
+nem uma prova de concorrência/carga de produção.
+
+### Regressão e descoberta
+
+Node 22.14.0 e Deno 2.9.7, correspondentes às versões declaradas no CI:
+
+| Execução | Aprovados | Reprovados | Ignorados/cancelados |
+| --- | ---: | ---: | ---: |
+| `npm run test:node` | 239 | 0 | 0 |
+| `npm run dev:test` | 239 | 0 | 0 |
+| `node --test scripts/*.test.mjs` | 314 | 0 | 0 |
+| Gate portátil Pages: App Config + preparador | 32 | 0 | 0 |
+| Deno, comando abaixo | 150 | 0 | 0 |
+
+```text
+deno test --no-prompt --deny-net --allow-env=GOOGLE_SERVICE_ACCOUNT_JSON_B64,GOOGLE_SPREADSHEET_ID supabase/functions invite-app/admin/scripts/guest-metrics.test.ts
+```
+
+A seleção canônica tem seis entradas: `app-config`, `prepare-static-site`,
+`admin-block3`, `guest-list-controller`, `event-config`, `environment-isolation`.
+As outras quatro entradas descobertas pelo glob (`envelope-motion`,
+`welcome-typography`, `welcome-wallpaper`, `invitation-names`) já são importadas
+pelo agregador Admin. Assim, todos os dez arquivos estão cobertos; o glob
+repete 75 testes, sem ampliar cobertura. Deno descobre 12 arquivos nas Functions
+e o arquivo de métricas do Admin.
+
+A auditoria anterior tinha 236 distintos/311 com glob. A regressão de exclusão
+do `dev-config.json` em `703d3a5` elevou para 237/312. Os dois novos testes
+pertinentes à classificação de PIDs resultam nos atuais 239/314. Os três testes
+de isolamento originais foram preservados e agora participam do CI e DEV.
+As contagens históricas de 212 Node/144 Deno permanecem válidas apenas para
+seus checkpoints anteriores.
+
+Sintaxe: 27 arquivos `.js` versionados (equivalente à etapa do CI) e os 15 `.mjs`
+de `scripts/` aprovados. O Node emite o aviso não bloqueante
+`MODULE_TYPELESS_PACKAGE_JSON` ao importar módulos ES `.js`; não foi feita
+mudança global de formato de módulos para silenciar esse aviso.
+
+### CI e artefatos
+
+`test.yml` usa `npm run test:node`; `dev:test` delega ao mesmo comando, removendo
+a entrada duplicada de movimento. Não há Docker, credenciais de produção ou
+novas etapas de deploy no CI. Gatilhos e permissões permanecem os mesmos.
+As execuções acima são locais: não houve push nem novo run Linux/GitHub Actions.
+
+O gate Pages (App Config + preparador, 32 testes contidos na seleção aprovada)
+foi reexecutado após a atualização do README publicado e passou integralmente.
+O workflow permanece inalterado e publica somente `staging`, inclusive no guard
+da execução manual e no checkout explícito. O preparador exclui a configuração
+DEV; o código de frontend e os contratos HTTP não foram alterados nesta etapa.
+
+Preparações adicionais para root Vercel e subpath Pages usaram fetch simulado,
+sem GET real. Cada artefato contém 69 arquivos e 79 referências relativas
+HTML/CSS/imports JS verificadas; todos os destinos existem. Não há `.dev`,
+arquivos de env, `dev-config.json`, valores de credenciais locais ou marcadores
+`__PUBLIC_*` não resolvidos. Hashes dos 70 arquivos de origem foram preservados.
+As saídas temporárias exclusivas dessa inspeção foram removidas após a leitura.
+
+Uma checagem comportamental do bootstrap com hosts públicos confirmou zero
+fetches locais e seleção do backend remoto existente, mesmo com configuração
+DEV injetada. Em host local, configuração ausente ou remota foi recusada.
+O primeiro ensaio desse check usou `undefined` enquanto o global DEV ainda
+estava preenchido; a asserção de ausência foi corrigida no próprio ensaio,
+removendo o global, e passou sem alteração do código de aplicação.
+
+A consulta somente leitura pelo conector Vercel confirmou projeto sem framework
+declarado (`framework: null`), Node 24.x e deployment de produção `READY`
+`dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`. A consulta detalhada ao deployment retornou
+403 por escopo de autorização. **Root Directory, Build Command e Production
+Branch atuais: NÃO COMPROVADOS nesta auditoria.** O registro histórico anterior
+não foi apagado nem tratado como verificação atual. Não houve mudança de
+configuração, deploy ou reautenticação.
+
+### Isolamento, limites e veredito
+
+O env local contém `APP_ENV=dev`, provider `local` e URLs Docker/host locais,
+sem variáveis Google. Senha sintética, service-role e token do sidecar não são
+expostos no frontend nem nos artefatos. `.dev/` e `invite-app/dev-config.json`
+continuam ignorados pelo Git. O snapshot Event Config foi preservado, SHA-256
+`D1F6C79819ED22E6166E0AEB1B98540DABF629527E193115452B0268955E7E8F`.
+
+Ressalvas operacionais não bloqueantes para integração na branch de desenvolvimento:
+
+- O Vector local reinicia porque seu coletor `docker_logs` recebe conexão
+  recusada no endpoint Docker `192.168.65.254:2375`. A coleta centralizada de logs
+  está degradada; serviços e fluxos funcionais acima passaram. Não se habilitou
+  uma API Docker TCP sem autenticação nem se alterou Docker Desktop para isso.
+- Configurações externas detalhadas da Vercel precisam de consulta autorizada
+  antes de uma futura publicação. Compatibilidade estática local não prova
+  qual comando externo de build está configurado.
+- O isolamento remoto UAT é uma etapa futura, fora deste escopo. Não há promessa
+  de backend remoto separado já implantado. Nenhum aceite de UAT/PRD ou execução
+  remota de CI foi inferido a partir dos testes DEV.
+
+**APROVADO PARA INTEGRAÇÃO** em `feature/landing-page`, sujeito à autorização
+explícita da integração e à reconferência de ancestralidade/refs nesse momento.
+As pendências técnicas locais da auditoria foram encerradas; as ressalvas acima
+devem permanecer visíveis antes da promoção a ambientes publicados.

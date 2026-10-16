@@ -254,11 +254,15 @@ O CI não executa SQL, deploy de Supabase ou conexão a produção. A suíte SQL
 separada foi aprovada integralmente no Bloco 7, exclusivamente em banco local
 descartável. Contratos e evidências: [event-config.md](event-config.md).
 
-Comando Node atualizado:
+Comando Node canônico (mesma seleção no CI e em `dev:test`, incluindo isolamento):
 
 ```text
-node --test scripts/app-config.test.mjs scripts/prepare-static-site.test.mjs scripts/admin-block3.test.mjs scripts/event-config.test.mjs
+npm run test:node
 ```
+
+Contagens acima são checkpoints históricos; a seleção e a explicação das
+duplicações estão em [testing-strategy.md](testing-strategy.md). Resultados
+locais recentes não representam uma nova execução do GitHub Actions.
 
 **Referências oficiais:**
 
