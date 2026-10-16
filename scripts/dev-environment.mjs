@@ -448,12 +448,12 @@ async function health() {
 }
 
 async function tests() {
-  const args = [
-    '--test', 'scripts/app-config.test.mjs', 'scripts/prepare-static-site.test.mjs',
-    'scripts/admin-block3.test.mjs', 'scripts/guest-list-controller.test.mjs',
-    'scripts/event-config.test.mjs', 'scripts/envelope-motion.test.mjs',
-  ];
-  execFileSync(process.execPath, args, { cwd: projectRoot, stdio: 'inherit' });
+  // Uma única seleção de arquivos para CI e DEV; o agregado já importa movimento.
+  execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'test:node'], {
+    cwd: projectRoot,
+    stdio: 'inherit',
+    shell: process.platform === 'win32',
+  });
   console.log('DEV-safe Node test set passed; no remote service was contacted by these tests.');
 }
 
