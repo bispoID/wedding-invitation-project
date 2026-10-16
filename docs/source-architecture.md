@@ -2,11 +2,12 @@
 
 ## Entrada do frontend público
 
-`invite-app/index.html` carrega `scripts/shared/dev-runtime-config.js` e, em
-seguida, `scripts/main.js`. O bootstrap local injeta a configuração DEV antes
-de `shared/app-config.js` resolver URLs. Em hosts publicados, a configuração
-remota é escolhida diretamente; em hosts locais, ausência de `dev-config.json`
-interrompe a resolução para evitar fallback silencioso.
+`index.html`, `admin/index.html` e `admin/login.html` carregam uma única
+entrada `scripts/shared/bootstrap.js`. Ela aguarda o manifesto da própria origem
+e a validação de `environment-config.js` antes de importar o main correspondente.
+`app-config.js` só exporta valores revalidados, sem destino padrão.
+Falhas exibem alerta acessível e bloqueiam formulários. O contrato e a
+compatibilidade do arquivo DEV legado estão em [environments.md](environments.md).
 
 `scripts/main.js` coordena as fachadas `scripts/envelope.js` e
 `scripts/letter.js`, além de `event-config.js`, `invitation-names.js` e RSVP.
@@ -27,7 +28,7 @@ As responsabilidades internas ficam separadas assim:
 
 `invite-app/admin/scripts/main.js` escolhe login ou dashboard pelo atributo
 `data-page`. `auth.js` concentra sessão; `supabase.js` cria o cliente sob
-demanda; `functions.js` normaliza erros das Edge Functions.
+demanda, com storageKey por ambiente/project ref; `functions.js` normaliza erros das Edge Functions.
 
 No dashboard, `guest-list-controller.js` é a fonte do estado de pesquisa,
 debounce, paginação e descarte de respostas obsoletas. `guests.js` busca a
@@ -59,7 +60,10 @@ verificação de limpeza fora do handler HTTP.
 As migrations em `supabase/migrations` são históricas e aplicadas em ordem.
 `docs/database-schema.md` descreve o modelo consolidado sem substituir essas
 migrations. O build em `scripts/prepare-static-site.mjs` copia para `_site`,
-resolve metadados e exige URL de Event Config explícita em DEV.
+valida o contrato e o manifesto de destinos antes de qualquer GET externo,
+deriva Event Config e resolve metadados. Copia somente public-assets.json e
+gera runtime-config.json do ambiente selecionado. O helper de título puro
+fica em shared/invitation-title.js, sem importar configuração do navegador.
 
 Os testes Node modelam DOM, timers e filesystem; os testes Deno exercitam
 handlers e módulos compartilhados com dependências sintéticas; `block3.sql`

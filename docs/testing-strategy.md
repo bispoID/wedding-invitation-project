@@ -54,10 +54,35 @@ validação vigente estão em [qa-final-evidence.md](qa-final-evidence.md#valida
 `environment-isolation.test.mjs` cobre os contratos estáticos de configuração
 local fail-closed, contingência sem Google Sheets, comandos/arquivos locais e
 a classificação de processos antes de encerrar PIDs persistidos. Os testes do
-preparador cobrem a exclusão de `dev-config.json` e a recusa do endpoint padrão
-de PRD em build DEV sem URL explícita.
+preparador agora cobrem a allowlist completa, contratos explícitos UAT/PRD,
+bloqueio do manifesto UAT não provisionado, ausência de fetch em falhas,
+redirects recusados e artefatos root/subpath com mocks. Não há fallback PRD.
 
 Ao alterar comentários ou documentação, `git diff --check` e as suítes
 relevantes confirmam que a manutenção não introduziu whitespace inválido nem
 quebrou sintaxe. Evidência visual deve ser reportada separadamente quando um
 navegador estiver disponível.
+
+## Etapa 1 UAT — cobertura local
+
+App Config exercita validação v1 DEV/UAT/PRD, chaves legadas/publishable,
+destinos cruzados, hosts desconhecidos, compatibilidade do DEV legado, namespace
+do cliente Supabase e bootstrap ordenado com erro acessível. Os testes de build
+comparam todos os assets permitidos byte a byte, verificam o manifesto gerado,
+metadados, exclusão de arquivos internos e bloqueio de credenciais privilegiadas.
+
+Fixtures e políticas sintéticas vivem somente em scripts/environment-fixtures.mjs;
+não são configuração real de UAT e não integram o artefato. Nenhum teste do CI
+precisa consultar Supabase. Deno e a seleção canônica do package.json permanecem
+inalterados. As novas verificações estão nas suítes já selecionadas, sem duplicação.
+A evidência DEV integrada está pendente de infraestrutura; testes com doubles
+não equivalem a navegação, autenticação ou submissão real no Docker.
+
+Resultado local em 16/10/2026 nesta etapa: **308 testes Node aprovados, 150 Deno
+aprovados**, sem falhas, cancelamentos ou skips na seleção canônica. Sintaxe
+aprovada em 46 arquivos JS/MJS (incluindo os novos) e git diff --check limpo.
+Quatro artefatos sintéticos (UAT/PRD × root/subpath) foram gerados, inspecionados
+nos testes e removidos pelo teardown. Nenhum artefato real PRD foi preparado.
+A configuração DEV ignorada existente foi validada sem imprimir valores;
+portas locais consultadas indisponíveis e dev:health sem conclusão, interrompido.
+Não houve execução remota de CI, deploy ou GET Event Config PRD.

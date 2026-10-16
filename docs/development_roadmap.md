@@ -865,3 +865,23 @@ Este arquivo complementa o `project_context.md`.
 
 O `development_roadmap.md` é a fonte oficial para o status do projeto. Em caso
 de diferença de status entre os documentos, deve prevalecer o roadmap.
+
+
+## Etapa 1 do isolamento UAT — 16/10/2026, somente local
+
+Implementação na branch feature/uat-environment-isolation, originada da baseline
+DEV 6b51bf8. Contrato v1, bootstrap controlado, sessão por ambiente/projeto,
+build sem fallback, allowlist de assets e gates Pages preparados.
+O manifesto UAT continua sem project ref: nenhum ambiente UAT novo foi criado
+ou publicado. Os checkpoints históricos acima não são evidência desta alteração.
+
+- [x] Estrutura e testes sintéticos de isolamento implementados localmente.
+- [x] PRD preparado para configuração explícita, sem modificar serviço remoto.
+- [ ] Revalidar DEV integrado e aceite visual com infraestrutura disponível.
+- [ ] Provisionar Supabase UAT independente e revisar/applicar migrations no destino.
+- [ ] Configurar Auth, CORS, Event Config e contingência UAT próprios.
+- [ ] Autorizar e executar promoção/publicação UAT e validar fluxos reais.
+- [ ] Confirmar configuração Vercel e autorizar migração explícita PRD.
+
+Não encerrar a fase de publicação por aprovação apenas de testes locais.
+Pré-requisitos e limites: [environments.md](environments.md).

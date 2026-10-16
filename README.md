@@ -35,6 +35,12 @@ resolve metadados de root/subpath no artefato. Outros provedores compatíveis co
 hospedagem estática podem publicar o mesmo frontend, sem alterar regras de
 negócio. Instruções: [invite-app/README.md](invite-app/README.md#configuração-pública-e-publicação-portátil).
 
+A Etapa 1 UAT prepara localmente um contrato explícito e bootstrap fail-closed.
+O Supabase UAT ainda não foi provisionado; o manifesto bloqueia seu build.
+Esta alteração não foi publicada. PRD exige configuração explícita no próximo
+build autorizado. Variáveis, limites e próximos passos:
+[environments.md](docs/environments.md).
+
 ## Arquitetura principal
 
 ```text

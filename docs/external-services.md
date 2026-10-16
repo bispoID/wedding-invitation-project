@@ -4,6 +4,16 @@ Este documento registra as ferramentas e os serviços externos utilizados no
 estado atual do projeto, sua finalidade e as referências oficiais para
 manutenção futura.
 
+## Preparação local UAT — 16/10/2026
+
+Esta etapa altera código/workflow local, sem provisionar ou publicar serviços.
+UAT Supabase ainda não existe; o manifesto mantém ref nulo e bloqueia builds.
+Pages passará a exigir variáveis UAT explícitas e um ref aprovado. Vercel
+depende de confirmação futura de Root Directory, Build Command, Output Directory
+e Production Branch. Nenhum secret/variable remoto, Auth, Google Sheets ou
+monitor foi alterado. Estado publicado anterior permanece histórico.
+Contrato e pré-requisitos: [environments.md](environments.md).
+
 ## Supabase
 
 **Finalidade:** backend da aplicação, PostgreSQL, Supabase Auth e Edge

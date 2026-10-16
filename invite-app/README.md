@@ -90,9 +90,10 @@ publicado consome dinamicamente esses dados; o primeiro consumo foi implementado
 no Bloco 4. Requisitos e testes:
 [event-config.md](../docs/event-config.md).
 
-O frontend é estático e não carrega arquivos `.env`. Antes de usar o login, copie
-a chave **publishable** (ou a chave legada **anon**) do Supabase Dashboard para
-`scripts/shared/app-config.js`, na constante `SUPABASE_PUBLIC_KEY`.
+O frontend é estático e não carrega arquivos `.env`. A chave **publishable**
+(ou **anon** legada) é recebida pelo contrato público validado, por
+SUPABASE_PUBLIC_KEY no build ou pelo dev-config.json local. Não edite
+app-config.js para inserir destinos ou chaves.
 Essa chave é pública e pode ser enviada ao navegador; não use a chave
 `service_role`. O Supabase Auth autentica os administradores. As Edge Functions
 administrativas validam o JWT e autorizam separadamente o usuário comparando
@@ -118,40 +119,31 @@ administrativas devem ser servidas por HTTP; abrir por `file://` não é suporta
 
 ## Configuração pública e publicação portátil
 
-`scripts/shared/app-config.js` centraliza `SUPABASE_URL` e
-`SUPABASE_PUBLIC_KEY`. `FUNCTIONS_BASE_URL` é derivada pela API URL; o RSVP
-mantém seu contrato e o admin mantém Auth/sessão. `APP_BASE_URL` é derivada de
-`import.meta.url`, dois diretórios acima do módulo, preservando root e subpath.
-Nomes das Functions continuam contratos locais, não configuração do evento.
+As três páginas usam shared/bootstrap.js e só importam a aplicação após validar
+o manifesto da própria origem. app-config.js exporta os valores já validados;
+FUNCTIONS_BASE_URL e APP_BASE_URL preservam os contratos e root/subpath.
 
-Na raiz do repositório, execute o preparador com `PUBLIC_SITE_URL` definida:
+O preparador exige APP_ENV, SUPABASE_PROJECT_REF, SUPABASE_URL,
+SUPABASE_PUBLIC_KEY e PUBLIC_SITE_URL; BUILD_ID é opcional. O manifesto
+config/environments.json aprova o ref selecionado. UAT está não provisionado
+e bloqueado. Não use placeholders como configuração real.
 
-```powershell
-$env:PUBLIC_SITE_URL = 'https://example.github.io/wedding-invitation-project/'
+```text
 node scripts/prepare-static-site.mjs
 ```
 
-Ele copia `invite-app` para um `_site` novo, resolve os marcadores
-`__PUBLIC_SITE_URL__` e `__PUBLIC_SHARE_IMAGE_URL__` e tenta obter a configuração
-pública do evento para preencher `title`, Open Graph e Twitter no artefato. Não
-modifica o HTML-fonte, os textos ou as imagens. Se o Event Config não estiver
-disponível, mantém o título genérico e continua a preparação.
-URL HTTP(S) absoluta é obrigatória; credenciais, query e fragmento são rejeitados.
-Uma barra final é normalizada. Destino existente é recusado, sem limpeza automática.
+Com configuração real aprovada, o comando gera _site novo, copia somente os
+recursos de config/public-assets.json e gera runtime-config.json. A consulta
+Event Config deriva do projeto validado; redirects são recusados. Falha de rede
+preserva título genérico sem trocar backend. UAT recebe homologação/noindex.
+O arquivo DEV, testes, snapshots e arquivos operacionais nunca são publicados.
 
-Para publicar em root, use a URL operacional do provedor escolhido, por exemplo,
-`https://example.net/`. As fixtures também cobrem `https://example.vercel.app/`
-como exemplo concreto de portabilidade, não como destino preferencial.
-Sirva/publice o conteúdo de `_site`, não os marcadores do source. Em desenvolvimento,
-continue servindo `invite-app`: os marcadores não participam do comportamento do
-convite, e os metadados personalizados de compartilhamento só ficam prontos no
-artefato preparado.
-
-No Pages, a URL operacional vem de `actions/configure-pages`; a política de
-publicação fica restrita à branch `staging`. A branch de desenvolvimento e a
-branch `production` não ganham trigger de deploy do Pages. Não há bundler ou leitura
-de `.env` pelo browser. O consumo de `event_config` e a retirada dos dados pessoais
-hardcoded foram implementados no Bloco 4 e estão incluídos na publicação atual.
+O build pode consultar Event Config do ambiente selecionado; nos testes, todas
+as consultas são mocks. Não executar build PRD como teste sem autorização.
+Sirva invite-app diretamente em DEV; produção requer o artefato preparado.
+O Pages mantém o guard staging e passa a exigir variáveis UAT. Vercel requer
+confirmação externa antes de publicar esta arquitetura. Contrato, variáveis,
+sessões e provisionamento: [environments.md](../docs/environments.md).
 
 Testes locais, sem rede, na raiz do repositório:
 

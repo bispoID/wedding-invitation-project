@@ -133,6 +133,16 @@ e limites de validação: [qa-final-evidence.md](qa-final-evidence.md#validaçã
 
 ## Preparação estática
 
-Um build com `APP_ENV=dev` precisa receber explicitamente
-`EVENT_CONFIG_URL` local; sem isso o preparador recusa o endpoint remoto. UAT e
-PRD continuam usando seus valores de build existentes.
+O preparador de publicação aceita somente UAT/PRD explícitos, com manifesto
+aprovado. DEV continua servindo invite-app diretamente; não precisa gerar _site.
+O dev-config.json legado gerado pelo setup é adaptado ao contrato v1 somente
+em hosts locais. Nenhum arquivo local precisa ser regenerado para esta etapa.
+Parâmetros devmode continuam exclusivamente visuais. Sessões agora usam namespace
+por ambiente e projeto, exigindo novo login local sem apagar armazenamento antigo.
+Detalhes de build e variáveis: [environments.md](environments.md).
+
+Na revalidação de 16/10/2026 da Etapa 1 UAT, o arquivo DEV existente passou no
+novo validador sem expor seus valores. As portas 54321, 5500 e 8000 não responderam;
+dev:health não concluiu e foi interrompido. Não houve start/reset, teste
+autenticado, teste SQL nem aceite visual nesta etapa. O funcionamento integrado
+DEV deve ser revalidado com a infraestrutura disponível.
