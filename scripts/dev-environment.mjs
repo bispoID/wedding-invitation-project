@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile, unlink } from 'node:fs/promises';
 import { openSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isDevProcessCommand } from './dev-process.mjs';
 
 /**
  * Orquestra o ambiente DEV local sem operar o projeto Supabase remoto.
@@ -338,30 +339,41 @@ async function startSidecar(token) {
   await updateState({ contingencyPid: pid });
 }
 
-/** Inicia as Edge Functions locais e aguarda o gateway sair do estado 502. */
+/** Inicia as Edge Functions locais e exige HTTP 200 no health para prontidão. */
 async function startFunctions() {
   const state = await readState();
   if (state.functionsPid) {
     const health = await fetch(`${state.apiUrl}/functions/v1/health`).catch(() => null);
-    if (health && health.status !== 502) return;
-    await stopPid(state.functionsPid);
+    if (health?.status === 200) return;
+    await stopPid(state.functionsPid, 'functions');
     await updateState({ functionsPid: null });
   }
   const pid = await spawnDetached(cli, ['--no-install', 'supabase', 'functions', 'serve', '--env-file', '.dev/functions.env'], functionsLogPath, cliEnv);
   await updateState({ functionsPid: pid });
   for (let attempt = 0; attempt < 30; attempt += 1) {
     const response = await fetch(`${state.apiUrl || statusEnv().API_URL}/functions/v1/health`).catch(() => null);
-    // The gateway answers 502 while the local Edge Runtime is still loading
-    // the Functions. Do not treat that transient response as readiness.
-    if (response && response.status !== 502) return;
+    // Gateway errors (including 503 for a stopped runtime) are not readiness.
+    if (response?.status === 200) return;
     await new Promise((resolvePromise) => setTimeout(resolvePromise, 500));
   }
   fail(`Local Edge Functions did not become reachable. Inspect ${functionsLogPath}.`);
 }
 
-/** Encerra um processo filho conhecido, tolerando processo já finalizado. */
-async function stopPid(pid) {
+/** Confere o tipo de comando antes de encerrar um PID persistido, que pode ter sido reutilizado. */
+async function stopPid(pid, kind) {
   if (!Number.isInteger(pid)) return;
+  let commandLine;
+  try {
+    commandLine = process.platform === 'win32'
+      ? execFileSync('powershell.exe', ['-NoProfile', '-Command',
+        `(Get-CimInstance Win32_Process -Filter 'ProcessId=${pid}').CommandLine`],
+      { encoding: 'utf8', windowsHide: true })
+      : execFileSync('ps', ['-p', String(pid), '-o', 'args='], { encoding: 'utf8' });
+  } catch { return; }
+  if (!isDevProcessCommand(commandLine, kind)) {
+    console.log(`Ignoring stale DEV ${kind} PID ${pid}; no matching process was stopped.`);
+    return;
+  }
   if (process.platform === 'win32') {
     try { execFileSync('taskkill.exe', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore' }); } catch { /* already stopped */ }
   } else {
@@ -371,8 +383,8 @@ async function stopPid(pid) {
 
 async function stopFunctionsAndSidecar() {
   const state = await readState();
-  await stopPid(state.functionsPid);
-  await stopPid(state.contingencyPid);
+  await stopPid(state.functionsPid, 'functions');
+  await stopPid(state.contingencyPid, 'contingency');
   await updateState({ functionsPid: null, contingencyPid: null });
 }
 
