@@ -9,6 +9,7 @@ const LONG_NAMES = [
   'NOME_FIXTURE_B_LONGO',
 ];
 const eventSource = (await readFile(new URL('../invite-app/scripts/event-config.js', import.meta.url), 'utf8'))
+  .replaceAll("./shared/invitation-title.js", new URL("../invite-app/scripts/shared/invitation-title.js", import.meta.url).href)
   .replace("import { FUNCTIONS_BASE_URL } from './shared/app-config.js';", "const FUNCTIONS_BASE_URL = 'https://example.invalid/functions/v1/';");
 const { applyEventConfig } = await import('data:text/javascript;base64,' + Buffer.from(eventSource).toString('base64'));
 

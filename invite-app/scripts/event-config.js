@@ -10,26 +10,8 @@ const LIMITS = { bride_name: 200, groom_name: 200, city: 150, state: 100, ceremo
   ceremony_address: 500, reception_name: 200, reception_address: 500, reception_city: 150, reception_state: 100, ceremony_maps_url: 2048, reception_maps_url: 2048 };
 const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 export const CONTENT_UPDATED = 'invitation:content-updated';
-export const DEFAULT_INVITATION_TITLE = 'Um convite especial — Nosso Dia ♡';
-
-/**
- * Cria o título textual usado no documento e nos metadados de compartilhamento.
- * Nomes incompletos mantêm o fallback genérico para não publicar um título
- * parcialmente preenchido.
- *
- * @param {Record<string, unknown>} config Configuração pública do evento.
- * @returns {string} Título pronto para uso em HTML.
- */
-export function buildInvitationTitle(config = {}) {
-  const brideName = typeof config.bride_name === 'string' ? config.bride_name.trim() : '';
-  const groomName = typeof config.groom_name === 'string' ? config.groom_name.trim() : '';
-
-  if (!brideName || !groomName) {
-    return DEFAULT_INVITATION_TITLE;
-  }
-
-  return `Um convite especial — ${brideName} & ${groomName} ♡`;
-}
+import { buildInvitationTitle, DEFAULT_INVITATION_TITLE } from './shared/invitation-title.js';
+export { buildInvitationTitle, DEFAULT_INVITATION_TITLE };
 
 /**
  * Verifica se um link de mapa pode ser exposto como navegação externa.
@@ -95,7 +77,7 @@ export function loadEventConfig() {
       const timeout = setTimeout(() => controller.abort(), 12_000);
       try {
         const response = await fetch(new URL('event-config', FUNCTIONS_BASE_URL).href, {
-          method: 'GET', cache: 'no-store', signal: controller.signal,
+          method: 'GET', cache: 'no-store', redirect: 'error', signal: controller.signal,
         });
         if (response.status === 404) {
           const body = await response.json();
@@ -118,7 +100,8 @@ export function updateDocumentMetadata(root, config) {
   const documentRoot = root?.ownerDocument ?? root;
   if (!documentRoot) return;
 
-  const title = buildInvitationTitle(config);
+  const prefix = documentRoot.documentElement?.dataset?.appEnv === 'uat' ? '[Homologação] ' : '';
+  const title = prefix + buildInvitationTitle(config);
   documentRoot.title = title;
 
   for (const selector of ['meta[property="og:title"]', 'meta[name="twitter:title"]']) {

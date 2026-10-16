@@ -6,7 +6,8 @@ import { readFile } from 'node:fs/promises';
 const source = await readFile(new URL('../invite-app/scripts/event-config.js', import.meta.url), 'utf8');
 let sequence = 0;
 async function module() {
-  const code = source.replace("import { FUNCTIONS_BASE_URL } from './shared/app-config.js';", "const FUNCTIONS_BASE_URL='https://example.invalid/functions/v1/';") + `\n// instance ${sequence++}`;
+  const code = source.replaceAll("./shared/invitation-title.js", new URL("../invite-app/scripts/shared/invitation-title.js", import.meta.url).href)
+  .replace("import { FUNCTIONS_BASE_URL } from './shared/app-config.js';", "const FUNCTIONS_BASE_URL='https://example.invalid/functions/v1/';") + `\n// instance ${sequence++}`;
   return import('data:text/javascript;base64,' + Buffer.from(code).toString('base64'));
 }
 const fixture = {
@@ -61,7 +62,7 @@ async function withFetch(fetcher, run) {
 test('event config shares exact promise and performs only one GET, including repeated initialization', async () => {
   await withFetch(async (url, options) => {
     assert.equal(url, 'https://example.invalid/functions/v1/event-config');
-    assert.equal(options.method, 'GET'); assert.equal(options.cache, 'no-store');
+    assert.equal(options.method, 'GET'); assert.equal(options.cache, 'no-store'); assert.equal(options.redirect, 'error');
     return valid();
   }, async (api, calls) => {
     const first = api.loadEventConfig();
@@ -255,3 +256,13 @@ for (const [field, limit] of [['reception_city', 150], ['reception_state', 100]]
     }
   });
 }
+
+test('UAT keeps homologation title after dynamic Event Config', async () => {
+  await withFetch(async () => valid(), async api => {
+    const dom = root();
+    dom.ownerDocument.documentElement = { dataset: { appEnv: 'uat' } };
+    await api.initEventConfig(dom);
+    assert.equal(dom.ownerDocument.title, '[Homologação] ' + api.buildInvitationTitle(fixture));
+    assert.equal(dom.ogTitle.attrs.content, dom.ownerDocument.title);
+  });
+});

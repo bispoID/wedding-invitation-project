@@ -1,0 +1,9 @@
+{
+  "contractVersion": 1,
+  "uat": {
+    "projectRef": null
+  },
+  "prd": {
+    "projectRef": "bkkienyemqlkueygknzl"
+  }
+}

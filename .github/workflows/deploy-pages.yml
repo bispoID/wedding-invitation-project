@@ -45,6 +45,11 @@ jobs:
 
       - name: Prepare site
         env:
+          APP_ENV: uat
+          SUPABASE_PROJECT_REF: ${{ vars.UAT_SUPABASE_PROJECT_REF }}
+          SUPABASE_URL: ${{ vars.UAT_SUPABASE_URL }}
+          SUPABASE_PUBLIC_KEY: ${{ vars.UAT_SUPABASE_PUBLIC_KEY }}
+          BUILD_ID: ${{ github.sha }}
           PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
         run: node scripts/prepare-static-site.mjs
 

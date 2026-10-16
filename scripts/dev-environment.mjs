@@ -261,8 +261,8 @@ function validateEventConfig(config) {
 
 /** Obtém a configuração pública uma única vez quando não há snapshot local. */
 async function fetchPublicEventConfig() {
-  const appConfig = await import('../invite-app/scripts/shared/app-config.js');
-  const eventConfigUrl = new URL('event-config', appConfig.FUNCTIONS_BASE_URL).href;
+  // Fonte explícita do snapshot legado; nunca utilizada pelo runtime ou build.
+  const eventConfigUrl = 'https://bkkienyemqlkueygknzl.supabase.co/functions/v1/event-config';
   const { response, body } = await requestJson(eventConfigUrl, { method: 'GET' });
   if (!response.ok || body?.success !== true) {
     fail(`The public Event Config GET failed (HTTP ${response.status}). No privileged fallback is allowed.`);

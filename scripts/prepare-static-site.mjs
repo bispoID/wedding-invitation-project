@@ -1,8 +1,10 @@
-import { cp, readFile, lstat, realpath, writeFile } from 'node:fs/promises';
+import { cp, readFile, lstat, realpath, writeFile, readdir } from 'node:fs/promises';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { buildInvitationTitle, DEFAULT_INVITATION_TITLE } from '../invite-app/scripts/event-config.js';
-import { FUNCTIONS_BASE_URL } from '../invite-app/scripts/shared/app-config.js';
+import { buildInvitationTitle, DEFAULT_INVITATION_TITLE } from '../invite-app/scripts/shared/invitation-title.js';
+import { validateEnvironmentConfig } from '../invite-app/scripts/shared/environment-config.js';
+const publicAssets = new Set(JSON.parse(await readFile(new URL('../config/public-assets.json', import.meta.url), 'utf8')));
+const environmentPolicy = JSON.parse(await readFile(new URL('../config/environments.json', import.meta.url), 'utf8'));
 
 /**
  * Prepara um artefato portátil do frontend para publicação.
@@ -11,9 +13,9 @@ import { FUNCTIONS_BASE_URL } from '../invite-app/scripts/shared/app-config.js';
  * tornar a falha do endpoint um bloqueio de publicação.
  */
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
-const DEFAULT_EVENT_CONFIG_URL = new URL('event-config', FUNCTIONS_BASE_URL).href;
+
 const EVENT_CONFIG_TIMEOUT_MS = 12_000;
-const LOCAL_DEV_CONFIG_NAME = 'dev-config.json';
+
 
 /** Normaliza URL pública e rejeita credenciais, query, fragmento e encoding inválido. */
 export function normalizePublicSiteUrl(value) {
@@ -68,11 +70,13 @@ export async function resolveInvitationTitle(eventConfigUrl, fetchImpl = globalT
   const timeout = setTimeout(() => controller.abort(), EVENT_CONFIG_TIMEOUT_MS);
   try {
     const response = await fetchImpl(eventConfigUrl, {
-      method: 'GET', cache: 'no-store', signal: controller.signal,
+      method: 'GET', cache: 'no-store', redirect: 'manual', signal: controller.signal,
     });
+    if (response?.status >= 300 && response?.status < 400 || response?.redirected || response?.url && response.url !== eventConfigUrl) throw new Error('CROSS_PROJECT_REDIRECT');
     if (!response || response.status !== 200) return DEFAULT_INVITATION_TITLE;
     return buildInvitationTitle((await response.json())?.config);
-  } catch {
+  } catch (error) {
+    if (error.message === 'CROSS_PROJECT_REDIRECT') throw error;
     return DEFAULT_INVITATION_TITLE;
   } finally {
     clearTimeout(timeout);
@@ -108,14 +112,16 @@ function isWithin(parent, child) {
 
 /** Copia a árvore para saída nova após validar sobreposição e metadados. */
 export async function prepareStaticSite({
-  publicSiteUrl,
-  eventConfigUrl,
+  config,
+  policy = environmentPolicy,
   fetchImpl,
   sourceDir = resolve(projectRoot, 'invite-app'),
   outputDir = resolve(projectRoot, '_site'),
 } = {}) {
-  const siteUrl = normalizePublicSiteUrl(publicSiteUrl);
-  // Resolve symlinks before checking overlap; never write back into the source.
+  const selected = validateBuildConfig(config, policy);
+  const siteUrl = selected.publicSiteUrl;
+  const eventConfigUrl = resolveBuildEventConfigUrl(selected);
+  // Resolve links antes de conferir sobreposição; nunca escreve na origem.
   const source = await realpath(resolve(sourceDir));
   const output = resolve(outputDir);
   const outputParent = await realpath(dirname(output));
@@ -134,35 +140,73 @@ export async function prepareStaticSite({
     throw new Error('Source index.html must be a regular file, not a symlink.');
   }
   const originalHtml = await readFile(sourceIndex, 'utf8');
+  await inspectPublicTree(source);
+  for (const asset of publicAssets) {
+    if (!(await lstat(resolve(source, asset))).isFile()) throw new Error('Recurso público ausente ou inválido: ' + asset);
+  }
   const invitationTitle = await resolveInvitationTitle(eventConfigUrl, fetchImpl);
-  const preparedHtml = resolveMetadata(originalHtml, siteUrl, invitationTitle);
+  let preparedHtml = resolveMetadata(originalHtml, siteUrl,
+    selected.appEnv === 'uat' ? '[Homologação] ' + invitationTitle : invitationTitle);
+  if (selected.appEnv === 'uat') preparedHtml = preparedHtml.replace('</head>', '  <meta name="robots" content="noindex, nofollow" />\n</head>');
   await cp(source, output, {
     recursive: true,
     errorOnExist: true,
     force: false,
-    filter: (entry) => resolve(entry) !== resolve(source, LOCAL_DEV_CONFIG_NAME),
+    filter: (entry) => isPublicPath(relative(source, entry).replaceAll('\\', '/')),
   });
   await writeFile(resolve(output, 'index.html'), preparedHtml, 'utf8');
+  await writeFile(resolve(output, 'runtime-config.json'), JSON.stringify(selected, null, 2) + '\n', 'utf8');
+  await inspectPublicTree(output);
   return { siteUrl, outputDir: output };
 }
 
-/** Impede DEV de cair silenciosamente no endpoint de produção. */
-export function resolveBuildEventConfigUrl({ appEnv = process.env.APP_ENV, eventConfigUrl } = {}) {
-  if (eventConfigUrl) return eventConfigUrl;
-  if (appEnv === 'dev') {
-    throw new Error('EVENT_CONFIG_URL is required for DEV static preparation; refusing the production endpoint.');
+// Manifesto de destinos aprovado no repositório; UAT permanece não provisionado.
+export function validateBuildConfig(config, policy = environmentPolicy) {
+  const selected = validateEnvironmentConfig(config);
+  if (!['uat', 'prd'].includes(selected.appEnv) || policy.contractVersion !== 1 ||
+      !policy[selected.appEnv]?.projectRef || policy[selected.appEnv].projectRef !== selected.projectRef) {
+    throw new Error('Ambiente não provisionado ou project ref não aprovado no manifesto.');
   }
-  return DEFAULT_EVENT_CONFIG_URL;
+  return selected;
+}
+export function resolveBuildEventConfigUrl(config) {
+  const selected = validateEnvironmentConfig(config);
+  return new URL('/functions/v1/event-config', selected.supabaseUrl).href;
+}
+export function configFromEnvironment(env) {
+  if (env.EVENT_CONFIG_URL) throw new Error('EVENT_CONFIG_URL não é permitido; endpoint derivado do manifesto.');
+  return {
+    contractVersion: 1, appEnv: env.APP_ENV, projectRef: env.SUPABASE_PROJECT_REF,
+    supabaseUrl: env.SUPABASE_URL, supabaseAnonKey: env.SUPABASE_PUBLIC_KEY,
+    publicSiteUrl: env.PUBLIC_SITE_URL,
+    ...(env.BUILD_ID ? { buildId: env.BUILD_ID } : {}),
+  };
+}
+/** Lista exata de recursos públicos revisados; novos assets exigem inclusão explícita. */
+export function isPublicPath(path) {
+  return !path || publicAssets.has(path) || [...publicAssets].some(asset => asset.startsWith(path + '/'));
+}
+async function inspectPublicTree(root, prefix = '') {
+  for (const entry of await readdir(resolve(root, prefix), { withFileTypes: true })) {
+    const path = prefix ? prefix + '/' + entry.name : entry.name;
+    if (!isPublicPath(path)) continue;
+    if (entry.isSymbolicLink()) throw new Error('Symlink não permitido no artefato público.');
+    if (entry.isDirectory()) await inspectPublicTree(root, path);
+    else if (/\.(js|html|css|svg)$/.test(path)) {
+      const content = await readFile(resolve(root, path), 'utf8');
+      if (/sb_secret_[A-Za-z0-9_-]+|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(content)) throw new Error('Credencial privilegiada no artefato.');
+      for (const token of content.match(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g) || []) {
+        try { if (JSON.parse(Buffer.from(token.split('.')[1], 'base64url')).role === 'service_role') throw new Error('Credencial privilegiada no artefato.'); }
+        catch (error) { if (error.message.startsWith('Credencial')) throw error; }
+      }
+    }
+  }
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
   try {
     const result = await prepareStaticSite({
-      publicSiteUrl: process.env.PUBLIC_SITE_URL,
-      eventConfigUrl: resolveBuildEventConfigUrl({
-        appEnv: process.env.APP_ENV,
-        eventConfigUrl: process.env.EVENT_CONFIG_URL,
-      }),
+      config: configFromEnvironment(process.env),
     });
     console.log(`Prepared ${result.outputDir} for ${result.siteUrl}`);
   } catch (error) {

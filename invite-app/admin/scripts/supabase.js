@@ -1,4 +1,4 @@
-import { SUPABASE_PUBLIC_KEY, SUPABASE_URL } from '../../scripts/shared/app-config.js';
+import { AUTH_STORAGE_KEY, SUPABASE_PUBLIC_KEY, SUPABASE_URL } from '../../scripts/shared/app-config.js';
 
 let supabaseClientPromise;
 
@@ -16,7 +16,7 @@ export async function getSupabaseClient() {
 
   if (!supabaseClientPromise) {
     supabaseClientPromise = import('https://esm.sh/@supabase/supabase-js@2.117.2')
-      .then(({ createClient }) => createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY))
+      .then(({ createClient }) => createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY, { auth: { storageKey: AUTH_STORAGE_KEY } }))
       .catch((error) => {
         supabaseClientPromise = undefined;
         throw new Error(

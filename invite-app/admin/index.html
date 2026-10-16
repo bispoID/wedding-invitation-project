@@ -59,7 +59,7 @@
               <p id="event-loading" class="feedback" role="status">Carregando configuração...</p>
               <p id="event-feedback" class="feedback" role="status" aria-live="polite" hidden></p>
               <button id="event-retry" class="button button--secondary" type="button" hidden>Tentar novamente</button>
-              <form id="event-form" hidden>
+              <form inert id="event-form" hidden>
                 <div class="event-fields">
                   <label for="event-bride_name">Nome da noiva *
                     <input id="event-bride_name" name="bride_name" type="text" maxlength="200" required />
@@ -255,7 +255,7 @@
       </section>
     </main>
     <dialog class="guest-dialog" id="guest-dialog" aria-labelledby="guest-dialog-title">
-      <form id="guest-form" novalidate>
+      <form inert id="guest-form" novalidate>
         <h2 id="guest-dialog-title">Editar convidado</h2>
         <p class="feedback feedback--error" id="guest-form-error" role="alert" hidden></p>
         <label for="guest-name">Nome</label>
@@ -285,7 +285,6 @@
         </div>
       </form>
     </dialog>
-    <script type="module" src="../scripts/shared/dev-runtime-config.js"></script>
-    <script type="module" src="./scripts/main.js"></script>
+    <script type="module" src="../scripts/shared/bootstrap.js"></script>
   </body>
 </html>

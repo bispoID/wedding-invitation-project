@@ -26,8 +26,8 @@ test('DEV process identity distinguishes the local function server and sidecar',
 });
 
 test('frontend DEV configuration is explicit and never contains a privileged key', async () => {
-  const config = await read('invite-app/scripts/shared/app-config.js');
-  assert.match(config, /DEV Supabase configuration is missing or invalid/);
+  const config = await read('invite-app/scripts/shared/environment-config.js');
+  assert.match(config, /validateEnvironmentConfig/);
   assert.match(config, /LOCAL_HOSTNAMES/);
   assert.doesNotMatch(config, /SERVICE_ROLE/);
   const runtime = await read('invite-app/scripts/shared/dev-runtime-config.js');
