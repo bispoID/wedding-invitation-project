@@ -877,7 +877,8 @@ ou publicado. Os checkpoints históricos acima não são evidência desta altera
 
 - [x] Estrutura e testes sintéticos de isolamento implementados localmente.
 - [x] PRD preparado para configuração explícita, sem modificar serviço remoto.
-- [ ] Revalidar DEV integrado e aceite visual com infraestrutura disponível.
+- [x] Revalidar DEV integrado em 17/10/2026: health, integração e fluxos de desktop.
+- [ ] Obter aceite visual humano nos dispositivos e larguras efetivamente usados.
 - [ ] Provisionar Supabase UAT independente e revisar/applicar migrations no destino.
 - [ ] Configurar Auth, CORS, Event Config e contingência UAT próprios.
 - [ ] Autorizar e executar promoção/publicação UAT e validar fluxos reais.
@@ -885,3 +886,8 @@ ou publicado. Os checkpoints históricos acima não são evidência desta altera
 
 Não encerrar a fase de publicação por aprovação apenas de testes locais.
 Pré-requisitos e limites: [environments.md](environments.md).
+
+Revalidação dinâmica e diagnóstico do 503 local:
+[uat-dynamic-revalidation.md](uat-dynamic-revalidation.md). O erro reproduzido
+ocorreu antes da prontidão das Functions; com o stack pronto as consultas e a
+edição retornaram 200. Nenhuma mudança de regra de negócio foi necessária.

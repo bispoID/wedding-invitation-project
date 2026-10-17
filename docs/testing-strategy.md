@@ -86,3 +86,9 @@ nos testes e removidos pelo teardown. Nenhum artefato real PRD foi preparado.
 A configuração DEV ignorada existente foi validada sem imprimir valores;
 portas locais consultadas indisponíveis e dev:health sem conclusão, interrompido.
 Não houve execução remota de CI, deploy ou GET Event Config PRD.
+
+Retomada em 17/10/2026: **310 testes Node aprovados**, incluindo duas regressões
+de recuperação explícita após HTTP 503. Health e integração DEV passaram, e os
+fluxos administrativos foram verificados no navegador com backend local.
+Detalhes, captura sanitizada e limites de aceite:
+[uat-dynamic-revalidation.md](uat-dynamic-revalidation.md).

@@ -146,3 +146,9 @@ novo validador sem expor seus valores. As portas 54321, 5500 e 8000 não respond
 dev:health não concluiu e foi interrompido. Não houve start/reset, teste
 autenticado, teste SQL nem aceite visual nesta etapa. O funcionamento integrado
 DEV deve ser revalidado com a infraestrutura disponível.
+
+Revalidação posterior em 17/10/2026: Docker e serviços restaurados sem reset;
+health, integração, login/dashboard, paginação, edição e isolamento no navegador
+aprovados. A indisponibilidade 503 durante o startup foi distinguida de erro de
+configuração. Aguardar `DEV ready` e health aprovado antes de abrir o Admin.
+Evidências e limites: [uat-dynamic-revalidation.md](uat-dynamic-revalidation.md).
