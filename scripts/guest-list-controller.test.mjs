@@ -29,6 +29,32 @@ function response(total, records = [], responseMetrics = metrics) {
   return { total, records, metrics: responseMetrics };
 }
 
+test('guest list recovers from startup 503 on explicit reload without losing pagination', async () => {
+  const queries = [];
+  let unavailable = false;
+  const controller = createGuestListController({
+    fetchGuests: async query => {
+      queries.push({ ...query });
+      if (unavailable) throw Object.assign(new Error('Edge Runtime unavailable'), { status: 503 });
+      return response(12, [record(query.page === 1 ? 'first' : 'last')]);
+    },
+    onStateChange() {},
+  });
+  await controller.load();
+  await controller.setPage(2);
+  unavailable = true;
+  await controller.reload();
+  assert.equal(controller.getState().error.status, 503);
+  assert.equal(controller.getState().loading, false);
+  assert.equal(controller.getState().records[0].id, 'last');
+  assert.equal(queries.length, 3);
+  unavailable = false;
+  await controller.reload();
+  assert.equal(controller.getState().error, null);
+  assert.equal(controller.getState().pagination.page, 2);
+  assert.deepEqual(queries[2], queries[3]);
+});
+
 function fakeScheduler() {
   let nextId = 0;
   const timers = new Map();

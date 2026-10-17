@@ -697,6 +697,35 @@ test('shared admin helper preserves errors and create/update/delete payloads', a
   } finally { globalThis.__adminInvoke = oldHook; globalThis.__adminCall = oldCall; }
 });
 
+test('admin startup 503 stays an error and explicit retry uses the same function', async () => {
+  const previous = globalThis.__adminStartupInvoke;
+  const requests = [];
+  globalThis.__adminStartupInvoke = async (name, options) => {
+    requests.push({ name, options });
+    return requests.length === 1
+      ? { data: null, error: { context: Response.json({ message: 'name resolution failed' }, { status: 503 }) } }
+      : { data: { success: true }, error: null };
+  };
+  try {
+    const helper = await load('invite-app/admin/scripts/functions.js', [
+      ["import { getSupabaseClient } from './supabase.js';",
+        'const getSupabaseClient=async()=>({functions:{invoke:(...args)=>globalThis.__adminStartupInvoke(...args)}});'],
+    ]);
+    const options = { method: 'GET' };
+    await assert.rejects(helper.callAdminFunction('admin-manage-event-config', options),
+      error => error.status === 503 && error.code === 'FUNCTION_FAILED');
+    assert.equal(requests.length, 1);
+    assert.deepEqual(await helper.callAdminFunction('admin-manage-event-config', options), { success: true });
+    assert.deepEqual(requests, [
+      { name: 'admin-manage-event-config', options },
+      { name: 'admin-manage-event-config', options },
+    ]);
+  } finally {
+    if (previous === undefined) delete globalThis.__adminStartupInvoke;
+    else globalThis.__adminStartupInvoke = previous;
+  }
+});
+
 test('timestamp presentation is explicitly Sao Paulo regardless of machine timezone', () => {
   const original = process.env.TZ;
   try {
