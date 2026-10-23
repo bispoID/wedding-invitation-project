@@ -235,7 +235,7 @@ for (const companions of ['-1', '16', '1.5', 'invalid']) test(`RSVP attendance=y
   }, { companions });
 });
 
-test('RSVP 201 resets defaults, preserves success and allows second submit without double-submit', async () => {
+test('RSVP 201 resets defaults, preserves success and blocks resubmission', async () => {
   await withRsvpForm(async (ui) => {
     const first = ui.submit();
     assert.equal(ui.button.disabled, true);
@@ -252,21 +252,18 @@ test('RSVP 201 resets defaults, preserves success and allows second submit witho
     assert.equal(ui.feedback.textContent, 'Presença confirmada! Agradecemos pela sua confirmação.');
     assert.deepEqual(ui.fields, { name: '', email: '', attendance: '', companions: '0' });
     assert.equal(ui.companions.disabled, false);
-    assert.equal(ui.button.disabled, false);
-    assert.equal(ui.attrs['aria-busy'], undefined);
+    assert.equal(ui.button.disabled, true);
+    assert.equal(ui.attrs['aria-busy'], 'false');
     assert.equal(ui.resets(), 1);
     Object.assign(ui.fields, { name: 'Second synthetic RSVP', email: 'second@example.invalid', attendance: 'yes', companions: '1' });
     ui.setAttendance('yes');
-    const second = ui.submit();
-    assert.equal(ui.requests.length, 2);
-    assert.equal(ui.requests[1].payload.email, 'second@example.invalid');
+    await ui.submit();
+    assert.equal(ui.requests.length, 1);
     assert.equal(ui.button.disabled, true);
-    ui.requests[1].resolve(new Response(null, { status: 201 }));
-    await second;
-    assert.equal(ui.resets(), 2);
-    assert.equal(ui.companions.value, '0');
+    assert.equal(ui.resets(), 1);
+    assert.equal(ui.companions.value, '1');
     assert.equal(ui.companions.disabled, false);
-    assert.equal(ui.button.disabled, false);
+    assert.equal(ui.button.disabled, true);
   });
 });
 
@@ -287,8 +284,8 @@ test('RSVP absent 201 uses submitted attendance, sends zero companions and reset
     assert.deepEqual(ui.fields, { name: '', email: '', attendance: '', companions: '0' });
     assert.equal(ui.resets(), 1);
     assert.equal(ui.companions.disabled, false);
-    assert.equal(ui.button.disabled, false);
-    assert.equal(ui.attrs['aria-busy'], undefined);
+    assert.equal(ui.button.disabled, true);
+    assert.equal(ui.attrs['aria-busy'], 'false');
   });
 });
 

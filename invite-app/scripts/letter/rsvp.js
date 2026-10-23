@@ -99,6 +99,7 @@ export function initRsvp() {
       });
 
       if (response.status === 201) {
+        isSubmitted = true;
         setSuccessState(rsvpForm, submitButton, feedback, payload.attendance);
         syncCompanions();
         return;
@@ -165,7 +166,7 @@ function setLoadingState(form, button, feedback) {
  */
 function setSuccessState(form, button, feedback, attendance) {
   form.reset();
-  button.disabled = false;
+  button.disabled = true;
   form.setAttribute('aria-busy', 'false');
   setFeedback(
     feedback,
