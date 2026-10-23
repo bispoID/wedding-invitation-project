@@ -5,6 +5,25 @@ import { validateEnvironmentConfig as validate, normalizeDevConfig, sessionStora
 import { loadRuntimeConfig, bootstrap } from '../invite-app/scripts/shared/dev-runtime-config.js';
 import { fixture, jwt, UAT_REF } from './environment-fixtures.mjs';
 
+test('approved UAT uses the exact isolated session namespace without network credentials', () => {
+  const projectRef = 'eugvobtvjicvocttnkka';
+  const config = fixture('uat', { projectRef, supabaseUrl: `https://${projectRef}.supabase.co`,
+    supabaseAnonKey: jwt({ role: 'anon', ref: projectRef }),
+    publicSiteUrl: 'https://bispoid.github.io/wedding-invitation-project/' });
+  assert.equal(sessionStorageKey(config), 'invitation-v1-uat-eugvobtvjicvocttnkka-auth');
+  assert.throws(() => validate({ ...config, supabaseAnonKey: fixture('prd').supabaseAnonKey }));
+});
+
+test('localhost cannot consume the approved UAT artifact as a DEV fallback', async () => {
+  const projectRef = 'eugvobtvjicvocttnkka';
+  let calls = 0;
+  await assert.rejects(loadRuntimeConfig('http://localhost:5500/', async url => {
+    calls++; assert.equal(url, 'http://localhost:5500/dev-config.json');
+    return Response.json(fixture('uat', { projectRef, supabaseUrl: `https://${projectRef}.supabase.co`, supabaseAnonKey: 'sb_publishable_synthetic' }));
+  }));
+  assert.equal(calls, 1);
+});
+
 for (const env of ['dev', 'uat', 'prd']) {
   for (const keyType of ['legacy', 'publishable']) test(`${env} explicit ${keyType} config`, () => {
     const config = fixture(env, keyType === 'publishable' ? { supabaseAnonKey: 'sb_publishable_synthetic' } : {});

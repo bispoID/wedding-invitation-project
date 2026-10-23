@@ -91,6 +91,7 @@ for (const env of ['uat','prd']) for (const subpath of ['', 'invite/']) test(`${
   assert.ok(html.includes(config.publicSiteUrl+'images/preview-link.webp'));
   assert.equal(html.includes('[Homologação]'),env==='uat');
   assert.equal(html.includes('noindex, nofollow'),env==='uat');
+  assert.equal((html.match(/Ambiente de homologação — convite fictício para testes\./g) ?? []).length, env === 'uat' ? 3 : 0);
   for (const name of ['dev-config.json','.env','secrets.json','snapshot.json','provision.js','scripts/fixture.js','scripts/credentials.js','.dev','admin/scripts/guest-metrics.test.ts']) await assert.rejects(access(join(output,name)));
   // Todos os recursos permitidos, inclusive fontes e imagens, são preservados byte a byte.
   const assets = JSON.parse(await readFile(new URL('../config/public-assets.json',import.meta.url),'utf8'));
@@ -105,8 +106,12 @@ for (const config of [undefined, {}, fixture('uat',{projectRef:fixture('prd').pr
   await assert.rejects(prepareStaticSite({config,policy,outputDir,fetchImpl:async()=>{ calls++; }}));
   assert.equal(calls,0); await assert.rejects(access(outputDir));
 });
-test('real UAT remains blocked until the versioned manifest is provisioned', () => {
+test('versioned manifest approves only the provisioned UAT and preserves PRD', () => {
   assert.throws(()=>validateBuildConfig(fixture()),/não provisionado/);
+  const projectRef = 'eugvobtvjicvocttnkka';
+  const approved = fixture('uat', { projectRef, supabaseUrl: `https://${projectRef}.supabase.co`, supabaseAnonKey: 'sb_publishable_synthetic' });
+  assert.equal(validateBuildConfig(approved).projectRef, projectRef);
+  assert.throws(() => validateBuildConfig(approved, { contractVersion: 1, uat: { projectRef: null } }), /não provisionado/);
   assert.equal(validateBuildConfig(fixture('prd')).appEnv,'prd');
 });
 test('CLI requires explicit settings and refuses endpoint override', () => {

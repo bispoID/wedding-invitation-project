@@ -147,7 +147,12 @@ export async function prepareStaticSite({
   const invitationTitle = await resolveInvitationTitle(eventConfigUrl, fetchImpl);
   let preparedHtml = resolveMetadata(originalHtml, siteUrl,
     selected.appEnv === 'uat' ? '[Homologação] ' + invitationTitle : invitationTitle);
-  if (selected.appEnv === 'uat') preparedHtml = preparedHtml.replace('</head>', '  <meta name="robots" content="noindex, nofollow" />\n</head>');
+  if (selected.appEnv === 'uat') {
+    preparedHtml = preparedHtml.replace(
+      /(<meta\s+(?:name|property)="(?:description|og:description|twitter:description)"\s+content=")[^"]*(")/g,
+      '$1Ambiente de homologação — convite fictício para testes.$2',
+    ).replace('</head>', '  <meta name="robots" content="noindex, nofollow" />\n</head>');
+  }
   await cp(source, output, {
     recursive: true,
     errorOnExist: true,
@@ -160,7 +165,7 @@ export async function prepareStaticSite({
   return { siteUrl, outputDir: output };
 }
 
-// Manifesto de destinos aprovado no repositório; UAT permanece não provisionado.
+// Manifesto de destinos aprovado no repositório; nenhum destino é inferido.
 export function validateBuildConfig(config, policy = environmentPolicy) {
   const selected = validateEnvironmentConfig(config);
   if (!['uat', 'prd'].includes(selected.appEnv) || policy.contractVersion !== 1 ||
