@@ -1,5 +1,26 @@
 # Ambientes e isolamento
 
+## Proteção Git Vercel — Etapa 5A.1, 23/10/2026, somente local
+
+Dashboard consultado sem alterações: projeto wedding-invitation-project,
+repositório bispoID/wedding-invitation-project, Production Branch `production`,
+Root Directory na raiz do repositório (sem subdiretório; ./ na interface), Other,
+build `node scripts/prepare-static-site.mjs` e saída `_site`. Preview Branch
+Tracking está habilitado para branches não atribuídas; o Ignored Build Step
+Only build production pode cancelar builds, mas não prova ausência de deployments.
+
+O novo `vercel.json` na raiz contém somente git.deploymentEnabled com
+`feature/landing-page: false` e `staging: false`. Não há bloqueio global ou globs;
+production e demais branches mantêm o comportamento não sobrescrito. Nenhum
+setting remoto, build command, output directory, domínio ou workflow foi alterado.
+O arquivo não integra os assets publicados nem muda o runtime DEV/UAT/PRD.
+
+**PREPARADA COM RESSALVAS:** testes locais aprovados, mas a política não está
+publicada/ativa remotamente. O primeiro push continua sujeito a comprovação de
+segurança e autorização separada. Staging não foi alterada e não recebe proteção
+apenas por existir uma regra em outra branch. Reauditar se Production Branch,
+Root Directory ou regras mudarem. [Evidências, schema e procedimento](uat-git-ci-integration.md).
+
 ## Estado atual — 23/10/2026, E2E no Edge aprovado com ressalvas
 
 O aceite técnico de navegador foi concluído em Playwright/Edge instalado,

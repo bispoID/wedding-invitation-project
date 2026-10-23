@@ -1,5 +1,20 @@
 # Ferramentas e serviços externos
 
+## Auditoria Vercel — 23/10/2026, Etapa 5A.1
+
+A sessão autenticada no navegador do Codex permitiu somente leitura dos campos
+antes indisponíveis pela API: Production Branch production, Root Directory na
+raiz do repositório, Other, build Node do preparador e saída _site. Repositório
+e Project ID conferidos. Preview acompanha branches não atribuídas; ignore
+Only build production preservado. Sem Deploy Hooks ou integrações Marketplace
+instaladas apresentados pelo projeto. Não se consultaram valores de secrets.
+
+Política git.deploymentEnabled preparada apenas no vercel.json local, bloqueando
+os nomes exatos de desenvolvimento e staging, sem alterar produção. 342 Node,
+150 Deno e 48 JS/MJS aprovados; schema verificado por constraints equivalentes
+dos nós aplicáveis, sem instalar dependências. Nenhum setting, push ou deploy.
+O gate do primeiro push permanece pendente. [Auditoria e limites](uat-git-ci-integration.md).
+
 Continuação de 23/10/2026: Playwright 1.62.1 disponível no runtime foi reutilizado
 com Microsoft Edge 155.0.4283.62 instalado; nenhum pacote permanente ou navegador
 foi baixado. A autorização específica para esse executor resolveu o bloqueio

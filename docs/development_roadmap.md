@@ -1,5 +1,20 @@
 # Cronologia de Desenvolvimento — Convite Virtual de Casamento
 
+## Atualização UAT — 23/10/2026, Etapa 5A.1 preparada com ressalvas
+
+- [x] Confirmar no Dashboard o projeto, repositório e Production Branch production.
+- [x] Confirmar Root Directory na raiz, build Node e saída _site sem alterá-los.
+- [x] Preparar vercel.json local: bloquear somente feature/landing-page e staging.
+- [x] Validar a política, conflitos e privacidade: 342 Node, 150 Deno e 48 JS/MJS.
+- [ ] Obter comprovação suficiente da segurança do primeiro evento que introduz o arquivo.
+- [ ] Autorizar separadamente o push exclusivo do desenvolvimento e validar CI pelo SHA.
+- [ ] Autorizar a preparação/publicação Pages UAT em etapa própria.
+
+**PREPARADA COM RESSALVAS.** Configuração ainda não publicada nem ativa na Vercel;
+nenhum setting remoto, merge, push, deploy ou branch de publicação alterado.
+Não confundir validação local com liberação do gate remoto ou proteção já aplicada
+à staging. [Evidências e procedimento seguro](uat-git-ci-integration.md).
+
 ## Atualização UAT — 23/10/2026, Etapa 5A integrada somente localmente
 
 - [x] Incorporar os oito commits UAT em feature/landing-page por fast-forward.
