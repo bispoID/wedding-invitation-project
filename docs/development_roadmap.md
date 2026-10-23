@@ -1,5 +1,18 @@
 # Cronologia de Desenvolvimento — Convite Virtual de Casamento
 
+## Atualização UAT — 23/10/2026, Etapa 5A integrada somente localmente
+
+- [x] Incorporar os oito commits UAT em feature/landing-page por fast-forward.
+- [x] Revalidar antes/depois: 312 Node, 150 Deno, 46 JS/MJS e builds sintéticos.
+- [x] Auditar Pages e Vercel sem alterar configurações remotas.
+- [ ] Resolver o risco de Preview automático Vercel antes de publicar a branch.
+- [ ] Publicar somente a branch de desenvolvimento e validar CI pelo SHA final.
+- [ ] Autorizar separadamente variáveis, proteções e publicação Pages UAT.
+
+**INTEGRAÇÃO LOCAL CONCLUÍDA — PUSH/CI PENDENTES.** Nenhum deploy foi realizado;
+staging, production e serviços remotos preservados. Este estado atualiza os
+checkpoints históricos abaixo. [Evidências e bloqueio](uat-git-ci-integration.md).
+
 ## Atualização UAT — 23/10/2026, E2E no Edge concluído
 
 Este estado atual complementa e atualiza os checkpoints históricos abaixo.
