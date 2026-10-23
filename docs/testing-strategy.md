@@ -1,5 +1,15 @@
 # Estratégia de testes
 
+## Etapa 4 UAT — 23/10/2026
+
+312 Node aprovados com Node 22.14.0, 150 Deno com Deno 2.9.7 e deny-net,
+46 arquivos JS/MJS com sintaxe válida. Novas regressões conferem o namespace
+UAT aprovado e rejeição de UAT em localhost; o gate de build agora aprova só
+o ref provisionado e verifica as três descrições de homologação. Os testes
+comuns continuam sem credenciais remotas, Docker ou acesso a UAT/PRD.
+Builds reais UAT root/subpath foram inspecionados separadamente. Não houve
+aceite de navegador nem CI remoto. [Evidências e pendências](uat-frontend-validation.md).
+
 ## Camadas
 
 - **Node unit/static:** `npm run test:node` verifica módulos de frontend,

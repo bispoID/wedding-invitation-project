@@ -1,5 +1,21 @@
 # Cronologia de Desenvolvimento — Convite Virtual de Casamento
 
+## Atualização UAT — 23/10/2026
+
+Este estado atual complementa e atualiza os checkpoints históricos abaixo.
+
+- [x] Backend UAT independente provisionado nas etapas anteriores; oito Functions ACTIVE/v1 reconferidas.
+- [x] Ref UAT aprovado no manifesto, chave pública associada ao projeto correto.
+- [x] Builds reais UAT locais root/subpath e inspeção de artefatos.
+- [x] Regressão: 312 Node, 150 Deno e 46 arquivos JS/MJS com sintaxe válida.
+- [ ] Concluir Etapa 4 com contexto temporário/interceptação: convite, RSVP, login, dashboard, CORS e sessões em navegador.
+- [ ] Obter aceite visual humano nos dispositivos-alvo.
+- [ ] Autorizar integração, CI remoto, variables Pages e promoção/publicação em staging.
+
+Etapa 4 **incompleta**, não aprovada para publicação. Nenhum push, merge,
+deploy, mudança de CORS ou operação funcional PRD. Limitação do navegador e
+procedimento: [uat-frontend-validation.md](uat-frontend-validation.md).
+
 ## Objetivo
 
 Este arquivo define a **ordem geral de desenvolvimento** do projeto Convite Virtual de Casamento.

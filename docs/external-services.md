@@ -1,5 +1,15 @@
 # Ferramentas e serviços externos
 
+## Integração UAT local — 23/10/2026
+
+Supabase UAT independente: `eugvobtvjicvocttnkka`, organização Teste, sa-east-1.
+A configuração pública utiliza publishable obtida pela CLI explicitamente
+direcionada ao UAT, sem imprimir a chave ou solicitar secrets privados.
+Builds locais consultam somente Event Config UAT; não publicam o frontend.
+O navegador disponível não oferece interceptação de rotas/contexto temporário;
+o teste E2E sob a futura origem Pages permanece pendente, sem alterar CORS.
+[Procedimento e limites](uat-frontend-validation.md).
+
 Este documento registra as ferramentas e os serviços externos utilizados no
 estado atual do projeto, sua finalidade e as referências oficiais para
 manutenção futura.

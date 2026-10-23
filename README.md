@@ -1,5 +1,10 @@
 # Convite Virtual de Casamento
 
+Estado de isolamento em 23/10/2026: backend UAT independente aprovado no
+manifesto e artefatos UAT gerados localmente. O GitHub Pages atual não foi
+atualizado. A Etapa 4 ainda depende do aceite E2E em navegador isolado;
+[resultados e limitações](docs/uat-frontend-validation.md).
+
 Convite digital de casamento em formato de landing page web, com uma experiência sofisticada e interativa e confirmação de presença (RSVP) integrada.
 
 O convite é acessado por um link enviado aos convidados, principalmente pelo WhatsApp. A experiência é mobile-first e também responsiva para desktops.

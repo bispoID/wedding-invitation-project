@@ -1,5 +1,15 @@
 # QA final — evidências técnicas e manuais
 
+## Etapa 4 UAT — 23/10/2026, execução parcial
+
+312 Node, 150 Deno e sintaxe de 46 JS/MJS aprovados. Artefatos reais UAT em
+raiz/subpath: 71 arquivos cada, runtime público validado, fixture fictícia e
+metadados de homologação. Foram dois GETs públicos UAT nesta etapa (ensaio e
+build final), sem escritas. Não houve acesso funcional PRD ou ao Pages atual.
+Convite, RSVP, login, dashboard e CORS em navegador **não executados** por
+ausência de interceptação/contexto isolado disponível. As evidências HTTP da
+Etapa 3.2B não substituem esses critérios. [Detalhes](uat-frontend-validation.md).
+
 Consolidação documental final: **13/10/2026**. Projeto:
 `wedding-invitation-project`.
 Branch de produção: `production`.

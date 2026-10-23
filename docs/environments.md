@@ -1,5 +1,20 @@
 # Ambientes e isolamento
 
+## Estado atual — 23/10/2026, Etapa 4 parcial
+
+O manifesto aprova UAT `eugvobtvjicvocttnkka`, independente de PRD. O backend
+foi revalidado por metadados (oito Functions ACTIVE/v1); builds reais UAT locais
+root/subpath passaram com chave publishable obtida por metadados oficiais do
+projeto. A chave é pública e opaca: não se inferem claims ou assinatura JWT.
+Nenhuma credencial privada foi versionada. Os registros abaixo da Etapa 1 são
+históricos, inclusive suas referências ao manifesto ainda não provisionado.
+
+O Pages publicado **não foi atualizado**. A validação E2E de navegador continua
+pendente: o navegador disponível não expõe contexto temporário e interceptação
+de rotas para servir disco sob a origem Pages. Não adicionar localhost ao CORS,
+não abrir o Pages antigo para testes e não habilitar overrides publicados.
+Procedimento, evidências e limites: [uat-frontend-validation.md](uat-frontend-validation.md).
+
 ## Estado da Etapa 1 — implementação local, sem publicação
 
 O histórico de promoção permanece:
@@ -40,8 +55,8 @@ de uma publishable exige conferência no painel do projeto durante o
 provisionamento. Não usar service_role, sb_secret_, senha ou chave privada.
 
 `config/environments.json` aprova os destinos do build. O ref PRD público é
-`bkkienyemqlkueygknzl`; UAT contém `projectRef: null`. Nem variáveis preenchidas
-com fixtures liberam UAT enquanto o manifesto versionado não for atualizado.
+`bkkienyemqlkueygknzl`; UAT aprova exclusivamente `eugvobtvjicvocttnkka`.
+Destinos sintéticos ou não aprovados continuam bloqueados pelo preparador.
 A política sintética injetada pelos testes não é uma opção do CLI.
 
 UAT exige URL github.io e ref diferente de PRD; PRD recusa github.io e só aceita

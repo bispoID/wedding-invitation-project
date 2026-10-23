@@ -1,5 +1,13 @@
 # Invite app
 
+Etapa 4 (23/10/2026): ref UAT aprovado e build real local validado; nenhum
+frontend publicado. Não abrir o Pages antigo para testes nem servir UAT em
+localhost como se fosse DEV. O E2E requer contexto temporário e interceptação
+de todas as requisições do site sob sua origem futura, com PRD bloqueado.
+Essa capacidade não está disponível no navegador desta execução; os testes
+de convite/RSVP/Auth/Admin em navegador permanecem pendentes.
+[Detalhes e build](../docs/uat-frontend-validation.md).
+
 Aplicação estática do convite virtual, com RSVP e área administrativa integrados.
 Inicialmente, o artefato foi publicado no GitHub Pages. A arquitetura do frontend
 permanece independente do provedor de hospedagem, permitindo sua publicação em

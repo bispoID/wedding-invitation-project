@@ -1,5 +1,11 @@
 # Arquitetura do código-fonte
 
+Atualização de 23/10/2026: o manifesto aprova o projeto UAT independente.
+Bootstrap, endpoints derivados e namespace por ambiente permanecem sem
+overrides. O preparador identifica somente o artefato UAT com descrições de
+homologação; PRD conserva seus metadados. A aprovação local não equivale a
+publicação ou aceite E2E: [validação UAT](uat-frontend-validation.md).
+
 ## Entrada do frontend público
 
 `index.html`, `admin/index.html` e `admin/login.html` carregam uma única
