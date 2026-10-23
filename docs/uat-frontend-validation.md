@@ -1,5 +1,14 @@
 # Frontend UAT — integração local, 23/10/2026
 
+## Continuação E2E concluída
+
+O bloqueio de navegador registrado abaixo é histórico. Após autorização explícita
+para Playwright com o Edge instalado, o aceite técnico E2E passou em contexto
+efêmero com interceptação local integral. RSVP, Auth, Admin, CORS e sessões
+foram comprovados; 11 convidados sintéticos foram removidos por UUID. Resultado
+atual: **APROVADA COM RESSALVAS** de navegador único e mobile emulado, sem
+publicação ou aceite humano em aparelho real. [Evidências](uat-edge-e2e.md).
+
 ## Escopo e resultado
 
 Branch `feature/uat-environment-isolation`; baseline

@@ -1,6 +1,14 @@
 # Ambientes e isolamento
 
-## Estado atual — 23/10/2026, Etapa 4 parcial
+## Estado atual — 23/10/2026, E2E no Edge aprovado com ressalvas
+
+O aceite técnico de navegador foi concluído em Playwright/Edge instalado,
+contexto efêmero, service workers bloqueados e recursos Pages servidos somente
+do artefato local sob sua origem futura. CORS, RSVP, Auth, sessões e Admin foram
+validados, com limpeza de 11 UUIDs sintéticos. Nenhum ambiente foi publicado.
+Limites de cobertura e instruções: [uat-edge-e2e.md](uat-edge-e2e.md).
+
+## Checkpoint anterior — 23/10/2026, Etapa 4 parcial
 
 O manifesto aprova UAT `eugvobtvjicvocttnkka`, independente de PRD. O backend
 foi revalidado por metadados (oito Functions ACTIVE/v1); builds reais UAT locais

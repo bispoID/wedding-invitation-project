@@ -1,5 +1,10 @@
 # Arquitetura do código-fonte
 
+Continuação E2E (23/10/2026): o RSVP agora mantém a trava isSubmitted e o botão
+desabilitado após 201; reset e mensagem são preservados, sem segundo POST na
+mesma página. Falhas continuam permitindo retry e 202 mantém sua trava.
+Contrato/backend inalterados. [Validação no Edge](uat-edge-e2e.md).
+
 Atualização de 23/10/2026: o manifesto aprova o projeto UAT independente.
 Bootstrap, endpoints derivados e namespace por ambiente permanecem sem
 overrides. O preparador identifica somente o artefato UAT com descrições de

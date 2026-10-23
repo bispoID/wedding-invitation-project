@@ -1,5 +1,10 @@
 # Invite app
 
+Continuação de 23/10/2026: E2E Playwright/Edge aprovado com ressalvas, origem
+Pages simulada com arquivos locais, sessão efêmera, CORS UAT e limpeza por UUID.
+O bloqueio do primeiro executor descrito abaixo é histórico.
+[Evidências atuais](../docs/uat-edge-e2e.md). Nenhum frontend foi publicado.
+
 Etapa 4 (23/10/2026): ref UAT aprovado e build real local validado; nenhum
 frontend publicado. Não abrir o Pages antigo para testes nem servir UAT em
 localhost como se fosse DEV. O E2E requer contexto temporário e interceptação

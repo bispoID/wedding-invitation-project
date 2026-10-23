@@ -1,5 +1,16 @@
 # QA final — evidências técnicas e manuais
 
+## Continuação da Etapa 4 — E2E Edge aprovado com ressalvas, 23/10/2026
+
+Login real com senha digitada pelo usuário no contexto de teste, namespace/JWT
+UAT, convite por teclado, Pausar/Continuar, foco, RSVP 201/loading/trava, dashboard,
+paginação 10+1, busca, métricas globais, edição, Event Config, contingência vazia,
+limpeza de 11 UUIDs e logout aprovados. 17 cenários funcionais, sem erros;
+checagem complementar de assets/layout em desktop e mobile emulado aprovada.
+Nenhuma chamada Pages real/PRD/DEV, alteração remota de configuração ou publicação.
+312 Node/150 Deno passaram. Aceite humano em aparelho real continua separado.
+[Evidências e UUIDs](uat-edge-e2e.md). O checkpoint parcial abaixo é histórico.
+
 ## Etapa 4 UAT — 23/10/2026, execução parcial
 
 312 Node, 150 Deno e sintaxe de 46 JS/MJS aprovados. Artefatos reais UAT em

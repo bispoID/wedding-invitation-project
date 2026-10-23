@@ -1,6 +1,6 @@
 # Cronologia de Desenvolvimento — Convite Virtual de Casamento
 
-## Atualização UAT — 23/10/2026
+## Atualização UAT — 23/10/2026, E2E no Edge concluído
 
 Este estado atual complementa e atualiza os checkpoints históricos abaixo.
 
@@ -8,13 +8,15 @@ Este estado atual complementa e atualiza os checkpoints históricos abaixo.
 - [x] Ref UAT aprovado no manifesto, chave pública associada ao projeto correto.
 - [x] Builds reais UAT locais root/subpath e inspeção de artefatos.
 - [x] Regressão: 312 Node, 150 Deno e 46 arquivos JS/MJS com sintaxe válida.
-- [ ] Concluir Etapa 4 com contexto temporário/interceptação: convite, RSVP, login, dashboard, CORS e sessões em navegador.
+- [x] Concluir aceite técnico E2E da Etapa 4 com contexto temporário/interceptação: convite, RSVP, login, dashboard, CORS e sessões no Microsoft Edge.
 - [ ] Obter aceite visual humano nos dispositivos-alvo.
 - [ ] Autorizar integração, CI remoto, variables Pages e promoção/publicação em staging.
 
-Etapa 4 **incompleta**, não aprovada para publicação. Nenhum push, merge,
-deploy, mudança de CORS ou operação funcional PRD. Limitação do navegador e
-procedimento: [uat-frontend-validation.md](uat-frontend-validation.md).
+Etapa 4 **aprovada tecnicamente com ressalvas de cobertura**: Edge Windows e
+viewport mobile emulado, sem aceite humano em dispositivo real. Nenhum push,
+merge, deploy, mudança de CORS ou operação funcional PRD. O bloqueio do primeiro
+executor foi resolvido por Playwright/Edge explicitamente autorizado;
+[evidências E2E](uat-edge-e2e.md). Publicação continua pendente de autorização.
 
 ## Objetivo
 

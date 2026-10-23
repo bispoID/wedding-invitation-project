@@ -1,5 +1,15 @@
 # Estratégia de testes
 
+## Continuação E2E no Edge — 23/10/2026
+
+17 cenários funcionais no navegador aprovados, mais checagem de fontes/imagens
+e ausência de overflow em 1365x900 e 390x844. Playwright 1.62.1 reutilizado do
+runtime; Edge 155.0.4283.62 instalado, contexto efêmero, rotas antes da navegação,
+sem Pages real ou tráfego PRD/DEV. A regressão RSVP foi atualizada para bloquear
+reenvio após 201; contagem permanece 312 Node e 150 Deno aprovados. Runner,
+evidências e artefato E2E ficam ignorados em .dev; CI não depende de Auth remoto
+ou de Playwright. [Detalhes e limites](uat-edge-e2e.md).
+
 ## Etapa 4 UAT — 23/10/2026
 
 312 Node aprovados com Node 22.14.0, 150 Deno com Deno 2.9.7 e deny-net,

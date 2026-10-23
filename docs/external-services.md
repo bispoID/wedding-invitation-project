@@ -1,5 +1,11 @@
 # Ferramentas e serviços externos
 
+Continuação de 23/10/2026: Playwright 1.62.1 disponível no runtime foi reutilizado
+com Microsoft Edge 155.0.4283.62 instalado; nenhum pacote permanente ou navegador
+foi baixado. A autorização específica para esse executor resolveu o bloqueio
+do navegador anterior. Apenas UAT e scripts de https://esm.sh foram liberados,
+com todos os recursos Pages atendidos localmente. [Evidências](uat-edge-e2e.md).
+
 ## Integração UAT local — 23/10/2026
 
 Supabase UAT independente: `eugvobtvjicvocttnkka`, organização Teste, sa-east-1.
