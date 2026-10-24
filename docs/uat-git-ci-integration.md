@@ -1,5 +1,30 @@
 # Etapa 5A — integração Git local e bloqueio de publicação
 
+## Atualização — Etapa 5B.1, 23–24/10/2026, rulesets remotos ativos
+
+Protect Staging `25768317` e Protect Production `25768402` foram criados nessa
+ordem, com validação de staging antes da segunda escrita. Cada um corresponde
+exclusivamente à respectiva refs/heads/staging ou refs/heads/production; target
+branch, active, somente deletion e non_fast_forward. Dashboard autenticado
+confirma bypass vazio em ambos; API confirma escopo e regras efetivas. Nenhuma
+regra adicional foi habilitada. Fast-forward por atores com escrita continua
+permitido, sem autorização implícita para promoção ou publicação.
+
+SHAs remotos preservados: desenvolvimento 82450ab, staging 5ca164f, production
+b5995cf; também foram reconferidas as demais oito branches. Environment Pages
+staging-only, seus reviewers/wait/bypass, Source Actions e Vercel production /
+Preview desligado permaneceram inalterados. CI 40043031879 e deployment Pages
+7028282932 continuam os últimos; nenhum deployment Vercel novo foi observado.
+
+Os dois commits locais anteriores, incluindo os gates Pages, continuam sem push;
+este registro acrescenta somente um commit documental local. Nenhuma alteração
+de código/workflow ou publicação foi executada na Etapa 5B.1. Publicar o SHA final
+de desenvolvimento e obter CI exige autorização 5B.2; promover staging exige
+autorização posterior 5C. Required checks e PR/revisores exigem avaliação separada
+para não bloquear o mantenedor único ou criar dependência circular com Pages.
+[Validação completa e administração dos rulesets](github-pages-uat-preparation.md).
+As descrições anteriores de branches desprotegidas são checkpoints históricos.
+
 ## Atualização — Etapas 5A.2, 5A.3 e preparação 5B, 23/10/2026
 
 O bloqueio remoto Preview Branch Tracking foi salvo e confirmado na Vercel.

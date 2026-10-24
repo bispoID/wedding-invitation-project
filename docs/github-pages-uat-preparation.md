@@ -1,5 +1,101 @@
 # GitHub Pages UAT — preparação e proteção, Etapa 5B
 
+## Atualização — Etapa 5B.1, 23–24/10/2026, proteções remotas concluídas
+
+**PROTEÇÕES GITHUB CONFIGURADAS E VALIDADAS; SEM PUBLICAÇÃO.** Este checkpoint
+substitui somente o diagnóstico de ausência de proteção das seções históricas
+da Etapa 5B abaixo. Os gates de workflow continuam apenas nos commits locais.
+
+### Rulesets efetivamente salvos
+
+| Ruleset | ID | Inclusão exclusiva | Estado | Regras |
+| --- | --- | --- | --- | --- |
+| [Protect Staging](https://github.com/bispoID/wedding-invitation-project/rules/25768317) | 25768317 | refs/heads/staging | active | deletion, non_fast_forward |
+| [Protect Production](https://github.com/bispoID/wedding-invitation-project/rules/25768402) | 25768402 | refs/heads/production | active | deletion, non_fast_forward |
+
+Ambos têm target `branch`, origem Repository `bispoID/wedding-invitation-project`,
+nenhuma exclusão, curingas ou alvo adicional. Staging foi salva e validada antes
+da criação de production. A confirmação de identidade por e-mail exigida pelo
+GitHub foi concluída pelo próprio usuário; nenhum código ou credencial foi lido.
+
+A releitura de `/rulesets/{id}` confirmou identidade, regras e condições. A
+consulta `/rules/branches/{branch}` retornou exatamente os dois tipos e o ID
+correto em cada destino. Staging e production passaram a `protected=true`.
+As outras nove branches remotas, inclusive desenvolvimento e main, permaneceram
+sem regras efetivas. Nenhum ruleset herdado ou target tag foi encontrado.
+Os 11 nomes/SHAs de branches remotas permaneceram iguais aos da auditoria inicial.
+
+Validação **declarativa e de regras efetivas**, sem force push, tentativa de
+exclusão, commits de teste ou atualização remota de refs. Não confundir essa
+evidência com um teste comportamental destrutivo, que não foi realizado.
+
+### Bypass, compatibilidade e administração
+
+As duas páginas de edição salvas, na sessão autenticada do proprietário bispoID,
+mostraram `Bypass list is empty`. A resposta GET pública omite `bypass_actors`:
+campo ausente não foi interpretado como lista vazia; o bypass foi validado pela
+interface autenticada. Não foram incluídos proprietário, admins, papéis de
+escrita, usuários, Apps, deploy keys ou automações como exceções. Tokens obedecem
+às regras do ator correspondente; nenhuma credencial nova foi criada.
+
+O administrador mantém a gestão dos rulesets, não um bypass de push concedido
+por estas configurações. A recuperação administrativa exige acesso legítimo à
+conta; não há garantia contra mudanças futuras feitas por um administrador.
+Para revisão futura autorizada: Settings → Rulesets → conferir ID, target,
+condições, enforcement, regras e bypass; avaliar impacto antes de salvar, e
+reconsultar as regras efetivas e os SHAs. Não desabilitar regras para testes.
+
+Não foram habilitados `creation`, `update`, PR obrigatório, required reviews,
+required status checks, assinaturas, histórico linear ou outras restrições.
+Assim, a política permite fast-forward normal por quem já tem escrita, inclusive
+uma promoção autorizada de desenvolvimento; isso não concede autorização de push
+e não substitui revalidar ancestralidade, SHA aprovado e autorização de deploy.
+
+PR e aprovação estão disponíveis em rulesets deste repositório público. Exigir
+uma aprovação independente pode bloquear um mantenedor único, pois o autor não
+pode aprovar o próprio PR. Zero aprovações com PR obrigatório seria outra mudança
+de processo, não adotada. Uma revisão futura deve definir revisores disponíveis,
+quantidade, recuperação administrativa e compatibilidade com o release.
+
+O check remoto atual é `JavaScript and Deno tests`, GitHub Actions app 15368,
+mas o contexto após introduzir `workflow_call` ainda precisa ser observado. Não
+foram improvisados checks obrigatórios nem criada dependência circular com Pages.
+
+### Recursos preservados e limites
+
+- Git inicial: feature/landing-page, HEAD `077c92fc0f631e7b83142084d0b8a7c996362f15`,
+  worktree/index limpos e dois commits locais sem push. Este registro documental
+  acrescenta um terceiro commit local, sem alterar os dois anteriores.
+- Desenvolvimento remoto: `82450ab9727b932a7c5e04fe52ae0f3b38c57065`.
+- Staging: `5ca164fc4b0842378355a5eab350b540d061f068`.
+- Production: `b5995cf53be3085f9b1d418b8cddf08154afd303`.
+- Último CI permaneceu `40043031879`, success, SHA 82450ab; último Pages,
+  deployment `7028282932`, SHA 5ca164f. Nenhuma execução nova foi observada.
+- Environment github-pages ID 20459424781 preservado: única política staging
+  (ID 58100147), sem reviewers ou wait timer; `can_admins_bypass=true` inalterado.
+  Este bypass de environment é independente do bypass vazio dos rulesets.
+- Pages Source GitHub Actions, HTTPS e endereço permanecem iguais; Pages público
+  ainda é anterior à migração UAT. Não usá-lo para RSVP/Auth/Admin nesta etapa.
+- Vercel manteve Production Branch production e Preview Branch Tracking desligado;
+  nenhum deployment novo observado. Produção READY permaneceu no deployment
+  `dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`, SHA b5995cf.
+- Nenhuma modificação de código, workflows, environment, vars/secrets, Vercel,
+  Supabase ou Google. Nenhum push, merge, PR, dispatch, deploy ou recurso pago.
+
+Evidências locais ignoradas: `.dev/vercel-audit/stage5b1-staging-saved.png`,
+`stage5b1-production-verified.png` e `stage5b1-final-rulesets.png`, na mesma pasta.
+Os artefatos/testes históricos de 077c92f não representam o novo HEAD documental
+nem CI remoto desse novo commit; não foram regenerados ou publicados nesta etapa.
+
+Próxima Etapa 5B.2, **não executada**: revalidar refs/rulesets e segurança Vercel;
+obter autorização para push exclusivo de feature/landing-page sem force; validar
+CI do SHA final e ausência de deployments; preparar autorização separada da
+Etapa 5C. Revisões/checks adicionais e promoção UAT continuam pendentes.
+
+Referências oficiais: [disponibilidade e enforcement](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets),
+[API, regras e limitação do campo bypass](https://docs.github.com/en/rest/repos/rules),
+[aprovação pelo autor](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/approving-a-pull-request-with-required-reviews).
+
 ## Resultado e limites — 23/10/2026
 
 **PREPARADO COM RESSALVAS; PUBLICAÇÃO NÃO AUTORIZADA.** Três variáveis públicas
@@ -115,6 +211,10 @@ inclusive Free; não se recomenda contratação de recurso pago. Referência:
 [environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).
 
 ## Proteções Git — diagnóstico e proposta, não aplicadas
+
+Checkpoint histórico da Etapa 5B; a Etapa 5B.1 acima aplicou somente os bloqueios
+de force push/exclusão em staging e production. As demais propostas não foram
+adotadas e exigem nova autorização.
 
 As branches feature/landing-page, staging e production retornaram protected=false,
 sem required checks efetivos; lista de rulesets vazia. Portanto não há hoje

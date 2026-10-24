@@ -1,5 +1,25 @@
 # Ambientes e isolamento
 
+## Atualização — Etapa 5B.1, 23–24/10/2026, proteção Git sem publicação
+
+Rulesets remotos ativos: Protect Staging `25768317`, somente refs/heads/staging;
+Protect Production `25768402`, somente refs/heads/production. Ambos bloqueiam
+exclusão (`deletion`) e force push (`non_fast_forward`), sem bypass, curingas,
+PR/reviews/checks obrigatórios ou restrição geral de atualização. Fast-forward
+legítimo continua permitido pela política, mas depende de autorização separada.
+Releitura API e regras efetivas aprovadas; bypass vazio conferido no Dashboard
+autenticado, não inferido do campo omitido pela API pública. As outras nove
+branches e todos os 11 SHAs remotos permaneceram iguais.
+
+Environment github-pages, suas variáveis e bypass administrativo não foram
+alterados. Pages segue Source Actions e staging-only, no deployment antigo;
+Vercel continua em production, Preview desligado, sem deployment novo observado.
+Nenhum push, merge, deploy ou acesso funcional Supabase/Google nesta etapa.
+Dois commits locais anteriores preservados, mais um registro documental local,
+todos sem push/CI novo. Requisitos adicionais de revisão/CI e Etapas 5B.2/5C
+continuam pendentes. [IDs, evidências e revisão administrativa](github-pages-uat-preparation.md).
+Os checkpoints anteriores abaixo permanecem como histórico.
+
 ## Atualização — Etapa 5B, 23/10/2026, preparação sem deploy
 
 O desenvolvimento 82450ab foi publicado na Etapa 5A.3 e seu CI 40043031879 passou.

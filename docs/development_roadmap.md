@@ -1,5 +1,25 @@
 # Cronologia de Desenvolvimento — Convite Virtual de Casamento
 
+## Atualização UAT — 23–24/10/2026, Etapa 5B.1 concluída sem publicação
+
+- [x] Confirmar repositório público, proprietário/admin, Git limpo e refs esperadas.
+- [x] Criar Protect Staging 25768317, active, somente refs/heads/staging.
+- [x] Validar staging antes de criar Protect Production 25768402, active, somente refs/heads/production.
+- [x] Bloquear exclusão e force push em ambas, sem bypass ou exigências adicionais.
+- [x] Reconsultar regras efetivas; preservar outras nove branches e todos os 11 SHAs remotos.
+- [x] Preservar fast-forward, environment Pages e Vercel; nenhum workflow/deployment novo observado.
+- [x] Preservar os dois commits locais anteriores e registrar somente documentação local adicional.
+- [ ] Avaliar separadamente Required Status Checks, PR e revisores disponíveis.
+- [ ] Autorizar 5B.2: push exclusivo de desenvolvimento, CI do SHA final e ausência de deployments.
+- [ ] Autorizar posteriormente 5C: promoção/publicação Pages UAT e homologação pública.
+
+**PROTEÇÕES GITHUB CONFIGURADAS E VALIDADAS — SEM PUSH OU DEPLOY.** Validação
+declarativa, por API/regras efetivas e Dashboard autenticado; sem testes de force
+push/exclusão. O usuário concluiu a confirmação de identidade exigida pelo GitHub.
+Nenhum código, workflow, environment, vars/secrets, Vercel, Supabase ou Google foi
+alterado. Os registros anteriores de ausência de proteção são históricos.
+[Rulesets, bypass, limites e procedimento futuro](github-pages-uat-preparation.md).
+
 ## Atualização UAT — 23/10/2026, Etapa 5B preparada com ressalvas
 
 - [x] Publicar somente desenvolvimento em 82450ab e confirmar CI 40043031879.
