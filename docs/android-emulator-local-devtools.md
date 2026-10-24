@@ -2,6 +2,11 @@
 
 Este procedimento permite testar o HTML/CSS/JavaScript localmente em um celular virtual do Android Studio, sem precisar fazer deploy no GitHub Pages a cada alteração.
 
+Antes de servir o frontend, prepare o DEV conforme
+[local-development.md](local-development.md#frontend-e-emulador-android).
+Use DEV_FRONTEND_HOST=10.0.2.2 e gere dev-config.json pelo setup; sem arquivo
+válido o bootstrap bloqueia a aplicação. Não apontar o emulador ao Supabase PRD.
+
 ## 1. Abrir o Android Emulator
 
 1. Abra o **Android Studio**.

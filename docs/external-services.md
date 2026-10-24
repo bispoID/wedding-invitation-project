@@ -1,61 +1,11 @@
 # Ferramentas e serviços externos
 
-## Atualização GitHub Pages UAT — Etapa 5B, 23/10/2026
-
-Pages Source GitHub Actions e HTTPS obrigatório confirmados no Dashboard.
-Criadas exclusivamente UAT_SUPABASE_PROJECT_REF, UAT_SUPABASE_URL e
-UAT_SUPABASE_PUBLIC_KEY em github-pages; nenhum Repository Variable/Secret ou
-environment Production/Preview alterado. Publishable UAT reconfirmada por metadados
-oficiais, sem --reveal e sem imprimir a chave. Um GET público UAT alimentou o
-build local; não houve escrita Supabase, Auth, RSVP ou acesso ao Pages publicado.
-Preview Vercel desligado e produção READY preservados. Proteções propostas não
-foram aplicadas; nenhum push/deploy. [Evidências e limites](github-pages-uat-preparation.md).
-As seções anteriores de preparação abaixo são históricas.
-
-## Auditoria Vercel — 23/10/2026, Etapa 5A.1
-
-A sessão autenticada no navegador do Codex permitiu somente leitura dos campos
-antes indisponíveis pela API: Production Branch production, Root Directory na
-raiz do repositório, Other, build Node do preparador e saída _site. Repositório
-e Project ID conferidos. Preview acompanha branches não atribuídas; ignore
-Only build production preservado. Sem Deploy Hooks ou integrações Marketplace
-instaladas apresentados pelo projeto. Não se consultaram valores de secrets.
-
-Política git.deploymentEnabled preparada apenas no vercel.json local, bloqueando
-os nomes exatos de desenvolvimento e staging, sem alterar produção. 342 Node,
-150 Deno e 48 JS/MJS aprovados; schema verificado por constraints equivalentes
-dos nós aplicáveis, sem instalar dependências. Nenhum setting, push ou deploy.
-O gate do primeiro push permanece pendente. [Auditoria e limites](uat-git-ci-integration.md).
-
-Continuação de 23/10/2026: Playwright 1.62.1 disponível no runtime foi reutilizado
-com Microsoft Edge 155.0.4283.62 instalado; nenhum pacote permanente ou navegador
-foi baixado. A autorização específica para esse executor resolveu o bloqueio
-do navegador anterior. Apenas UAT e scripts de https://esm.sh foram liberados,
-com todos os recursos Pages atendidos localmente. [Evidências](uat-edge-e2e.md).
-
-## Integração UAT local — 23/10/2026
-
-Supabase UAT independente: `eugvobtvjicvocttnkka`, organização Teste, sa-east-1.
-A configuração pública utiliza publishable obtida pela CLI explicitamente
-direcionada ao UAT, sem imprimir a chave ou solicitar secrets privados.
-Builds locais consultam somente Event Config UAT; não publicam o frontend.
-O navegador disponível não oferece interceptação de rotas/contexto temporário;
-o teste E2E sob a futura origem Pages permanece pendente, sem alterar CORS.
-[Procedimento e limites](uat-frontend-validation.md).
-
-Este documento registra as ferramentas e os serviços externos utilizados no
-estado atual do projeto, sua finalidade e as referências oficiais para
-manutenção futura.
-
-## Preparação local UAT — 16/10/2026
-
-Esta etapa altera código/workflow local, sem provisionar ou publicar serviços.
-UAT Supabase ainda não existe; o manifesto mantém ref nulo e bloqueia builds.
-Pages passará a exigir variáveis UAT explícitas e um ref aprovado. Vercel
-depende de confirmação futura de Root Directory, Build Command, Output Directory
-e Production Branch. Nenhum secret/variable remoto, Auth, Google Sheets ou
-monitor foi alterado. Estado publicado anterior permanece histórico.
-Contrato e pré-requisitos: [environments.md](environments.md).
+Este guia descreve ferramentas, permissões e comandos. A configuração canônica
+de ambientes, publicação e rollback fica em [environments.md](environments.md).
+Checkpoints UAT/Vercel permanecem em
+[uat-git-ci-integration.md](uat-git-ci-integration.md) e
+[github-pages-uat-preparation.md](github-pages-uat-preparation.md);
+não são pendências operacionais atuais.
 
 ## Supabase
 
@@ -135,8 +85,7 @@ A configuração atual do monitor está detalhada em
 
 ## GitHub Pages
 
-**Finalidade:** implementação operacional da hospedagem estática inicialmente
-adotada para o frontend.
+**Finalidade:** hospedagem de UAT, originalmente usada para o frontend produtivo.
 
 **Uso no projeto:**
 
@@ -145,7 +94,8 @@ adotada para o frontend.
 - URL atualmente monitorada:
   `https://bispoid.github.io/wedding-invitation-project`.
 
-O monitor do frontend verifica a disponibilidade da página. Ele é independente
+O monitor historicamente configurado para esse endereço verifica agora UAT;
+não comprova monitoramento da URL Vercel PRD. Ele é independente
 do monitor do Supabase, que verifica os pré-requisitos operacionais do RSVP.
 
 GitHub Pages não é uma dependência da arquitetura. A preparação e os testes
@@ -159,43 +109,14 @@ mantendo as regras de negócio nas Supabase Edge Functions.
 
 ## Separação de branches e ambientes
 
-O fluxo operacional preparado localmente é:
+O fluxo é desenvolvimento local → staging/Pages UAT → production/Vercel PRD.
+Destinos, variáveis, branch tracking, previews, gates e comandos:
+[environments.md](environments.md#cicd-e-próximas-etapas).
 
-```text
-feature/landing-page (desenvolvimento local/Codex)
-        ↓ promoção explícita
-staging (homologação / GitHub Pages)
-        ↓ promoção explícita
-production (produção / Vercel)
-```
-
-As três branches foram criadas a partir do commit estável publicado
-`d3f35d9` (`d3f35d98d594ae1885bb94135204a872c5809dec`). As branches remotas
-`staging` e `production` foram publicadas no GitHub. A separação funcional foi
-introduzida no commit `1e19f5b`
-(`1e19f5bc86a2a80aebcc9b2a5cceb2f247cc6e57`). Esses commits permanecem como
-referência histórica da separação; a referência de produção deste
-encerramento é registrada abaixo.
-A publicação do Pages fica limitada a `staging` por push; o workflow também
-recusa execuções manuais selecionadas em outra branch e faz checkout explícito
-de `staging`.
-
-O workflow foi executado após a publicação e o job de testes passou. A execução
-do Pages falhou imediatamente no ambiente do GitHub, sem etapas de job/log
-disponíveis pelo conector; por isso ainda é necessário revisar a configuração
-do Pages/ambiente `github-pages` para permitir a publicação a partir de
-`staging` e então repetir a execução manual.
-
-No encerramento desta funcionalidade, a Production Branch da Vercel está
-associada a `production`. A publicação final foi gerada pela integração Git com
-o commit `b5995cf53be3085f9b1d418b8cddf08154afd303`, deployment
-`dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`, alvo `production` e estado `READY`.
-O domínio associado é `bruna-e-diego.vercel.app`.
-
-Branches não produtivas permanecem fora do escopo desta publicação e podem
-gerar previews conforme a configuração da integração. A pendência do GitHub
-Pages para `staging` permanece independente da publicação Vercel descrita
-acima.
+Vercel é a hospedagem produtiva em uso, não apenas uma alternativa considerada.
+Sua integração Git gera deployment no push autorizado de production. A evidência
+observada na publicação está no [QA final](qa-final-evidence.md#publicação-devuatprd--24102026),
+sem promessa de disponibilidade em tempo real.
 
 ## Node.js e npm
 
@@ -242,13 +163,12 @@ falhas**. Não há evidência para atribuir a falha a todo ambiente Windows ou
 O workflow `../.github/workflows/test.yml` utiliza `ubuntu-24.04`, Node.js
 `22.14.0` e Deno `2.9.7`, mantendo a versão Deno observada localmente para
 separar limitações do ambiente local de falhas nas asserções. É acionado por push,
-pull request ou execução manual, sem realizar deploy e sem alterar o workflow
-de GitHub Pages.
+pull request, execução manual ou workflow_call. O Pages o reutiliza como gate
+do mesmo SHA; o workflow de testes não realiza deploy.
 
 A validação sintática descobre os arquivos `.js` versionados pelo Git e exclui
 diretórios gerados ou de dependências. A execução Deno descobre os testes em
-`supabase/functions` e inclui o arquivo de métricas explicitamente. A baseline
-atual contém treze arquivos Deno:
+`supabase/functions` e inclui o arquivo de métricas explicitamente. A seleção contém treze arquivos Deno:
 
 ```text
 supabase/functions/_shared/admin-auth_test.ts
@@ -326,7 +246,6 @@ locais recentes não representam uma nova execução do GitHub Actions.
 ## Portabilidade e alternativas consideradas
 
 O frontend é estático e independente do provedor. GitHub Pages foi a escolha
-inicial; Vercel também foi considerada durante o desenvolvimento. Vercel,
-Cloudflare Pages e Netlify são exemplos de provedores compatíveis, sem posição
-preferencial. Adotar outro serviço ou domínio é uma escolha operacional futura,
+inicial e agora hospeda UAT; Vercel hospeda PRD. Cloudflare Pages e Netlify
+permanecem alternativas compatíveis. Adotar outro serviço ou domínio é uma escolha operacional futura,
 não uma pendência da arquitetura nem requisito para concluir o escopo vigente.

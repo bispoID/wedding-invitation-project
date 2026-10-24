@@ -1,5 +1,10 @@
 # Etapa 5A — integração Git local e bloqueio de publicação
 
+> **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
+> abaixo valem na data do checkpoint, não como backlog atual. A separação foi
+> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](environments.md).
+
 ## Atualização — Etapa 5B.1, 23–24/10/2026, rulesets remotos ativos
 
 Protect Staging `25768317` e Protect Production `25768402` foram criados nessa

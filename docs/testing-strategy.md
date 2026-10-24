@@ -1,24 +1,8 @@
 # Estratégia de testes
 
-## Continuação E2E no Edge — 23/10/2026
-
-17 cenários funcionais no navegador aprovados, mais checagem de fontes/imagens
-e ausência de overflow em 1365x900 e 390x844. Playwright 1.62.1 reutilizado do
-runtime; Edge 155.0.4283.62 instalado, contexto efêmero, rotas antes da navegação,
-sem Pages real ou tráfego PRD/DEV. A regressão RSVP foi atualizada para bloquear
-reenvio após 201; contagem permanece 312 Node e 150 Deno aprovados. Runner,
-evidências e artefato E2E ficam ignorados em .dev; CI não depende de Auth remoto
-ou de Playwright. [Detalhes e limites](uat-edge-e2e.md).
-
-## Etapa 4 UAT — 23/10/2026
-
-312 Node aprovados com Node 22.14.0, 150 Deno com Deno 2.9.7 e deny-net,
-46 arquivos JS/MJS com sintaxe válida. Novas regressões conferem o namespace
-UAT aprovado e rejeição de UAT em localhost; o gate de build agora aprova só
-o ref provisionado e verifica as três descrições de homologação. Os testes
-comuns continuam sem credenciais remotas, Docker ou acesso a UAT/PRD.
-Builds reais UAT root/subpath foram inspecionados separadamente. Não houve
-aceite de navegador nem CI remoto. [Evidências e pendências](uat-frontend-validation.md).
+Resultados e aceites são checkpoints por data e SHA em
+[qa-final-evidence.md](qa-final-evidence.md). Este documento define seleção,
+permissões e limites dos testes, não disponibilidade atual dos serviços.
 
 ## Camadas
 
@@ -61,7 +45,8 @@ etapas locais separadas, com os comandos em [local-development.md](local-develop
 ## Descoberta e contagem Node
 
 A seleção explícita de `package.json` inclui `app-config`, `prepare-static-site`,
-`admin-block3`, `guest-list-controller`, `event-config` e `environment-isolation`.
+`admin-block3`, `guest-list-controller`, `event-config`, `environment-isolation`,
+`vercel-deployment` e `pages-uat`.
 O agregador `admin-block3.test.mjs` já importa `envelope-motion`,
 `welcome-typography`, `welcome-wallpaper` e `invitation-names`: todos os arquivos
 de teste em `scripts/` estão cobertos, sem executá-los novamente como entradas.
@@ -69,21 +54,28 @@ de teste em `scripts/` estão cobertos, sem executá-los novamente como entradas
 O glob `node --test scripts/*.test.mjs` serve para conferir a descoberta, mas
 repete as quatro suítes importadas. A diferença de 75 execuções na auditoria
 não é cobertura adicional. Os resultados históricos e as contagens datadas da
-validação vigente estão em [qa-final-evidence.md](qa-final-evidence.md#validação-final-do-dev--16102026).
+validação estão em [qa-final-evidence.md](qa-final-evidence.md).
 
 `environment-isolation.test.mjs` cobre os contratos estáticos de configuração
 local fail-closed, contingência sem Google Sheets, comandos/arquivos locais e
 a classificação de processos antes de encerrar PIDs persistidos. Os testes do
 preparador agora cobrem a allowlist completa, contratos explícitos UAT/PRD,
-bloqueio do manifesto UAT não provisionado, ausência de fetch em falhas,
+bloqueio de manifestos não provisionados/sintéticos e destinos não aprovados,
+ausência de fetch em falhas,
 redirects recusados e artefatos root/subpath com mocks. Não há fallback PRD.
 
-Ao alterar comentários ou documentação, `git diff --check` e as suítes
-relevantes confirmam que a manutenção não introduziu whitespace inválido nem
-quebrou sintaxe. Evidência visual deve ser reportada separadamente quando um
-navegador estiver disponível.
+Para mudanças só em Markdown, conferir diff/whitespace, links, âncoras e
+veracidade das afirmações contra os consumidores versionados; não repetir a
+suíte da aplicação sem dependência técnica demonstrada. Para código, selecionar
+as camadas afetadas e usar fixtures; novo E2E remoto exige escopo autorizado.
+
+Pages exige CI completo do mesmo SHA por workflow_call, depois o gate portátil,
+o build UAT e a auditoria do artefato. Production exige o check homologado antes
+da promoção e executa CI novamente no push. [Publicação](environments.md#proteções-e-promoção).
 
 ## Etapa 1 UAT — cobertura local
+
+Registro histórico de 16–17/10/2026; não representa backlog atual.
 
 App Config exercita validação v1 DEV/UAT/PRD, chaves legadas/publishable,
 destinos cruzados, hosts desconhecidos, compatibilidade do DEV legado, namespace
@@ -95,8 +87,9 @@ Fixtures e políticas sintéticas vivem somente em scripts/environment-fixtures.
 não são configuração real de UAT e não integram o artefato. Nenhum teste do CI
 precisa consultar Supabase. Deno e a seleção canônica do package.json permanecem
 inalterados. As novas verificações estão nas suítes já selecionadas, sem duplicação.
-A evidência DEV integrada está pendente de infraestrutura; testes com doubles
-não equivalem a navegação, autenticação ou submissão real no Docker.
+Naquele primeiro checkpoint, DEV integrado estava pendente de infraestrutura;
+a retomada abaixo resolveu a indisponibilidade. Doubles não equivalem a
+navegação, autenticação ou submissão real no Docker.
 
 Resultado local em 16/10/2026 nesta etapa: **308 testes Node aprovados, 150 Deno
 aprovados**, sem falhas, cancelamentos ou skips na seleção canônica. Sintaxe

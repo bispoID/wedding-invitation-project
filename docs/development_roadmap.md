@@ -1,88 +1,15 @@
 # Cronologia de Desenvolvimento — Convite Virtual de Casamento
 
-## Atualização UAT — 23–24/10/2026, Etapa 5B.1 concluída sem publicação
+## Situação e navegação
 
-- [x] Confirmar repositório público, proprietário/admin, Git limpo e refs esperadas.
-- [x] Criar Protect Staging 25768317, active, somente refs/heads/staging.
-- [x] Validar staging antes de criar Protect Production 25768402, active, somente refs/heads/production.
-- [x] Bloquear exclusão e force push em ambas, sem bypass ou exigências adicionais.
-- [x] Reconsultar regras efetivas; preservar outras nove branches e todos os 11 SHAs remotos.
-- [x] Preservar fast-forward, environment Pages e Vercel; nenhum workflow/deployment novo observado.
-- [x] Preservar os dois commits locais anteriores e registrar somente documentação local adicional.
-- [ ] Avaliar separadamente Required Status Checks, PR e revisores disponíveis.
-- [ ] Autorizar 5B.2: push exclusivo de desenvolvimento, CI do SHA final e ausência de deployments.
-- [ ] Autorizar posteriormente 5C: promoção/publicação Pages UAT e homologação pública.
+As 13 fases estão concluídas nos escopos definidos. A separação DEV/UAT/PRD
+foi homologada e publicada; os antigos gates de provisionamento, Preview,
+Pages e release não são tarefas pendentes. Ver [estado atual](#estado-atual),
+[backlog](#backlog) e [ambientes](environments.md).
 
-**PROTEÇÕES GITHUB CONFIGURADAS E VALIDADAS — SEM PUSH OU DEPLOY.** Validação
-declarativa, por API/regras efetivas e Dashboard autenticado; sem testes de force
-push/exclusão. O usuário concluiu a confirmação de identidade exigida pelo GitHub.
-Nenhum código, workflow, environment, vars/secrets, Vercel, Supabase ou Google foi
-alterado. Os registros anteriores de ausência de proteção são históricos.
-[Rulesets, bypass, limites e procedimento futuro](github-pages-uat-preparation.md).
-
-## Atualização UAT — 23/10/2026, Etapa 5B preparada com ressalvas
-
-- [x] Publicar somente desenvolvimento em 82450ab e confirmar CI 40043031879.
-- [x] Manter Preview Vercel desligado, sem alteração da produção.
-- [x] Confirmar Pages Source Actions, HTTPS e environment restrito a staging.
-- [x] Configurar somente três variáveis públicas UAT no environment github-pages.
-- [x] Preparar localmente CI reutilizável do mesmo SHA, guards e auditoria pré-upload.
-- [x] Validar 370 Node, 150 Deno, 51 JS/MJS e artefato UAT local de 71 arquivos.
-- [x] Auditar ancestralidade e propor regras sem modificar proteções remotas.
-- [ ] Autorizar/aplicar proteções de branches e política de revisão/bypass.
-- [ ] Autorizar publicação dos novos commits de desenvolvimento e obter CI do novo SHA.
-- [ ] Autorizar Etapa 5C: promoção/publicação exclusiva Pages UAT e homologação pública.
-
-**PREPARADO COM RESSALVAS — SEM DEPLOY.** Pages ainda não utiliza o backend UAT.
-Nenhum push, merge, PR, workflow_dispatch, deploy ou escrita Supabase nesta etapa.
-Aceite visual público/dispositivos reais permanece pendente. Checkpoints abaixo
-são históricos. [Evidências e plano](github-pages-uat-preparation.md).
-
-## Atualização UAT — 23/10/2026, Etapa 5A.1 preparada com ressalvas
-
-- [x] Confirmar no Dashboard o projeto, repositório e Production Branch production.
-- [x] Confirmar Root Directory na raiz, build Node e saída _site sem alterá-los.
-- [x] Preparar vercel.json local: bloquear somente feature/landing-page e staging.
-- [x] Validar a política, conflitos e privacidade: 342 Node, 150 Deno e 48 JS/MJS.
-- [ ] Obter comprovação suficiente da segurança do primeiro evento que introduz o arquivo.
-- [ ] Autorizar separadamente o push exclusivo do desenvolvimento e validar CI pelo SHA.
-- [ ] Autorizar a preparação/publicação Pages UAT em etapa própria.
-
-**PREPARADA COM RESSALVAS.** Configuração ainda não publicada nem ativa na Vercel;
-nenhum setting remoto, merge, push, deploy ou branch de publicação alterado.
-Não confundir validação local com liberação do gate remoto ou proteção já aplicada
-à staging. [Evidências e procedimento seguro](uat-git-ci-integration.md).
-
-## Atualização UAT — 23/10/2026, Etapa 5A integrada somente localmente
-
-- [x] Incorporar os oito commits UAT em feature/landing-page por fast-forward.
-- [x] Revalidar antes/depois: 312 Node, 150 Deno, 46 JS/MJS e builds sintéticos.
-- [x] Auditar Pages e Vercel sem alterar configurações remotas.
-- [ ] Resolver o risco de Preview automático Vercel antes de publicar a branch.
-- [ ] Publicar somente a branch de desenvolvimento e validar CI pelo SHA final.
-- [ ] Autorizar separadamente variáveis, proteções e publicação Pages UAT.
-
-**INTEGRAÇÃO LOCAL CONCLUÍDA — PUSH/CI PENDENTES.** Nenhum deploy foi realizado;
-staging, production e serviços remotos preservados. Este estado atualiza os
-checkpoints históricos abaixo. [Evidências e bloqueio](uat-git-ci-integration.md).
-
-## Atualização UAT — 23/10/2026, E2E no Edge concluído
-
-Este estado atual complementa e atualiza os checkpoints históricos abaixo.
-
-- [x] Backend UAT independente provisionado nas etapas anteriores; oito Functions ACTIVE/v1 reconferidas.
-- [x] Ref UAT aprovado no manifesto, chave pública associada ao projeto correto.
-- [x] Builds reais UAT locais root/subpath e inspeção de artefatos.
-- [x] Regressão: 312 Node, 150 Deno e 46 arquivos JS/MJS com sintaxe válida.
-- [x] Concluir aceite técnico E2E da Etapa 4 com contexto temporário/interceptação: convite, RSVP, login, dashboard, CORS e sessões no Microsoft Edge.
-- [ ] Obter aceite visual humano nos dispositivos-alvo.
-- [ ] Autorizar integração, CI remoto, variables Pages e promoção/publicação em staging.
-
-Etapa 4 **aprovada tecnicamente com ressalvas de cobertura**: Edge Windows e
-viewport mobile emulado, sem aceite humano em dispositivo real. Nenhum push,
-merge, deploy, mudança de CORS ou operação funcional PRD. O bloqueio do primeiro
-executor foi resolvido por Playwright/Edge explicitamente autorizado;
-[evidências E2E](uat-edge-e2e.md). Publicação continua pendente de autorização.
+Os detalhes abaixo preservam requisitos e entregas por fase. A cronologia
+de isolamento foi consolidada no [QA final](qa-final-evidence.md#publicação-devuatprd--24102026);
+seus checkpoints iniciais continuam nos documentos de evidência, explicitamente históricos.
 
 ## Objetivo
 
@@ -484,6 +411,9 @@ Detalhes técnicos: [health-check.md](health-check.md). Ferramentas e serviços:
 
 # FASE 9 — Interface / Design
 
+Os aceites desta seção são o checkpoint de 09/10/2026. O aceite atualizado do
+release de isolamento e seus limites ficam em [estado atual](#estado-atual).
+
 Objetivo: desenvolver a experiência visual do convite.
 
 Esta fase vem depois da definição da base técnica, evitando construir a interface sobre uma arquitetura ainda instável.
@@ -588,56 +518,23 @@ exigem seu próprio aceite; não são extensões faltantes do escopo entregue.
 Objetivo: validar a hospedagem atual e a portabilidade operacional do frontend
 estático, sem dependência de um provedor nas regras de negócio.
 
-**Estado: EM TRANSIÇÃO.** A publicação inicial no GitHub Pages continua validada;
-nesta tarefa, a separação entre desenvolvimento, homologação e produção foi
-preparada localmente. App Config centraliza infraestrutura pública; o preparador
-e os testes cobrem root/subpath.
+**Estado: CONCLUÍDA.** DEV local, UAT Pages/Supabase independente e PRD
+Vercel/Supabase foram separados, homologados e publicados.
 
-- [x] Implementar publicação de `invite-app` no GitHub Pages por workflow.
-- [x] Validar root/subpath nos testes e o subpath publicado `/wedding-invitation-project/`.
-- [x] Validar comunicação Frontend → Edge Functions nos aceites publicados.
-- [x] Centralizar configuração pública e preparar URLs de metadados no Lote 2.
-- [x] Validar origins/CORS dos ambientes efetivamente utilizados.
-- [x] Documentar preparação e testes locais do artefato estático.
-- [x] Documentar configuração operacional e previews disponíveis.
-- [x] Preparar localmente `staging` e `production` a partir do commit estável.
-- [x] Restringir localmente o workflow Pages à branch `staging`.
-- [x] Publicar as novas branches no GitHub no commit de separação `1e19f5b`.
-- [x] Ajustar a Production Branch da Vercel para `production` e validar a publicação deste escopo.
-- [ ] Concluir a validação do GitHub Pages para `staging`.
+- [x] Contrato público explícito, bootstrap fail-closed e sessão por ambiente/projeto.
+- [x] Supabase local, Auth sintético, contingência JSON e testes SQL DEV.
+- [x] Supabase UAT independente com 16 migrations, Auth, CORS e Sheets próprios.
+- [x] Pages staging-only, CI do mesmo SHA e auditoria do artefato antes do upload.
+- [x] Proteção contra exclusão/force push e check obrigatório em production.
+- [x] Preview Vercel desligado e deployment não produtivo bloqueado nas branches definidas.
+- [x] BUILD_ID vinculado ao SHA e configuração pública PRD explícita.
+- [x] Homologação UAT, promoção PRD fast-forward e smoke público aprovados.
 
-A arquitetura é independente do provedor. Outros serviços compatíveis podem
-publicar o mesmo artefato; novos ambientes exigem validar suas URLs/origins.
-Esta transição não altera o Supabase de produção, o domínio ou as regras de
-negócio. A conclusão da separação depende da configuração manual da Production
-Branch na Vercel e da correção da configuração do Pages para `staging`.
-
-Na branch `feature/dev-environment-isolation`, o escopo complementar de DEV
-foi implementado localmente com Supabase em Docker, configuração de frontend
-fail-closed, Auth sintético, snapshot público de Event Config e contingência
-JSON. Essa implementação não promove a branch nem altera UAT/PRD; sua integração
-futura segue revisão explícita para `feature/landing-page`.
-
-Em 16/10/2026, a validação final local do DEV aprovou health, Auth, RSVP,
-administração, paginação, recuperação de contingência, as duas suítes SQL e
-as suítes Node/Deno. O CI e `dev:test` passam a compartilhar `npm run test:node`,
-incluindo isolamento sem duplicar suítes. A prontidão das Functions e o
-tratamento de PIDs reutilizados foram corrigidos. Artefatos root/subpath foram
-validados sem consultas a PRD. Evidências, contagens e ressalvas operacionais:
-[qa-final-evidence.md](qa-final-evidence.md#validação-final-do-dev--16102026).
-Isso não constitui merge, execução do CI remoto ou publicação. O isolamento
-remoto de UAT continua fora deste escopo.
-
-**Resultado do checkpoint anterior de publicação (registro histórico):**
-
-Branches remotas publicadas, configuração operacional documentada e
-portabilidade de paths verificada, sem modificar regras de negócio. A
-Production Branch da Vercel está configurada como `production`, e a publicação
-final deste escopo foi validada pelo commit
-`b5995cf53be3085f9b1d418b8cddf08154afd303` e pelo deployment
-`dpl_F8r3e6u28EY2NimfGtZLSUmP1Bvf`. A publicação do Pages e a configuração do
-ambiente `github-pages` permanecem pendentes e independentes deste
-encerramento.
+Operação e rollback: [environments.md](environments.md#cicd-e-próximas-etapas).
+Diagnósticos DEV e testes SQL: [QA DEV](qa-final-evidence.md#validação-final-do-dev--16102026)
+e [revalidação dinâmica](uat-dynamic-revalidation.md).
+Histórico da integração: [uat-git-ci-integration.md](uat-git-ci-integration.md).
+A preparação inicial não é tratada como pendência atual.
 
 ---
 
@@ -681,8 +578,8 @@ sucesso por ausência e tap highlight do Admin integram a versão publicada.
 O fluxo do envelope também possui cobertura específica para o controle manual da
 apresentação do cartão: pausa da revelação automática, continuação após o
 movimento natural, proteção contra callbacks antigos e restauração ao retornar
-para a capa. Essa alteração é local e ainda não altera as evidências históricas
-de CI, Pages ou do aceite da versão publicada na Fase 13.
+para a capa. A alteração foi posteriormente homologada e publicada; os resultados
+numéricos acima continuam pertencendo ao checkpoint histórico de 09/10/2026.
 Contratos detalhados: [event-config.md](event-config.md).
 
 - [x] Criar workflow independente `.github/workflows/test.yml` em Linux.
@@ -772,7 +669,7 @@ registrado na Fase 13.
 Objetivo: colocar o sistema em funcionamento real.
 
 **Estado: CONCLUÍDA no escopo publicado e validado.**
-O commit `9d34e6c` foi publicado, com Test baseline e Pages aprovados:
+Registro histórico de 09/10/2026: o commit `9d34e6c` foi publicado, com Test baseline e Pages aprovados:
 [CI 37982999446](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999446)
 e [Pages 37982999447](https://github.com/bispoID/wedding-invitation-project/actions/runs/37982999447).
 Os smoke checks confirmaram HTTP 200, metadados e integridade de 64 arquivos.
@@ -784,7 +681,7 @@ Essa confirmação é evidência manual informada, não inferência dos smoke ch
 nem teste de navegador executado pelo agente. Evidências:
 [qa-final-evidence.md](qa-final-evidence.md#publicação-do-qa--09102026).
 
-- [x] Disponibilizar a publicação atual via GitHub Pages.
+- [x] Disponibilizar a publicação inicial via GitHub Pages (atualmente UAT; PRD na Vercel).
 - [x] Publicar a versão equalizada e os hotfixes aprovados.
 - [x] Revisar a configuração pública e operacional do ambiente escolhido.
 - [x] Registrar a configuração Supabase validada nos checkpoints operacionais.
@@ -850,7 +747,7 @@ Não avançar simplesmente porque a implementação "parece pronta".
 [x] 08 — Monitoramento
 [x] 09 — Interface / Design (CONCLUÍDA no escopo visual e manual relatado)
 [x] 10 — Integração (CONCLUÍDA no escopo funcional atual)
-[~] 11 — Hospedagem estática / ambientes (Vercel deste escopo validada; Pages e demais configurações independentes ainda pendentes)
+[x] 11 — Hospedagem estática / ambientes (DEV/UAT/PRD isolados, homologados e publicados)
 [x] 12 — Testes / qualidade (baseline histórica e aceites consolidados; validações posteriores em `qa-final-evidence.md`)
 [x] 13 — Publicação / operação (QA publicado; CI, smoke checks e aceite visual final aprovados)
 ```
@@ -859,36 +756,48 @@ Não avançar simplesmente porque a implementação "parece pronta".
 
 # Estado atual
 
-As Fases 1–13 estão concluídas nos escopos definidos, com as evidências e limites
-das Fases 9/12 registrados em [qa-final-evidence.md](qa-final-evidence.md). App Config,
-Event Config, CRUD administrativo, RSVP e contingência estão integrados e
-publicados. O monitor externo utiliza HEAD a cada 15 minutos; sua saúde
-instantânea deve ser consultada no serviço, não presumida por este registro.
+**Separação DEV/UAT/PRD concluída em 24/10/2026**, com promoção fast-forward
+do SHA homologado `09267d1188d26e95a2295897da6695a20a1e6b27` para production.
+CI, deployment, runtime BUILD_ID e smoke público aprovados na Etapa 6C.
+Evidências: [QA final](qa-final-evidence.md#publicação-devuatprd--24102026).
+Isso descreve o momento da publicação, não disponibilidade em tempo real.
 
-No Bloco 6, as constraints de convidados foram validadas após auditoria histórica
-sem violações, preservando dados. No Bloco 7, as 15 migrations e a suíte SQL
-integral passaram em banco local descartável, eliminando essa pendência técnica.
-Baseline histórica do Bloco 7: 144 Deno + 119 Node = 263, aprovada localmente e
-em Linux/CI. Regressão local do QA consolidado: 144 Deno + 212 Node = 356, zero
-falhas, também confirmada em Linux no CI do commit consolidado `9d34e6c`.
+App Config, Event Config, CRUD, RSVP, contingência e monitoramento estão
+integrados nos escopos entregues. As Fases 1–13 não são reabertas por melhorias
+opcionais. A cobertura tem limites explícitos: o aceite UAT atualizado inclui
+Edge desktop e Galaxy A21/Chrome físico com redução de movimento; Safari/iOS,
+Firefox, zoom real 200% e leitores de tela não foram revalidados nesse release.
+Relatos antigos de Firefox/zoom pertencem a outro checkpoint, não ampliam esse aceite.
 
-**Encerramento integral do escopo:** CI, Pages e smoke checks passaram, e o
-responsável confirmou o aceite visual final da versão publicada em 09/10/2026.
-Não restam pendências obrigatórias identificadas para o encerramento das 13
-fases. O QA manual ampliado e o aceite final foram informados como aprovados
-e consolidados, respeitando a ausência de evidência específica para Safari/iOS e
-redução de movimento no celular real. Não há defeito aberto identificado nos
-gates locais; esses limites de cobertura não são garantia de aprovação universal.
+Não há bloqueio técnico relevante identificado no encerramento. CI, integridade
+de dados, isolamento, credenciais e publicação continuam requisitos essenciais.
 
-**Melhorias opcionais, não dívidas técnicas do escopo vigente:** domínio próprio,
-outros provedores ou ambientes separados, MFA, CAPTCHA se necessário e
-observabilidade adicional. Cada adoção
-exige avaliação e aceite próprios; nenhuma é iniciada por este fechamento.
+## Backlog
 
-Arquitetura e requisitos estáveis: [project_context.md](project_context.md).
-Contratos/validações: [event-config.md](event-config.md),
-[admin-guest-management.md](admin-guest-management.md) e
-[health-check.md](health-check.md).
+| Categoria | Item | Tratamento |
+| --- | --- | --- |
+| Melhoria importante | Recuperação administrativa completa e validação do procedimento oficial preservando UUID | Risco residual conhecido e explicitamente aceito; não implementada/testada integralmente; não bloqueante por padrão |
+| Melhoria operacional | Conferir cobertura de monitor do frontend PRD, distinta do monitor Pages/UAT | Sem evidência de configuração atual Vercel no UptimeRobot; não é falha comprovada |
+| Cobertura evolutiva | Safari/iOS, Firefox e tecnologias assistivas/zoom no release atual | Priorizar por público e alterações, sem exigir matriz universal |
+| Funcionalidade opcional | MFA, CAPTCHA se necessário, domínio próprio e observabilidade adicional | Avaliar benefício/risco/custo antes de adotar |
+
+Recuperação de senha não é recuperação de RSVPs Sheets. Procedimento e limites:
+[administração](admin-guest-management.md#recuperação-do-acesso-administrativo).
+
+## Critérios proporcionais de manutenção
+
+Bloqueiam release: problemas relevantes de segurança, integridade, funcionamento
+essencial ou confiabilidade da publicação. Riscos não bloqueantes exigem
+mitigação e aceite explícito, não reprovação automática. Reutilizar evidências
+do mesmo escopo; repetir validações quando houver mudança ou regressão concreta.
+Agrupar atividades relacionadas e manter autorização para ações de impacto.
+
+A revisão documental consolida status e referências sem modificar aplicação.
+Novas funcionalidades não devem ser apresentadas como fases antigas incompletas.
+
+Arquitetura/requisitos: [project_context.md](project_context.md).
+Contratos: [event-config.md](event-config.md), [administração](admin-guest-management.md)
+e [health](health-check.md).
 
 ### Validação do rate limiting da Fase 4
 
@@ -953,23 +862,10 @@ de diferença de status entre os documentos, deve prevalecer o roadmap.
 
 ## Etapa 1 do isolamento UAT — 16/10/2026, somente local
 
-Implementação na branch feature/uat-environment-isolation, originada da baseline
-DEV 6b51bf8. Contrato v1, bootstrap controlado, sessão por ambiente/projeto,
-build sem fallback, allowlist de assets e gates Pages preparados.
-O manifesto UAT continua sem project ref: nenhum ambiente UAT novo foi criado
-ou publicado. Os checkpoints históricos acima não são evidência desta alteração.
-
-- [x] Estrutura e testes sintéticos de isolamento implementados localmente.
-- [x] PRD preparado para configuração explícita, sem modificar serviço remoto.
-- [x] Revalidar DEV integrado em 17/10/2026: health, integração e fluxos de desktop.
-- [ ] Obter aceite visual humano nos dispositivos e larguras efetivamente usados.
-- [ ] Provisionar Supabase UAT independente e revisar/applicar migrations no destino.
-- [ ] Configurar Auth, CORS, Event Config e contingência UAT próprios.
-- [ ] Autorizar e executar promoção/publicação UAT e validar fluxos reais.
-- [ ] Confirmar configuração Vercel e autorizar migração explícita PRD.
-
-Não encerrar a fase de publicação por aprovação apenas de testes locais.
-Pré-requisitos e limites: [environments.md](environments.md).
+Checkpoint histórico: contrato v1 e gates locais foram preparados a partir do
+DEV 6b51bf8, sem provisionamento remoto naquela etapa. Provisionamento, aceites,
+proteções e publicações posteriores encerraram esse checklist; consultar
+[histórico UAT](uat-frontend-validation.md) e [estado atual](#estado-atual).
 
 Revalidação dinâmica e diagnóstico do 503 local:
 [uat-dynamic-revalidation.md](uat-dynamic-revalidation.md). O erro reproduzido

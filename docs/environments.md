@@ -1,98 +1,26 @@
 # Ambientes e isolamento
 
-## Atualização — Etapa 5B.1, 23–24/10/2026, proteção Git sem publicação
+Este é o guia operacional canônico de configuração e publicação. O
+[roadmap](development_roadmap.md#estado-atual) registra status e backlog; o
+[QA final](qa-final-evidence.md#publicação-devuatprd--24102026) registra a
+publicação homologada. Observações datadas não garantem disponibilidade atual.
 
-Rulesets remotos ativos: Protect Staging `25768317`, somente refs/heads/staging;
-Protect Production `25768402`, somente refs/heads/production. Ambos bloqueiam
-exclusão (`deletion`) e force push (`non_fast_forward`), sem bypass, curingas,
-PR/reviews/checks obrigatórios ou restrição geral de atualização. Fast-forward
-legítimo continua permitido pela política, mas depende de autorização separada.
-Releitura API e regras efetivas aprovadas; bypass vazio conferido no Dashboard
-autenticado, não inferido do campo omitido pela API pública. As outras nove
-branches e todos os 11 SHAs remotos permaneceram iguais.
+## Matriz de ambientes
 
-Environment github-pages, suas variáveis e bypass administrativo não foram
-alterados. Pages segue Source Actions e staging-only, no deployment antigo;
-Vercel continua em production, Preview desligado, sem deployment novo observado.
-Nenhum push, merge, deploy ou acesso funcional Supabase/Google nesta etapa.
-Dois commits locais anteriores preservados, mais um registro documental local,
-todos sem push/CI novo. Requisitos adicionais de revisão/CI e Etapas 5B.2/5C
-continuam pendentes. [IDs, evidências e revisão administrativa](github-pages-uat-preparation.md).
-Os checkpoints anteriores abaixo permanecem como histórico.
+| Ambiente | Branch | Frontend | Backend |
+| --- | --- | --- | --- |
+| DEV | feature/landing-page | Local: Live Server/Python/emulador | Supabase Docker; projectRef local |
+| UAT | staging | [GitHub Pages](https://bispoid.github.io/wedding-invitation-project/) | Supabase eugvobtvjicvocttnkka |
+| PRD | production | [Vercel](https://bruna-e-diego.vercel.app/) | Supabase bkkienyemqlkueygknzl |
 
-## Atualização — Etapa 5B, 23/10/2026, preparação sem deploy
-
-O desenvolvimento 82450ab foi publicado na Etapa 5A.3 e seu CI 40043031879 passou.
-Preview Vercel permanece desligado. Pages continua no deployment antigo, não UAT.
-Nesta etapa, somente três variáveis públicas UAT foram criadas no environment
-github-pages, com persistência conferida; nenhuma configuração PRD foi sobrescrita.
-Workflow/gates de SHA, URL, publishable e artefato foram corrigidos apenas localmente.
-370 Node, 150 Deno e 51 JS/MJS aprovados; build UAT local inspecionado. Proteções
-Git e revisão/bypass ainda exigem autorização; novos commits não possuem CI remoto.
-[Auditoria, variáveis, artefato e plano 5C](github-pages-uat-preparation.md).
-As seções 5A.1 e Etapa 1 abaixo são checkpoints históricos.
-
-## Proteção Git Vercel — Etapa 5A.1, 23/10/2026, somente local
-
-Dashboard consultado sem alterações: projeto wedding-invitation-project,
-repositório bispoID/wedding-invitation-project, Production Branch `production`,
-Root Directory na raiz do repositório (sem subdiretório; ./ na interface), Other,
-build `node scripts/prepare-static-site.mjs` e saída `_site`. Preview Branch
-Tracking está habilitado para branches não atribuídas; o Ignored Build Step
-Only build production pode cancelar builds, mas não prova ausência de deployments.
-
-O novo `vercel.json` na raiz contém somente git.deploymentEnabled com
-`feature/landing-page: false` e `staging: false`. Não há bloqueio global ou globs;
-production e demais branches mantêm o comportamento não sobrescrito. Nenhum
-setting remoto, build command, output directory, domínio ou workflow foi alterado.
-O arquivo não integra os assets publicados nem muda o runtime DEV/UAT/PRD.
-
-**PREPARADA COM RESSALVAS:** testes locais aprovados, mas a política não está
-publicada/ativa remotamente. O primeiro push continua sujeito a comprovação de
-segurança e autorização separada. Staging não foi alterada e não recebe proteção
-apenas por existir uma regra em outra branch. Reauditar se Production Branch,
-Root Directory ou regras mudarem. [Evidências, schema e procedimento](uat-git-ci-integration.md).
-
-## Estado atual — 23/10/2026, E2E no Edge aprovado com ressalvas
-
-O aceite técnico de navegador foi concluído em Playwright/Edge instalado,
-contexto efêmero, service workers bloqueados e recursos Pages servidos somente
-do artefato local sob sua origem futura. CORS, RSVP, Auth, sessões e Admin foram
-validados, com limpeza de 11 UUIDs sintéticos. Nenhum ambiente foi publicado.
-Limites de cobertura e instruções: [uat-edge-e2e.md](uat-edge-e2e.md).
-
-## Checkpoint anterior — 23/10/2026, Etapa 4 parcial
-
-O manifesto aprova UAT `eugvobtvjicvocttnkka`, independente de PRD. O backend
-foi revalidado por metadados (oito Functions ACTIVE/v1); builds reais UAT locais
-root/subpath passaram com chave publishable obtida por metadados oficiais do
-projeto. A chave é pública e opaca: não se inferem claims ou assinatura JWT.
-Nenhuma credencial privada foi versionada. Os registros abaixo da Etapa 1 são
-históricos, inclusive suas referências ao manifesto ainda não provisionado.
-
-O Pages publicado **não foi atualizado**. A validação E2E de navegador continua
-pendente: o navegador disponível não expõe contexto temporário e interceptação
-de rotas para servir disco sob a origem Pages. Não adicionar localhost ao CORS,
-não abrir o Pages antigo para testes e não habilitar overrides publicados.
-Procedimento, evidências e limites: [uat-frontend-validation.md](uat-frontend-validation.md).
-
-## Estado da Etapa 1 — implementação local, sem publicação
-
-O histórico de promoção permanece:
+UAT tem Auth, CORS, Event Config e contingência próprios, sem convidados,
+sessões ou credenciais copiados de PRD. DEV usa contingência JSON local;
+ambientes publicados usam Google Sheets separados. Inicialização, manutenção
+e SQL exclusivamente local: [local-development.md](local-development.md).
 
 ```text
-feature/* → feature/landing-page → staging (GitHub Pages) → production (Vercel)
+feature/* → feature/landing-page → staging (UAT) → production (PRD)
 ```
-
-O isolamento DEV foi integrado em 6b51bf8. A auditoria posterior identificou
-que Pages ainda selecionava o backend PRD. Esta etapa prepara a correção no
-código; **não altera os ambientes publicados nem comprova isolamento remoto**.
-
-| Ambiente | Frontend | Backend selecionado pelo novo código |
-| --- | --- | --- |
-| DEV | Live Server/Python/emulador | Supabase Docker, configuração local obrigatória |
-| UAT | GitHub Pages | Projeto exclusivo ainda não provisionado; build bloqueado |
-| PRD | Vercel | Projeto existente, somente com configuração explícita |
 
 ## Contrato público v1
 
@@ -142,8 +70,8 @@ arquivo ignorado. Arquivos DEV v1 devem declarar sua base exata.
 
 A sessão usa `invitation-v1-<ambiente>-<projectRef>-auth`. Sessões antigas
 `sb-<ref>-auth-token` não são reutilizadas, removidas nem encerradas remotamente.
-Na primeira adoção do novo contrato será necessário autenticar novamente,
-inclusive em PRD; essa transição ainda não foi publicada.
+Na primeira adoção do contrato é necessário autenticar novamente, inclusive
+em PRD; a transição foi publicada. Não migre storage/token entre ambientes.
 
 ## Build e artefatos
 
@@ -177,35 +105,95 @@ título de homologação e noindex/nofollow. PRD mantém a identidade existente.
 
 ## CI/CD e próximas etapas
 
-O workflow Pages conserva push em staging e o guard de execução manual.
-Exige APP_ENV=uat, as variables UAT_SUPABASE_PROJECT_REF, UAT_SUPABASE_URL,
-UAT_SUPABASE_PUBLIC_KEY, PUBLIC_SITE_URL vindo de configure-pages e BUILD_ID
-com o SHA. Além disso, o ref precisa estar aprovado no manifesto. As variables
-remotas não foram criadas. A suíte Node canônica e Deno continuam sem Docker
-ou serviços externos. Nenhum workflow remoto foi disparado nesta etapa.
+### GitHub Pages — UAT
 
-Para Vercel, confirmar futuramente Production Branch, Root Directory,
-Build Command e Output Directory. A preparação proposta usa raiz do repositório,
-comando Node acima e saída _site; depende de confirmação externa antes de
-publicar. APP_ENV=prd e todas as entradas públicas serão obrigatórios.
-Não publicar diretamente invite-app, pois falta runtime-config.json.
+- `.github/workflows/deploy-pages.yml`: push em staging e execução manual
+  com guard de branch em ambos os jobs.
+- `validate` chama test.yml do mesmo SHA; `deploy` depende de sua aprovação.
+  Checkout por github.sha, sem credenciais persistidas.
+- Environment github-pages, variables UAT_SUPABASE_PROJECT_REF,
+  UAT_SUPABASE_URL e UAT_SUPABASE_PUBLIC_KEY. APP_ENV=uat,
+  PUBLIC_SITE_URL vem de configure-pages e BUILD_ID=github.sha.
+- `scripts/prepare-pages-uat.mjs` exige ref/URL/origem exatos, chave publishable
+  UAT, SHA completo e Event Config com nomes sintéticos identificados como UAT.
+  Audita allowlist, bytes, runtime, metadados e referências antes do upload.
+- Publica `_site`, nunca a pasta-fonte diretamente.
 
-Antes de provisionar UAT:
-1. Autorizar uma etapa remota específica e criar projeto independente; registrar
-   organização, nome, ref e URL e conferir que diferem de PRD.
-2. Conferir o inventário e ordem de supabase/migrations; revisar extensão,
-   grants/RLS e requisitos de Functions. Usar contexto CLI isolado, sem reutilizar
-   supabase/.temp ou vínculo de PRD e conferir destino antes de cada operação.
-3. Aplicar migrations somente no novo projeto confirmado, sem importar convidados,
-   sessões, secrets ou snapshots privados de PRD; carregar dados sintéticos.
-4. Provisionar Auth/admin UAT, allowlists CORS, Event Config e contingência próprios.
-   Credenciais privilegiadas ficam somente no backend; definir destino de
-   contingência de teste antes de habilitar RSVP.
-5. Conferir chave pública no painel UAT, atualizar o ref aprovado no manifesto,
-   configurar variables de Pages e testar o artefato com UAT real.
-6. Autorizar separadamente merge/push/publicação, validar navegador/admin/RSVP
-   e só depois considerar a migração explícita PRD.
+### Vercel — PRD
 
-O setup DEV mantém seu snapshot local. O GET público legado ocorre somente
-quando ele não existe, por comando DEV explícito; não integra o runtime/build.
-Nesta etapa não foi realizado GET de Event Config PRD.
+Projeto `prj_ddkuhQTns4qqaGCXtBoq5ilWoteb`, wedding-invitation-project,
+repositório bispoID/wedding-invitation-project. Configuração conferida na Etapa 6C:
+Production Branch production, raiz do repositório, Framework Other,
+Output Directory _site, instalação padrão e Node 24.x.
+
+Build Command salvo no projeto:
+
+```sh
+node -e 'let e=process.env,s=e.VERCEL_GIT_COMMIT_SHA;if(!/^[a-f0-9]{40}$/.test(s)||e.BUILD_ID&&e.BUILD_ID!==s)throw Error();e.BUILD_ID=s;process.argv[1]="./scripts/prepare-static-site.mjs";import(process.argv[1])'
+```
+
+O wrapper exige SHA Git completo, rejeita conflito e passa BUILD_ID ao CLI
+existente. Não criar BUILD_ID estático. Exposição de variáveis de sistema
+habilitada; APP_ENV, SUPABASE_PROJECT_REF, SUPABASE_URL e SUPABASE_PUBLIC_KEY
+são exclusivos de Production. PUBLIC_SITE_URL canônica:
+https://bruna-e-diego.vercel.app/. Valores Secret não são recuperáveis pela
+interface após salvar; não substituir ou exportar para conferir.
+
+Preview Branch Tracking foi desligado. `vercel.json` também desabilita
+deployment de feature/landing-page e staging; não bloqueia todas as outras
+branches por padrão. Ignored Build Step Only build production filtra builds,
+não é garantia isolada de ausência de registro de deployment.
+
+### Proteções e promoção
+
+Protect Staging 25768317 e Protect Production 25768402 bloqueiam exclusão e
+non-fast-forward, sem bypass. Production exige
+`validate / JavaScript and Deno tests`, GitHub Actions App 15368,
+sem PR/segundo revisor obrigatório e sem atualização estrita de branch.
+
+Antes de promoção autorizada: árvore limpa, fetch, comparar refs/ancestralidade,
+confirmar CI do SHA exato e destino de publicação. Se houver divergência,
+interromper; não usar force, reset, rebase ou desabilitar proteções.
+
+```sh
+git fetch origin
+git switch <branch-destino>
+git merge --ff-only <SHA-homologado>
+git rev-parse HEAD
+git diff --check
+git push origin <branch-destino>
+```
+
+Executar passo a passo, verificando cada resultado. O push em staging aciona
+Pages UAT; o push em production aciona Vercel PRD. A autorização deve abranger
+esse efeito. Não há necessidade de merge commit, tag ou redeploy manual.
+
+Depois: acompanhar CI/deployment do SHA, conferir domínio e runtime-config.json
+(appEnv, projectRef, publicSiteUrl e buildId), assets e fluxo público essencial.
+Não registrar chave pública integral, tokens ou dados de convidados em relatórios.
+RSVP/CRUD/recovery reais não são smoke checks de publicação.
+
+### Rollback
+
+Identificar antes da publicação o deployment estável e sua elegibilidade.
+Se build falhar, conferir qual versão o domínio ainda serve; não presumir
+publicação. Se READY apresentar ambiente errado, exposição de credencial ou
+falha essencial, interromper e pedir autorização específica de recuperação.
+
+Rollback Vercel restaura o frontend elegível, não Git, banco, Auth ou Functions.
+Não retornar a branch com reset/force. Rollback pode desabilitar autoatribuição
+de domínios; conferir essa política antes de nova publicação, sem corrigi-la
+automaticamente. Reversão Git ou backend exige plano próprio.
+
+### Recriação de UAT ou mudança de destino
+
+UAT já foi provisionado e homologado. Para recriá-lo, não reutilizar cegamente
+o vínculo CLI principal: usar contexto operacional isolado, confirmar project-ref
+antes de cada operação, revisar as 16 migrations em ordem e autorizar aplicação
+separadamente. Configurar Auth/admin, CORS, Event Config e Sheets próprios;
+não importar dados privados PRD. Conferir a chave pública no projeto correto,
+atualizar manifesto/variables sob autorização e validar antes da publicação.
+
+O snapshot DEV em .dev é preservado. Seu bootstrap só consulta Event Config
+pública PRD se o snapshot estiver ausente, por comando explícito; isso não é
+fallback do runtime/build. Não executar essa consulta sem autorização.

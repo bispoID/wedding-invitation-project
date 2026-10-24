@@ -141,11 +141,8 @@ Parâmetros devmode continuam exclusivamente visuais. Sessões agora usam namesp
 por ambiente e projeto, exigindo novo login local sem apagar armazenamento antigo.
 Detalhes de build e variáveis: [environments.md](environments.md).
 
-Na revalidação de 16/10/2026 da Etapa 1 UAT, o arquivo DEV existente passou no
-novo validador sem expor seus valores. As portas 54321, 5500 e 8000 não responderam;
-dev:health não concluiu e foi interrompido. Não houve start/reset, teste
-autenticado, teste SQL nem aceite visual nesta etapa. O funcionamento integrado
-DEV deve ser revalidado com a infraestrutura disponível.
+Histórico de diagnóstico: em 16/10/2026 as portas locais estavam indisponíveis.
+Isso não é uma pendência atual do setup.
 
 Revalidação posterior em 17/10/2026: Docker e serviços restaurados sem reset;
 health, integração, login/dashboard, paginação, edição e isolamento no navegador

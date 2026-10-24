@@ -82,6 +82,10 @@ fails, the function returns `CLEANUP_PENDING` with `persisted: true` and
 
 ## Backend configuration
 
+Use separate spreadsheets and service-account configuration for UAT and PRD.
+DEV uses a local JSON provider instead; see [environments](environments.md).
+Worksheet recovery below is unrelated to administrator password recovery.
+
 Configure these values only for the Supabase Edge Functions:
 
 - `ADMIN_AUTH_USER_IDS`: comma-separated UUIDs of the Supabase Auth users
@@ -103,6 +107,9 @@ administrator UUID list. CORS is restricted to the configured exact origins;
 CORS is not a substitute for JWT and administrator validation.
 
 ## Operational limits
+
+The public RSVP reaches Sheets fallback only after its PostgreSQL rate-limit
+check succeeds. It does not cover a total database outage before that check.
 
 The persisted lock serializes recoveries performed through this Edge Function.
 It cannot prevent a person or a separate integration from manually inserting,

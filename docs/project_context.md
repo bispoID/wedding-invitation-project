@@ -98,10 +98,10 @@ Seções implementadas:
 
 ## 5. Hospedagem
 
-O **GitHub Pages** foi a hospedagem inicialmente adotada para o frontend.
-A arquitetura é estática e independente do provedor. Vercel foi uma das opções
-consideradas durante o desenvolvimento; serviços como Vercel, Cloudflare Pages
-ou Netlify são exemplos de alternativas compatíveis, não destinos preferenciais.
+GitHub Pages foi a hospedagem inicial e agora serve UAT; Vercel serve PRD.
+DEV usa Supabase local e UAT/PRD têm projetos separados. A matriz e os
+procedimentos operacionais ficam em [environments.md](environments.md).
+A arquitetura continua estática e independente de provedor.
 
 Publicar em outro provedor exige configuração operacional de URLs, origins/CORS
 e deploy, sem alterar regras de negócio. App Config deriva a base root/subpath;
@@ -331,27 +331,11 @@ A `service_role key` do Supabase **nunca deverá ser colocada em HTML, CSS ou Ja
 
 ## 14. Operações no banco
 
-### Usuário público
-
-```text
-INSERT → permitido através do fluxo controlado da API
-SELECT → bloqueado
-UPDATE → bloqueado
-DELETE → bloqueado
-```
-
-### Administrador
-
-```text
-SELECT → permitido
-INSERT → permitido, se necessário
-UPDATE → permitido
-DELETE → permitido, se necessário
-```
-
-As operações administrativas deverão exigir autenticação e autorização adequadas.
-
----
+O público só grava pelo RSVP controlado; não tem acesso direto à tabela
+([permissões públicas](#10-permissões-do-usuário-público)). Operações
+administrativas passam pelas Functions com Auth, allowlist e origem exata;
+nenhum papel de banco privilegiado é entregue ao navegador.
+[Schema e grants](database-schema.md) detalham essas fronteiras.
 
 ## 15. Área administrativa
 
@@ -506,7 +490,9 @@ O health atual verifica a existência e acessibilidade das tabelas e do RPC de
 rate limiting, além dos privilégios necessários ao RSVP. Não executa INSERT de
 convidados, não incrementa o contador, não acessa Google Sheets e não simula uma
 confirmação real. O UptimeRobot consulta o endpoint por `HEAD` a cada **15
-minutos**; há monitoramento separado do frontend publicado em GitHub Pages.
+minutos**, conforme configuração informada. O monitor separado do Pages
+corresponde hoje a UAT; cobertura do frontend PRD não é presumida.
+Consulte [limites de monitoramento](health-check.md#monitoramento-do-frontend).
 
 O monitor é externo, independente de sessão administrativa e do provedor de
 hospedagem estática. Detalhes: [health-check.md](health-check.md).
@@ -604,10 +590,12 @@ A contingência deverá ser protegida adequadamente, considerando:
 Exemplo:
 
 ```text
-Supabase temporariamente indisponível
+Falha no INSERT de convidados após sucesso do rate limiting
 ```
 
-A aplicação deverá tentar preservar o RSVP na contingência e alertar o administrador.
+A aplicação tenta preservar o RSVP na contingência e alertar o administrador.
+O fallback depende do sucesso prévio do RPC de rate limiting; não cobre
+indisponibilidade total do banco, que pode encerrar a requisição antes do INSERT.
 
 ### Erro de regra de negócio
 
@@ -678,71 +666,13 @@ Nunca apresentar sucesso falso.
 
 ## 24. Arquitetura geral
 
-```text
-                         ┌──────────────────────┐
-                         │      CONVIDADO       │
-                         │                      │
-                         │ Acessa convite       │
-                         │ Preenche RSVP        │
-                         └──────────┬───────────┘
-                                    │
-                                  HTTPS
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │  FRONTEND ESTÁTICO   │
-                         │                      │
-                         │ HTML / CSS / JS      │
-                         │ Landing Page         │
-                         └──────────┬───────────┘
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │ API / EDGE FUNCTION  │
-                         │                      │
-                         │ Validação            │
-                         │ Regras de negócio    │
-                         │ Proteção contra      │
-                         │ abuso                 │
-                         └──────────┬───────────┘
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │       SUPABASE       │
-                         │                      │
-                         │ PostgreSQL           │
-                         │ RLS                  │
-                         │ Auth                 │
-                         └──────────┬───────────┘
-                                    │
-                         ┌──────────┴──────────┐
-                         │                     │
-                       SUCESSO                FALHA
-                         │                     │
-                         ▼                     ▼
-                  RSVP confirmado       Google Sheets
-                                              │
-                                              ▼
-                                        Alerta ao admin
-                                              │
-                                              ▼
-                                          Sincronização
+Frontend estático → Edge Functions → PostgreSQL/Auth. Após rate limit e validação,
+o RSVP persiste no banco ou usa contingência de infraestrutura. A reconciliação
+administrativa confirma persistência antes de remover a linha Sheets.
+Health é uma consulta independente e read-only; não executa esse fluxo de escrita.
 
-
-        ┌────────────────────────────────────────────┐
-        │              MONITORAMENTO                 │
-        │                                            │
-        │ health → RPC read-only → PostgreSQL        │
-        │ Frontend: monitor independente             │
-        └──────────────────────┬─────────────────────┘
-                               │
-                             FALHA
-                               │
-                               ▼
-                         ALERTA ADMIN
-```
-
----
+O diagrama principal fica no [README](../README.md#arquitetura-principal).
+O mapa de módulos fica em [source-architecture.md](source-architecture.md).
 
 ## 25. Princípios do projeto
 
@@ -774,7 +704,8 @@ Não construir arquitetura empresarial desnecessária para um convite de casamen
 
 ### Confiabilidade
 
-Um RSVP somente deve ser considerado confirmado quando houver persistência real ou, em caso de falha recuperável, preservação na contingência.
+HTTP 201 confirma persistência no banco. HTTP 202 indica preservação na
+contingência, ainda pendente de sincronização; não é confirmação definitiva.
 
 ### Experiência
 
@@ -792,7 +723,7 @@ Frontend
 
 Hospedagem
 → Frontend estático independente do provedor
-→ GitHub Pages foi a escolha inicial
+→ GitHub Pages para UAT; Vercel para PRD
 
 Backend/API
 → Edge Function / API
@@ -878,13 +809,16 @@ passo de execução. Essas informações devem permanecer no
 
 - MFA;
 - Domínio personalizado;
+- Recuperação de senha administrativa completa: melhoria futura, não implementada
+  nem testada; risco residual explicitamente aceito na liberação PRD. Login
+  funcional e acesso independente ao Supabase são mitigações, não prova de recuperação;
 - Recursos administrativos avançados;
 - CAPTCHA/Turnstile, caso não seja necessário;
 - Outras funcionalidades que não sejam essenciais ao RSVP.
 
 ### Configuração pública e separação de responsabilidades
 
-`scripts/shared/app-config.js` é a fonte única de URL e
+`invite-app/scripts/shared/app-config.js` é a fonte única de URL e
 chave pública Supabase do browser. A base da aplicação é derivada do módulo;
 metadados absolutos são preparados no artefato por `scripts/prepare-static-site.mjs`
 com `PUBLIC_SITE_URL` operacional. Não há secrets no módulo nem `.env` no browser.

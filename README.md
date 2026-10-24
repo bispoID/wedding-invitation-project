@@ -1,10 +1,7 @@
 # Convite Virtual de Casamento
 
-Estado de isolamento em 23/10/2026: backend UAT independente aprovado no
-manifesto e artefatos UAT gerados localmente. O GitHub Pages atual não foi
-atualizado. O aceite técnico E2E passou no Edge isolado, com ressalvas de cobertura;
-[evidências atuais](docs/uat-edge-e2e.md) e
-[checkpoint anterior](docs/uat-frontend-validation.md).
+Estado e próximos objetivos: [roadmap](docs/development_roadmap.md#estado-atual).
+Operação DEV/UAT/PRD: [ambientes e publicação](docs/environments.md).
 
 Convite digital de casamento em formato de landing page web, com uma experiência sofisticada e interativa e confirmação de presença (RSVP) integrada.
 
@@ -32,19 +29,16 @@ feature/landing-page → staging → production
  local/Codex             GitHub Pages  Vercel
 ```
 
-O workflow do GitHub Pages publica somente `staging`. A Production Branch da
-Vercel precisa ser ajustada manualmente para `production` antes da primeira
-promoção remota; nenhuma configuração externa é alterada por este checkout.
+GitHub Pages publica UAT somente de `staging`; a Vercel publica PRD de
+`production`. DEV usa Supabase local; UAT e PRD têm projetos Supabase separados.
+Promoções exigem autorização e CI aprovado no SHA exato.
 
 App Config centraliza a infraestrutura pública do browser; o preparador estático
 resolve metadados de root/subpath no artefato. Outros provedores compatíveis com
 hospedagem estática podem publicar o mesmo frontend, sem alterar regras de
 negócio. Instruções: [invite-app/README.md](invite-app/README.md#configuração-pública-e-publicação-portátil).
 
-A Etapa 1 UAT prepara localmente um contrato explícito e bootstrap fail-closed.
-O Supabase UAT ainda não foi provisionado; o manifesto bloqueia seu build.
-Esta alteração não foi publicada. PRD exige configuração explícita no próximo
-build autorizado. Variáveis, limites e próximos passos:
+Contrato público, destinos e procedimentos de release:
 [environments.md](docs/environments.md).
 
 ## Arquitetura principal
@@ -149,8 +143,8 @@ python -m http.server 8000 --bind 0.0.0.0
 
 Endereços úteis:
 
-- computador: `http://localhost:8000`;
-- Android Emulator: `http://10.0.2.2:8000`;
+- computador: `http://localhost:8000/invite-app/` (servidor na raiz do repositório);
+- Android Emulator: `http://10.0.2.2:8000/invite-app/`;
 - inspeção remota: `edge://inspect/#devices`.
 
 Os detalhes do fluxo de testes mobile estão em [android-emulator-local-devtools.md](docs/android-emulator-local-devtools.md).
@@ -165,17 +159,15 @@ Também executa `npm run test:node`, a seleção canônica de App Config,
 preparação portátil, Admin, paginação, Event Config e isolamento DEV.
 `npm run dev:test` reutiliza essa seleção sem duplicar as suítes importadas pelo
 agregador Admin. Comandos e descoberta: [testing-strategy.md](docs/testing-strategy.md).
-Resultados vigentes são registrados por data em
-[qa-final-evidence.md](docs/qa-final-evidence.md#validação-final-do-dev--16102026),
+Resultados são registrados por data e SHA em
+[qa-final-evidence.md](docs/qa-final-evidence.md),
 sem confundir execução local com CI remoto ou publicação.
 
 Os testes usam dependências simuladas e dados sintéticos. Não exigem secrets de
 produção, não acessam banco ou Google Sheets reais e não fazem deploy. O
-workflow de deploy permanece independente, com gate Node antes da preparação.
-A baseline histórica do Bloco 7, de **263 testes (144 Deno e 119 Node)**, passou
-localmente e no GitHub Actions. O checkpoint histórico `9d34e6c` aprovou
-**356 testes (144 Deno e 212 Node)** localmente e em Linux/CI; sua publicação e
-aceite visual continuam preservados nas evidências do QA final.
+workflow Pages exige a suíte completa do mesmo SHA antes do gate portátil,
+preparação e upload. Contagens históricas e aceites permanecem no QA final.
+
 As suítes SQL `supabase/tests/block3.sql` e `supabase/tests/dev-rpc.sql`,
 separadas do CI, validam o banco local em transações com ROLLBACK.
 Detalhes SQL: [event-config.md](docs/event-config.md#validação-local).
@@ -187,29 +179,9 @@ estão descritos em [external-services.md](docs/external-services.md#deno).
 
 ## Roadmap
 
-O desenvolvimento do projeto está organizado em 13 fases, que estruturam sua evolução desde a base técnica até a publicação e validação em produção:
-
-1. Base do projeto;
-2. Banco / Supabase;
-3. Segurança / permissões;
-4. API / Edge Function;
-5. RSVP;
-6. Contingência;
-7. Área administrativa;
-8. Monitoramento;
-9. Interface / Design;
-10. Integração;
-11. Hospedagem estática / ambientes;
-12. Testes / qualidade;
-13. Publicação / operação.
-
-O [development_roadmap.md](docs/development_roadmap.md) é a fonte oficial para a ordem, o status e os próximos objetivos das fases.
-
-O escopo funcional atual está implementado e publicado, incluindo App Config,
-Event Config, criação manual de convidados e minimização de PII nos logs.
-O roadmap reúne as entregas validadas, os aceites manuais consolidados e as
-melhorias opcionais. O encerramento do escopo não equivale a validar toda
-combinação de navegador, tela ou tecnologia assistiva.
+As 13 fases estão concluídas nos escopos homologados. O
+[roadmap](docs/development_roadmap.md) reúne entregas, backlog e riscos aceitos,
+sem transformar melhorias opcionais em bloqueios de publicação.
 
 ## Documentação
 
@@ -217,6 +189,9 @@ combinação de navegador, tela ou tecnologia assistiva.
 |---|---|
 | [project_context.md](docs/project_context.md) | Visão do produto, requisitos e arquitetura estável |
 | [development_roadmap.md](docs/development_roadmap.md) | Ordem de execução, status e próximos objetivos |
+| [environments.md](docs/environments.md) | Matriz de ambientes, configuração, publicação e rollback |
+| [testing-strategy.md](docs/testing-strategy.md) | Camadas e comandos de validação |
+| [source-architecture.md](docs/source-architecture.md) | Mapa dos módulos e responsabilidades |
 | [external-services.md](docs/external-services.md) | Ferramentas e serviços externos |
 | [health-check.md](docs/health-check.md) | Arquitetura e operação do Health Check |
 | [admin-guest-management.md](docs/admin-guest-management.md) | Autenticação, autorização e gerenciamento administrativo |

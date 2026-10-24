@@ -31,11 +31,12 @@ permissão administrativa: usuário autenticado cujo UUID não esteja na lista
 recebe HTTP 403. O frontend não decide quem é administrador nem recebe essa
 lista.
 
-Cada administrador possui sua própria conta do Supabase Auth. O Email Provider
-está habilitado, a confirmação de e-mail é exigida e o cadastro público de novos
-usuários está desabilitado. A senha deve ter no mínimo oito caracteres. A
-proteção contra senhas vazadas não está disponível no plano atual. Convidados
-que enviam RSVP não possuem conta no Supabase Auth.
+Cada administrador possui sua própria conta do Supabase Auth. Na configuração
+PRD registrada, Email Provider está habilitado, confirmação de e-mail é exigida,
+cadastro público está desabilitado e a senha exige no mínimo oito caracteres.
+A proteção contra senhas vazadas estava indisponível no plano inspecionado;
+políticas remotas devem ser conferidas quando forem alteradas, não inferidas do
+config.toml local. Convidados que enviam RSVP não possuem conta Auth.
 
 Novos administradores são criados manualmente pelo proprietário no Supabase
 Dashboard e, em seguida, seus UUIDs são incluídos em `ADMIN_AUTH_USER_IDS`.
@@ -100,7 +101,8 @@ desabilitando `Anterior`/`Próxima` nos limites. O backend rejeita página fora 
 A ordenação é determinística por `created_at DESC, id DESC`.
 
 Uma chamada paginada usa `GET /functions/v1/admin-list-guests?page=1&page_size=10`
-e pode incluir `search`. A resposta mantém `success` e `records` e acrescenta.
+e pode incluir `search`. A resposta mantém `success` e `records` e acrescenta
+`pagination` e `metrics`.
 Respostas de dados e erros administrativos usam `Cache-Control: private,
 no-store`; o preflight `OPTIONS` mantém seu cache CORS separado:
 
@@ -138,7 +140,8 @@ A migration `20261013010000_create_admin_guest_list.sql` cria essa RPC como
 `security definer`, revoga execução de `public`, `anon`, `authenticated` e
 `service_role` antes de concedê-la somente a `service_role`. Ela foi validada
 em PostgreSQL local descartável e aplicada em produção. A Edge Function
-`admin-list-guests` que usa essa RPC está publicada na versão 8.
+`admin-list-guests` usa essa RPC; a versão 8 foi a referência PRD conferida no
+checkpoint de implantação, não um número de versão garantido em tempo real.
 
 Sem parâmetros de paginação, o endpoint mantém temporariamente a resposta
 completa para compatibilidade com versões antigas do dashboard durante uma
@@ -180,3 +183,32 @@ validação e autorização próprias.
 A seção de contingência permanece independente. Sua listagem e recuperação
 continuam passando pelas Edge Functions administrativas; o navegador não
 acessa o Google Sheets.
+
+## Recuperação do acesso administrativo
+
+Não confundir recuperação de senha com recuperação de RSVPs da contingência.
+O frontend implementa login, sessão e logout, mas não um fluxo completo de
+redefinição. Na liberação PRD, o responsável atestou login e consultas funcionais
+pelo domínio oficial e acesso independente ao Dashboard Supabase. A ausência
+de recuperação completa foi aceita como risco residual e melhoria futura.
+
+O plano é preservar o usuário e seu UUID autorizado. Antes de qualquer execução,
+confirmar projeto, identidade, permissão e método oficial; usar ambiente confiável
+e entrada privada da senha. A atualização por ID deve alterar somente a senha,
+sem recriar conta ou mudar allowlist. A Auth Admin API é exclusivamente server-side;
+nunca expor service_role no frontend, argumentos, logs ou relatórios.
+
+O procedimento ainda não foi validado operacionalmente. Acesso a Users não
+comprova capacidade de redefinição; parar se os pré-requisitos não estiverem
+confirmados. Troca de senha, revogação ou mudanças Auth exigem autorização.
+Não presumir revogação imediata de todo token nem usar SQL direto em auth.users.
+Depois de execução autorizada, conferir UUID e login, sem CRUD. Não há rollback
+automático para senha antiga.
+
+Site URL Auth local e redirects vazios são observações da auditoria PRD,
+não uma prova de falha em signInWithPassword. A opção administrativa direta não
+usa e-mail de recuperação. Se for escolhido self-service, implementar e validar
+seu callback real antes de alterar URLs; só mudar URLs não completa o fluxo.
+
+Referência: [Auth Admin updateUserById](https://supabase.com/docs/reference/javascript/auth-admin-updateuserbyid).
+Classificação: [backlog](development_roadmap.md#backlog).

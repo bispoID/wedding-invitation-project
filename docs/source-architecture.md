@@ -1,15 +1,8 @@
 # Arquitetura do código-fonte
 
-Continuação E2E (23/10/2026): o RSVP agora mantém a trava isSubmitted e o botão
-desabilitado após 201; reset e mensagem são preservados, sem segundo POST na
-mesma página. Falhas continuam permitindo retry e 202 mantém sua trava.
-Contrato/backend inalterados. [Validação no Edge](uat-edge-e2e.md).
-
-Atualização de 23/10/2026: o manifesto aprova o projeto UAT independente.
-Bootstrap, endpoints derivados e namespace por ambiente permanecem sem
-overrides. O preparador identifica somente o artefato UAT com descrições de
-homologação; PRD conserva seus metadados. A aprovação local não equivale a
-publicação ou aceite E2E: [validação UAT](uat-frontend-validation.md).
+Este mapa descreve responsabilidades do código versionado. Contrato de ambiente
+e publicação: [environments.md](environments.md); evidências datadas:
+[qa-final-evidence.md](qa-final-evidence.md).
 
 ## Entrada do frontend público
 
@@ -30,6 +23,7 @@ As responsabilidades internas ficam separadas assim:
   selo; `welcome/typography.js` cuida somente da tipografia da capa.
 - `letter/letter.js` alterna visibilidade/foco; `letter/rsvp.js` traduz o
   formulário para o contrato HTTP e diferencia 201 de contingência 202.
+  Ambos travam reenvio na mesma página; erros permitem nova tentativa.
 - `event-config.js` valida o DTO, atualiza campos `data-event-*`, metadados e
   emite `invitation:content-updated` para os módulos tipográficos.
 - `styles/main.css` é o entrypoint da cascata; `base`, `welcome`, `letter`,

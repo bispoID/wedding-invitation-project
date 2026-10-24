@@ -139,7 +139,7 @@ ele não executa o fluxo real de RSVP.
 O monitoramento externo é realizado pelo UptimeRobot, independentemente da
 aplicação e do painel administrativo.
 
-Configuração atual:
+Configuração informada pelo responsável (não reconsultada nesta revisão):
 
 ```text
 Monitor: Supabase — Health Check RSVP
@@ -183,8 +183,8 @@ condição que exija atenção.
 
 ## Monitoramento do frontend
 
-O frontend atualmente publicado em GitHub Pages possui monitoramento externo
-separado:
+Há registro histórico de um monitor externo para o endereço GitHub Pages,
+que agora corresponde a UAT:
 
 ```text
 https://bispoid.github.io/wedding-invitation-project
@@ -194,9 +194,11 @@ Esse monitor verifica a disponibilidade da página. O monitor do Supabase
 verifica a saúde da infraestrutura necessária ao RSVP. Eles têm objetivos
 diferentes.
 
-O frontend é estático e independente do provedor, com publicação atual no
-GitHub Pages. O monitor de health não depende desse provedor: consulta
-diretamente a Edge Function do Supabase.
+PRD é servido pela Vercel em https://bruna-e-diego.vercel.app/.
+Não há evidência nesta revisão de monitor UptimeRobot para esse domínio;
+verificar a cobertura antes de alterar qualquer monitor. Isso é uma melhoria
+operacional, não uma falha comprovada. O health PRD consulta diretamente a Edge
+Function do Supabase, independentemente da hospedagem estática.
 
 ## Limitações
 

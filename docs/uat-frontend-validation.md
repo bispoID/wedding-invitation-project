@@ -1,5 +1,10 @@
 # Frontend UAT — integração local, 23/10/2026
 
+> **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
+> abaixo valem na data do checkpoint, não como backlog atual. A separação foi
+> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](environments.md).
+
 ## Continuação E2E concluída
 
 O bloqueio de navegador registrado abaixo é histórico. Após autorização explícita

@@ -1,5 +1,10 @@
 # Revalidação dinâmica DEV após isolamento UAT
 
+> **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
+> abaixo valem na data do checkpoint, não como backlog atual. A separação foi
+> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](environments.md).
+
 ## Escopo e estado inicial — 17/10/2026
 
 Branch `feature/uat-environment-isolation`, HEAD inicial

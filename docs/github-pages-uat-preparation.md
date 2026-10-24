@@ -1,5 +1,10 @@
 # GitHub Pages UAT — preparação e proteção, Etapa 5B
 
+> **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
+> abaixo valem na data do checkpoint, não como backlog atual. A separação foi
+> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](environments.md).
+
 ## Atualização — Etapa 5B.1, 23–24/10/2026, proteções remotas concluídas
 
 **PROTEÇÕES GITHUB CONFIGURADAS E VALIDADAS; SEM PUBLICAÇÃO.** Este checkpoint

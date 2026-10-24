@@ -1,35 +1,8 @@
 # Invite app
 
-Continuação de 23/10/2026: E2E Playwright/Edge aprovado com ressalvas, origem
-Pages simulada com arquivos locais, sessão efêmera, CORS UAT e limpeza por UUID.
-O bloqueio do primeiro executor descrito abaixo é histórico.
-[Evidências atuais](../docs/uat-edge-e2e.md). Nenhum frontend foi publicado.
-
-Etapa 4 (23/10/2026): ref UAT aprovado e build real local validado; nenhum
-frontend publicado. Não abrir o Pages antigo para testes nem servir UAT em
-localhost como se fosse DEV. O E2E requer contexto temporário e interceptação
-de todas as requisições do site sob sua origem futura, com PRD bloqueado.
-Essa capacidade não está disponível no navegador desta execução; os testes
-de convite/RSVP/Auth/Admin em navegador permanecem pendentes.
-[Detalhes e build](../docs/uat-frontend-validation.md).
-
-Aplicação estática do convite virtual, com RSVP e área administrativa integrados.
-Inicialmente, o artefato foi publicado no GitHub Pages. A arquitetura do frontend
-permanece independente do provedor de hospedagem, permitindo sua publicação em
-outros serviços compatíveis, como Vercel, Cloudflare Pages ou Netlify, sem
-alterações nas regras de negócio.
-
-O fluxo de ambientes é `feature/landing-page` (desenvolvimento local/Codex) →
-`staging` (homologação no GitHub Pages) → `production` (produção na Vercel).
-As branches `staging` e `production` foram preparadas localmente a partir do
-commit estável publicado e já foram publicadas no GitHub no commit de separação
-`1e19f5b`. A Production Branch da Vercel ainda precisa ser trocada manualmente
-para `production`; os pushes recentes geraram apenas previews `READY`.
-
-O job de testes do GitHub passou após a publicação. O job do Pages falhou
-imediatamente sem etapas/logs disponíveis pelo conector, então a configuração
-do Pages/ambiente `github-pages` precisa ser revisada antes da homologação
-publicada em `staging`.
+Aplicação estática do convite, com RSVP e administração via Edge Functions.
+DEV é local, UAT está no GitHub Pages e PRD na Vercel. Destinos e publicação:
+[environments.md](../docs/environments.md); estado: [roadmap](../docs/development_roadmap.md#estado-atual).
 
 ## Arquitetura
 
@@ -54,7 +27,10 @@ no encerramento da Fase 13. Evidências e limites:
 
 ## Como visualizar
 
-Sirva a pasta `invite-app` por HTTP (por exemplo, com o Live Server do VS Code) e acesse `index.html`. A área administrativa fica em `admin/login.html`.
+Prepare o DEV isolado com `npm run dev:up` e sirva `invite-app` por HTTP.
+O arquivo ignorado `dev-config.json` é obrigatório nos hosts locais; não há
+fallback para PRD. A área administrativa fica em `admin/login.html`.
+Setup, portas e emulador: [local-development.md](../docs/local-development.md).
 
 Os nomes e detalhes do evento são carregados pela Function pública `event-config`,
 sem dados pessoais de fallback no HTML. O mesmo consumo dinâmico está presente
@@ -62,46 +38,12 @@ na versão publicada.
 
 ## Configuração da área administrativa
 
-O frontend público está integrado na branch `feature/landing-page`; a branch de
-homologação publicada pelo GitHub Pages é `staging`, e a produção da Vercel deve
-ser promovida somente pela branch `production` após a configuração manual do
-projeto.
-Os dados públicos vêm exclusivamente da
-Function event-config: um GET/Promise por página, timeout de 12 segundos,
-loading/ready/not-configured/error, sem cache persistente ou fallback pessoal.
-O contrato final tem 14 campos públicos, incluindo reception_city,
-reception_state e reception_maps_url. O monograma não é configurável:
-`images/monograma_bd.webp` é estático/versionado,
-no cartão e na carta. Endereços e mapas são opcionais; city/state mantêm a
-posição geográfica da cerimônia, sem fallback para a recepção. Esta possui
-cidade/estado próprios opcionais, sem placeholders ou separadores órfãos.
-Metadata estática é genérica e usa
-`images/preview-link.webp`; os markers PUBLIC_SITE_URL permanecem.
-O contrato completo está em [event-config.md](../docs/event-config.md).
-O primeiro PUT real foi realizado pelo usuário e READY já foi alcançado.
-A nova migration de localização e as duas Functions foram implantadas em
-checkpoints anteriores, sem alteração automática do registro ou seus timestamps.
-O preenchimento manual e a localização independente da recepção foram validados
-pelo usuário. Este checkpoint não reaplica migrations, deploys ou PUT remoto.
-O painel formata updated_at e timestamps já exibidos de convidados/contingência
-em America/Sao_Paulo, por Intl.DateTimeFormat compartilhado, só na apresentação.
-A persistência de instantes absolutos permanece inalterada. event_time continua
-horário civil HH:mm sem conversão. Há 12px acima de #event-updated; o espaçamento
-aprovado de #event-feedback permanece.
-O Event Config usa seção recolhível: botão nativo com aria-expanded/aria-controls,
-inicialmente recolhida, mantendo GET e valores dos inputs. Feedback importante
-expande a seção; salvar não a recolhe. Não há persistência do estado.
-Aceite manual concluído em desktop e mobile aproximadamente 390px, incluindo
-mapas, monograma, timestamp, espaçamentos e seção recolhível. A publicação atual
-inclui essas funcionalidades.
-O RSVP funciona independente do carregamento dos dados.
-
-Funcionalidades administrativas implementadas e publicadas: criação manual de convidados,
-configuração do evento e links portáteis para convite/previews. A configuração
-do evento é pública pela API, não um armazenamento de dados privados. O convite
-publicado consome dinamicamente esses dados; o primeiro consumo foi implementado
-no Bloco 4. Requisitos e testes:
-[event-config.md](../docs/event-config.md).
+O painel oferece CRUD de convidados, métricas globais, Event Config e
+contingência. Contratos e limites: [admin-guest-management.md](../docs/admin-guest-management.md)
+e [event-config.md](../docs/event-config.md). A configuração do evento tem 14
+campos públicos, com localização independente da recepção; não contém secrets.
+O frontend consulta Event Config uma vez por página; falhas não trocam backend
+nem impedem o RSVP. Monograma e imagem social são assets estáticos.
 
 O frontend é estático e não carrega arquivos `.env`. A chave **publishable**
 (ou **anon** legada) é recebida pelo contrato público validado, por
@@ -137,9 +79,10 @@ o manifesto da própria origem. app-config.js exporta os valores já validados;
 FUNCTIONS_BASE_URL e APP_BASE_URL preservam os contratos e root/subpath.
 
 O preparador exige APP_ENV, SUPABASE_PROJECT_REF, SUPABASE_URL,
-SUPABASE_PUBLIC_KEY e PUBLIC_SITE_URL; BUILD_ID é opcional. O manifesto
-config/environments.json aprova o ref selecionado. UAT está não provisionado
-e bloqueado. Não use placeholders como configuração real.
+SUPABASE_PUBLIC_KEY e PUBLIC_SITE_URL. O manifesto
+config/environments.json aprova os projetos independentes UAT/PRD. BUILD_ID
+é opcional no contrato genérico, mas obrigatório nos pipelines publicados:
+Pages exige o SHA completo e o wrapper Vercel o deriva do commit Git.
 
 ```text
 node scripts/prepare-static-site.mjs
@@ -154,9 +97,8 @@ O arquivo DEV, testes, snapshots e arquivos operacionais nunca são publicados.
 O build pode consultar Event Config do ambiente selecionado; nos testes, todas
 as consultas são mocks. Não executar build PRD como teste sem autorização.
 Sirva invite-app diretamente em DEV; produção requer o artefato preparado.
-O Pages mantém o guard staging e passa a exigir variáveis UAT. Vercel requer
-confirmação externa antes de publicar esta arquitetura. Contrato, variáveis,
-sessões e provisionamento: [environments.md](../docs/environments.md).
+Pages usa staging e variáveis UAT; Vercel usa production. Contrato, variáveis,
+sessões e procedimento de publicação/rollback: [environments.md](../docs/environments.md).
 
 Testes locais, sem rede, na raiz do repositório:
 
@@ -173,15 +115,9 @@ O workflow de testes executa essa suíte além dos testes Deno existentes. O wor
 Pages executa os testes de App Config e do preparador como gate antes da preparação, sem
 dependência circular ou duplicação da suíte Deno.
 
-O checkpoint histórico de QA `9d34e6c` aprovou localmente e em Linux/CI
-**212 testes Node e 144 Deno (356)**,
-incluindo as suítes de movimento, tipografia, wallpaper e nomes no cartão/carta
-importadas por `admin-block3.test.mjs`. CI e publicação do commit consolidado
-`9d34e6c` estão registrados em [qa-final-evidence.md](../docs/qa-final-evidence.md).
-A baseline histórica de **119 Node e 144 Deno (263)** foi
-aprovada localmente e em Linux/CI no Bloco 7. A suíte SQL integral foi aprovada
-separadamente em banco local
-descartável; consulte [event-config.md](../docs/event-config.md#validação-local).
+Contagens históricas, publicação e aceites estão em
+[qa-final-evidence.md](../docs/qa-final-evidence.md). SQL local:
+[event-config.md](../docs/event-config.md#validação-local).
 
 O controle do cartão possui cobertura específica em
 `scripts/envelope-motion.test.mjs`: a execução local direta validou a exibição de
@@ -230,5 +166,7 @@ animação do cartão continua até o fim, enquanto a revelação automática da
 é suspensa. O cartão permanece apresentado por tempo indeterminado e o botão
 muda para “Continuar”. Ao continuar, a carta é revelada sem reiniciar o
 movimento do cartão. Sem interação, os marcos automáticos originais permanecem.
-O botão usa navegação nativa por teclado, `focus-visible`, gerenciamento de foco
-na carta e respeita `prefers-reduced-motion`.
+O botão usa teclado nativo, `focus-visible` e transferência de foco à carta.
+Com `prefers-reduced-motion: reduce`, o cartão aparece sem os atrasos normais,
+fica retido sem timeout e **Continuar** recebe foco; só a ação explícita abre a carta.
+Contrato e regressões: [qa-accessibility-motion.md](../docs/qa-accessibility-motion.md).

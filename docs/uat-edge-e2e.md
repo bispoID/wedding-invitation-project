@@ -1,5 +1,10 @@
 # Etapa 4 — E2E no Microsoft Edge, 23/10/2026
 
+> **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
+> abaixo valem na data do checkpoint, não como backlog atual. A separação foi
+> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](environments.md).
+
 ## Resultado e escopo
 
 **APROVADA COM RESSALVAS** de cobertura: Edge Windows e layout mobile emulado,

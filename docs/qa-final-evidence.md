@@ -1,5 +1,54 @@
 # QA final — evidências técnicas e manuais
 
+## Publicação DEV/UAT/PRD — 24/10/2026
+
+Registro consolidado da homologação e Etapa 6C, não nova execução de testes
+nesta revisão documental. Estado de operação: [ambientes](environments.md);
+pendências e decisões: [roadmap](development_roadmap.md#estado-atual).
+
+- SHA homologado/publicado: `09267d1188d26e95a2295897da6695a20a1e6b27`.
+- UAT Pages: [run 40096509221](https://github.com/bispoID/wedding-invitation-project/actions/runs/40096509221).
+  Homologação registrou 377 Node, 150 Deno e 102 verificações do gate portátil.
+- Aceite humano atualizado: Edge desktop, foco RSVP e redução de movimento;
+  Galaxy A21 físico/Chrome, incluindo redução de movimento. iPhone SE foi perfil
+  emulado no DevTools, não aparelho físico; Android 15 virtual foi complementar.
+- Limites aceitos: Safari/iOS e Firefox não testados nesse release; zoom real 200%
+  e leitores de tela não revalidados. Aceites mais antigos abaixo não são
+  automaticamente atribuídos ao novo SHA.
+- Production promovida por fast-forward de b5995cf para o mesmo SHA, sem merge
+  commit. Push exclusivo de production; staging remota preservada.
+- [CI production 40129755999](https://github.com/bispoID/wedding-invitation-project/actions/runs/40129755999)
+  completed/success, incluindo Node, Deno, sintaxe e whitespace.
+- Deployment Git Vercel `dpl_7wXbLSv8F8DjzasFubCoasRDgvJU`, READY, domínio
+  https://bruna-e-diego.vercel.app/, sem redeploy manual.
+- Runtime público 200: appEnv=prd, projectRef=bkkienyemqlkueygknzl,
+  URL Supabase PRD, publicSiteUrl canônica e buildId igual ao SHA completo.
+- Home, bootstrap, main.js, main.css, módulo RSVP e imagem social retornaram 200;
+  selo → carta → formulário visível → retorno à capa funcionaram no navegador.
+  Nenhum envio RSVP, CRUD ou login administrativo pelo agente nessa publicação.
+- Administração PRD: responsável atestou login real e consultas de convidados,
+  métricas e contingência pelo domínio oficial. URL canônica e configuração
+  Sheets PRD separado de UAT foram atestados; não equivalem a inspeção de secrets
+  nem novo E2E de contingência.
+- Auditoria 6B: 16 migrations/schema/RPC compatíveis; oito Functions PRD baixadas
+  oficialmente. 27 arquivos corresponderam ao fonte PRD anterior; comparação
+  com o homologado encontrou 5 equivalentes textuais, 18 AST e 4 diferenças
+  estruturais no adapter de contingência, sem incompatibilidade HTTP identificada.
+  Imports relativos disponíveis; npm transitivo, lockfiles e import map de
+  admin-list-guests não integralmente recuperados. Compatibilidade estática,
+  não reprodução completa do runtime.
+- Recuperação administrativa incompleta: risco residual explicitamente aceito.
+  Runbook planejado não foi testado; nenhum ajuste Auth ou redefinição de senha.
+- Sem alteração de Supabase, Functions, migrations, Google Sheets ou secrets
+  durante a promoção. Worktree terminou limpo e sincronizado em production.
+
+A criação inicial das branches partiu de `d3f35d98d594ae1885bb94135204a872c5809dec`;
+`1e19f5bc86a2a80aebcc9b2a5cceb2f247cc6e57` introduziu a separação inicial.
+São marcos históricos, não referências para republicar.
+
+A seguir, checkpoints anteriores preservados para diagnóstico e rastreabilidade.
+Termos como “atual”, “pendente” e “não publicado” referem-se à sua própria data.
+
 ## Continuação da Etapa 4 — E2E Edge aprovado com ressalvas, 23/10/2026
 
 Login real com senha digitada pelo usuário no contexto de teste, namespace/JWT
@@ -21,7 +70,7 @@ Convite, RSVP, login, dashboard e CORS em navegador **não executados** por
 ausência de interceptação/contexto isolado disponível. As evidências HTTP da
 Etapa 3.2B não substituem esses critérios. [Detalhes](uat-frontend-validation.md).
 
-Consolidação documental final: **13/10/2026**. Projeto:
+Checkpoint de consolidação documental: **13/10/2026**. Projeto:
 `wedding-invitation-project`.
 Branch de produção: `production`.
 HEAD final deste escopo: `b5995cf53be3085f9b1d418b8cddf08154afd303`.

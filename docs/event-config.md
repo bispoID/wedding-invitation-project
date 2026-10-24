@@ -1,15 +1,10 @@
 # Configuração do evento
 
-O primeiro PUT real foi realizado pelo usuário e o convite local já alcançou
-READY. O checkpoint pós-READY adicionou a localização própria da recepção:
-schema remoto e as duas Functions estão sincronizados no contrato de 14 campos.
-Na implantação, o registro real e seus timestamps anteriores foram preservados,
-com os dois campos novos inicialmente NULL. O usuário posteriormente concluiu
-o preenchimento manual e validou a localização independente da recepção.
-O frontend dinâmico e o painel foram integrados e publicados no GitHub Pages
-no Bloco 5. Os checkpoints posteriores validaram as constraints de convidados
-e a suíte SQL local. Dados cadastrados na Event Config são públicos pela API,
-mesmo que não sejam versionados no Git.
+Event Config armazena os 14 campos públicos do evento. O contrato e o frontend
+dinâmico estão implantados; a localização independente da recepção foi validada
+pelo responsável. Dados são públicos pela API, embora não versionados no Git.
+Ambientes atuais: [environments.md](environments.md). Os checkpoints de
+migrations e testes abaixo preservam o histórico de implantação.
 
 ## Separação de responsabilidades
 
