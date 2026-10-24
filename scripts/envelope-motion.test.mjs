@@ -12,29 +12,34 @@ const variables = await readFile(new URL('../invite-app/styles/base/variables.cs
 const tokens = Object.fromEntries([...variables.matchAll(/(--[\w-]+):\s*([^;]+);/g)]
   .map(([, name, value]) => [name, value.trim()]));
 
-async function withEnvelopeMotion(reduced, run) {
+async function withEnvelopeMotion(reduced, run, options = {}) {
   const names = ['window', 'document', 'getComputedStyle'];
   const previous = names.map((name) => [name, Object.getOwnPropertyDescriptor(globalThis, name)]);
   const animations = [];
   const timers = new Map();
   const mediaQueries = [];
   const scrolls = [];
+  const panels = [];
   let clock = 0, timerId = 0;
 
   function element(hidden = false) {
     const classes = new Set();
     return {
-      hidden, style: {}, attrs: {}, events: {}, focusCalls: [],
+      hidden, style: {}, attrs: {}, events: {}, focusCalls: [], children: [],
       classList: {
         add: (...names) => names.forEach((name) => classes.add(name)),
         remove: (...names) => names.forEach((name) => classes.delete(name)),
         contains: (name) => classes.has(name),
+        toggle(name, active) { if (active) classes.add(name); else classes.delete(name); },
       },
       setAttribute(name, value) { this.attrs[name] = value; },
       getAttribute(name) { return this.attrs[name]; },
       removeAttribute(name) { delete this.attrs[name]; },
       addEventListener(type, listener) { this.events[type] = listener; },
       focus(options) { this.focusCalls.push(options); },
+      appendChild(child) { this.children.push(child); },
+      querySelectorAll() { return this.children.filter(child => child.attrs['data-preview']); },
+      remove() {},
     };
   }
 
@@ -53,9 +58,12 @@ async function withEnvelopeMotion(reduced, run) {
     animations.push(animation);
     return animation;
   };
-  globalThis.document = { documentElement: {}, querySelector: (selector) => selectors[selector] ?? null };
+  globalThis.document = { documentElement: {}, querySelector: (selector) => selectors[selector] ?? null,
+    getElementById: () => null, createElement: () => element(), body: { appendChild: panel => panels.push(panel) } };
   globalThis.getComputedStyle = () => ({ getPropertyValue: (name) => tokens[name] ?? '' });
   globalThis.window = {
+    location: { href: 'https://synthetic.github.io/invite/' },
+    history: { replaceState() {} },
     matchMedia(query) {
       mediaQueries.push(query);
       assert.equal(query, '(prefers-reduced-motion: reduce)');
@@ -82,10 +90,18 @@ async function withEnvelopeMotion(reduced, run) {
     clock = end;
   }
 
+  function nextTimer() {
+    const next = [...timers].sort((a, b) => a[1].at - b[1].at)[0];
+    assert.ok(next, 'A scheduled step must exist');
+    clock = next[1].at;
+    timers.delete(next[0]);
+    next[1].callback();
+  }
+
   try {
     resetFloralSealAnimations();
-    initEnvelope();
-    await run({ ...elements, animations, timers, mediaQueries, scrolls, advance,
+    initEnvelope(options);
+    await run({ ...elements, animations, timers, mediaQueries, scrolls, advance, nextTimer, panels,
       setReduced(value) { reduced = value; } });
   } finally {
     resetFloralSealAnimations();
@@ -189,23 +205,38 @@ for (const reduced of [false, true]) for (const trigger of ['click', 'Enter', ' 
       assert.equal(ui.timers.size, 1, 'Repeated activation must not duplicate the opening');
       assert.equal(ui.seal.attrs['aria-disabled'], 'true');
       assert.equal(prevented, trigger === 'click' ? 0 : 2);
-      ui.advance(599);
-      assert.equal(ui.animations.length, 0);
-      ui.advance(1);
-      assert.equal(ui.welcome.classList.contains('is-opening-envelope'), true);
-      assert.equal(ui.animations.length, reduced ? 0 : 1);
-      assert.deepEqual(ui.decorations.style, {});
-      assert.equal(ui.decorations.hidden, false);
-      ui.advance(4699);
-      assert.equal(ui.welcome.classList.contains('is-opening-card'), false);
-      ui.advance(1);
-      assert.equal(ui.welcome.classList.contains('is-opening-card'), true);
-      assert.equal(ui.cardControl.hidden, false);
-      assert.equal(ui.cardControl.textContent, 'Pausar');
-      assert.equal(ui.cardControl.attrs['data-card-symbol'], '⏸');
-      ui.advance(4799);
-      assert.equal(ui.letter.hidden, true);
-      ui.advance(1);
+      if (reduced) {
+        ui.advance(0);
+        assert.equal(ui.welcome.classList.contains('is-opening-envelope'), true);
+        assert.equal(ui.welcome.classList.contains('is-opening-card'), true);
+        assert.equal(ui.cardControl.hidden, false);
+        assert.equal(ui.cardControl.textContent, 'Continuar');
+        assert.equal(ui.cardControl.attrs['aria-label'], 'Continuar para a carta');
+        assert.deepEqual(ui.cardControl.focusCalls, [{ preventScroll: true }]);
+        assert.equal(ui.animations.length, 0);
+        assert.equal(ui.timers.size, 0, 'Reduced motion must not schedule a hidden auto-advance');
+        ui.advance(60000);
+        assert.equal(ui.letter.hidden, true, 'The user controls how long the card is retained');
+        ui.cardControl.events.click();
+      } else {
+        ui.advance(599);
+        assert.equal(ui.animations.length, 0);
+        ui.advance(1);
+        assert.equal(ui.welcome.classList.contains('is-opening-envelope'), true);
+        assert.equal(ui.animations.length, 1);
+        assert.deepEqual(ui.decorations.style, {});
+        assert.equal(ui.decorations.hidden, false);
+        ui.advance(4699);
+        assert.equal(ui.welcome.classList.contains('is-opening-card'), false);
+        ui.advance(1);
+        assert.equal(ui.welcome.classList.contains('is-opening-card'), true);
+        assert.equal(ui.cardControl.hidden, false);
+        assert.equal(ui.cardControl.textContent, 'Pausar');
+        assert.equal(ui.cardControl.attrs['data-card-symbol'], '⏸');
+        ui.advance(4799);
+        assert.equal(ui.letter.hidden, true);
+        ui.advance(1);
+      }
       assert.equal(ui.welcome.hidden, true);
       assert.equal(ui.letter.hidden, false);
       assert.equal(ui.cardControl.hidden, true);
@@ -224,7 +255,8 @@ for (const reduced of [false, true]) for (const trigger of ['click', 'Enter', ' 
       assert.deepEqual(ui.seal.focusCalls, [{ preventScroll: true }]);
       assert.equal(ui.animations[0]?.cancelCalls ?? 0, reduced ? 0 : 1);
       activate();
-      ui.advance(10100);
+      ui.advance(reduced ? 0 : 10100);
+      if (reduced) ui.cardControl.events.click();
       assert.equal(ui.welcome.hidden, true);
       assert.equal(ui.letter.hidden, false);
       assert.equal(ui.animations.length, reduced ? 0 : 2);
@@ -238,9 +270,9 @@ for (const reduced of [false, true]) {
   test(`Envelope ${reduced ? 'reduce' : 'no-preference'} wait pauses only the letter transition`, async () => {
     await withEnvelopeMotion(reduced, async (ui) => {
       ui.seal.events.click();
-      ui.advance(600 + 4700);
+      ui.advance(reduced ? 0 : 600 + 4700);
 
-      ui.cardControl.events.click();
+      if (!reduced) ui.cardControl.events.click();
       assert.equal(ui.cardControl.textContent, 'Continuar');
       assert.equal(ui.cardControl.attrs['data-card-symbol'], '▶');
       assert.equal(ui.cardControl.hidden, false);
@@ -295,6 +327,107 @@ test('Envelope wait near the automatic deadline prevents an old letter callback'
     assert.equal(ui.letter.hidden, true);
     ui.advance(60000);
     assert.equal(ui.letter.hidden, true);
+  });
+});
+
+test('Envelope reduced motion snapshots preference per opening and preserves normal timings on the next run', async () => {
+  await withEnvelopeMotion(true, async (ui) => {
+    ui.seal.events.click();
+    ui.advance(0);
+    ui.setReduced(false);
+    ui.advance(60000);
+    assert.equal(ui.letter.hidden, true, 'A preference change must not invent an auto-advance');
+    ui.cardControl.events.click();
+    ui.backButton.events.click();
+    ui.seal.events.click();
+    ui.advance(599);
+    assert.equal(ui.welcome.classList.contains('is-opening-envelope'), false);
+    ui.advance(1 + 4700);
+    assert.equal(ui.cardControl.textContent, 'Pausar');
+    ui.advance(4799);
+    assert.equal(ui.letter.hidden, true);
+    ui.advance(1);
+    assert.equal(ui.letter.hidden, false);
+  });
+});
+
+test('Envelope changing preference mid-opening does not reschedule the normal timeline', async () => {
+  await withEnvelopeMotion(false, async (ui) => {
+    ui.seal.events.click();
+    ui.setReduced(true);
+    ui.advance(599);
+    assert.equal(ui.welcome.classList.contains('is-opening-envelope'), false);
+    ui.advance(1 + 4700);
+    assert.equal(ui.cardControl.textContent, 'Pausar');
+    ui.advance(4799);
+    assert.equal(ui.letter.hidden, true);
+    ui.advance(1);
+    assert.equal(ui.letter.hidden, false);
+    ui.backButton.events.click();
+    ui.seal.events.click();
+    ui.advance(0);
+    assert.equal(ui.cardControl.textContent, 'Continuar');
+    assert.equal(ui.letter.hidden, true);
+    assert.equal(ui.timers.size, 0);
+  });
+});
+
+test('Envelope reduced continue before the zero-duration completion step reveals only once', async () => {
+  await withEnvelopeMotion(true, async (ui) => {
+    ui.seal.events.click();
+    ui.nextTimer(); // abertura
+    ui.nextTimer(); // cartão apresentado, conclusão ainda pendente
+    assert.equal(ui.cardControl.textContent, 'Continuar');
+    ui.cardControl.events.click();
+    ui.cardControl.events.click();
+    assert.equal(ui.cardControl.disabled, true);
+    assert.equal(ui.letter.hidden, true);
+    ui.nextTimer();
+    assert.equal(ui.letter.hidden, false);
+    assert.equal(ui.letterTitle.focusCalls.length, 1);
+    assert.equal(ui.timers.size, 0);
+  });
+});
+
+for (const reduced of [false, true]) test(`Envelope ${reduced ? 'reduce' : 'normal'} preview reset rejects stale callbacks before a new opening`, async () => {
+  await withEnvelopeMotion(reduced, async (ui) => {
+    const coverButton = ui.panels[0].children.find(button => button.attrs['data-preview'] === 'cover');
+    ui.seal.events.click();
+    const obsolete = [...ui.timers.values()].map(timer => timer.callback);
+    if (!reduced) {
+      ui.advance(600);
+      obsolete.push(...[...ui.timers.values()].map(timer => timer.callback));
+    }
+    coverButton.events.click();
+    assert.equal(ui.timers.size, 0);
+    ui.setReduced(true);
+    ui.seal.events.click();
+    obsolete.forEach(callback => callback());
+    ui.advance(0);
+    assert.equal(ui.cardControl.textContent, 'Continuar');
+    assert.equal(ui.letter.hidden, true);
+    assert.equal(ui.timers.size, 0);
+    ui.cardControl.events.click();
+    ui.cardControl.events.click();
+    assert.equal(ui.letterTitle.focusCalls.length, 1);
+    ui.backButton.events.click();
+    obsolete.forEach(callback => callback());
+    ui.advance(60000);
+    assert.equal(ui.letter.hidden, true);
+    assert.equal(ui.cardControl.hidden, true);
+  }, { devPreview: 'cover' });
+});
+
+test('Envelope return control is inert while the hidden letter is still opening', async () => {
+  await withEnvelopeMotion(false, async (ui) => {
+    ui.seal.events.click();
+    ui.advance(600);
+    const pending = ui.timers.size;
+    ui.backButton.events.click();
+    assert.equal(ui.timers.size, pending);
+    assert.equal(ui.welcome.hidden, false);
+    ui.advance(9500);
+    assert.equal(ui.letterTitle.focusCalls.length, 1);
   });
 });
 

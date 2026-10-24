@@ -787,6 +787,18 @@ test('RSVP attendance select preserves native semantics and has scoped visible k
   assert.ok(focusRule.index > css.indexOf('.rsvp-form select {'));
 });
 
+test('RSVP input focus shares the scoped select indicator after the outline reset', async () => {
+  const css = await readFile(new URL('../invite-app/styles/letter/rsvp.css', import.meta.url), 'utf8');
+  const rule = css.match(/\.rsvp-form input:focus-visible,\s*\.rsvp-form select:focus-visible\s*\{([^}]*)\}/);
+  assert.ok(rule, 'All RSVP inputs must override the later component outline reset');
+  assert.match(rule[1], /outline: 2px solid var\(--color-heading\)/);
+  assert.match(rule[1], /outline-offset: 4px/);
+  assert.ok(rule.index > css.indexOf('.rsvp-form select {'));
+  assert.doesNotMatch(rule[1], /!important|width:|height:|padding:/);
+  // Complemento estático: accessibility-browser.mjs verifica a cascata real,
+  // Tab/Shift+Tab, disabled e estilos computados em Edge e Chrome.
+});
+
 test('admin touch highlight is limited to interactive controls and preserves visible keyboard focus', async () => {
   const css = await readFile(new URL('../invite-app/admin/styles/main.css', import.meta.url), 'utf8');
   const dashboard = await readFile(new URL('../invite-app/admin/styles/dashboard.css', import.meta.url), 'utf8');

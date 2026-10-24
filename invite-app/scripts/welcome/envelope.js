@@ -52,6 +52,13 @@ function readAnimationTiming() {
   };
 }
 
+/** Mantém os tokens normais; reduce apresenta o cartão sem avanço automático. */
+function effectiveAnimationTiming(normalTiming, reducedMotion) {
+  return reducedMotion
+    ? { openingPause: 0, cardStart: 0, cardDuration: 0, letterEnter: null }
+    : normalTiming;
+}
+
 
 /* Estados explícitos evitam que um callback antigo revele a carta após a espera. */
 const FLOW_STATES = Object.freeze({
@@ -415,11 +422,11 @@ function createInvitationController({
     flowState = FLOW_STATES.OPENING;
     cardAnimationComplete = false;
     const runId = flowRunId + 1;
-    const cardCompletionDelay = window.matchMedia(
+    // A preferência é capturada por abertura, como já ocorria com a conclusão
+    // do cartão. Não se introduz ressincronização de timers no meio do fluxo.
+    const timing = effectiveAnimationTiming(animationTiming, window.matchMedia(
       '(prefers-reduced-motion: reduce)'
-    ).matches
-      ? 0
-      : animationTiming.cardDuration;
+    ).matches);
     flowRunId = runId;
     seal.setAttribute('aria-disabled', 'true');
     welcome.classList.add('is-opening-invitation');
@@ -454,9 +461,18 @@ function createInvitationController({
 
         cardCompletionTimerId = schedule(
           () => completeCardPresentation(runId),
-          cardCompletionDelay
+          timing.cardDuration
         );
-      }, animationTiming.cardStart);
+
+        if (timing.letterEnter === null) {
+          // O cartão já está em espera: Continuar permanece acionável sem
+          // disputar uma janela automática curta com o usuário de teclado.
+          requestCardPause();
+          cardControl.focus({ preventScroll: true });
+        }
+      }, timing.cardStart);
+
+      if (timing.letterEnter === null) return;
 
       // Etapa 3: a capa é ocultada e a carta recebe o foco.
       letterTimerId = schedule(() => {
@@ -476,8 +492,8 @@ function createInvitationController({
 
         flowState = FLOW_STATES.TRANSITION_AUTHORIZED;
         revealLetter();
-      }, animationTiming.letterEnter);
-    }, animationTiming.openingPause);
+      }, timing.letterEnter);
+    }, timing.openingPause);
   }
 
 

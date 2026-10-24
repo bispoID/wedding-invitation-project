@@ -160,6 +160,7 @@
   font-size: 4cqw;
 }
 
+.rsvp-form input:focus-visible,
 .rsvp-form select:focus-visible {
   outline: 2px solid var(--color-heading);
   outline-offset: 4px;

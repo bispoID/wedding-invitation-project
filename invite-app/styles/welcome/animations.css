@@ -188,3 +188,11 @@
       scale(1);
   }
 }
+
+/* O modo reduzido não deve reter o delay da aba/sombra após reduzir a duração. */
+@media (prefers-reduced-motion: reduce) {
+  .welcome.is-opening-envelope .envelope__flap,
+  .welcome.is-opening-envelope .envelope__card::after {
+    animation-delay: 0s;
+  }
+}
