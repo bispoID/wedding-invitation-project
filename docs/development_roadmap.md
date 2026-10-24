@@ -1,5 +1,23 @@
 # Cronologia de Desenvolvimento — Convite Virtual de Casamento
 
+## Atualização UAT — 23/10/2026, Etapa 5B preparada com ressalvas
+
+- [x] Publicar somente desenvolvimento em 82450ab e confirmar CI 40043031879.
+- [x] Manter Preview Vercel desligado, sem alteração da produção.
+- [x] Confirmar Pages Source Actions, HTTPS e environment restrito a staging.
+- [x] Configurar somente três variáveis públicas UAT no environment github-pages.
+- [x] Preparar localmente CI reutilizável do mesmo SHA, guards e auditoria pré-upload.
+- [x] Validar 370 Node, 150 Deno, 51 JS/MJS e artefato UAT local de 71 arquivos.
+- [x] Auditar ancestralidade e propor regras sem modificar proteções remotas.
+- [ ] Autorizar/aplicar proteções de branches e política de revisão/bypass.
+- [ ] Autorizar publicação dos novos commits de desenvolvimento e obter CI do novo SHA.
+- [ ] Autorizar Etapa 5C: promoção/publicação exclusiva Pages UAT e homologação pública.
+
+**PREPARADO COM RESSALVAS — SEM DEPLOY.** Pages ainda não utiliza o backend UAT.
+Nenhum push, merge, PR, workflow_dispatch, deploy ou escrita Supabase nesta etapa.
+Aceite visual público/dispositivos reais permanece pendente. Checkpoints abaixo
+são históricos. [Evidências e plano](github-pages-uat-preparation.md).
+
 ## Atualização UAT — 23/10/2026, Etapa 5A.1 preparada com ressalvas
 
 - [x] Confirmar no Dashboard o projeto, repositório e Production Branch production.

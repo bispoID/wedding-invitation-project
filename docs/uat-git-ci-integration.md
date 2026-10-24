@@ -1,5 +1,20 @@
 # Etapa 5A — integração Git local e bloqueio de publicação
 
+## Atualização — Etapas 5A.2, 5A.3 e preparação 5B, 23/10/2026
+
+O bloqueio remoto Preview Branch Tracking foi salvo e confirmado na Vercel.
+O push exclusivo de desenvolvimento publicou 82450ab9727b932a7c5e04fe52ae0f3b38c57065;
+CI 40043031879 aprovado (342 Node, 150 Deno), sem novos deployments observados.
+Staging e production não foram promovidas. O gate do primeiro push descrito na
+seção 5A.1 abaixo foi resolvido por essas etapas, não permanece um bloqueio atual.
+
+Etapa 5B: variáveis públicas UAT configuradas em github-pages; Pages e proteções
+Git auditados, gates de publicação corrigidos somente localmente. Novo commit
+773fd598b604c85082b84f04e06a9b40184487ce e documentação subsequente não possuem
+CI remoto aprovado. Build local rastreável validado, sem publicação. Staging e
+production continuam sem proteção remota; as propostas exigem autorização.
+[Resultado completo e plano de promoção](github-pages-uat-preparation.md).
+
 ## Atualização — Etapa 5A.1, 23/10/2026
 
 **PREPARADA COM RESSALVAS.** A configuração Git Vercel foi preparada e validada

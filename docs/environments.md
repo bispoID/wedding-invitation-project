@@ -1,5 +1,17 @@
 # Ambientes e isolamento
 
+## Atualização — Etapa 5B, 23/10/2026, preparação sem deploy
+
+O desenvolvimento 82450ab foi publicado na Etapa 5A.3 e seu CI 40043031879 passou.
+Preview Vercel permanece desligado. Pages continua no deployment antigo, não UAT.
+Nesta etapa, somente três variáveis públicas UAT foram criadas no environment
+github-pages, com persistência conferida; nenhuma configuração PRD foi sobrescrita.
+Workflow/gates de SHA, URL, publishable e artefato foram corrigidos apenas localmente.
+370 Node, 150 Deno e 51 JS/MJS aprovados; build UAT local inspecionado. Proteções
+Git e revisão/bypass ainda exigem autorização; novos commits não possuem CI remoto.
+[Auditoria, variáveis, artefato e plano 5C](github-pages-uat-preparation.md).
+As seções 5A.1 e Etapa 1 abaixo são checkpoints históricos.
+
 ## Proteção Git Vercel — Etapa 5A.1, 23/10/2026, somente local
 
 Dashboard consultado sem alterações: projeto wedding-invitation-project,

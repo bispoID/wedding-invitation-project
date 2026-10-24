@@ -1,5 +1,17 @@
 # Ferramentas e serviços externos
 
+## Atualização GitHub Pages UAT — Etapa 5B, 23/10/2026
+
+Pages Source GitHub Actions e HTTPS obrigatório confirmados no Dashboard.
+Criadas exclusivamente UAT_SUPABASE_PROJECT_REF, UAT_SUPABASE_URL e
+UAT_SUPABASE_PUBLIC_KEY em github-pages; nenhum Repository Variable/Secret ou
+environment Production/Preview alterado. Publishable UAT reconfirmada por metadados
+oficiais, sem --reveal e sem imprimir a chave. Um GET público UAT alimentou o
+build local; não houve escrita Supabase, Auth, RSVP ou acesso ao Pages publicado.
+Preview Vercel desligado e produção READY preservados. Proteções propostas não
+foram aplicadas; nenhum push/deploy. [Evidências e limites](github-pages-uat-preparation.md).
+As seções anteriores de preparação abaixo são históricas.
+
 ## Auditoria Vercel — 23/10/2026, Etapa 5A.1
 
 A sessão autenticada no navegador do Codex permitiu somente leitura dos campos
