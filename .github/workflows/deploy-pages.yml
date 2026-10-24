@@ -8,17 +8,26 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
+  validate:
+    if: github.ref == 'refs/heads/staging'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/test.yml
+
   deploy:
+    needs: validate
     # A execução manual também só pode publicar o ambiente de homologação.
     if: github.ref == 'refs/heads/staging'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -29,7 +38,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: staging
+          ref: ${{ github.sha }}
+          persist-credentials: false
 
       - name: Configure GitHub Pages
         id: pages
@@ -51,7 +61,7 @@ jobs:
           SUPABASE_PUBLIC_KEY: ${{ vars.UAT_SUPABASE_PUBLIC_KEY }}
           BUILD_ID: ${{ github.sha }}
           PUBLIC_SITE_URL: ${{ steps.pages.outputs.base_url }}
-        run: node scripts/prepare-static-site.mjs
+        run: node scripts/prepare-pages-uat.mjs
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
