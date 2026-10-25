@@ -2,6 +2,11 @@
 
 ## Estado em 25/10/2026
 
+**Versão atual publicada em UAT: `bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb`.**
+O refinamento visual foi publicado com sucesso; a inspeção do estado normal do
+login e dos arquivos publicados foi concluída. O novo estado de sucesso tem
+cobertura automatizada, sem nova recuperação ou troca real neste ciclo.
+
 **Publicação e validação funcional da versão UAT `ed5f7c9` concluídas.**
 Solicitação, recebimento, callback, submissão humana, sucesso persistente e
 retorno pelo link foram verificados na versão publicada. O responsável confirmou
@@ -12,10 +17,11 @@ UUID preservado e bloqueio do acesso direto e do link reutilizado.
 O dashboard nesse login foi confirmado pelo responsável; não se atribui essa
 observação ao agente, cuja conferência posterior encontrou a aba já sem sessão.
 O refinamento visual posterior compõe esta nova entrega, com testes automatizados,
-sem integrar o aceite funcional anterior de ed5f7c9. Sua publicação será registrada
-separadamente neste documento. PRD não foi promovido ou configurado.
+sem integrar o aceite funcional anterior de ed5f7c9. A publicação e os limites
+da inspeção desta atualização são registrados separadamente abaixo. PRD não foi
+promovido ou configurado.
 
-## Versão e publicação
+## Primeira versão e publicação — ed5f7c9
 
 - Entrega: `ed5f7c9c99dfa269607c5628e5514ca703b75217`,
   `feat(admin): add secure password recovery flow`.
@@ -24,7 +30,8 @@ separadamente neste documento. PRD não foi promovido ou configurado.
   `origin/production` estava em `09267d1188d26e95a2295897da6695a20a1e6b27`.
 - Push da feature para CI; depois fast-forward e push exclusivo de `staging`
   para o mesmo SHA. A branch local staging estava desatualizada e foi avançada
-  sem reset, force ou reescrita. Nenhum commit novo foi criado naquele primeiro ciclo de publicação.
+  sem reset, force ou reescrita. Nenhum commit novo foi criado naquele primeiro
+  ciclo de publicação.
 - Gatilhos conferidos: `test.yml` em push; `deploy-pages.yml` somente staging,
   com validação do mesmo SHA. `vercel.json` desabilita deployments das branches
   feature/landing-page e staging; production não foi movimentada.
@@ -104,30 +111,70 @@ Credenciais UAT devem continuar privadas e distintas do `.dev/admin.json` local.
 ## Refinamento visual final — nova entrega UAT
 
 O responsável observou que a orientação de criação de senha continuava junto ao
-resultado e pediu remover o complemento de sucesso sobre sessão/login. A atualização oculta `reset-description` após confirmação real de updateUser e reduz
+resultado e pediu remover o complemento de sucesso sobre sessão/login. A
+atualização oculta `reset-description` após confirmação real de updateUser e reduz
 as confirmações normais da página e do login a **Senha alterada com sucesso.**
 Erros de logout continuam separados e informativos. O retorno explícito é mantido.
 
-Esse refinamento **não integra a versão ed5f7c9 já homologada**. Está preparado
-para commit e publicação exclusivos em UAT, com a mensagem
-`fix(admin): refine password recovery success feedback`. Regressões DOM
-atualizadas, **411 testes locais**,
-sintaxe dos quatro JS/MJS envolvidos e `git diff --check` aprovados. Não se repetiu
+Esse refinamento **não integra a versão ed5f7c9 já homologada**. Foi incluído no
+commit `bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb`,
+`fix(admin): refine password recovery success feedback`, com 11 arquivos
+(implementação, testes e documentação consolidada). Regressões DOM atualizadas,
+**411 testes locais**, sintaxe dos quatro JS/MJS envolvidos e `git diff --check` aprovados. Não se repetiu
 outra troca de senha para esse ajuste. O sucesso persistente da versão publicada
 foi observado realmente; o texto simplificado e a ocultação da orientação foram
-validados automaticamente nesta atualização. O estado de sucesso só pode ser
-alcançado após atualização confirmada da senha; não se fabricará sessão, evento
-Auth ou parâmetro de sucesso para obter uma captura. Se esse estado não estiver
-disponível legitimamente após publicar, registrar a cobertura automatizada e a
-limitação visual, preservando o aceite funcional anterior.
+validados automaticamente nesta atualização.
+
+### Publicação e verificação de bf35bc2
+
+- Working tree limpo após commit; staging explícito dos 11 arquivos, staged diff
+  revisado e `git diff --cached --check` aprovado. Nenhum arquivo privado ou
+  segredo real identificado. `.dev/admin.json` e dev-config.json seguem ignorados.
+- As validações locais anteriores foram reaproveitadas: não houve nova mudança
+  de código neste ciclo. Push da feature, CI do SHA exato aprovado, promoção de
+  staging por fast-forward de ed5f7c9 para bf35bc2 e push somente de staging.
+- [CI feature 40204682771](https://github.com/bispoID/wedding-invitation-project/actions/runs/40204682771),
+  [CI staging 40204737563](https://github.com/bispoID/wedding-invitation-project/actions/runs/40204737563)
+  e [Pages 40204737681](https://github.com/bispoID/wedding-invitation-project/actions/runs/40204737681):
+  completed/success. Job validate do Pages confirmou **411 Node, 150 Deno**,
+  sintaxe de **33 JS** e whitespace aprovados.
+- Artefato `github-pages` ID `12603671041`, SHA-256
+  `6c08d94acb4768beeddd4f5269aa5ac5515b23e0fe3316c268a94c11dc9bcefc`.
+  Os **75 arquivos** publicados corresponderam byte a byte ao artefato CI. Os
+  quatro recursos diretamente envolvidos no feedback também coincidem com os
+  blobs do commit; a comparação usa Git, evitando a conversão CRLF do checkout.
+- Runtime público 200: appEnv=uat, projectRef=`eugvobtvjicvocttnkka`, base Pages
+  correta e buildId=`bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb`.
+  Feature e staging remotas no mesmo SHA. Production permanece em
+  `09267d1188d26e95a2295897da6695a20a1e6b27`.
+- Navegador real: login da versão publicada carregou com formulário e foco no
+  e-mail. O aviso de sucesso da navegação anterior já não estava disponível.
+  Não se inseriu parâmetro de sucesso, sessão, evento Auth ou mutação do DOM para
+  fabricar esse estado. Nenhum e-mail de recuperação foi solicitado e nenhuma
+  senha foi alterada neste ciclo.
+- **Limitação visual:** a ocultação da orientação, a frase curta de sucesso e a
+  permanência de Ir para o login foram verificadas pelos testes DOM e pelos
+  recursos publicados, sem nova observação do estado de sucesso em UAT. Esse
+  estado depende de uma atualização de senha confirmada; não foi repetida apenas
+  para conferir textos. O E2E funcional de ed5f7c9 permanece como evidência anterior,
+  sem ser reatribuído ao novo SHA.
+- Evidências privadas sanitizadas, fora do commit:
+  `.dev/qa/uat-password-feedback/published-audit.json` e
+  `.dev/qa/uat-password-feedback/login-published.png`.
+- Retorno ao checkout feature/landing-page após a promoção. Apenas este registro
+  e o status correspondente no roadmap foram atualizados após o commit e ficaram
+  locais para revisão, sem segundo commit automático naquele ciclo. A consolidação
+  documental posterior recebeu autorização explícita para commit local.
 
 ## Limites e preservação
 
 Configuração e recursos PRD não foram consultados ou alterados. A conferência da
 referência Git production não envolveu o frontend ou Auth PRD. Nenhuma Function,
 migration, política de banco, Google Sheets ou configuração SMTP foi modificada.
-Este ciclo autoriza commit e publicação do ajuste/testes e documentação
-consolidada. Evidências acrescentadas após o commit ficam locais para revisão.
+O ciclo de publicação de bf35bc2 autorizou o commit e a publicação do ajuste,
+testes e documentação consolidada. As evidências acrescentadas após aquele commit
+foram revisadas neste encerramento documental; seu commit local não publica uma
+nova versão em UAT ou PRD. O plano PRD é uma preparação separada, somente leitura.
 
 Procedimento: [ambientes](environments.md). Histórico da entrega e aceite DEV:
 [validação DEV](password-recovery-dev-validation.md).
