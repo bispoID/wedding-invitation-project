@@ -43,7 +43,7 @@ async function initializeLogin() {
 
     const success = document.querySelector('#login-success');
     if (new URLSearchParams(window.location.search).get('password-reset') === 'success') {
-      success.textContent = 'Senha alterada com sucesso. Sessão atual encerrada. Entre com a nova senha.';
+      success.textContent = 'Senha alterada com sucesso.';
       success.hidden = false;
       window.history.replaceState(null, '', window.location.pathname);
     }

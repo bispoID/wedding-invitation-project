@@ -187,10 +187,16 @@ acessa o Google Sheets.
 ## Recuperação do acesso administrativo
 
 Não confundir recuperação de senha com recuperação de RSVPs da contingência.
-O fluxo de senha está implementado e funcionalmente validado em DEV neste diff
-local; não está publicado nem homologado em UAT/PRD. O último aviso persistente
-foi validado automaticamente, sem outra troca real após esse ajuste. Evidências:
-[validação DEV](password-recovery-dev-validation.md).
+O fluxo de senha está implementado e funcionalmente validado em DEV. A entrega
+`ed5f7c9` foi publicada em UAT em 25/10/2026; a validação funcional UAT dessa
+versão foi concluída: troca humana, sucesso persistente e retorno verificados;
+senha antiga rejeitada, nova autenticando e abertura do painel confirmadas pelo
+responsável. PRD não recebeu a entrega. A atualização visual posterior reduz
+o aviso a **Senha alterada com sucesso.** e oculta a orientação de criação após
+a troca; tem validação automatizada própria. A publicação dessa atualização e
+seus limites de observação visual são registrados separadamente. Evidências:
+[validação DEV](password-recovery-dev-validation.md) e
+[publicação/homologação UAT](password-recovery-uat-validation.md).
 
 No login, **Esqueci minha senha** abre o formulário de e-mail. A chamada oficial
 `resetPasswordForEmail` usa uma resposta neutra para contas existentes/ausentes;
@@ -241,8 +247,7 @@ Depois da atualização, `signOut({ scope: 'local' })` encerra **a sessão atual
 pelo SDK. Em sucesso, mantém **Senha alterada com sucesso** visível e oferece
 **Ir para o login**, com foco e descrição acessível da confirmação. Não há
 redirecionamento imediato nem timer que impeça a leitura. O link abre o login
-com aviso para usar a nova senha. Se o
-logout falhar, a interface informa que a senha já mudou, limpa os campos e oferece
+com aviso de sucesso. Se o logout falhar, a interface informa que a senha já mudou, limpa os campos e oferece
 retry de logout, sem repetir a atualização. Outros dispositivos não são
 explicitamente desconectados por esse escopo; não se promete invalidação
 imediata de todos os JWTs já emitidos. O aviso de sucesso no login é apenas
@@ -259,9 +264,11 @@ senha/política, expiração e falha de logout têm tratamentos separados.
 
 ### Pré-requisitos posteriores em UAT e PRD
 
-Conferir separadamente no projeto correto, sob autorização; nada abaixo foi
-modificado remotamente neste ciclo. São URLs **a configurar/conferir após
-publicação autorizada**, não uma afirmação de disponibilidade atual:
+Conferir separadamente no projeto correto, sob autorização. UAT: callback exato
+configurado e entrega publicada e funcionalmente validada em 25/10/2026; ver o
+registro UAT para as evidências e a versão do refinamento visual posterior.
+PRD: configuração e homologação continuam pendentes. A tabela define os destinos;
+não comprova homologação funcional:
 
 | Ambiente / projeto | Site URL | Redirect URL exata de recuperação |
 | --- | --- | --- |

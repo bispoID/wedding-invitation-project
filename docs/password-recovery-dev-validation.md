@@ -1,5 +1,9 @@
 # Recuperação administrativa — validação DEV
 
+> Checkpoint DEV preservado. Continuação posterior: [publicação e homologação
+> UAT](password-recovery-uat-validation.md). O estado abaixo descreve o encerramento
+> DEV anterior à publicação UAT.
+
 ## Conclusão em 25/10/2026
 
 **Implementação e validação funcional DEV concluídas.** Configuração, publicação

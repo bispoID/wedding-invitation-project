@@ -131,7 +131,7 @@ export function createPasswordReset(auth, recovery, { onPasswordUpdated = () => 
         return { status: 'logout-error', message: 'Senha alterada com sucesso, mas não foi possível encerrar esta sessão. Tente encerrar a sessão novamente antes de voltar ao login.' };
       }
       recovery.dispose();
-      terminalResult = { status: 'success', message: 'Senha alterada com sucesso. Sessão atual encerrada. Entre com a nova senha.' };
+      terminalResult = { status: 'success', message: 'Senha alterada com sucesso.' };
       return terminalResult;
     } catch (error) {
       if (updated) return { status: 'logout-error', message: 'Senha alterada com sucesso, mas não foi possível concluir o encerramento desta sessão. Tente encerrar a sessão novamente.' };

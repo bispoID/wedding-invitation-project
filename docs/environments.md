@@ -75,8 +75,12 @@ Na primeira adoção do contrato é necessário autenticar novamente, inclusive
 em PRD; a transição foi publicada. Não migre storage/token entre ambientes.
 
 A recuperação administrativa usa callback exato derivado da mesma base validada,
-sem destinos fornecidos pela URL. A implementação local não configura o Auth
-remoto. URLs e pré-requisitos de SMTP/template para futura homologação:
+sem destinos fornecidos pela URL. O callback exato foi configurado no Auth UAT
+em 25/10/2026, após publicação de `ed5f7c9`; a validação funcional dessa versão
+foi concluída, incluindo logins e dashboard confirmados pelo responsável. O
+refinamento visual posterior tem entrega e registro de publicação separados
+daquele aceite funcional. PRD não recebeu essa entrega/configuração. Evidências:
+[recuperação UAT](password-recovery-uat-validation.md). URLs e pré-requisitos:
 [recuperação administrativa](admin-guest-management.md#pré-requisitos-posteriores-em-uat-e-prd).
 
 ## Build e artefatos

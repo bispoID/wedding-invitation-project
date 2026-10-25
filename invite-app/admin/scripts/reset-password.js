@@ -4,6 +4,7 @@ import { clearRecoveryUrl, createPasswordReset, INVALID_RECOVERY_MESSAGE } from 
 
 const form = document.querySelector('#reset-form');
 const feedback = document.querySelector('#reset-feedback');
+const description = document.querySelector('#reset-description');
 const button = document.querySelector('#reset-button');
 const retry = document.querySelector('#reset-logout');
 const login = document.querySelector('#reset-login');
@@ -37,8 +38,9 @@ async function initialize() {
   const reset = createPasswordReset(client.auth, getRecoveryState(), {
     onPasswordUpdated() {
       hidePasswordForm();
+      description.hidden = true;
       feedback.setAttribute('role', 'status');
-      feedback.textContent = 'Senha alterada com sucesso. Encerrando esta sessão...';
+      feedback.textContent = 'Senha alterada com sucesso.';
     },
   });
   async function submit(event) {

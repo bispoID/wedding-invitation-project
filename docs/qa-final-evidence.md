@@ -1,5 +1,20 @@
 # QA final — evidências técnicas e manuais
 
+## Recuperação administrativa — UAT, 25/10/2026
+
+Entrega `ed5f7c9c99dfa269607c5628e5514ca703b75217` publicada em Pages UAT,
+[run 40199947457](https://github.com/bispoID/wedding-invitation-project/actions/runs/40199947457),
+com CI aprovado e 75 arquivos publicados idênticos ao artefato. Auth UAT recebeu
+somente o callback exato e o e-mail autorizado do mesmo administrador, preservando
+UUID; serviço padrão de e-mail e template mantidos. Solicitação → recebimento →
+callback, troca humana, sucesso persistente, retorno ao login, UUID e bloqueio de
+reuso aprovados. O responsável confirmou senha anterior rejeitada, nova senha
+autenticando e abertura do Painel de administração UAT. Validação funcional da
+versão publicada concluída; a evidência dos logins e do dashboard é humana.
+Refinamento posterior do texto e da orientação de senha validado localmente
+(411 testes), com commit/publicação UAT próprios registrados no relatório.
+PRD preservado. [Evidências e pendências](password-recovery-uat-validation.md).
+
 ## Publicação DEV/UAT/PRD — 24/10/2026
 
 Registro consolidado da homologação e Etapa 6C, não nova execução de testes

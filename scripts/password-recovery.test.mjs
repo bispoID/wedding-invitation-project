@@ -236,6 +236,7 @@ test('reset page is blocked initially, bootstrapped and included with all recove
   const html = await read('invite-app/admin/reset-password.html');
   assert.match(html, /<form inert[^>]*id="reset-form" hidden>/);
   assert.match(html, /autocomplete="new-password"/);
+  assert.match(html, /id="reset-description"/);
   assert.match(html, /name="referrer" content="no-referrer"/);
   assert.match(html, /shared\/bootstrap.js/);
   const bootstrap = await read('invite-app/scripts/shared/bootstrap.js');
@@ -256,6 +257,7 @@ async function withResetPage({ valid = true, initError = null, logoutFails = fal
     focus() { this.focused = true; },
     reset() { this.cleared = true; },
   };
+  get('#reset-description').hidden = false;
   const auth = authDouble();
   const state = recovery.observeRecovery(auth, valid ? callback : 'https://example.invalid/sub/admin/reset-password.html');
   let initialized = false;
@@ -290,6 +292,7 @@ test('reset UI waits for the SDK event, cleans callback and shows password form 
   await withResetPage({}, async ({ get, navigations, cleanups }) => {
     assert.equal(get('#reset-form').inert, false);
     assert.equal(get('#reset-form').hidden, false);
+    assert.equal(get('#reset-description').hidden, false);
     assert.equal(get('#new-password').focused, true);
     assert.deepEqual(navigations, []);
     assert.deepEqual(cleanups, [[null, '', '/sub/admin/reset-password.html']]);
@@ -303,7 +306,8 @@ test('reset UI waits for the SDK event, cleans callback and shows password form 
     assert.equal(get('#reset-login').hidden, false);
     assert.equal(get('#reset-login').attrs['aria-describedby'], 'reset-feedback');
     await new Promise(resolve => setImmediate(resolve));
-    assert.match(get('#reset-feedback').textContent, /^Senha alterada com sucesso/);
+    assert.equal(get('#reset-feedback').textContent, 'Senha alterada com sucesso.');
+    assert.equal(get('#reset-description').hidden, true);
     assert.deepEqual(navigations, []);
     assert.equal(get('#reset-button').disabled, false);
   });
@@ -329,6 +333,7 @@ test('logout failure UI clears password fields and exposes only the logout retry
     assert.equal(get('#reset-login').hidden, true);
     assert.equal(get('#reset-logout').hidden, false);
     assert.match(get('#reset-feedback').textContent, /Senha alterada com sucesso/);
+    assert.equal(get('#reset-description').hidden, true);
     auth.signOut = async () => ({ error: null });
     await get('#reset-logout').events.click({ preventDefault() {} });
     assert.equal(auth.calls.filter(([method]) => method === 'updateUser').length, 1);
@@ -350,20 +355,22 @@ test('regression UI: preventDefault, same-session reannouncement, confirmed upda
     assert.equal(prevented, true);
     assert.equal(get('#reset-button').disabled, true);
     assert.equal(get('#reset-feedback').textContent, 'Atualizando sua senha...');
+    assert.equal(get('#reset-description').hidden, false);
     await get('#reset-form').events.submit({ preventDefault() {} });
     assert.equal(updates, 1);
     assert.deepEqual(navigations, []);
     finishUpdate({ data: { user: session.user }, error: null });
     await Promise.resolve();
     await Promise.resolve();
-    assert.match(get('#reset-feedback').textContent, /^Senha alterada com sucesso/);
+    assert.equal(get('#reset-feedback').textContent, 'Senha alterada com sucesso.');
+    assert.equal(get('#reset-description').hidden, true);
     assert.equal(get('#reset-form').hidden, true);
     assert.deepEqual(navigations, []);
     auth.emit('SIGNED_OUT', null);
     assert.equal(state.allows(session), false);
     finishLogout({ error: null });
     await pending;
-    assert.match(get('#reset-feedback').textContent, /^Senha alterada com sucesso/);
+    assert.equal(get('#reset-feedback').textContent, 'Senha alterada com sucesso.');
     assert.deepEqual(navigations, []);
     assert.equal(get('#reset-login').href, 'https://example.invalid/sub/admin/login.html?password-reset=success');
     await get('#reset-form').events.submit({ preventDefault() {} });
@@ -436,7 +443,7 @@ test('recovery takes precedence over automatic login redirect, while the success
   await withLoginPage({ activeSession: null, search: '?password-reset=success' }, ({ get, navigations }) => {
     assert.deepEqual(navigations, []);
     assert.equal(get('#login-success').hidden, false);
-    assert.match(get('#login-success').textContent, /Sessão atual encerrada/);
+    assert.equal(get('#login-success').textContent, 'Senha alterada com sucesso.');
   });
 });
 
