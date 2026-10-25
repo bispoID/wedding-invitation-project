@@ -56,7 +56,8 @@ seleção por query string, localStorage ou devmode.
 
 ## Inicialização e sessões
 
-As três páginas carregam somente `shared/bootstrap.js`. Em host local, ele
+As páginas públicas e administrativas (incluindo `admin/reset-password.html`)
+carregam somente `shared/bootstrap.js`. Em host local, ele
 carrega `dev-config.json`; nos demais hosts, `runtime-config.json`. Essa leitura
 na própria origem é a única consulta anterior à validação. Redirects do
 manifesto são recusados e o carregamento possui timeout de 12 segundos.
@@ -72,6 +73,11 @@ A sessão usa `invitation-v1-<ambiente>-<projectRef>-auth`. Sessões antigas
 `sb-<ref>-auth-token` não são reutilizadas, removidas nem encerradas remotamente.
 Na primeira adoção do contrato é necessário autenticar novamente, inclusive
 em PRD; a transição foi publicada. Não migre storage/token entre ambientes.
+
+A recuperação administrativa usa callback exato derivado da mesma base validada,
+sem destinos fornecidos pela URL. A implementação local não configura o Auth
+remoto. URLs e pré-requisitos de SMTP/template para futura homologação:
+[recuperação administrativa](admin-guest-management.md#pré-requisitos-posteriores-em-uat-e-prd).
 
 ## Build e artefatos
 

@@ -776,7 +776,7 @@ de dados, isolamento, credenciais e publicação continuam requisitos essenciais
 
 | Categoria | Item | Tratamento |
 | --- | --- | --- |
-| Melhoria importante | Recuperação administrativa completa e validação do procedimento oficial preservando UUID | Risco residual conhecido e explicitamente aceito; não implementada/testada integralmente; não bloqueante por padrão |
+| Melhoria importante | Recuperação administrativa e homologação preservando UUID | Implementação e validação funcional DEV concluídas, incluindo troca e logins pela interface, UUID preservado e credencial local sincronizada. Último aviso persistente validado por testes automatizados, sem nova troca real. Configuração/homologação UAT/PRD e contingência manual continuam pendentes. [Evidências](password-recovery-dev-validation.md) |
 | Melhoria operacional | Conferir cobertura de monitor do frontend PRD, distinta do monitor Pages/UAT | Sem evidência de configuração atual Vercel no UptimeRobot; não é falha comprovada |
 | Cobertura evolutiva | Safari/iOS, Firefox e tecnologias assistivas/zoom no release atual | Priorizar por público e alterações, sem exigir matriz universal |
 | Funcionalidade opcional | MFA, CAPTCHA se necessário, domínio próprio e observabilidade adicional | Avaliar benefício/risco/custo antes de adotar |

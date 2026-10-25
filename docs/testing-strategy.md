@@ -41,12 +41,13 @@ npm run dev:integration
 `npm run dev:test` chama a mesma seleção Node de `test:node`, sem exigir Docker,
 credenciais ou serviços. O CI usa esse comando canônico; SQL e integração são
 etapas locais separadas, com os comandos em [local-development.md](local-development.md).
+`npm run test` é um alias para `npm run test:node`, sem uma segunda seleção.
 
 ## Descoberta e contagem Node
 
 A seleção explícita de `package.json` inclui `app-config`, `prepare-static-site`,
 `admin-block3`, `guest-list-controller`, `event-config`, `environment-isolation`,
-`vercel-deployment` e `pages-uat`.
+`vercel-deployment`, `pages-uat` e `password-recovery`.
 O agregador `admin-block3.test.mjs` já importa `envelope-motion`,
 `welcome-typography`, `welcome-wallpaper` e `invitation-names`: todos os arquivos
 de teste em `scripts/` estão cobertos, sem executá-los novamente como entradas.
@@ -68,6 +69,18 @@ Para mudanças só em Markdown, conferir diff/whitespace, links, âncoras e
 veracidade das afirmações contra os consumidores versionados; não repetir a
 suíte da aplicação sem dependência técnica demonstrada. Para código, selecionar
 as camadas afetadas e usar fixtures; novo E2E remoto exige escopo autorizado.
+
+`password-recovery.test.mjs` cobre solicitação neutra, falhas/rate limit,
+concorrência, retorno validado por evento, sessão anterior, acesso direto/reload,
+erros de link, limpeza da URL, confirmação/política de senha, rejeições do Auth,
+atualização só da senha, logout local e retry separado. Fixtures do DOM verificam
+o formulário bloqueado/liberado e a confirmação persistente com link ao login; isso não equivale ao
+aceite visual. Root/subpath são cobertos também pelo preparador da allowlist.
+Validação funcional DEV concluída e distinção do último ajuste visual automatizado:
+[validação DEV de senha](password-recovery-dev-validation.md).
+A regressão de 25/10 cobre `SIGNED_IN` reemitido pelo SDK para a mesma sessão,
+troca efetiva de `session_id`, renovação do token, perda da resposta de update,
+confirmação antes de logout demorado e sucesso que eventos tardios não substituem.
 
 Pages exige CI completo do mesmo SHA por workflow_call, depois o gate portátil,
 o build UAT e a auditoria do artefato. Production exige o check homologado antes

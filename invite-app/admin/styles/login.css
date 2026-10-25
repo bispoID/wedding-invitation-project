@@ -42,3 +42,19 @@
 .login-form .button {
   margin-top: 16px;
 }
+
+.login-link {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--admin-olive-hover);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.login-link:focus-visible {
+  outline: 3px solid var(--admin-focus);
+  outline-offset: 3px;
+}

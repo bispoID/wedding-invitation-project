@@ -187,28 +187,120 @@ acessa o Google Sheets.
 ## Recuperação do acesso administrativo
 
 Não confundir recuperação de senha com recuperação de RSVPs da contingência.
-O frontend implementa login, sessão e logout, mas não um fluxo completo de
-redefinição. Na liberação PRD, o responsável atestou login e consultas funcionais
-pelo domínio oficial e acesso independente ao Dashboard Supabase. A ausência
-de recuperação completa foi aceita como risco residual e melhoria futura.
+O fluxo de senha está implementado e funcionalmente validado em DEV neste diff
+local; não está publicado nem homologado em UAT/PRD. O último aviso persistente
+foi validado automaticamente, sem outra troca real após esse ajuste. Evidências:
+[validação DEV](password-recovery-dev-validation.md).
 
-O plano é preservar o usuário e seu UUID autorizado. Antes de qualquer execução,
-confirmar projeto, identidade, permissão e método oficial; usar ambiente confiável
-e entrada privada da senha. A atualização por ID deve alterar somente a senha,
-sem recriar conta ou mudar allowlist. A Auth Admin API é exclusivamente server-side;
-nunca expor service_role no frontend, argumentos, logs ou relatórios.
+No login, **Esqueci minha senha** abre o formulário de e-mail. A chamada oficial
+`resetPasswordForEmail` usa uma resposta neutra para contas existentes/ausentes;
+falhas de comunicação e rate limit têm mensagens genéricas. Envios simultâneos
+são bloqueados na interface e no controlador. A proteção de abuso continua
+dependendo dos limites do Supabase Auth, não do botão.
 
-O procedimento ainda não foi validado operacionalmente. Acesso a Users não
-comprova capacidade de redefinição; parar se os pré-requisitos não estiverem
-confirmados. Troca de senha, revogação ou mudanças Auth exigem autorização.
-Não presumir revogação imediata de todo token nem usar SQL direto em auth.users.
-Depois de execução autorizada, conferir UUID e login, sem CRUD. Não há rollback
-automático para senha antiga.
+O callback deriva exclusivamente de `APP_BASE_URL`, validada pelo bootstrap,
+como `admin/reset-password.html`, preservando root/subpath e ambiente. Não há
+destino por query string nem fallback. A nova página e seus módulos integram a
+allowlist de publicação. Configuração inválida mantém os controles bloqueados.
 
-Site URL Auth local e redirects vazios são observações da auditoria PRD,
-não uma prova de falha em signInWithPassword. A opção administrativa direta não
-usa e-mail de recuperação. Se for escolhido self-service, implementar e validar
-seu callback real antes de alterar URLs; só mudar URLs não completa o fluxo.
+O SDK existente `@supabase/supabase-js@2.117.2` usa explicitamente **implicit**,
+com detecção de sessão na URL. O listener é registrado imediatamente após
+`createClient`, antes de aguardar Auth. Seu callback é síncrono e não chama
+métodos Auth. A página aguarda `initialize`, o evento agendado pelo SDK e
+`getSession`; exige `PASSWORD_RECOVERY` com o token do callback e o usuário da
+sessão corrente. A autorização fica vinculada ao usuário e ao `session_id` do
+token validado pelo SDK; a leitura desse identificador serve só para comparar
+continuidade, não para autenticar JWTs por conta própria. Revalidações
+`SIGNED_IN` da mesma sessão e renovação do token preservam recovery; logout ou
+troca efetiva de sessão o invalidam, mesmo para o mesmo usuário. Se o token não
+contiver identificador de sessão, só o mesmo access token mantém continuidade.
+`type=recovery`, `INITIAL_SESSION` e sessão anterior, sozinhos,
+não liberam o formulário. O retorno válido aparece antes de qualquer dashboard.
 
-Referência: [Auth Admin updateUserById](https://supabase.com/docs/reference/javascript/auth-admin-updateuserbyid).
-Classificação: [backlog](development_roadmap.md#backlog).
+Link inválido, expirado, reutilizado, acesso direto ou recarregamento solicitam
+outro link no login, inclusive com sessão anterior existente. A prova de recovery
+vive somente na memória dessa navegação. Não há marcador persistido que autorize
+o reload. A sessão preexistente não é encerrada por uma visita inválida; não
+confundir sua existência com autorização para redefinir a senha nessa página.
+O link de retorno usa `login.html?recovery=request` para abrir a solicitação
+mesmo com sessão anterior. Esse parâmetro só escolhe a interface de envio;
+nunca libera a redefinição ou escolhe um destino.
+Query e fragmento são removidos com `replaceState` depois do processamento do SDK;
+se a configuração falhar antes dele, o bootstrap limpa o retorno sem iniciar Auth.
+A página usa meta `referrer` com `no-referrer`. Não copiar links, senhas, tokens
+ou sessões para console, evidências ou relatórios.
+
+A política mínima deste frontend é **6 caracteres**, coerente com
+`minimum_password_length=6` local; espaços são preservados e a confirmação deve
+coincidir. Prefira senha longa e exclusiva. O servidor permanece autoridade para
+política mais forte, senha repetida, reautenticação e expiração; conferir a
+política real antes de homologar outros ambientes. Só `updateUser({ password })`
+é utilizado: não recria usuário, não muda UUID nem `ADMIN_AUTH_USER_IDS`.
+
+Depois da atualização, `signOut({ scope: 'local' })` encerra **a sessão atual**
+pelo SDK. Em sucesso, mantém **Senha alterada com sucesso** visível e oferece
+**Ir para o login**, com foco e descrição acessível da confirmação. Não há
+redirecionamento imediato nem timer que impeça a leitura. O link abre o login
+com aviso para usar a nova senha. Se o
+logout falhar, a interface informa que a senha já mudou, limpa os campos e oferece
+retry de logout, sem repetir a atualização. Outros dispositivos não são
+explicitamente desconectados por esse escopo; não se promete invalidação
+imediata de todos os JWTs já emitidos. O aviso de sucesso no login é apenas
+informativo, nunca prova de recuperação/autorização.
+
+O resultado de `updateUser` deve confirmar o usuário esperado. Só então aparece
+**Senha alterada com sucesso**, antes de aguardar o logout. Uma falha de rede ou
+resposta 5xx depois do envio não comprova que a senha deixou de mudar: o resultado
+é apresentado como **não confirmado**, os campos são limpos e o formulário não
+reenvia a atualização. A orientação é tentar a nova senha no login ou solicitar
+outro link. Falha de comunicação ao verificar a sessão, antes do envio, permite
+nova tentativa e não é apresentada como link expirado. Rejeições explícitas de
+senha/política, expiração e falha de logout têm tratamentos separados.
+
+### Pré-requisitos posteriores em UAT e PRD
+
+Conferir separadamente no projeto correto, sob autorização; nada abaixo foi
+modificado remotamente neste ciclo. São URLs **a configurar/conferir após
+publicação autorizada**, não uma afirmação de disponibilidade atual:
+
+| Ambiente / projeto | Site URL | Redirect URL exata de recuperação |
+| --- | --- | --- |
+| UAT / `eugvobtvjicvocttnkka` | `https://bispoid.github.io/wedding-invitation-project/` | `https://bispoid.github.io/wedding-invitation-project/admin/reset-password.html` |
+| PRD / `bkkienyemqlkueygknzl` | `https://bruna-e-diego.vercel.app/` | `https://bruna-e-diego.vercel.app/admin/reset-password.html` |
+
+Login UAT: `https://bispoid.github.io/wedding-invitation-project/admin/login.html`.
+Login PRD: `https://bruna-e-diego.vercel.app/admin/login.html`.
+
+Antes de enviar e-mail real, conferir destinatário autorizado/controlado do
+administrador, conta existente e UUID autorizado no próprio ambiente. Conferir
+provider Email, Site URL, redirect exato na allowlist do Auth, expiração de links,
+política de senha, reautenticação e rate limits. Não habilitar cadastro público
+para implementar recuperação e não transportar credenciais/sessões entre projetos.
+
+Conferir **SMTP**: remetente e domínio verificados, host/porta/TLS, credenciais
+privadas e destinatários permitidos pelo provedor. O SMTP padrão hospedado tem
+restrições de destinatário (membros autorizados da organização) e limites; não
+assumir que um login existente garante entrega de recuperação. Conferir o template
+**Reset password**: usar o link oficial `{{ .ConfirmationURL }}`, respeitando o
+`RedirectTo` aprovado; não substituir pelo SiteURL sozinho, token próprio ou
+rota PKCE/OTP que este frontend não implementa. Verificar reescrita de links,
+tracking e scanners do e-mail, que podem consumir links antes do clique humano.
+Depois, testar envio/recebimento e percurso completo autorizado em cada ambiente.
+
+Referências oficiais: [resetPasswordForEmail](https://supabase.com/docs/reference/javascript/auth-resetpasswordforemail),
+[SDK 2.117.2 e emissão do evento](https://github.com/supabase/supabase-js/blob/v2.117.2/packages/core/auth-js/src/GoTrueClient.ts),
+[signOut e escopos](https://supabase.com/docs/reference/javascript/auth-signout),
+[SMTP](https://supabase.com/docs/guides/auth/auth-smtp) e
+[templates](https://supabase.com/docs/guides/auth/auth-email-templates).
+
+### Contingência manual
+
+Permanece uma alternativa **não validada operacionalmente neste ciclo**. Antes
+de qualquer execução autorizada, confirmar projeto, identidade, permissão e método
+oficial; usar ambiente confiável e entrada privada da senha. A atualização
+administrativa por ID deve alterar somente a senha, sem recriar conta ou mudar
+allowlist. A [Auth Admin API](https://supabase.com/docs/reference/javascript/auth-admin-updateuserbyid)
+é exclusivamente server-side; nunca expor service_role no frontend, argumentos,
+logs ou relatórios. Acesso a Users não comprova a execução do procedimento.
+Não usar SQL direto em auth.users nem presumir revogação imediata de todo token.
+Depois, conferir UUID e login, sem CRUD. Não há rollback automático da senha.

@@ -99,7 +99,7 @@ for (const input of [undefined, fixture('prd'), { ...fixture(), supabaseAnonKey:
   document.form.handler({ preventDefault() { prevented=true; } }); assert.equal(prevented,true);
 });
 test('all HTML entrypoints use only the controlled bootstrap', async () => {
-  for (const path of ['index.html','admin/index.html','admin/login.html']) {
+  for (const path of ['index.html','admin/index.html','admin/login.html','admin/reset-password.html']) {
     const html = await readFile(new URL('../invite-app/' + path, import.meta.url),'utf8');
     assert.doesNotMatch(html, /<form (?!inert)/);
     assert.match(html, /shared\/bootstrap.js/); assert.doesNotMatch(html,/src="[^"]*scripts\/main.js"/);
@@ -114,12 +114,13 @@ test('Supabase client receives the namespace and never reads legacy storage', as
   let calls=0;
   globalThis.__testCreateClient=(url,key,options)=>{
     calls++; assert.equal(url,config.supabaseUrl); assert.equal(key,config.supabaseAnonKey);
-    assert.deepEqual(options,{auth:{storageKey}});
+    assert.deepEqual(options,{auth:{storageKey,flowType:'implicit',detectSessionInUrl:true}});
     return { synthetic:true };
   };
   try {
     const source=(await readFile(new URL('../invite-app/admin/scripts/supabase.js',import.meta.url),'utf8'))
       .replace(/^import[^;]+;/, `const AUTH_STORAGE_KEY=${JSON.stringify(storageKey)}, SUPABASE_URL=${JSON.stringify(config.supabaseUrl)}, SUPABASE_PUBLIC_KEY=${JSON.stringify(config.supabaseAnonKey)};`)
+      .replace("import { observeRecovery } from './password-recovery.js';", 'const observeRecovery = () => null; const window = { location: { href: "https://example.invalid/" } };')
       .replace("import('https://esm.sh/@supabase/supabase-js@2.117.2')","Promise.resolve({createClient:globalThis.__testCreateClient})");
     const api=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
     assert.deepEqual(await api.getSupabaseClient(),{synthetic:true});

@@ -1,4 +1,6 @@
 import { getCurrentSession, signIn, signOut } from './auth.js';
+import { getSupabaseClient, getRecoveryState } from './supabase.js';
+import { initializeRecoveryRequest } from './recovery-request.js';
 import { getPendingContingency, manageGuest, recoverContingency } from './contingency.js';
 import { getGuests } from './guests.js';
 import { createGuestListController, GUEST_PAGE_SIZES } from './guest-list-controller.js';
@@ -26,14 +28,30 @@ async function initializeLogin() {
 
   try {
     const session = await getCurrentSession();
+    const recovery = getRecoveryState();
+    const recoveryRequested = new URLSearchParams(window.location.search).get('recovery') === 'request';
 
-    if (session) {
+    if (session && !recovery?.allows(session) && !recoveryRequested) {
       window.location.replace('./index.html');
       return;
     }
 
+    if (recovery?.allows(session)) {
+      showError(errorMessage, 'Abra o link de recuperação na página de nova senha. Solicite outro link abaixo.');
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    const success = document.querySelector('#login-success');
+    if (new URLSearchParams(window.location.search).get('password-reset') === 'success') {
+      success.textContent = 'Senha alterada com sucesso. Sessão atual encerrada. Entre com a nova senha.';
+      success.hidden = false;
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+    const client = await getSupabaseClient();
     loadingMessage.hidden = true;
     form.hidden = false;
+    initializeRecoveryRequest(client.auth, document, { open: recoveryRequested });
+    if (recoveryRequested) window.history.replaceState(null, '', window.location.pathname);
   } catch (error) {
     loadingMessage.hidden = true;
     showError(errorMessage, getErrorMessage(error));

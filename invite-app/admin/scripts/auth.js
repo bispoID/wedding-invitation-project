@@ -3,6 +3,8 @@ import { getSupabaseClient } from './supabase.js';
 /** Retorna a sessão atual; ausência de sessão é um resultado válido (`null`). */
 export async function getCurrentSession() {
   const client = await getSupabaseClient();
+  await client.auth.initialize();
+  await new Promise(resolve => setTimeout(resolve, 0));
   const { data, error } = await client.auth.getSession();
 
   if (error) {

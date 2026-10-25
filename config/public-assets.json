@@ -1,6 +1,7 @@
 [
   "admin/index.html",
   "admin/login.html",
+  "admin/reset-password.html",
   "admin/scripts/auth.js",
   "admin/scripts/contingency.js",
   "admin/scripts/date-time.js",
@@ -12,6 +13,9 @@
   "admin/scripts/guests.js",
   "admin/scripts/main.js",
   "admin/scripts/navigation.js",
+  "admin/scripts/password-recovery.js",
+  "admin/scripts/recovery-request.js",
+  "admin/scripts/reset-password.js",
   "admin/scripts/supabase.js",
   "admin/styles/dashboard.css",
   "admin/styles/login.css",

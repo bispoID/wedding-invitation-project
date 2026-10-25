@@ -76,6 +76,35 @@ O administrador sintético é criado pela API administrativa do Auth local com
 uma senha gerada e armazenada somente em `.dev/admin.json`. O UUID local é
 configurado somente no env-file usado pelas Functions.
 
+### Recuperação de senha no DEV
+
+Com o stack pronto, acesse `http://127.0.0.1:8000/invite-app/admin/login.html`
+(servidor na raiz do repositório) ou a mesma rota na porta Live Server 5500.
+Solicite a recuperação para `dev-admin@local.test` e abra o e-mail no
+Mailpit local, `http://127.0.0.1:54324/`. Nenhum e-mail deve ser enviado para
+destinatários reais. O callback testado é
+`http://127.0.0.1:8000/invite-app/admin/reset-password.html`.
+
+`supabase/config.toml` permite callbacks DEV exatos adicionais para
+`127.0.0.1`, `localhost` e `10.0.2.2`, portas 5500/8000, no subpath
+`/invite-app/admin/reset-password.html`. Se o frontend for servido em outra base,
+conferir a URL exata e ajustar apenas o Auth local; não usar wildcard ou UAT/PRD.
+Recarregar a página após o callback exige outro link. O mínimo local permanece
+6 caracteres; o Auth valida sua própria política.
+
+Após a troca sintética, sincronize **privadamente** a senha em `.dev/admin.json`,
+preservando e-mail e UUID. O navegador não acessa esse arquivo. Sem sincronização,
+`dev:up`/`dev:integration` tentarão autenticar com a credencial antiga. Não imprimir
+senhas, tokens ou links para fazer essa atualização; não versionar o arquivo nem
+alterar `ADMIN_AUTH_USER_IDS`. A validação funcional DEV foi concluída: troca
+pela interface confirmada pelo responsável, senha anterior rejeitada e nova senha
+autenticando no dashboard. O responsável sincronizou o arquivo privadamente e o
+UUID foi conferido. O ajuste posterior do aviso persistente de sucesso teve
+validação automatizada, sem outra troca real. Evidências e limites:
+[validação de recuperação DEV](password-recovery-dev-validation.md).
+
+### Contingência local
+
 O provider de contingência é selecionado por `APP_ENV=dev` e
 `CONTINGENCY_PROVIDER=local`. O provider local grava `.dev/contingency.json`,
 aceita o RSVP pendente, lista registros pelo painel e remove a linha somente
