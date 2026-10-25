@@ -32,8 +32,10 @@ recebe HTTP 403. O frontend não decide quem é administrador nem recebe essa
 lista.
 
 Cada administrador possui sua própria conta do Supabase Auth. Na configuração
-PRD registrada, Email Provider está habilitado, confirmação de e-mail é exigida,
-cadastro público está desabilitado e a senha exige no mínimo oito caracteres.
+PRD registrada, Email Provider está habilitado, confirmação de e-mail é exigida
+e cadastro público está desabilitado. Um registro anterior indicava mínimo de
+oito caracteres; na conferência de 25/10/2026, a ferramenta ocultou esse valor,
+sem nova aferição numérica ou alteração da política de senha.
 A proteção contra senhas vazadas estava indisponível no plano inspecionado;
 políticas remotas devem ser conferidas quando forem alteradas, não inferidas do
 config.toml local. Convidados que enviam RSVP não possuem conta Auth.
@@ -191,12 +193,20 @@ O fluxo de senha está implementado e funcionalmente validado em DEV. A entrega
 `ed5f7c9` foi publicada em UAT em 25/10/2026; a validação funcional UAT dessa
 versão foi concluída: troca humana, sucesso persistente e retorno verificados;
 senha antiga rejeitada, nova autenticando e abertura do painel confirmadas pelo
-responsável. PRD não recebeu a entrega. A atualização visual posterior reduz
+responsável. PRD recebeu o candidato exato `bf35bc2` em 25/10/2026, com CI e
+publicação aprovados. Troca real e testes das duas senhas confirmados pelo
+responsável; UUID/e-mail preservados e reuso bloqueado conferidos pelo agente.
+O responsável confirmou a abertura do painel e a lista carregada após o novo
+login, concluindo o aceite funcional PRD.
+Site URL e callback PRD foram configurados, sem alterar a conta administrativa
+ou o serviço de e-mail. A atualização visual reduz
 o aviso a **Senha alterada com sucesso.** e oculta a orientação de criação após
-a troca; tem validação automatizada própria. A publicação dessa atualização e
-seus limites de observação visual são registrados separadamente. Evidências:
+a troca; tem validação automatizada própria e confirmação humana do resultado
+na troca PRD. As evidências e os limites de observação são registrados por
+ambiente e versão, sem reatribuir esse teste ao UAT. Evidências:
 [validação DEV](password-recovery-dev-validation.md) e
-[publicação/homologação UAT](password-recovery-uat-validation.md).
+[publicação/homologação UAT](password-recovery-uat-validation.md) e
+[publicação/validação PRD](password-recovery-prd-validation.md).
 
 No login, **Esqueci minha senha** abre o formulário de e-mail. A chamada oficial
 `resetPasswordForEmail` usa uma resposta neutra para contas existentes/ausentes;
@@ -267,7 +277,10 @@ senha/política, expiração e falha de logout têm tratamentos separados.
 Conferir separadamente no projeto correto, sob autorização. UAT: callback exato
 configurado e entrega publicada e funcionalmente validada em 25/10/2026; ver o
 registro UAT para as evidências e a versão do refinamento visual posterior.
-PRD: configuração e homologação continuam pendentes. A tabela define os destinos;
+PRD: Site URL e callback configurados em 25/10/2026; publicação e aceite
+funcional concluídos, incluindo painel/lista após o novo login confirmados pelo
+responsável no registro PRD.
+A tabela define os destinos;
 não comprova homologação funcional:
 
 | Ambiente / projeto | Site URL | Redirect URL exata de recuperação |

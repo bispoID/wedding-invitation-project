@@ -762,6 +762,13 @@ CI, deployment, runtime BUILD_ID e smoke público aprovados na Etapa 6C.
 Evidências: [QA final](qa-final-evidence.md#publicação-devuatprd--24102026).
 Isso descreve o momento da publicação, não disponibilidade em tempo real.
 
+A recuperação administrativa foi concluída em DEV, UAT e PRD em 25/10/2026.
+Production recebeu o candidato exato `bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb`,
+com CI e deployment READY aprovados. Troca real, testes das duas senhas e
+painel/lista PRD foram confirmados pelo responsável; identidade preservada e
+reuso bloqueado foram conferidos pelo agente. Evidências e limites:
+[registro PRD](password-recovery-prd-validation.md).
+
 App Config, Event Config, CRUD, RSVP, contingência e monitoramento estão
 integrados nos escopos entregues. As Fases 1–13 não são reabertas por melhorias
 opcionais. A cobertura tem limites explícitos: o aceite UAT atualizado inclui
@@ -776,7 +783,7 @@ de dados, isolamento, credenciais e publicação continuam requisitos essenciais
 
 | Categoria | Item | Tratamento |
 | --- | --- | --- |
-| Melhoria importante | Recuperação administrativa e homologação preservando UUID | DEV concluído. `ed5f7c9` publicado em UAT; callback e e-mail do administrador configurados, UUID preservado. Solicitação/recebimento/callback, troca humana, sucesso persistente, retorno, UUID e bloqueio de reuso reais aprovados; rejeição da senha antiga, nova autenticando e painel UAT aberto confirmados pelo responsável. Validação funcional dessa versão UAT concluída. Refinamento visual `bf35bc2` publicado em UAT; CI e 75 arquivos conferidos. Sucesso simplificado coberto automaticamente, sem outra troca real ou novo aceite visual desse estado. Publicação e limites no registro UAT. PRD e contingência manual permanecem fora deste aceite. [DEV](password-recovery-dev-validation.md) / [UAT](password-recovery-uat-validation.md) |
+| Melhoria importante | Recuperação administrativa e homologação preservando UUID | DEV concluído. `ed5f7c9` publicado em UAT; callback e e-mail do administrador configurados, UUID preservado. Solicitação/recebimento/callback, troca humana, sucesso persistente, retorno, UUID e bloqueio de reuso reais aprovados; rejeição da senha antiga, nova autenticando e painel UAT aberto confirmados pelo responsável. Validação funcional dessa versão UAT concluída. Refinamento visual `bf35bc2` publicado em UAT; CI e 75 arquivos conferidos. Sucesso simplificado coberto automaticamente, sem outra troca real ou novo aceite visual desse estado. Publicação e limites no registro UAT. PRD recebeu bf35bc2, com CI/READY/runtime aprovados e ajustes mínimos de Site URL/callback. Troca real, resultado da etapa de sucesso e testes das duas senhas confirmados pelo responsável; identidade preservada e reuso bloqueado conferidos pelo agente. Painel PRD aberto e lista carregada após o novo login confirmados pelo responsável; aceite funcional PRD concluído. Contingência manual permanece não validada. [DEV](password-recovery-dev-validation.md) / [UAT](password-recovery-uat-validation.md) / [PRD](password-recovery-prd-validation.md) |
 | Melhoria operacional | Conferir cobertura de monitor do frontend PRD, distinta do monitor Pages/UAT | Sem evidência de configuração atual Vercel no UptimeRobot; não é falha comprovada |
 | Cobertura evolutiva | Safari/iOS, Firefox e tecnologias assistivas/zoom no release atual | Priorizar por público e alterações, sem exigir matriz universal |
 | Funcionalidade opcional | MFA, CAPTCHA se necessário, domínio próprio e observabilidade adicional | Avaliar benefício/risco/custo antes de adotar |

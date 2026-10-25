@@ -79,7 +79,12 @@ sem destinos fornecidos pela URL. O callback exato foi configurado no Auth UAT
 em 25/10/2026, após publicação de `ed5f7c9`; a validação funcional dessa versão
 foi concluída, incluindo logins e dashboard confirmados pelo responsável. O
 refinamento visual posterior tem entrega e registro de publicação separados
-daquele aceite funcional. PRD não recebeu essa entrega/configuração. Evidências:
+daquele aceite funcional. PRD recebeu `bf35bc2` em 25/10/2026; Site URL/callback
+foram configurados. Troca real e testes das senhas foram confirmados pelo
+responsável; identidade preservada e reuso bloqueado foram conferidos pelo agente.
+O responsável confirmou painel e lista após o novo login, concluindo o aceite
+funcional PRD. Evidências:
+[recuperação PRD](password-recovery-prd-validation.md),
 [recuperação UAT](password-recovery-uat-validation.md). URLs e pré-requisitos:
 [recuperação administrativa](admin-guest-management.md#pré-requisitos-posteriores-em-uat-e-prd).
 

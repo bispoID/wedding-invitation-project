@@ -1,5 +1,26 @@
 # QA final — evidências técnicas e manuais
 
+## Recuperação administrativa — PRD, 25/10/2026
+
+Candidato exato `bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb` promovido por
+fast-forward e push exclusivo de production; 9e3ad34 preservado e excluído.
+[CI 40216876597](https://github.com/bispoID/wedding-invitation-project/actions/runs/40216876597)
+aprovou 411 Node, 150 Deno, sintaxe e whitespace. Deployment Vercel
+`dpl_VhUcj8Lvq56JTxFYgwgyxLCeN8Kr` READY, domínio oficial e runtime PRD com o SHA
+correto. Conferidos 75 recursos; 73 estáticos idênticos ao candidato.
+
+Auth recebeu somente Site URL oficial e callback exato de recuperação. Conta,
+UUID, allowlist administrativa e serviço padrão de e-mail preservados. Login anterior/painel,
+acesso direto rejeitado, solicitação, recebimento e callback reais verificados.
+Troca e resultado da etapa de sucesso simplificado confirmados pelo responsável,
+assim como senha anterior rejeitada e nova autenticando. UUID/e-mail preservados
+por comparação após a troca; reuso rejeitado em outra aba. O responsável confirmou
+que o novo login abriu o painel PRD e carregou a lista, concluindo o aceite
+funcional. A evidência desse acesso posterior é humana; na conferência do agente,
+a aba já estava no login. Rollback elegível para
+`dpl_7wXbLSv8F8DjzasFubCoasRDgvJU` conferido,
+sem executar reversão. [Resultados e limites](password-recovery-prd-validation.md).
+
 ## Recuperação administrativa — UAT, 25/10/2026
 
 Entrega `ed5f7c9c99dfa269607c5628e5514ca703b75217` publicada em Pages UAT,
