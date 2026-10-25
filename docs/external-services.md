@@ -73,10 +73,31 @@ alterar produção para executar essa suíte.
 - consulta do endpoint remoto de Health Check por `HEAD`;
 - intervalo de 15 minutos;
 - alerta por e-mail em caso de falha;
+- monitor HTTP(S) `Frontend PRD — Bruna e Diego`, ID `804420580`, na URL
+  `https://bruna-e-diego.vercel.app/`, HEAD a cada cinco minutos;
 - monitoramento independente do computador local e do painel administrativo.
 
 A configuração atual do monitor está detalhada em
 [health-check.md](health-check.md).
+
+Em 25/10/2026, após login privado do responsável, a consulta autenticada encontrou
+somente Pages/UAT e health Supabase. Como não havia monitor para a URL Vercel,
+foi criado exclusivamente o monitor PRD acima. Plano Free 50 conferido, sem
+contratação: 50 monitores e intervalo de 300 segundos. Configuração salva:
+HEAD, timeout de 30 segundos, sem autenticação e e-mail primário do responsável
+habilitado, sem atraso/repetição. O monitor foi observado **Up**.
+
+O Test Notification foi executado somente para esse contato; as mensagens
+sintéticas TEST DOWN e TEST UP foram recebidas na caixa autorizada e conferidas
+via Gmail. Isso confirma entrega do teste, sem provocar indisponibilidade.
+Os monitores anteriores foram preservados: Pages/UAT `804214516` Paused e
+health Supabase `804216408` Up no inventário final.
+
+A consulta pública independente HEAD retornou HTTP 200 na URL PRD, sem
+redirecionamento. Configuração, horários e limites de observação estão no
+[registro do frontend PRD](health-check.md#conferência-do-frontend-prd--25102026).
+Uma resposta HTTP não comprova execução JavaScript nem o fluxo completo de RSVP;
+o estado Up é uma observação datada, não garantia de disponibilidade futura.
 
 **Referência oficial:**
 
@@ -91,11 +112,12 @@ A configuração atual do monitor está detalhada em
 
 - preparação de `invite-app` em `_site`, com `PUBLIC_SITE_URL` operacional;
 - publicação do artefato pelo workflow `deploy-pages` somente em `staging`;
-- URL atualmente monitorada:
+- URL do monitor Pages/UAT (Paused na consulta de 25/10/2026):
   `https://bispoid.github.io/wedding-invitation-project`.
 
-O monitor historicamente configurado para esse endereço verifica agora UAT;
-não comprova monitoramento da URL Vercel PRD. Ele é independente
+O monitor configurado para esse endereço corresponde agora a UAT e foi
+preservado pausado; sua existência não comprova cobertura ativa. O monitor
+Vercel PRD é separado, conforme registro acima. Ambos são independentes
 do monitor do Supabase, que verifica os pré-requisitos operacionais do RSVP.
 
 GitHub Pages não é uma dependência da arquitetura. A preparação e os testes

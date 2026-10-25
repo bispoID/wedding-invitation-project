@@ -183,22 +183,57 @@ condição que exija atenção.
 
 ## Monitoramento do frontend
 
-Há registro histórico de um monitor externo para o endereço GitHub Pages,
-que agora corresponde a UAT:
+O monitor externo `bispoid.github.io`, ID `804214516`, aponta para o endereço
+GitHub Pages, que agora corresponde a UAT:
 
 ```text
 https://bispoid.github.io/wedding-invitation-project
 ```
 
-Esse monitor verifica a disponibilidade da página. O monitor do Supabase
-verifica a saúde da infraestrutura necessária ao RSVP. Eles têm objetivos
-diferentes.
+Na consulta autenticada de 25/10/2026, esse monitor estava **Paused**, com
+intervalo de cinco minutos, e foi preservado nesse estado. Sua existência não
+comprova cobertura UAT ativa. O monitor `Supabase — Health Check RSVP`, ID
+`804216408`, estava **Up** e não foi alterado. Ele verifica a infraestrutura
+necessária ao RSVP, independentemente da hospedagem estática.
 
 PRD é servido pela Vercel em https://bruna-e-diego.vercel.app/.
-Não há evidência nesta revisão de monitor UptimeRobot para esse domínio;
-verificar a cobertura antes de alterar qualquer monitor. Isso é uma melhoria
-operacional, não uma falha comprovada. O health PRD consulta diretamente a Edge
-Function do Supabase, independentemente da hospedagem estática.
+
+### Conferência do frontend PRD — 25/10/2026
+
+A primeira tentativa encontrou a tela de login. Após autenticação privada pelo
+responsável, a consulta mostrou somente os dois monitores acima, sem cobertura
+da URL Vercel PRD. A ausência foi constatada no serviço, não inferida do backlog.
+Foi criado exclusivamente o monitor PRD abaixo, sem reutilizar ou alterar
+Pages/UAT e health Supabase.
+
+| Item | Evidência neste ciclo |
+| --- | --- |
+| Nome e ID | `Frontend PRD — Bruna e Diego`, `804420580`. |
+| URL PRD | `https://bruna-e-diego.vercel.app/` |
+| Consulta pública independente | HEAD, HTTP 200, destino final igual à URL solicitada, zero redirecionamentos; 25/10/2026. |
+| Tipo, método e intervalo | HTTP(S), HEAD, 300 segundos (cinco minutos), conferidos novamente na configuração salva. HEAD é o padrão mantido; não se contratou edição Premium de método. |
+| Plano consultado | Free 50: 50 monitores, intervalo de 300 segundos; sem upgrade ou contratação. |
+| Parâmetros adicionais | Timeout de 30 segundos, autenticação None, redirecionamentos seguidos e códigos Up padrão 2xx/3xx. Sem credenciais ou headers personalizados. |
+| Estado observado | **Up**, após a preparação inicial; inventário final com PRD Up, health Up e Pages/UAT Paused. Estado transitório, não garantia de disponibilidade futura. |
+| Alertas | E-mail do contato primário do próprio responsável, já cadastrado, habilitado na configuração salva; sem atraso e sem repetição. SMS, voz e push não habilitados. Nenhum endereço privado registrado. |
+| Teste próprio do serviço | Test Notification executado apenas para o contato anexado do responsável, com notify-only e integrações desmarcados. Não se provocou indisponibilidade. |
+| Entrega efetiva | Duas mensagens de teste encontradas na caixa autorizada via conector Gmail: TEST DOWN às 20:07:44 UTC e TEST UP às 20:07:47 UTC, em 25/10/2026. |
+
+Os assuntos recebidos foram `TEST: Monitor is DOWN: Frontend PRD — Bruna e Diego`
+e `TEST: Monitor is UP: Frontend PRD — Bruna e Diego`, enviados pelo UptimeRobot.
+A evidência de entrega é a presença dessas mensagens na caixa vinculada, não
+apenas o acionamento do botão. São mensagens sintéticas do mecanismo de teste;
+não representam queda/recuperação real e não comprovam um incidente produtivo.
+Nenhum alerta foi direcionado a terceiros.
+
+O painel do monitor e sua configuração salva foram conferidos. O inventário
+final manteve os IDs e estados dos dois monitores anteriores. Não houve alteração
+de aplicação, Auth, banco, hospedagem ou deployment, nem envio de RSVP.
+Evidência visual privada, ignorada pelo Git:
+`.dev/qa/frontend-prd-monitoring/monitor-up.png`.
+
+Disponibilidade HTTP do frontend não comprova execução de JavaScript,
+carregamento de todos os recursos nem o fluxo completo de RSVP.
 
 ## Limitações
 
