@@ -776,6 +776,16 @@ Edge desktop e Galaxy A21/Chrome físico com redução de movimento; Safari/iOS,
 Firefox, zoom real 200% e leitores de tela não foram revalidados nesse release.
 Relatos antigos de Firefox/zoom pertencem a outro checkpoint, não ampliam esse aceite.
 
+Em 26/10/2026, o ciclo evolutivo DEV exercitou os percursos prioritários no
+navegador integrado automatizado e corrigiu a exposição acessível do cartão
+ainda coberto. Regressão local: 414 Node aprovados, incluindo 25 do envelope.
+O responsável confirmou testes manuais de todos os recursos em Firefox e Safari,
+sem problemas relatados. Versões, dispositivo, sistema operacional e ambiente
+acessado não foram informados; execução específica de zoom real de 200%, leitor
+de tela e iOS também não foi informada. Essa evidência humana é distinta da
+inspeção DOM/árvore acessível pelo agente. Evidências e roteiro complementar:
+[ciclo DEV](qa-final-evidence.md#cobertura-evolutiva-dev--26102026).
+
 Não há bloqueio técnico relevante identificado no encerramento. CI, integridade
 de dados, isolamento, credenciais e publicação continuam requisitos essenciais.
 
@@ -785,7 +795,7 @@ de dados, isolamento, credenciais e publicação continuam requisitos essenciais
 | --- | --- | --- |
 | Melhoria importante | Recuperação administrativa e homologação preservando UUID | DEV concluído. `ed5f7c9` publicado em UAT; callback e e-mail do administrador configurados, UUID preservado. Solicitação/recebimento/callback, troca humana, sucesso persistente, retorno, UUID e bloqueio de reuso reais aprovados; rejeição da senha antiga, nova autenticando e painel UAT aberto confirmados pelo responsável. Validação funcional dessa versão UAT concluída. Refinamento visual `bf35bc2` publicado em UAT; CI e 75 arquivos conferidos. Sucesso simplificado coberto automaticamente, sem outra troca real ou novo aceite visual desse estado. Publicação e limites no registro UAT. PRD recebeu bf35bc2, com CI/READY/runtime aprovados e ajustes mínimos de Site URL/callback. Troca real, resultado da etapa de sucesso e testes das duas senhas confirmados pelo responsável; identidade preservada e reuso bloqueado conferidos pelo agente. Painel PRD aberto e lista carregada após o novo login confirmados pelo responsável; aceite funcional PRD concluído. Contingência manual permanece não validada. [DEV](password-recovery-dev-validation.md) / [UAT](password-recovery-uat-validation.md) / [PRD](password-recovery-prd-validation.md) |
 | Melhoria operacional concluída | Cobertura do monitor do frontend PRD, distinta do monitor Pages/UAT | Em 25/10/2026, consulta autenticada confirmou somente dois monitores anteriores, sem URL Vercel PRD. Criado Frontend PRD — Bruna e Diego, ID 804420580, HEAD a cada cinco minutos no plano Free 50, sem contratação. Configuração salva e estado Up conferidos; teste nativo ao contato primário do responsável, com mensagens TEST DOWN/UP efetivamente recebidas via Gmail. Pages/UAT preservado Paused e health Supabase Up. HTTP não comprova JavaScript/RSVP; Up é estado datado. [Evidências e limites](health-check.md#conferência-do-frontend-prd--25102026) |
-| Cobertura evolutiva | Safari/iOS, Firefox e tecnologias assistivas/zoom no release atual | Priorizar por público e alterações, sem exigir matriz universal |
+| Cobertura evolutiva parcial | Detalhamento da matriz de navegadores/dispositivos e tecnologias assistivas/zoom | Ciclo DEV de 26/10/2026 sobre 76bf55f: teclado, RSVP sintético, login/recuperação e reset sem troca exercitados no IAB 1280 × 720. Cartão coberto indevidamente exposto na árvore acessível corrigido e reverificado; 414 Node aprovados. Responsável confirmou testes manuais de todos os recursos em Firefox e Safari, sem problemas relatados; versões, dispositivo, sistema operacional e ambiente acessado não informados. Zoom real 200%, leitor de tela e execução específica em iOS não informados. Agente não executou esses testes específicos: Firefox/NVDA ausentes do inventário local consultado, Edge nativo recusado pela ferramenta e Narrador sem teste de voz. Sem declaração de conformidade integral com WCAG. [Evidências e roteiro complementar](qa-final-evidence.md#cobertura-evolutiva-dev--26102026). Priorizar por público e alterações, sem exigir matriz universal |
 | Funcionalidade opcional | MFA, CAPTCHA se necessário, domínio próprio e observabilidade adicional | Avaliar benefício/risco/custo antes de adotar |
 
 Recuperação de senha não é recuperação de RSVPs Sheets. Procedimento e limites:

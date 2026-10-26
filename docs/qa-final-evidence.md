@@ -1,5 +1,131 @@
 # QA final — evidências técnicas e manuais
 
+## Cobertura evolutiva DEV — 26/10/2026
+
+Checkout inicial limpo em `feature/landing-page`, SHA
+`76bf55fa2f766a846245da231e99a4493c412917`. Este ciclo acrescenta uma correção
+local e documentação; não representa publicação ou novo aceite UAT/PRD.
+Recuperação administrativa e monitoramento PRD continuam concluídos nos
+registros anteriores, sem reabertura de auditorias.
+
+### Ambiente e ferramentas
+
+- Procedimento de [DEV local](local-development.md) seguido: snapshot
+  `.dev/event-config.json` existente e preservado, Docker Desktop/WSL2 e imagens
+  Supabase já disponíveis. `dev:up` sem reset e sem o GET condicionado à ausência
+  do snapshot. Nenhuma consulta ao backend UAT/PRD ou alteração remota.
+- Node 22.14.0 e servidor Python 3.12.2, restrito a `127.0.0.1:8000`.
+  Supabase API/Functions em `127.0.0.1:54321`, Mailpit em `:54324` e contingência
+  em `:54328`; `npm run dev:health` aprovado.
+- Navegador efetivamente exercitado: navegador integrado automatizado (IAB),
+  viewport 1280 × 720. Versão do engine não aferida. Isso não é Firefox real
+  nem um teste do Edge instalado.
+- Edge 155.0.4283.62 encontrado no Windows, mas a ferramenta de automação nativa
+  recusou seu controle por falta de aprovação do aplicativo. Foram fornecidos
+  os passos de liberação; não houve nova autorização confirmada neste ciclo.
+- Firefox e NVDA não encontrados no inventário local de aplicativos nem nos caminhos
+  consultados; Firefox também não encontrado nas entradas App Paths consultadas.
+  Nenhum navegador/leitor foi instalado. Narrador 10.0.26100.8972 presente, sem
+  teste de fala realizado. Inspeção da árvore acessível não equivale a leitor de tela.
+- Zoom real de 200% e Safari/iOS não executados pelo agente. O viewport acima não é evidência
+  de zoom, emulação de aparelho ou execução nesses ambientes.
+
+### Confirmação humana em Firefox e Safari
+
+Na consolidação deste ciclo, o responsável confirmou testes manuais de todos
+os recursos em Firefox e Safari, sem relatar problemas. Essa é evidência humana,
+separada das verificações automatizadas DEV e do inventário local do agente.
+
+Versões dos navegadores, dispositivo, sistema operacional e ambiente acessado
+não foram informados. Também não houve confirmação específica de zoom real de
+200% ou uso de leitor de tela. Safari não estabelece, por si só, execução em iOS.
+Não se atribuem esses detalhes nem uma nova execução pelo agente à confirmação.
+
+### Percursos reais no navegador automatizado
+
+| Percurso | Resultado observado |
+| --- | --- |
+| Capa e selo | Selo acessível como botão; primeiro Tab da capa chegou ao selo, com foco visível. Enter abriu o convite; clique no selo também exercitado. |
+| Cartão | Controle existente Pausar/Continuar (ação de espera solicitada) acionado por Espaço/Enter. Pausa manteve a carta oculta; retomada focou `letter-title`; retorno focou o selo. Os tokens normais de animação foram preservados. |
+| Carta e teclado | Tab percorreu os dois links de localização, nome, e-mail, presença, acompanhantes, envio e retorno; foco visível nos controles. Links externos não foram abertos. |
+| RSVP | Campos obrigatórios, e-mail inválido e quantidade acima de 15 rejeitados nativamente, com foco no campo correspondente. Ausência desabilitou acompanhantes e zerou o valor; presença reabilitou o campo. Um RSVP sintético foi confirmado no backend DEV, com feedback `role=status`, `aria-live=polite` e botão bloqueado após sucesso. |
+| Login | Credencial sintética local autenticou pela interface; dashboard e lista carregaram sem erro. Sessão de teste encerrada pela interface. Uma credencial inválida apresentou erro genérico com `role=alert`, excluído da árvore ao ocultar o painel de login. Senha e UUID locais preservados; nenhum segredo impresso. |
+| Login/recuperação | Alternância nos dois sentidos restaurou título/descrição e focou o e-mail. Cópia do e-mail sintético conferida visualmente. Painel oculto com `hidden`/`inert`, sem seus controles na árvore acessível. E-mail inválido rejeitado nativamente; solicitação válida apresentou mensagem neutra. |
+| Redefinição bloqueada | Acesso direto e reload com URL limpa mantiveram formulário `hidden`/`inert`, controles ausentes da árvore e mensagem com `role=alert`. |
+| Redefinição válida | Link legítimo do Mailpit, com host Auth e callback DEV conferidos sem registrar token/URL completa. Campos rotulados, instrução de mínimo, foco em Nova senha, status polite e ordem Nova senha → confirmação → salvar → voltar. Submissão vazia rejeitada nativamente e foco no primeiro campo. Nenhuma nova senha digitada ou alterada. |
+
+As inspeções visuais/DOM da capa, cartão, carta, login e reset não identificaram
+problema adicional neste viewport. Não ampliam cobertura para zoom ou outros
+navegadores. O registro sintético deste ciclo foi removido por filtro exato no
+banco Docker local; não houve reset, CRUD remoto ou alteração de outros convidados.
+
+### Defeito comprovado e correção
+
+Antes da correção, a capa mostrava o envelope fechado, mas a árvore acessível
+expunha monograma e citação do cartão coberto. Isso é exposição indevida na
+árvore; não se afirma que houve anúncio por um leitor de tela efetivamente ouvido.
+
+O cartão agora começa com `aria-hidden=true` no HTML e no reset do controlador.
+O atributo passa a false no início da apresentação e volta a true no retorno.
+O preview DEV acompanha capa/cartão/carta, sem mudar geometria, estilos,
+temporizadores, autenticação ou regras de negócio. O cartão não contém controles
+interativos que receberiam foco sob `aria-hidden`.
+
+Reverificação no navegador: citação ausente na capa, disponível durante a pausa
+real e novamente ausente após retorno; Continuar manteve o foco de transição.
+Uma primeira reverificação ainda utilizou o módulo antigo em cache em
+`127.0.0.1`; a origem DEV permitida `localhost:8000` carregou o grafo atualizado
+e confirmou ambos os estados. Não se alteraram os tempos para compensar latência
+da automação ou a janela curta de acionamento do controle.
+
+### Verificações automatizadas e estáticas
+
+- Regressões reproduziram a falha antes da correção: três novos casos de
+  estado/preview e a asserção HTML falharam; os demais 21 testes do arquivo passaram.
+- `node --test scripts/envelope-motion.test.mjs`: **25 aprovados**, zero falhas,
+  após a correção. Cobertura normal/reduced-motion, pausa/retorno e preview.
+- `npm run test:node`: **414 aprovados**, zero falhas. Inclui os 25 acima;
+  as contagens não devem ser somadas. DOM/timers/WAAPI simulados não provam voz.
+- Sintaxe aprovada em `scripts/main.js`, `scripts/welcome/envelope.js`,
+  `scripts/devmode/preview.js` (sob `invite-app`) e
+  `scripts/envelope-motion.test.mjs`; `git diff --check` aprovado.
+- Deno, SQL e integração ampla não repetidos: nenhuma camada backend alterada.
+  Login, RSVP e recuperação de link deste ciclo foram exercitados pela interface
+  DEV real, sem substituir esses percursos por testes diretos no SDK.
+- Sucesso após troca de senha não foi recriado. Reutilizam-se os aceites
+  funcionais existentes e as fixtures de recuperação, sem novo aceite de voz
+  ou zoom para esse estado e sem fabricar sessão/sucesso.
+
+Evidências ignoradas pelo Git em `.dev/qa/accessibility-2026-10-26/`:
+`cover-after.png`, `cover-after.ax.txt`, `card-paused-before.png`,
+`card-paused-after.ax.txt`, `rsvp-layout.png`, `reset-valid-required.png`, `reset-blocked.png`,
+`envelope-tests.log` e `node-tests.log`. Sem campos de senha preenchidos,
+sessões ou links completos de recuperação nessas evidências.
+
+### Pendências e roteiro manual curto
+
+1. Complementar, quando disponíveis, os metadados dos testes humanos já
+   confirmados em Firefox e Safari: versão, dispositivo, sistema operacional e
+   ambiente acessado. Não é necessário repetir os percursos funcionais apenas
+   para consolidar essa confirmação.
+2. Em navegador real autorizado, usar zoom do próprio navegador até o indicador
+   mostrar **200%**. Conferir leitura, controles, cortes, sobreposição e rolagem
+   nas mesmas telas. Não usar CSS zoom ou viewport estreito como substituto.
+3. Com Narrador ou outro leitor real, ouvir nomes, instruções, erros, status e
+   foco; verificar que cartão coberto e painéis ocultos não sejam lidos, mas o
+   cartão apresentado seja. Registrar leitor/versão e resultado ouvido.
+4. Para reset válido, usar somente outro link DEV do Mailpit, navegar pelos
+   campos e validar vazio; não é necessário salvar nova senha. Sucesso após troca
+   continua amparado pelas evidências anteriores, sem novo teste assistivo desse estado.
+5. A cobertura específica de iOS permanece não informada. Se necessária à
+   matriz de dispositivos, requer execução real e registro próprio; não inferir
+   esse resultado da confirmação de Safari nem dos testes IAB.
+
+Cobertura evolutiva **parcial** quanto à matriz detalhada de dispositivos,
+zoom e tecnologias assistivas, com defeito concreto corrigido e testes funcionais
+em Firefox e Safari confirmados pelo responsável. Este ciclo não declara
+conformidade integral com WCAG e não modifica os aceites históricos.
+
 ## Recuperação administrativa — PRD, 25/10/2026
 
 Candidato exato `bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb` promovido por

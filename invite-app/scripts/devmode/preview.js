@@ -6,15 +6,16 @@ import { resetFloralSealAnimations } from '../welcome/decorations.js';
 /**
  * Ajusta a apresentação do fluxo em desenvolvimento para previews estáticos.
  *
- * @param {{welcome: HTMLElement, letter: HTMLElement, cardControl?: HTMLButtonElement, mode: string}} params
+ * @param {{welcome: HTMLElement, letter: HTMLElement, card?: HTMLElement, cardControl?: HTMLButtonElement, mode: string}} params
  * @returns {void}
  */
-export function applyDeveloperPreview({ welcome, letter, cardControl, mode }) {
+export function applyDeveloperPreview({ welcome, letter, card, cardControl, mode }) {
   if (!mode) {
     return;
   }
 
   const isCardPreview = mode === 'envelope-card';
+  card?.setAttribute('aria-hidden', String(!isCardPreview));
 
   if (cardControl) {
     cardControl.hidden = !isCardPreview;
@@ -68,12 +69,13 @@ export function applyDeveloperPreview({ welcome, letter, cardControl, mode }) {
 /**
  * Cria um painel de preview que permite alternar rapidamente entre capa, cartão e carta.
  *
- * @param {{welcome: HTMLElement, letter: HTMLElement, cardControl?: HTMLButtonElement, activeMode?: string, resetInvitationState: Function}} params
+ * @param {{welcome: HTMLElement, letter: HTMLElement, card?: HTMLElement, cardControl?: HTMLButtonElement, activeMode?: string, resetInvitationState: Function}} params
  * @returns {void}
  */
 export function initDeveloperPreviewControls({
   welcome,
   letter,
+  card,
   cardControl,
   activeMode = 'cover',
   resetInvitationState
@@ -117,6 +119,7 @@ export function initDeveloperPreviewControls({
       applyDeveloperPreview({
         welcome,
         letter,
+        card,
         cardControl,
         mode: nextMode
       });
@@ -147,6 +150,7 @@ export function initDeveloperPreviewControls({
     applyDeveloperPreview({
       welcome,
       letter,
+      card,
       cardControl,
       mode: 'cover'
     });

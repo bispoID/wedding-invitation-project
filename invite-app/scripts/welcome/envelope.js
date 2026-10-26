@@ -25,7 +25,8 @@ const SELECTORS = Object.freeze({
   seal: '.envelope__seal',
   backButton: '.back-to-cover',
   decorations: '.envelope__decorations',
-  cardControl: '.card-pause-control'
+  cardControl: '.card-pause-control',
+  card: '.envelope__card'
 });
 
 /* Os valores reais ficam em styles/base/variables.css. */
@@ -83,6 +84,7 @@ const FLOW_STATES = Object.freeze({
  * @param {HTMLElement} elements.backButton Botão de retorno para a capa.
  * @param {HTMLElement} elements.decorations Grupo de flores e selo.
  * @param {HTMLButtonElement} elements.cardControl Controle de espera do cartão.
+ * @param {HTMLElement} elements.card Conteúdo do cartão oculto pelo envelope.
  * @returns {void}
  */
 function createInvitationController({
@@ -91,7 +93,8 @@ function createInvitationController({
   seal,
   backButton,
   decorations,
-  cardControl
+  cardControl,
+  card
 }) {
 
   /*
@@ -380,6 +383,7 @@ function createInvitationController({
     flowRunId += 1;
     cancelScheduledSteps();
     resetCardControl();
+    card.setAttribute('aria-hidden', 'true');
 
     welcome.hidden = false;
     letter.hidden = true;
@@ -452,6 +456,7 @@ function createInvitationController({
         }
 
         cardStartTimerId = null;
+        card.setAttribute('aria-hidden', 'false');
         flowState = FLOW_STATES.CARD_PRESENTING;
         showWaitControl();
 
@@ -595,6 +600,7 @@ export function initEnvelope({ devSkipWelcome = false, devPreview = null } = {})
     applyDeveloperPreview({
       welcome: elements.welcome,
       letter: elements.letter,
+      card: elements.card,
       cardControl: elements.cardControl,
       mode: devPreview
     });
@@ -602,6 +608,7 @@ export function initEnvelope({ devSkipWelcome = false, devPreview = null } = {})
     initDeveloperPreviewControls({
       welcome: elements.welcome,
       letter: elements.letter,
+      card: elements.card,
       cardControl: elements.cardControl,
       activeMode: devPreview,
       resetInvitationState: invitationController.resetInvitationState

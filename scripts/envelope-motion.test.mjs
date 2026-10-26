@@ -45,12 +45,13 @@ async function withEnvelopeMotion(reduced, run, options = {}) {
 
   const welcome = element(), letter = element(true), seal = element();
   const backButton = element(), decorations = element(), letterTitle = element();
-  const cardControl = element(true);
-  const elements = { welcome, letter, seal, backButton, decorations, letterTitle, cardControl };
+  const cardControl = element(true), card = element();
+  const elements = { welcome, letter, seal, backButton, decorations, letterTitle, cardControl, card };
   const selectors = {
     '.welcome': welcome, '.letter': letter, '.envelope__seal': seal,
     '.back-to-cover': backButton, '.envelope__decorations': decorations,
     '.card-pause-control': cardControl,
+    '.envelope__card': card,
   };
   letter.querySelector = (selector) => selector === '#letter-title' ? letterTitle : null;
   decorations.animate = (frames, options) => {
@@ -111,6 +112,43 @@ async function withEnvelopeMotion(reduced, run, options = {}) {
     }
   }
 }
+
+for (const reduced of [false, true]) test(`Envelope ${reduced ? 'reduce' : 'normal'} conceals card text until presentation and after return`, async () => {
+  await withEnvelopeMotion(reduced, async (ui) => {
+    assert.equal(ui.card.attrs['aria-hidden'], 'true');
+    ui.seal.events.click();
+    if (!reduced) {
+      ui.advance(5299);
+      assert.equal(ui.card.attrs['aria-hidden'], 'true');
+      ui.advance(1);
+    } else {
+      ui.advance(0);
+    }
+    assert.equal(ui.card.attrs['aria-hidden'], 'false');
+    if (!reduced) ui.cardControl.events.click();
+    ui.advance(60000);
+    assert.equal(ui.letter.hidden, true);
+    assert.equal(ui.card.attrs['aria-hidden'], 'false', 'The paused card remains readable');
+    ui.cardControl.events.click();
+    assert.equal(ui.welcome.hidden, true);
+    ui.backButton.events.click();
+    assert.equal(ui.card.attrs['aria-hidden'], 'true');
+  });
+});
+
+test('Envelope preview exposes card text only in the card preview', async () => {
+  await withEnvelopeMotion(false, async (ui) => {
+    const panel = ui.panels[0];
+    const select = mode => panel.children.find(button => button.attrs['data-preview'] === mode).events.click();
+    assert.equal(ui.card.attrs['aria-hidden'], 'true');
+    select('envelope-card');
+    assert.equal(ui.card.attrs['aria-hidden'], 'false');
+    select('letter');
+    assert.equal(ui.card.attrs['aria-hidden'], 'true');
+    select('cover');
+    assert.equal(ui.card.attrs['aria-hidden'], 'true');
+  }, { devPreview: 'cover' });
+});
 
 test('Envelope no-preference preserves original floral-seal keyframes and timing', async () => {
   await withEnvelopeMotion(false, async (ui) => {
@@ -435,6 +473,7 @@ test('Envelope seal and flowers use static WebP assets and retain native keyboar
   const html = await readFile(new URL('../invite-app/index.html', import.meta.url), 'utf8');
   const css = await readFile(new URL('../invite-app/styles/welcome/envelope.css', import.meta.url), 'utf8');
   const welcomeCss = await readFile(new URL('../invite-app/styles/welcome/welcome.css', import.meta.url), 'utf8');
+  assert.match(html, /<div\b[^>]*class="envelope__card"[^>]*aria-hidden="true"/);
   const seal = html.match(/<img\b[^>]*class="envelope__seal"[^>]*>/)?.[0];
   assert.ok(seal);
   assert.match(seal, /role="button"/);
