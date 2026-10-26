@@ -142,7 +142,7 @@ gerada e artefatos privados de diagnóstico ficam fora do versionamento.
    A contingência manual via Auth Admin API continua não validada operacionalmente.
 
 URLs exatas e pré-requisitos:
-[guia administrativo](admin-guest-management.md#pré-requisitos-posteriores-em-uat-e-prd).
+[guia administrativo](../admin-guest-management.md#pré-requisitos-posteriores-em-uat-e-prd).
 Nenhuma configuração ou homologação remota foi realizada neste ciclo.
 
 Mensagem sugerida: `feat(admin): add secure password recovery flow`.

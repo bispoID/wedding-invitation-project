@@ -1,4 +1,4 @@
-# Project Context — Convite Virtual de Casamento
+# Contexto do projeto — Convite Virtual de Casamento
 
 ## 1. Visão geral
 
@@ -398,6 +398,12 @@ O **MFA não será implementado inicialmente**.
 
 A arquitetura deverá permitir a inclusão de MFA posteriormente.
 
+A recuperação de senha utiliza Supabase Auth, callback do mesmo ambiente e
+preserva a identidade administrativa; não concede autorização adicional nem
+substitui a allowlist do backend. Contrato e pré-requisitos:
+[recuperação administrativa](admin-guest-management.md#recuperação-do-acesso-administrativo).
+Estado e aceites por ambiente: [roadmap](development_roadmap.md#estado-atual).
+
 ---
 
 ## 17. Autenticação x autorização
@@ -467,41 +473,15 @@ A prioridade será:
 
 ## 19. Monitoramento de saúde
 
-O sistema possui um mecanismo de **health check** público para os
-pré-requisitos operacionais read-only do RSVP.
+O health check público verifica, sem escrita, os pré-requisitos operacionais
+do RSVP: tabelas, RPC de rate limiting e privilégios necessários. Não insere
+convidados, não incrementa contadores, não acessa Sheets e não simula RSVP real.
 
-A ideia é verificar não apenas se a página está acessível, mas se os componentes importantes do fluxo estão funcionando.
-
-Conceito:
-
-```text
-UptimeRobot
-      ↓
-GET/HEAD /functions/v1/health
-      ↓
-public.check_rsvp_health()
-      ↓
-PostgreSQL e pré-requisitos do RSVP
-      ↓
-HTTP 200 ou HTTP 503
-```
-
-O health atual verifica a existência e acessibilidade das tabelas e do RPC de
-rate limiting, além dos privilégios necessários ao RSVP. Não executa INSERT de
-convidados, não incrementa o contador, não acessa Google Sheets e não simula uma
-confirmação real. O UptimeRobot consulta o endpoint por `HEAD` a cada **15
-minutos**, conforme configuração informada. O monitor separado do Pages
-corresponde hoje a UAT; cobertura do frontend PRD não é presumida.
-Consulte [limites de monitoramento](health-check.md#monitoramento-do-frontend).
-
-O monitor é externo, independente de sessão administrativa e do provedor de
-hospedagem estática. Detalhes: [health-check.md](health-check.md).
-
-Caso seja identificada uma falha, o administrador deverá receber um alerta.
-
-O monitoramento deverá preferencialmente ser executado por um serviço externo, e não depender do computador pessoal do administrador.
-
-O objetivo é **monitorar a saúde do sistema**, e não criar um mecanismo artificial para evitar regras de inatividade do plano gratuito.
+O monitoramento externo deve ser independente do computador pessoal e da
+sessão administrativa, com alerta em caso de falha. Seu objetivo é monitorar
+a saúde do sistema, sem simular atividade para evitar regras de inatividade.
+Endpoints, intervalos, configuração e evidências datadas pertencem ao
+[guia de monitoramento](health-check.md).
 
 ---
 
@@ -783,6 +763,7 @@ passo de execução. Essas informações devem permanecer no
 - Leitura dos convidados somente pelo administrador;
 - Alteração dos convidados e do evento somente pelo administrador;
 - Autenticação administrativa;
+- Recuperação de senha administrativa por Supabase Auth;
 - Confirmação de e-mail do administrador;
 - Monitoramento de saúde;
 - Alertas somente em caso de erro;
@@ -809,9 +790,6 @@ passo de execução. Essas informações devem permanecer no
 
 - MFA;
 - Domínio personalizado;
-- Recuperação de senha administrativa completa: melhoria futura, não implementada
-  nem testada; risco residual explicitamente aceito na liberação PRD. Login
-  funcional e acesso independente ao Supabase são mitigações, não prova de recuperação;
 - Recursos administrativos avançados;
 - CAPTCHA/Turnstile, caso não seja necessário;
 - Outras funcionalidades que não sejam essenciais ao RSVP.

@@ -101,7 +101,7 @@ pela interface confirmada pelo responsável, senha anterior rejeitada e nova sen
 autenticando no dashboard. O responsável sincronizou o arquivo privadamente e o
 UUID foi conferido. O ajuste posterior do aviso persistente de sucesso teve
 validação automatizada, sem outra troca real. Evidências e limites:
-[validação de recuperação DEV](password-recovery-dev-validation.md).
+[validação de recuperação DEV](history/password-recovery-dev-validation.md).
 
 ### Contingência local
 
@@ -158,7 +158,7 @@ As duas suítes usam transação com `ROLLBACK`; não precisam de reset e não
 alteram migrations históricas. Não substitua o destino por banco remoto.
 `block3.sql` valida Event Config; `dev-rpc.sql` complementa as permissões,
 health, rate limiting, paginação, busca e métricas globais. Resultados datados
-e limites de validação: [qa-final-evidence.md](qa-final-evidence.md#validação-final-do-dev--16102026).
+e limites de validação: [qa-final-evidence.md](history/qa-final-evidence.md#validação-final-do-dev--16102026).
 
 ## Preparação estática
 
@@ -177,4 +177,4 @@ Revalidação posterior em 17/10/2026: Docker e serviços restaurados sem reset;
 health, integração, login/dashboard, paginação, edição e isolamento no navegador
 aprovados. A indisponibilidade 503 durante o startup foi distinguida de erro de
 configuração. Aguardar `DEV ready` e health aprovado antes de abrir o Admin.
-Evidências e limites: [uat-dynamic-revalidation.md](uat-dynamic-revalidation.md).
+Evidências e limites: [uat-dynamic-revalidation.md](history/uat-dynamic-revalidation.md).

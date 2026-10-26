@@ -1,5 +1,9 @@
 # Recuperação administrativa — publicação e validação PRD
 
+> Registro histórico. As pendências e autorizações descrevem o checkpoint
+> indicado, sem substituir a operação vigente. [Estado atual](../development_roadmap.md#estado-atual)
+> e [índice de evidências](../README.md#evidências-históricas).
+
 ## Estado em 25/10/2026
 
 **Promoção, publicação e aceite funcional PRD concluídos.**

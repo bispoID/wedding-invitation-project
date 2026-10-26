@@ -1,125 +1,113 @@
-# Google Sheets contingency recovery
+# Recuperação da contingência no Google Sheets
 
-The `RSVP` worksheet is a temporary recovery queue, not a second source of
-truth. Automated recovery is handled only by the
-`admin-recover-contingency` Supabase Edge Function. The administrative browser
-must never access Google Sheets or its credentials directly.
+A aba `RSVP` é uma fila temporária de recuperação. O banco principal permanece
+como fonte dos convidados. A recuperação automatizada é executada somente pela
+Edge Function `admin-recover-contingency` do Supabase. O navegador administrativo
+nunca acessa o Google Sheets ou suas credenciais diretamente.
 
-## Dashboard listing
+## Listagem no painel
 
-The dashboard loads pending rows through the separate
-`admin-list-contingency` Edge Function. It verifies the JWT and administrator
-UUID, reads the worksheet on the backend, and returns only the request ID,
-creation date, name, email, attendance, companions, status, error type, and
-sync timestamp. Rows whose status is not `pending` are not returned. The
-`attendance` field accepts either `attendance` or `presence` as its worksheet
-header.
+O painel carrega linhas pendentes pela Edge Function independente
+`admin-list-contingency`. Ela verifica o JWT e o UUID administrativo, lê a
+planilha no backend e retorna somente ID da requisição, data de criação, nome,
+e-mail, presença, acompanhantes, status, tipo de erro e timestamp de
+sincronização. Linhas com status diferente de `pending` não são retornadas.
+O campo `attendance` aceita `attendance` ou `presence` como cabeçalho da planilha.
 
-The browser sends only the `request_id` when it invokes
-`admin-recover-contingency`. A conflict or failure leaves the row visible; the
-dashboard refreshes the list only after the function confirms successful
-reconciliation and removal.
+O navegador envia somente `request_id` ao invocar `admin-recover-contingency`.
+Conflito ou falha mantém a linha visível; a lista é atualizada somente após a
+confirmação de reconciliação e remoção pela função.
 
-## Automated recovery contract
+## Contrato da recuperação automatizada
 
-The administrator submits only a `request_id`, together with the Supabase
-Auth JWT. The Edge Function verifies the JWT and checks the user ID against
-the backend-only `ADMIN_AUTH_USER_IDS` configuration before creating a
-service-role client or accessing Google credentials. The secret contains a
-comma-separated list of UUIDs for permitted Supabase Auth users; malformed or
-missing configuration fails closed.
+O administrador envia somente `request_id`, acompanhado do JWT do Supabase
+Auth. A função verifica o JWT e compara o usuário com `ADMIN_AUTH_USER_IDS`,
+mantido exclusivamente no backend, antes de criar o cliente privilegiado ou
+acessar credenciais Google. O secret contém UUIDs autorizados separados por
+vírgulas; configuração ausente ou malformada bloqueia a operação.
 
-The function serializes recoveries for the worksheet with the persisted
-`google_sheets_rsvp_recovery` lock. The lock lease is 180 seconds; the function
-maximum duration is configured as 120 seconds. Expired locks can be acquired
-by a later request, and only the lock owner can release a lock.
+A função serializa recuperações da planilha pelo lock persistido
+`google_sheets_rsvp_recovery`. A concessão do lock dura 180 segundos; a duração
+máxima da função está configurada como 120 segundos. Locks expirados podem ser
+adquiridos por outra requisição; somente o proprietário pode liberar seu lock.
 
-For one request:
+Para cada requisição:
 
-1. Read the `RSVP` worksheet and map the fields from its header row. The
-   attendance field accepts either `attendance` or the existing `presence`
-   header name.
-2. Require exactly one row with the submitted `request_id` and require its
-   status to be `pending`.
-3. Trim and lowercase its email. Validate name, email, attendance, and
-   companions before writing anything.
-4. Query `public.guests` by the normalized email:
-   - If no row exists, insert only `name`, `email`, `attendance`, and
-     `companions`. PostgreSQL generates the ID and timestamps.
-   - If a row exists and its name, attendance, and companions match, reuse
-     that persisted row without another insert.
-   - If any of those values differ, return a data conflict. Do not insert,
-     overwrite, or remove the contingency row.
-5. After an insert or a unique-email race, query `public.guests` again and
-   confirm that the persisted values match the contingency record.
-6. Only after that confirmation, read the worksheet again and locate the
-   `request_id` again. Require exactly one matching pending row with unchanged
-   data.
-7. Delete that row using its freshly read row index and the worksheet's
-   `sheetId`.
-8. Read the worksheet again and confirm that the `request_id` is absent.
+1. Ler a aba `RSVP` e mapear os campos pelo cabeçalho; presença aceita
+   `attendance` ou o nome legado `presence`.
+2. Exigir exatamente uma linha com o `request_id` informado e status `pending`.
+3. Remover espaços nas extremidades do e-mail e convertê-lo para minúsculas.
+   Validar nome, e-mail, presença e acompanhantes antes de qualquer escrita.
+4. Consultar `public.guests` pelo e-mail normalizado. Se não houver registro,
+   inserir somente `name`, `email`, `attendance` e `companions`; PostgreSQL gera
+   ID e timestamps. Se nome, presença e acompanhantes coincidirem com um
+   registro existente, reutilizá-lo sem novo INSERT. Se divergirem, retornar
+   conflito sem inserir, sobrescrever ou remover a linha da contingência.
+5. Após INSERT ou disputa pela unicidade do e-mail, consultar `public.guests`
+   novamente e confirmar que os valores persistidos coincidem com a contingência.
+6. Somente após a confirmação, reler a planilha e localizar novamente o
+   `request_id`. Exigir uma única linha pendente, com dados inalterados.
+7. Excluir a linha pelo índice recém-consultado e pelo `sheetId` da aba.
+8. Reler a planilha e confirmar a ausência do `request_id`.
 
-The row is physically removed only after the database record has been
-confirmed. If persistence succeeds but the final removal or its verification
-fails, the function returns `CLEANUP_PENDING` with `persisted: true` and
-`contingency_removed: false`; it does not report complete success.
+A linha é removida fisicamente somente após confirmação no banco. Se a
+persistência ocorrer, mas a remoção ou sua verificação falhar, a função retorna
+`CLEANUP_PENDING`, com `persisted: true` e `contingency_removed: false`; não
+informa sucesso completo.
 
-## Safe retries and conflicts
+## Repetições seguras e conflitos
 
-- `public.guests.email` remains protected by its unique constraint. If a
-  concurrent RSVP inserts the same email, recovery re-queries the record and
-  proceeds only if its name, attendance, and companions match.
-- If the same email has different data, leave the contingency row in place for
-  manual review. The recovery function never overwrites a guest.
-- If a request is repeated after its row has already been removed, no second
-  insert or deletion occurs; the function reports that the request ID was not
-  found. A retry after a lost Google delete response first checks whether the
-  row is still present before attempting another deletion.
-- Missing or duplicate request IDs, a non-pending status, invalid data, an
-  occupied lock, or any unconfirmed database result prevent deletion.
-- A lost insert response is safe to retry: the next attempt first queries the
-  normalized email and confirms matching data before considering cleanup.
+- A restrição única de `public.guests.email` permanece. Se um RSVP concorrente
+  inserir o mesmo e-mail, a recuperação consulta novamente e prossegue somente
+  se nome, presença e acompanhantes coincidirem.
+- Se o mesmo e-mail tiver dados diferentes, manter a linha para revisão manual.
+  A recuperação nunca sobrescreve um convidado.
+- Repetir uma requisição cuja linha já foi removida não gera outro INSERT ou
+  exclusão; a função informa que o ID não foi encontrado. Após perda da resposta
+  de exclusão Google, conferir a presença da linha antes de tentar excluí-la.
+- IDs ausentes ou duplicados, status diferente de `pending`, dados inválidos,
+  lock ocupado ou resultado do banco sem confirmação impedem a exclusão.
+- A perda da resposta de INSERT permite nova tentativa: consultar primeiro o
+  e-mail normalizado e confirmar os dados antes de considerar a limpeza.
 
-## Backend configuration
+## Configuração do backend
 
-Use separate spreadsheets and service-account configuration for UAT and PRD.
-DEV uses a local JSON provider instead; see [environments](environments.md).
-Worksheet recovery below is unrelated to administrator password recovery.
+UAT e PRD usam planilhas e configurações de conta de serviço separadas. DEV
+utiliza o provider JSON local: [ambientes](environments.md). A recuperação de
+linhas não corresponde à recuperação de senha administrativa.
 
-Configure these values only for the Supabase Edge Functions:
+Configurar somente nas Edge Functions:
 
-- `ADMIN_AUTH_USER_IDS`: comma-separated UUIDs of the Supabase Auth users
-  permitted to access administrative functions, including contingency recovery.
-- `ADMIN_ALLOWED_ORIGINS`: comma-separated exact browser origins allowed to
-  call the function; do not include paths or wildcard origins.
-- `GOOGLE_SERVICE_ACCOUNT_JSON_B64`: existing service-account JSON secret.
-- `GOOGLE_SPREADSHEET_ID`: existing spreadsheet identifier.
+- `ADMIN_AUTH_USER_IDS`: UUIDs Supabase Auth autorizados para funções
+  administrativas, incluindo recuperação, separados por vírgulas.
+- `ADMIN_ALLOWED_ORIGINS`: origens exatas autorizadas, separadas por vírgulas,
+  sem caminhos ou curingas.
+- `GOOGLE_SERVICE_ACCOUNT_JSON_B64`: secret JSON existente da conta de serviço.
+- `GOOGLE_SPREADSHEET_ID`: identificador existente da planilha.
 
-The Google service account must have permission to read the spreadsheet and
-delete rows from the `RSVP` worksheet. The recovery function verifies the
-calling user through Supabase Auth before creating its service-role client or
-accessing the Google configuration. `service_role`, the Google service-account
-credential, OAuth tokens, and spreadsheet data are never returned to the
-browser or logged.
+A conta de serviço Google precisa ler a planilha e excluir linhas da aba
+`RSVP`. A função verifica o usuário pelo Supabase Auth antes de criar o cliente
+privilegiado ou acessar a configuração Google. `service_role`, credenciais da
+conta de serviço, tokens OAuth e dados da planilha nunca são retornados ao
+navegador nem registrados em logs.
 
-The endpoint requires a JWT and separately checks membership in the
-administrator UUID list. CORS is restricted to the configured exact origins;
-CORS is not a substitute for JWT and administrator validation.
+O endpoint exige JWT e verifica separadamente a lista de UUIDs administrativos.
+CORS aceita somente as origens exatas configuradas e não substitui a validação
+do JWT e da autorização administrativa.
 
-## Operational limits
+## Limites operacionais
 
-The public RSVP reaches Sheets fallback only after its PostgreSQL rate-limit
-check succeeds. It does not cover a total database outage before that check.
+O RSVP público alcança o fallback Sheets somente após sucesso na verificação
+de rate limiting PostgreSQL. Não cobre indisponibilidade total do banco antes
+dessa verificação.
 
-The persisted lock serializes recoveries performed through this Edge Function.
-It cannot prevent a person or a separate integration from manually inserting,
-deleting, or moving rows in Google Sheets while recovery is in progress. The
-function re-reads by `request_id` immediately before deletion and verifies the
-result afterward, but Google Sheets does not provide a conditional
-“delete-by-request_id” operation. Avoid manually rearranging the worksheet
-during automated recovery.
+O lock persistido serializa recuperações por esta função; não impede que uma
+pessoa ou integração externa insira, exclua ou mova linhas manualmente durante
+a recuperação. A função relê por `request_id` imediatamente antes da exclusão
+e verifica o resultado, mas Sheets não oferece exclusão condicional por
+`request_id`. Evitar reorganização manual da aba durante a recuperação.
 
-The `request_id` is stored in the contingency worksheet, not in
-`public.guests`; the normalized email is the idempotency key across the two
-systems. Never place service-role keys, Google credentials, or access tokens
-in SQL history, browser code, logs, or support notes.
+`request_id` fica na planilha, não em `public.guests`; o e-mail normalizado é a
+chave de idempotência entre os sistemas. Nunca inserir chaves privilegiadas,
+credenciais Google ou tokens em histórico SQL, código do navegador, logs ou
+notas de suporte.

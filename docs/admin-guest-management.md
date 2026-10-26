@@ -189,24 +189,13 @@ acessa o Google Sheets.
 ## Recuperação do acesso administrativo
 
 Não confundir recuperação de senha com recuperação de RSVPs da contingência.
-O fluxo de senha está implementado e funcionalmente validado em DEV. A entrega
-`ed5f7c9` foi publicada em UAT em 25/10/2026; a validação funcional UAT dessa
-versão foi concluída: troca humana, sucesso persistente e retorno verificados;
-senha antiga rejeitada, nova autenticando e abertura do painel confirmadas pelo
-responsável. PRD recebeu o candidato exato `bf35bc2` em 25/10/2026, com CI e
-publicação aprovados. Troca real e testes das duas senhas confirmados pelo
-responsável; UUID/e-mail preservados e reuso bloqueado conferidos pelo agente.
-O responsável confirmou a abertura do painel e a lista carregada após o novo
-login, concluindo o aceite funcional PRD.
-Site URL e callback PRD foram configurados, sem alterar a conta administrativa
-ou o serviço de e-mail. A atualização visual reduz
-o aviso a **Senha alterada com sucesso.** e oculta a orientação de criação após
-a troca; tem validação automatizada própria e confirmação humana do resultado
-na troca PRD. As evidências e os limites de observação são registrados por
-ambiente e versão, sem reatribuir esse teste ao UAT. Evidências:
-[validação DEV](password-recovery-dev-validation.md) e
-[publicação/homologação UAT](password-recovery-uat-validation.md) e
-[publicação/validação PRD](password-recovery-prd-validation.md).
+O fluxo de senha utiliza Supabase Auth e preserva a identidade administrativa.
+O estado resumido fica no [roadmap](development_roadmap.md#estado-atual).
+As validações e os limites por ambiente estão nos registros
+[DEV](history/password-recovery-dev-validation.md),
+[UAT](history/password-recovery-uat-validation.md) e
+[PRD](history/password-recovery-prd-validation.md), sem reatribuir observações técnicas
+ou relatos humanos entre versões.
 
 No login, **Esqueci minha senha** abre o formulário de e-mail. A chamada oficial
 `resetPasswordForEmail` usa uma resposta neutra para contas existentes/ausentes;

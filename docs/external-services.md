@@ -3,8 +3,8 @@
 Este guia descreve ferramentas, permissões e comandos. A configuração canônica
 de ambientes, publicação e rollback fica em [environments.md](environments.md).
 Checkpoints UAT/Vercel permanecem em
-[uat-git-ci-integration.md](uat-git-ci-integration.md) e
-[github-pages-uat-preparation.md](github-pages-uat-preparation.md);
+[uat-git-ci-integration.md](history/uat-git-ci-integration.md) e
+[github-pages-uat-preparation.md](history/github-pages-uat-preparation.md);
 não são pendências operacionais atuais.
 
 ## Supabase
@@ -67,37 +67,12 @@ alterar produção para executar essa suíte.
 
 **Finalidade:** monitoramento externo e alertas de indisponibilidade.
 
-**Uso no projeto:**
-
-- monitor `Supabase — Health Check RSVP`;
-- consulta do endpoint remoto de Health Check por `HEAD`;
-- intervalo de 15 minutos;
-- alerta por e-mail em caso de falha;
-- monitor HTTP(S) `Frontend PRD — Bruna e Diego`, ID `804420580`, na URL
-  `https://bruna-e-diego.vercel.app/`, HEAD a cada cinco minutos;
-- monitoramento independente do computador local e do painel administrativo.
-
-A configuração atual do monitor está detalhada em
-[health-check.md](health-check.md).
-
-Em 25/10/2026, após login privado do responsável, a consulta autenticada encontrou
-somente Pages/UAT e health Supabase. Como não havia monitor para a URL Vercel,
-foi criado exclusivamente o monitor PRD acima. Plano Free 50 conferido, sem
-contratação: 50 monitores e intervalo de 300 segundos. Configuração salva:
-HEAD, timeout de 30 segundos, sem autenticação e e-mail primário do responsável
-habilitado, sem atraso/repetição. O monitor foi observado **Up**.
-
-O Test Notification foi executado somente para esse contato; as mensagens
-sintéticas TEST DOWN e TEST UP foram recebidas na caixa autorizada e conferidas
-via Gmail. Isso confirma entrega do teste, sem provocar indisponibilidade.
-Os monitores anteriores foram preservados: Pages/UAT `804214516` Paused e
-health Supabase `804216408` Up no inventário final.
-
-A consulta pública independente HEAD retornou HTTP 200 na URL PRD, sem
-redirecionamento. Configuração, horários e limites de observação estão no
-[registro do frontend PRD](health-check.md#conferência-do-frontend-prd--25102026).
-Uma resposta HTTP não comprova execução JavaScript nem o fluxo completo de RSVP;
-o estado Up é uma observação datada, não garantia de disponibilidade futura.
+O [guia de monitoramento](health-check.md#monitoramento-externo) concentra
+endpoints, métodos, intervalos, alertas e limites do health e do frontend.
+O [registro de 25/10/2026](health-check.md#conferência-do-frontend-prd--25102026)
+documenta a configuração do monitor PRD, o inventário observado e o recebimento
+das mensagens sintéticas TEST DOWN/UP pelo contato autorizado. Esses estados
+são datados e não representam disponibilidade atual nem teste completo de RSVP.
 
 **Referência oficial:**
 
@@ -115,10 +90,8 @@ o estado Up é uma observação datada, não garantia de disponibilidade futura.
 - URL do monitor Pages/UAT (Paused na consulta de 25/10/2026):
   `https://bispoid.github.io/wedding-invitation-project`.
 
-O monitor configurado para esse endereço corresponde agora a UAT e foi
-preservado pausado; sua existência não comprova cobertura ativa. O monitor
-Vercel PRD é separado, conforme registro acima. Ambos são independentes
-do monitor do Supabase, que verifica os pré-requisitos operacionais do RSVP.
+O estado datado e os limites dos monitores Pages/UAT, Vercel PRD e Supabase
+ficam no [guia de monitoramento](health-check.md#monitoramento-do-frontend).
 
 GitHub Pages não é uma dependência da arquitetura. A preparação e os testes
 cobrem URLs root/subpath; a publicação em subpath foi validada nos checkpoints.
@@ -137,7 +110,7 @@ Destinos, variáveis, branch tracking, previews, gates e comandos:
 
 Vercel é a hospedagem produtiva em uso, não apenas uma alternativa considerada.
 Sua integração Git gera deployment no push autorizado de production. A evidência
-observada na publicação está no [QA final](qa-final-evidence.md#publicação-devuatprd--24102026),
+observada na publicação está no [QA final](history/qa-final-evidence.md#publicação-devuatprd--24102026),
 sem promessa de disponibilidade em tempo real.
 
 ## Node.js e npm

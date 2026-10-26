@@ -14,7 +14,7 @@ DEV é local, UAT está no GitHub Pages e PRD na Vercel. Destinos e publicação
 - **Interações:** `scripts/welcome/envelope.js` coordena a abertura, o controle manual `Pausar / Continuar`, o foco da carta e o retorno idempotente à capa; `scripts/letter/rsvp.js` envia o RSVP à Supabase Edge Function.
 - **Controles visuais:** `.button` e `.card-pause-control` compartilham identidade visual, tokens de cor, marca d’água floral, estados de foco e dimensionamento proporcional; o botão do cartão também respeita a área segura inferior em telas móveis.
 - **Modo desenvolvedor:** `scripts/devmode/preview.js` controla os previews estáticos e `styles/devmode/devmode.css` concentra os estilos do painel.
-- **Área administrativa:** `admin/` mantém login Supabase Auth, criação/listagem/edição/exclusão de convidados, indicadores, Event Config e contingência, sempre por Edge Functions com autorização no backend.
+- **Área administrativa:** `admin/` usa Supabase Auth para login e recuperação de senha. Criação/listagem/edição/exclusão de convidados, indicadores, Event Config e contingência passam pelas Edge Functions com autorização no backend.
 
 Essa estrutura vanilla atende à aplicação atual e evita adicionar framework ou
 build system antes de existir uma necessidade real. A interface e a integração
@@ -23,7 +23,7 @@ manuais ampliados de interface/acessibilidade foram consolidados; suas correçõ
 de QA estão versionadas e publicadas, com CI e smoke checks aprovados. O aceite
 visual final da publicação foi aprovado pelo responsável pelo QA e registrado
 no encerramento da Fase 13. Evidências e limites:
-[qa-final-evidence.md](../docs/qa-final-evidence.md).
+[qa-final-evidence.md](../docs/history/qa-final-evidence.md).
 
 ## Como visualizar
 
@@ -74,7 +74,8 @@ administrativas devem ser servidas por HTTP; abrir por `file://` não é suporta
 
 ## Configuração pública e publicação portátil
 
-As três páginas usam shared/bootstrap.js e só importam a aplicação após validar
+As quatro páginas (`index.html`, `admin/index.html`, `admin/login.html` e
+`admin/reset-password.html`) usam shared/bootstrap.js e só importam a aplicação após validar
 o manifesto da própria origem. app-config.js exporta os valores já validados;
 FUNCTIONS_BASE_URL e APP_BASE_URL preservam os contratos e root/subpath.
 
@@ -110,13 +111,13 @@ O workflow de testes e `npm run dev:test` usam a mesma seleção, incluindo
 paginação e isolamento DEV. Não use o glob como contagem de testes distintos:
 ele repete as suítes importadas pelo agregador Admin. Comandos e resultados
 vigentes: [testing-strategy.md](../docs/testing-strategy.md) e
-[QA DEV](../docs/qa-final-evidence.md#validação-final-do-dev--16102026).
+[QA DEV](../docs/history/qa-final-evidence.md#validação-final-do-dev--16102026).
 O workflow de testes executa essa suíte além dos testes Deno existentes. O workflow
 Pages executa os testes de App Config e do preparador como gate antes da preparação, sem
 dependência circular ou duplicação da suíte Deno.
 
 Contagens históricas, publicação e aceites estão em
-[qa-final-evidence.md](../docs/qa-final-evidence.md). SQL local:
+[qa-final-evidence.md](../docs/history/qa-final-evidence.md). SQL local:
 [event-config.md](../docs/event-config.md#validação-local).
 
 O controle do cartão possui cobertura específica em

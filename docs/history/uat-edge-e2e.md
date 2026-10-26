@@ -2,8 +2,8 @@
 
 > **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
 > abaixo valem na data do checkpoint, não como backlog atual. A separação foi
-> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
-> Operação vigente: [environments.md](environments.md).
+> concluída posteriormente: [estado atual](../development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](../environments.md).
 
 ## Resultado e escopo
 
@@ -27,7 +27,7 @@ outro navegador. Execução funcional headful para a entrada humana da senha;
 checagem complementar somente leitura de assets em Edge headless.
 
 O artefato anterior foi preservado; o preparador existente gerou saída nova em:
-`C:/Users/diegg/OneDrive/Documentos/Estudos/TI/projects/wedding-invitation-project/.dev/uat-cli/eugvobtvjicvocttnkka/edge-artifact/`.
+`<REPO_ROOT>/.dev/uat-cli/eugvobtvjicvocttnkka/edge-artifact/`.
 Build ID diagnóstico: `ed04d5c.edge-e2e-local`, contendo a correção local RSVP.
 Os bytes RSVP usados no teste foram comparados com o commit da correção
 `bf0f44b9df6e68c56058d695acf866591d8b341f` e são idênticos.
@@ -141,7 +141,7 @@ Nove fingerprints do vínculo CLI principal preservados.
 
 Runner, JSONs sanitizados, screenshots e artefato ficam exclusivamente no
 diretório ignorado:
-`C:/Users/diegg/OneDrive/Documentos/Estudos/TI/projects/wedding-invitation-project/.dev/uat-cli/eugvobtvjicvocttnkka/`.
+`<REPO_ROOT>/.dev/uat-cli/eugvobtvjicvocttnkka/`.
 Arquivos principais: edge-e2e.mjs, edge-authenticated.mjs, edge-evidence.json,
 edge-assets.mjs, edge-assets-proof.json e screenshots edge-*.png.
 Uma nova execução exige novos diretórios/identificadores e revalidação do alvo;

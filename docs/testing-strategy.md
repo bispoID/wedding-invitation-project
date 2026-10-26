@@ -1,7 +1,7 @@
 # Estratégia de testes
 
 Resultados e aceites são checkpoints por data e SHA em
-[qa-final-evidence.md](qa-final-evidence.md). Este documento define seleção,
+[qa-final-evidence.md](history/qa-final-evidence.md). Este documento define seleção,
 permissões e limites dos testes, não disponibilidade atual dos serviços.
 
 ## Camadas
@@ -55,7 +55,7 @@ de teste em `scripts/` estão cobertos, sem executá-los novamente como entradas
 O glob `node --test scripts/*.test.mjs` serve para conferir a descoberta, mas
 repete as quatro suítes importadas. A diferença de 75 execuções na auditoria
 não é cobertura adicional. Os resultados históricos e as contagens datadas da
-validação estão em [qa-final-evidence.md](qa-final-evidence.md).
+validação estão em [qa-final-evidence.md](history/qa-final-evidence.md).
 
 `environment-isolation.test.mjs` cobre os contratos estáticos de configuração
 local fail-closed, contingência sem Google Sheets, comandos/arquivos locais e
@@ -77,7 +77,7 @@ atualização só da senha, logout local e retry separado. Fixtures do DOM verif
 o formulário bloqueado/liberado e a confirmação persistente com link ao login; isso não equivale ao
 aceite visual. Root/subpath são cobertos também pelo preparador da allowlist.
 Validação funcional DEV concluída e distinção do último ajuste visual automatizado:
-[validação DEV de senha](password-recovery-dev-validation.md).
+[validação DEV de senha](history/password-recovery-dev-validation.md).
 A regressão de 25/10 cobre `SIGNED_IN` reemitido pelo SDK para a mesma sessão,
 troca efetiva de `session_id`, renovação do token, perda da resposta de update,
 confirmação antes de logout demorado e sucesso que eventos tardios não substituem.
@@ -88,33 +88,7 @@ da promoção e executa CI novamente no push. [Publicação](environments.md#pro
 
 ## Etapa 1 UAT — cobertura local
 
-Registro histórico de 16–17/10/2026; não representa backlog atual.
-
-App Config exercita validação v1 DEV/UAT/PRD, chaves legadas/publishable,
-destinos cruzados, hosts desconhecidos, compatibilidade do DEV legado, namespace
-do cliente Supabase e bootstrap ordenado com erro acessível. Os testes de build
-comparam todos os assets permitidos byte a byte, verificam o manifesto gerado,
-metadados, exclusão de arquivos internos e bloqueio de credenciais privilegiadas.
-
-Fixtures e políticas sintéticas vivem somente em scripts/environment-fixtures.mjs;
-não são configuração real de UAT e não integram o artefato. Nenhum teste do CI
-precisa consultar Supabase. Deno e a seleção canônica do package.json permanecem
-inalterados. As novas verificações estão nas suítes já selecionadas, sem duplicação.
-Naquele primeiro checkpoint, DEV integrado estava pendente de infraestrutura;
-a retomada abaixo resolveu a indisponibilidade. Doubles não equivalem a
-navegação, autenticação ou submissão real no Docker.
-
-Resultado local em 16/10/2026 nesta etapa: **308 testes Node aprovados, 150 Deno
-aprovados**, sem falhas, cancelamentos ou skips na seleção canônica. Sintaxe
-aprovada em 46 arquivos JS/MJS (incluindo os novos) e git diff --check limpo.
-Quatro artefatos sintéticos (UAT/PRD × root/subpath) foram gerados, inspecionados
-nos testes e removidos pelo teardown. Nenhum artefato real PRD foi preparado.
-A configuração DEV ignorada existente foi validada sem imprimir valores;
-portas locais consultadas indisponíveis e dev:health sem conclusão, interrompido.
-Não houve execução remota de CI, deploy ou GET Event Config PRD.
-
-Retomada em 17/10/2026: **310 testes Node aprovados**, incluindo duas regressões
-de recuperação explícita após HTTP 503. Health e integração DEV passaram, e os
-fluxos administrativos foram verificados no navegador com backend local.
-Detalhes, captura sanitizada e limites de aceite:
-[uat-dynamic-revalidation.md](uat-dynamic-revalidation.md).
+Os resultados de 16–17/10/2026 foram preservados no
+[histórico das fases](history/development-phases.md#etapa-1-uat--cobertura-local).
+A cobertura implementada permanece descrita acima; o checkpoint não representa
+backlog atual nem nova execução de testes.

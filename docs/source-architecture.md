@@ -2,13 +2,16 @@
 
 Este mapa descreve responsabilidades do código versionado. Contrato de ambiente
 e publicação: [environments.md](environments.md); evidências datadas:
-[qa-final-evidence.md](qa-final-evidence.md).
+[qa-final-evidence.md](history/qa-final-evidence.md).
 
-## Entrada do frontend público
+## Entradas do frontend público e administrativo
 
-`index.html`, `admin/index.html` e `admin/login.html` carregam uma única
+`index.html`, `admin/index.html`, `admin/login.html` e
+`admin/reset-password.html` carregam uma única
 entrada `scripts/shared/bootstrap.js`. Ela aguarda o manifesto da própria origem
 e a validação de `environment-config.js` antes de importar o main correspondente.
+`admin/reset-password.html` seleciona `admin/scripts/reset-password.js`;
+login/dashboard usam `admin/scripts/main.js` e o convite usa `scripts/main.js`.
 `app-config.js` só exporta valores revalidados, sem destino padrão.
 Falhas exibem alerta acessível e bloqueiam formulários. O contrato e a
 compatibilidade do arquivo DEV legado estão em [environments.md](environments.md).
@@ -74,3 +77,26 @@ Os testes Node modelam DOM, timers e filesystem; os testes Deno exercitam
 handlers e módulos compartilhados com dependências sintéticas; `block3.sql`
 verifica grants/RLS/constraints em uma transação local revertida. Nenhum deles
 é aceite visual de navegador ou validação de produção por si só.
+
+## Compatibilidade e critérios para limpeza
+
+As fachadas JS `scripts/envelope.js` e `scripts/letter.js` são importadas por
+`scripts/main.js`. As fachadas CSS são importadas por `styles/main.css` e
+preservam a ordem da cascata. Ambas as camadas integram a allowlist
+`config/public-assets.json`; seu tamanho reduzido não indica obsolescência.
+
+`supabase/functions/rsvp/google-sheets.ts` preserva a exportação histórica
+`saveToGoogleSheets`; `handler.ts` ainda aceita essa dependência de
+compatibilidade e os testes exercitam essa opção. Não foi demonstrada a
+ausência de consumidores externos da exportação. `notify-admin.ts` é importado
+pelo entrypoint, pelo handler como tipo e pelos testes; permanece funcional.
+
+Assets presentes na allowlist fazem parte do artefato publicado, mesmo quando
+não há referência direta no HTML. Por exemplo, `moldura_ramas_3360x4800.webp`
+permanece candidato a avaliação de uso, sem exclusão: sua remoção alteraria o
+artefato e requer verificar CSS, tokens, previews, URLs dinâmicas e compatibilidade.
+Imagens e monograma também podem representar decisões de identidade visual.
+
+Antes de excluir, conferir imports, HTML/CSS, scripts, manifestos, builds,
+testes, documentação e carregamento dinâmico. Preservar migrations históricas
+e testes necessários à reconstrução e validação do banco.

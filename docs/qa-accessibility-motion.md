@@ -1,7 +1,7 @@
 # Regressões de foco RSVP e movimento reduzido — Etapa 5D.1
 
 Homologação/publicação e aceite humano posteriores estão no
-[QA final](qa-final-evidence.md#publicação-devuatprd--24102026).
+[QA final](history/qa-final-evidence.md#publicação-devuatprd--24102026).
 Este documento preserva o contrato técnico e o executor opcional local.
 
 ## Contrato

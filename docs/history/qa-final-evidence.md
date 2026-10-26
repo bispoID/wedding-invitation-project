@@ -1,5 +1,9 @@
 # QA final — evidências técnicas e manuais
 
+> Registro histórico. As pendências e autorizações descrevem o checkpoint
+> indicado, sem substituir a operação vigente. [Estado atual](../development_roadmap.md#estado-atual)
+> e [índice de evidências](../README.md#evidências-históricas).
+
 ## Publicação e conferência PRD da correção de acessibilidade — 26/10/2026
 
 **Promoção, publicação e aceite técnico focado PRD concluídos**, no escopo
@@ -223,7 +227,7 @@ as alterações documentais locais produzidas após a publicação UAT.
    mecanismo Vercel no ciclo autorizado, sem usar a referência anterior 09267d1
    como alvo automático. A conexão MCP de deployments recebeu 403 por escopo;
    as informações atuais foram conferidas no dashboard autenticado.
-3. Seguir [o procedimento canônico](environments.md#proteções-e-promoção), passo
+3. Seguir [o procedimento canônico](../environments.md#proteções-e-promoção), passo
    a passo: `git switch production`,
    `git merge --ff-only c25e2cd266540210efc0297697ce54a2e5de9e03`, conferir HEAD e
    `git diff --check`, então `git push origin production`. Interromper se refs,
@@ -250,7 +254,7 @@ registros anteriores, sem reabertura de auditorias.
 
 ### Ambiente e ferramentas
 
-- Procedimento de [DEV local](local-development.md) seguido: snapshot
+- Procedimento de [DEV local](../local-development.md) seguido: snapshot
   `.dev/event-config.json` existente e preservado, Docker Desktop/WSL2 e imagens
   Supabase já disponíveis. `dev:up` sem reset e sem o GET condicionado à ausência
   do snapshot. Nenhuma consulta ao backend UAT/PRD ou alteração remota.
@@ -405,8 +409,8 @@ PRD preservado. [Evidências e pendências](password-recovery-uat-validation.md)
 ## Publicação DEV/UAT/PRD — 24/10/2026
 
 Registro consolidado da homologação e Etapa 6C, não nova execução de testes
-nesta revisão documental. Estado de operação: [ambientes](environments.md);
-pendências e decisões: [roadmap](development_roadmap.md#estado-atual).
+nesta revisão documental. Estado de operação: [ambientes](../environments.md);
+pendências e decisões: [roadmap](../development_roadmap.md#estado-atual).
 
 - SHA homologado/publicado: `09267d1188d26e95a2295897da6695a20a1e6b27`.
 - UAT Pages: [run 40096509221](https://github.com/bispoID/wedding-invitation-project/actions/runs/40096509221).
@@ -480,7 +484,7 @@ HEAD final deste escopo: `b5995cf53be3085f9b1d418b8cddf08154afd303`.
 Este documento preserva abaixo o histórico da consolidação anterior de
 09/10/2026, originalmente registrada em `feature/landing-page`, e acrescenta
 o encerramento específico da pesquisa e paginação administrativa. O
-[roadmap](development_roadmap.md) continua sendo a fonte oficial do estado das
+[roadmap](../development_roadmap.md) continua sendo a fonte oficial do estado das
 13 fases.
 
 ## Encerramento da pesquisa e paginação administrativa

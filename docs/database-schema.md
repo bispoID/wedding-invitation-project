@@ -57,4 +57,4 @@ bloqueio e expiração do rate limit, paginação sem sobreposição, busca lite
 `include_all`, métricas globais e rejeição de página inválida. Também termina
 com `ROLLBACK`, usando somente fixtures sintéticas. Comandos e evidências em
 [local-development.md](local-development.md#sql-local) e
-[qa-final-evidence.md](qa-final-evidence.md#validação-final-do-dev--16102026).
+[qa-final-evidence.md](history/qa-final-evidence.md#validação-final-do-dev--16102026).

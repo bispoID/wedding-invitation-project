@@ -2,7 +2,7 @@
 
 Este é o guia operacional canônico de configuração e publicação. O
 [roadmap](development_roadmap.md#estado-atual) registra status e backlog; o
-[QA final](qa-final-evidence.md#publicação-devuatprd--24102026) registra a
+[QA final](history/qa-final-evidence.md#publicação-devuatprd--24102026) registra a
 publicação homologada. Observações datadas não garantem disponibilidade atual.
 
 ## Matriz de ambientes
@@ -75,18 +75,9 @@ Na primeira adoção do contrato é necessário autenticar novamente, inclusive
 em PRD; a transição foi publicada. Não migre storage/token entre ambientes.
 
 A recuperação administrativa usa callback exato derivado da mesma base validada,
-sem destinos fornecidos pela URL. O callback exato foi configurado no Auth UAT
-em 25/10/2026, após publicação de `ed5f7c9`; a validação funcional dessa versão
-foi concluída, incluindo logins e dashboard confirmados pelo responsável. O
-refinamento visual posterior tem entrega e registro de publicação separados
-daquele aceite funcional. PRD recebeu `bf35bc2` em 25/10/2026; Site URL/callback
-foram configurados. Troca real e testes das senhas foram confirmados pelo
-responsável; identidade preservada e reuso bloqueado foram conferidos pelo agente.
-O responsável confirmou painel e lista após o novo login, concluindo o aceite
-funcional PRD. Evidências:
-[recuperação PRD](password-recovery-prd-validation.md),
-[recuperação UAT](password-recovery-uat-validation.md). URLs e pré-requisitos:
+sem destinos fornecidos pela URL. URLs, restrições e pré-requisitos:
 [recuperação administrativa](admin-guest-management.md#pré-requisitos-posteriores-em-uat-e-prd).
+Estado e aceites por ambiente: [roadmap](development_roadmap.md#estado-atual).
 
 ## Build e artefatos
 
@@ -212,3 +203,22 @@ atualizar manifesto/variables sob autorização e validar antes da publicação.
 O snapshot DEV em .dev é preservado. Seu bootstrap só consulta Event Config
 pública PRD se o snapshot estiver ausente, por comando explícito; isso não é
 fallback do runtime/build. Não executar essa consulta sem autorização.
+
+## Descoberta do repositório e papel de main
+
+Na inspeção local de 26/10/2026, `origin/main` apontava para `2b6082e` e seu
+README continha apenas o título do projeto. `origin/HEAD` não estava configurado;
+a branch padrão remota não foi consultada nesta revisão. O relatório anterior
+registrou `main` como padrão, o que permanece informação histórica.
+
+Recomenda-se definir separadamente se `main` será uma entrada documental ou
+uma linha de integração. Se continuar como padrão, seu README deve encaminhar
+para a documentação vigente, após decisão sobre o fluxo Git. Uma eventual
+mudança de branch padrão deve considerar a criação de PRs e as proteções
+existentes. Não se recomenda promover documentação sincronizando branches de
+publicação apenas para melhorar a página inicial.
+
+O workflow versionado publica Pages somente de `staging`; a política Vercel e
+os procedimentos usam `production` para PRD. Branch padrão e branch de deploy
+têm responsabilidades distintas. A navegação do checkout atual começa no
+[README raiz](../README.md) e no [índice documental](README.md).

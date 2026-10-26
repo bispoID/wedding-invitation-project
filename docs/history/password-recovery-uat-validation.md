@@ -1,5 +1,9 @@
 # Recuperação administrativa — publicação e homologação UAT
 
+> Registro histórico. As pendências e autorizações descrevem o checkpoint
+> indicado, sem substituir a operação vigente. [Estado atual](../development_roadmap.md#estado-atual)
+> e [índice de evidências](../README.md#evidências-históricas).
+
 ## Estado em 25/10/2026
 
 **Versão atual publicada em UAT: `bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb`.**
@@ -176,5 +180,5 @@ testes e documentação consolidada. As evidências acrescentadas após aquele c
 foram revisadas neste encerramento documental; seu commit local não publica uma
 nova versão em UAT ou PRD. O plano PRD é uma preparação separada, somente leitura.
 
-Procedimento: [ambientes](environments.md). Histórico da entrega e aceite DEV:
+Procedimento: [ambientes](../environments.md). Histórico da entrega e aceite DEV:
 [validação DEV](password-recovery-dev-validation.md).

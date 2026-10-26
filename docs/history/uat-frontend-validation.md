@@ -2,8 +2,8 @@
 
 > **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
 > abaixo valem na data do checkpoint, não como backlog atual. A separação foi
-> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
-> Operação vigente: [environments.md](environments.md).
+> concluída posteriormente: [estado atual](../development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](../environments.md).
 
 ## Continuação E2E concluída
 
@@ -56,8 +56,8 @@ o wrapper escolheu diretórios novos dentro do contexto operacional ignorado.
 
 Artefatos finais (71 arquivos cada):
 
-- `C:/Users/diegg/OneDrive/Documentos/Estudos/TI/projects/wedding-invitation-project/.dev/uat-cli/eugvobtvjicvocttnkka/stage4-artifact-final/`
-- `C:/Users/diegg/OneDrive/Documentos/Estudos/TI/projects/wedding-invitation-project/.dev/uat-cli/eugvobtvjicvocttnkka/stage4-root-final/`
+- `<REPO_ROOT>/.dev/uat-cli/eugvobtvjicvocttnkka/stage4-artifact-final/`
+- `<REPO_ROOT>/.dev/uat-cli/eugvobtvjicvocttnkka/stage4-root-final/`
 
 Build ID `c0903a4346d5.stage4-local`. Um GET real UAT alimentou ambos os builds
 finais; a resposta pública foi reutilizada em memória. O ensaio inicial usou

@@ -2,8 +2,8 @@
 
 > **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
 > abaixo valem na data do checkpoint, não como backlog atual. A separação foi
-> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
-> Operação vigente: [environments.md](environments.md).
+> concluída posteriormente: [estado atual](../development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](../environments.md).
 
 ## Atualização — Etapa 5B.1, 23–24/10/2026, proteções remotas concluídas
 
@@ -257,7 +257,7 @@ Nenhum GET PRD, RSVP, login ou escrita remota. A resposta pública verificada fo
 guardada em cache ignorado para regenerações locais sem nova consulta remota.
 
 Saída inicial ignorada:
-`C:/Users/diegg/OneDrive/Documentos/Estudos/TI/projects/wedding-invitation-project/.dev/vercel-audit/pages-uat-773fd598b604c85082b84f04e06a9b40184487ce/`.
+`<REPO_ROOT>/.dev/vercel-audit/pages-uat-773fd598b604c85082b84f04e06a9b40184487ce/`.
 
 Resultado: 71 arquivos (70 assets revisados + runtime-config.json), 81 referências
 relativas válidas; único recurso externo estático identificado: https://esm.sh.

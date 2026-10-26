@@ -2,8 +2,8 @@
 
 > **Registro histórico de etapa.** Estados, limites, bloqueios e próximas ações
 > abaixo valem na data do checkpoint, não como backlog atual. A separação foi
-> concluída posteriormente: [estado atual](development_roadmap.md#estado-atual).
-> Operação vigente: [environments.md](environments.md).
+> concluída posteriormente: [estado atual](../development_roadmap.md#estado-atual).
+> Operação vigente: [environments.md](../environments.md).
 
 ## Atualização — Etapa 5B.1, 23–24/10/2026, rulesets remotos ativos
 
@@ -61,8 +61,7 @@ leitura das páginas General, Git, Environments e Build and Deployment confirmou
 | Campo | Valor observado no Dashboard |
 | --- | --- |
 | Projeto | wedding-invitation-project |
-| Project ID | prj_ddkuhQTns4qqaGCXtBoq5ilWoteb |
-| Conta | Pessoal, Hobby; slug d7-af27 |
+| Plano | Hobby |
 | Repositório conectado | bispoID/wedding-invitation-project |
 | Production Branch | production |
 | Root Directory | raiz do repositório; campo sem subdiretório, exibindo ./ |
@@ -231,8 +230,7 @@ prova de publicação por branch. O environment github-pages permite somente
 `staging`, sem reviewer obrigatório informado e com bypass de admins permitido.
 O Pages publicado não foi atualizado nem utilizado para testes funcionais.
 
-Vercel: projeto `prj_ddkuhQTns4qqaGCXtBoq5ilWoteb`,
-`wedding-invitation-project`, conta `team_fTI9LQxhX6q7r3XC5gxy8jxl`.
+Vercel: projeto `wedding-invitation-project`, vinculado ao repositório indicado.
 A leitura resumida funcionou; a consulta com escopo explícito retornou HTTP 403.
 Production Branch, política atual de Preview e conteúdo do Ignored Build Step
 não foram expostos pelas respostas acessíveis.
