@@ -1,5 +1,245 @@
 # QA final — evidências técnicas e manuais
 
+## Publicação e conferência PRD da correção de acessibilidade — 26/10/2026
+
+**Promoção, publicação e aceite técnico focado PRD concluídos**, no escopo
+capa/cartão/carta e transições de foco descrito abaixo. Resultado observado
+pelo agente na interface publicada; não se atribui um novo aceite humano PRD.
+
+### Git, candidato e preservação documental
+
+- Candidato exato autorizado e publicado:
+  `c25e2cd266540210efc0297697ce54a2e5de9e03`.
+- Antes da promoção, feature e staging remotas estavam nesse SHA; production
+  estava em `bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb`. Fetch e comparação
+  confirmaram ancestralidade `0 4`, sem divergência.
+- Intervalo aprovado preservado: 9e3ad34, 67fb605, 76bf55f e c25e2cd;
+  **12 arquivos**, oito documentais, com 529 inserções e 48 exclusões. Alteração
+  executável restrita ao HTML e aos dois módulos do cartão; regressão no teste
+  do envelope. Sem alteração de workflow, política Vercel ou configuração de
+  ambiente, Functions, migrations, Auth ou banco.
+- QA e roadmap tinham alterações locais posteriores ao candidato. Foram
+  copiados para evidência ignorada e guardados temporariamente em stash de
+  escopo explícito. Com árvore limpa, production avançou por fast-forward ao
+  SHA autorizado e recebeu push normal exclusivo. Sem reset, force-push,
+  merge commit ou inclusão das alterações documentais locais.
+- Retorno à feature e restauração dos dois documentos conferida byte a byte
+  pelas cópias/hash anteriores, antes desta consolidação. Stash temporário
+  removido somente após essa verificação. Nenhum novo commit documental naquele
+  ciclo de promoção.
+
+### CI, deployment e integridade
+
+- [CI production 40339455956](https://github.com/bispoID/wedding-invitation-project/actions/runs/40339455956):
+  completed/success no candidato exato. Logs do job 121629842350 confirmaram
+  **414 Node, 150 Deno**, sintaxe de **33 JS** e whitespace aprovados.
+  Não se repetiram suítes locais; CI executou o workflow previsto no push.
+- Deployment Git Vercel **`dpl_PaytKBpZHjmVbppUgR22XmawwZrP`**, READY,
+  ambiente Production, source branch production e commit c25e2cd, conferidos
+  no dashboard autenticado. A inspeção continuou pelo navegador, dado o limite
+  de acesso ao escopo de deployments da conexão MCP registrado no ciclo UAT.
+- Domínio oficial: [frontend PRD](https://bruna-e-diego.vercel.app/).
+  Runtime HTTP 200: appEnv `prd`, projectRef `bkkienyemqlkueygknzl`,
+  supabaseUrl PRD, publicSiteUrl oficial e buildId igual ao SHA completo acima.
+- **75 recursos públicos HTTP 200, todos correspondentes byte a byte ao build
+  esperado.** Preparo canônico em diretório local ignorado, usando o candidato
+  extraído com `git -c core.autocrlf=false archive`; HTML gerado e runtime
+  incluídos na comparação. A primeira comparação usou texto convertido para
+  CRLF pelo Git Windows, inclusive no archive padrão, e diferiu dos bytes LF
+  publicados. A causa foi confirmada contra o blob Git do módulo; a extração
+  LF eliminou as diferenças sem mudar fonte, configuração Git ou deployment.
+  A preparação lê somente a Event Config pública para os metadados; nenhum
+  dado ou configuração remota foi alterado.
+
+### Conferência real focada na interface PRD
+
+Navegador integrado automatizado **IAB, viewport 1280 × 720**, versão do engine
+não aferida. Aba aberta no domínio oficial após o deployment READY, com recursos
+atualizados; o cartão foi exposto corretamente já na primeira execução. Método:
+interações pela interface, teclado, inspeção DOM/árvore acessível e capturas.
+Não houve injeção de estado, alteração de animações ou uso de preview DEV.
+
+| Etapa | Resultado observado |
+| --- | --- |
+| Capa | Cartão `aria-hidden=true`, monograma/citação do cartão ausentes da árvore. Primeiro Tab focou o selo com contorno visível. Sem rolagem horizontal. |
+| Abertura | Enter no selo iniciou a animação normal; Pausar antes de abrir a carta foi acionado pela interface durante a janela natural, preservando a ação de espera. |
+| Cartão apresentado | `aria-hidden=false`, monograma/citação disponíveis na árvore e cartão legível visualmente. Continuar visível; carta permaneceu oculta após terminar a apresentação. |
+| Retomada | Enter em Continuar revelou a carta, ocultou a capa e focou `letter-title`. Contorno de foco, aparência e ausência de rolagem horizontal conferidos. |
+| Retorno | Enter em Voltar para a capa restaurou foco visível no selo e scrollY=0. Cartão novamente `aria-hidden=true` e ausente da árvore, carta oculta. |
+
+Nenhuma regressão de funcionamento, aparência ou progressão identificada nesse
+percurso/viewport. Não houve envio de RSVP, troca de senha, alteração de Auth,
+banco, monitores, Functions ou migrations; homologações anteriores preservadas.
+
+Inspeção de árvore acessível **não é teste com leitor de tela**; viewport não é
+zoom real de 200%. Esses testes específicos não foram executados neste ciclo.
+Confirmação humana anterior em Firefox/Safari permanece separada, com versões,
+dispositivo, sistema operacional e ambiente não informados. Não se atribui a
+esse relato execução desta versão em PRD, iOS, zoom ou leitor de tela, nem se
+declara conformidade integral com WCAG.
+
+### Rollback efetivamente conferido
+
+Antes do push, o deployment estável
+**`dpl_VhUcj8Lvq56JTxFYgwgyxLCeN8Kr`**, SHA
+`bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb`, estava READY/current e associado ao
+domínio oficial. Diálogo Instant Rollback disponível; o plano Hobby oferece
+retorno ao deployment de produção imediatamente anterior, conforme a
+[documentação Vercel](https://vercel.com/docs/cli/rollback).
+
+Naquele momento bf35bc2 ainda era Current, e 09267d1 era Previous; não se
+afirmou que bf35bc2 já aparecia como Previous antes de substituí-lo. Após a
+publicação, nova inspeção do diálogo confirmou c25e2cd/PaytKBpZH como Current e
+**bf35bc2/VhUcj8Lvq como Previous elegível**, referência exata autorizada para
+reversão. Inspeções canceladas, sem Continue ou confirmação de rollback.
+Nenhuma regressão justificou utilizar a autorização de recuperação.
+
+Rollback Vercel restaura o frontend; não reverte Git, Auth, senha, banco ou
+Functions. Não desfazer esses estados automaticamente; após uma reversão,
+conferir domínio/runtime e política de autoatribuição antes de nova publicação.
+
+Evidências sanitizadas ignoradas sob `.dev/qa/prd-accessibility-2026-10-26/`:
+`published-audit.json`, `deployment-ready.png`/`.ax.txt`,
+`rollback-before.png`/`.ax.txt`, `rollback-after.png`/`.ax.txt`,
+`cover.png`, `card-paused.png`, `letter.png`, `cover-return.png` e respectivas
+árvores `.ax.txt`. Sem credenciais, sessões ou links completos de recuperação.
+Ao encerrar o ciclo de promoção, QA e roadmap ficaram como diff documental local
+para revisão, sem staging ou commit automático; feature, staging e production
+remotas estavam no mesmo candidato. O fechamento documental posterior tem
+escopo exclusivo nesses dois documentos e envio somente à feature, sem nova
+promoção ou publicação.
+
+## Publicação UAT da correção de acessibilidade — 26/10/2026
+
+### Candidato, promoção e CI
+
+Candidato exato: `c25e2cd266540210efc0297697ce54a2e5de9e03`
+(`fix(a11y): hide covered invitation card from assistive technology`).
+Checkout inicial limpo na feature. Refs remotas consultadas e atualizadas por
+fetch antes da promoção; staging e production estavam em
+`bf35bc2e485a9ae9731ed2d1319c7e924cdfb2fb`.
+
+O intervalo completo, sem divergência (`0 4`), contém:
+
+- `9e3ad34`: documentação do aceite da recuperação UAT.
+- `67fb605`: documentação do encerramento da recuperação PRD.
+- `76bf55f`: documentação do monitoramento do frontend PRD.
+- `c25e2cd`: correção de acessibilidade, regressão e consolidação QA/roadmap.
+
+São 12 arquivos: oito documentos, HTML, dois módulos JS e o teste do envelope.
+Nenhuma mudança em workflows, política Vercel, Auth, Functions, migrations ou
+configuração de ambiente. Nenhuma mudança inesperada identificada.
+
+Push normal da feature concluído; staging avançada por fast-forward e push ao
+mesmo candidato. `deploy-pages.yml` publica somente staging, inclusive no
+dispatch manual; `vercel.json` bloqueia deployments Git da feature e de staging.
+Production permaneceu em bf35bc2. Nenhum force-push, novo commit ou deploy PRD.
+
+| Execução | Resultado e evidência |
+| --- | --- |
+| [CI feature 40328977848](https://github.com/bispoID/wedding-invitation-project/actions/runs/40328977848) | completed/success no SHA exato. Logs: 414 Node, 150 Deno e sintaxe de 33 JS aprovados; whitespace aprovado. |
+| [CI staging 40329203284](https://github.com/bispoID/wedding-invitation-project/actions/runs/40329203284) | completed/success no mesmo SHA, com os mesmos totais confirmados nos logs. |
+| [Pages UAT 40329203374](https://github.com/bispoID/wedding-invitation-project/actions/runs/40329203374) | completed/success. Job validate: 414 Node, 150 Deno, sintaxe e whitespace aprovados. Job deploy: 102 testes de preparação aprovados, artefato preparado, upload e publicação concluídos. As execuções não são somadas como testes distintos. |
+
+Suítes locais não repetidas: os resultados DEV existentes foram aproveitados.
+CI executou automaticamente as verificações previstas nos workflows.
+
+### Integridade da publicação
+
+URL: [frontend UAT](https://bispoid.github.io/wedding-invitation-project/).
+Runtime HTTP 200: appEnv `uat`, projectRef `eugvobtvjicvocttnkka`, URL canônica
+Pages e buildId igual ao candidato completo. Artefato github-pages
+`12654250674`, ZIP SHA-256
+`f3840e1eb342de00140057ab8bfb431d6887de670376dc127b5f151f6b9f9474`.
+
+Os **75 arquivos publicados** retornaram HTTP 200 e corresponderam byte a byte
+ao conteúdo preparado do artefato Pages, incluindo HTML gerado e runtime.
+Não se comparou o HTML gerado diretamente com o fonte. Registro sanitizado
+ignorado: `.dev/qa/uat-accessibility-2026-10-26/published-audit.json`.
+
+### Conferência focada no navegador UAT
+
+Executada pelo agente no navegador integrado automatizado (IAB), viewport
+**794 × 884**, versão do engine não aferida. Interações reais da interface,
+inspeção DOM/árvore acessível e capturas visuais; sem simular estado de fluxo,
+alterar temporizadores ou executar preview DEV no site publicado.
+
+| Estado/ação | Resultado observado |
+| --- | --- |
+| Capa | Cartão com `aria-hidden=true`; monograma e citação do cartão ausentes da árvore acessível. Tab chegou ao selo com contorno de foco visível. |
+| Abertura | Enter no selo iniciou o fluxo normal e a animação existente. Controle Pausar antes de abrir a carta (ação de espera) acionado pela interface durante sua janela natural. |
+| Cartão apresentado/pausado | `aria-hidden=false`; monograma e citação disponíveis na árvore. Cartão legível na captura, controle Continuar visível e carta ainda oculta após a conclusão da apresentação. |
+| Continuar | Enter no controle revelou a carta e focou `letter-title`; capa oculta. Aparência da carta e contorno de foco conferidos em captura. |
+| Retorno | Enter em Voltar para a capa restaurou o selo como foco visível e scrollY=0. Cartão novamente `aria-hidden=true` e ausente da árvore; carta oculta. |
+
+Nenhuma regressão visual ou de progressão identificada nesse percurso/viewport.
+Estilos e recursos de animação não foram alterados pelo candidato. Não se
+reenviou RSVP, não se alterou senha e não se modificaram Auth, banco ou monitores.
+
+A aba inicial havia carregado módulos antes da publicação. Após recarga, HTML
+novo com JS ainda em cache manteve transitoriamente o cartão oculto na árvore
+durante a pausa. O recurso publicado já continha a correção; headers indicaram
+`Cache-Control: max-age=600`. Após a validade desse cache e nova recarga, o
+mesmo percurso confirmou os três estados corretos acima. Não se modificaram
+cache da aplicação, estilos ou tempos para contornar a observação. A primeira
+tentativa de alcançar Pausar também excedeu a janela da ferramenta; a execução
+concluída acionou o controle durante o fluxo natural, sem congelar a animação.
+
+Capturas e árvores sanitizadas, ignoradas pelo Git, sob
+`.dev/qa/uat-accessibility-2026-10-26/`: `cover.png`, `card-paused.png`,
+`letter.png`, `cover-return.png` e respectivos registros `.ax.txt`.
+`prd-current-reference.png`/`.ax.txt` registram a consulta PRD somente leitura.
+
+**Publicação e conferência focada UAT concluídas.** Inspeção de árvore não é
+teste com leitor de tela. Não houve novo teste de zoom real de 200%, Firefox,
+Safari ou iOS pelo agente. A confirmação humana prévia de Firefox/Safari mantém
+versões, dispositivo, sistema operacional e ambiente não informados; não se
+reatribui como execução específica desta publicação. Não se declara conformidade
+integral com WCAG. A promoção PRD subsequente foi autorizada e concluída no
+registro acima, sem ampliar retroativamente a cobertura deste ciclo UAT.
+
+### Plano PRD preparado por consultas de leitura
+
+O plano abaixo foi preparado somente por leitura no ciclo UAT e posteriormente
+executado por autorização específica, conforme o registro PRD acima. Preserva-se
+como histórico do plano aprovado: candidato exclusivamente c25e2cd, excluindo
+as alterações documentais locais produzidas após a publicação UAT.
+
+1. Após autorização específica, atualizar refs e conferir árvore limpa,
+   ancestralidade e candidato exato. Base ao preparar o plano: production em bf35bc2; intervalo
+   efetivo: os quatro commits e 12 arquivos discriminados acima, com 529 inserções
+   e 48 exclusões. Mudanças executáveis: `invite-app/index.html`,
+   `invite-app/scripts/welcome/envelope.js` e
+   `invite-app/scripts/devmode/preview.js`; regressão em
+   `scripts/envelope-motion.test.mjs`. Os outros oito arquivos são documentação.
+   Sem alterações de backend, Auth, banco, dependências ou configuração de deploy.
+2. Reconfirmar os checks exigidos do SHA e a referência estável de rollback.
+   Dashboard Vercel consultado em modo somente leitura: projeto
+   `prj_ddkuhQTns4qqaGCXtBoq5ilWoteb`, Production Branch `production`, deployment
+   **`dpl_VhUcj8Lvq56JTxFYgwgyxLCeN8Kr`**, READY/current, SHA bf35bc2 e domínio
+   `bruna-e-diego.vercel.app`. GET do runtime oficial confirmou `prd`, projeto
+   `bkkienyemqlkueygknzl` e buildId bf35bc2. Essa é a referência estável para
+   reversão da próxima publicação; reconfirmar disponibilidade/elegibilidade no
+   mecanismo Vercel no ciclo autorizado, sem usar a referência anterior 09267d1
+   como alvo automático. A conexão MCP de deployments recebeu 403 por escopo;
+   as informações atuais foram conferidas no dashboard autenticado.
+3. Seguir [o procedimento canônico](environments.md#proteções-e-promoção), passo
+   a passo: `git switch production`,
+   `git merge --ff-only c25e2cd266540210efc0297697ce54a2e5de9e03`, conferir HEAD e
+   `git diff --check`, então `git push origin production`. Interromper se refs,
+   diff ou ancestralidade divergirem. Push dessa branch aciona CI e Vercel PRD;
+   Pages permanece restrito a staging. Sem merge commit, reset ou force-push.
+4. Acompanhar CI e Vercel até READY; conferir domínio oficial, appEnv `prd`,
+   projeto Supabase PRD, buildId exato e recursos publicados. Repetir somente a
+   conferência focada de capa/cartão/carta, teclado e foco após transições,
+   com módulos atualizados. Não exigir novo RSVP ou troca de senha por esta
+   alteração; não há ajuste Auth/e-mail/callback necessário ao diff proposto.
+5. Se houver regressão essencial, com autorização de recuperação, usar o
+   mecanismo Vercel para restaurar o deployment estável acima e conferir
+   domínio/runtime. Rollback restaura frontend; não reverte Git, Auth, senha,
+   banco ou Functions. Conferir a política de autoatribuição de domínios antes
+   de publicação posterior. Não executar reset/force ou reversão de backend.
+
 ## Cobertura evolutiva DEV — 26/10/2026
 
 Checkout inicial limpo em `feature/landing-page`, SHA

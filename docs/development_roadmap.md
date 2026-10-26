@@ -786,6 +786,37 @@ de tela e iOS também não foi informada. Essa evidência humana é distinta da
 inspeção DOM/árvore acessível pelo agente. Evidências e roteiro complementar:
 [ciclo DEV](qa-final-evidence.md#cobertura-evolutiva-dev--26102026).
 
+Ainda em 26/10/2026, `c25e2cd266540210efc0297697ce54a2e5de9e03` foi enviado
+na feature e promovido por fast-forward a staging. O intervalo desde bf35bc2
+incluiu os três registros documentais anteriores (9e3ad34, 67fb605 e 76bf55f)
+e a correção aprovada, sem mudanças inesperadas. CI feature/staging e Pages
+aprovados; runtime UAT e 75 arquivos publicados conferidos contra o artefato.
+Conferência focada concluída no IAB 794 × 884: cartão excluído na capa,
+acessível na apresentação pausada e oculto novamente no retorno; abertura,
+Continuar e retorno com foco conferidos. Após renovar módulos em cache HTTP de
+dez minutos, os três estados foram confirmados, sem mudança de código adicional.
+No encerramento desse ciclo UAT, production ainda estava em bf35bc2. O
+[registro UAT e plano PRD](qa-final-evidence.md#publicação-uat-da-correção-de-acessibilidade--26102026)
+separa publicação, conferência no navegador e limites de cobertura. O plano
+PRD foi preparado somente por leitura e executado no ciclo autorizado seguinte.
+
+Na promoção PRD autorizada de 26/10/2026, production avançou por fast-forward
+ao mesmo c25e2cd, com push exclusivo dessa branch. CI
+[40339455956](https://github.com/bispoID/wedding-invitation-project/actions/runs/40339455956)
+aprovou 414 Node, 150 Deno, sintaxe e whitespace. Deployment
+`dpl_PaytKBpZHjmVbppUgR22XmawwZrP` READY no domínio oficial; runtime PRD e
+75 recursos conferidos contra o build esperado com os bytes LF do candidato.
+Conferência focada no IAB 1280 × 720 aprovada: três estados acessíveis do cartão,
+abertura, pausa, Continuar, carta e retorno com foco visível, sem regressão
+observada. Rollback para `dpl_VhUcj8Lvq56JTxFYgwgyxLCeN8Kr`/bf35bc2 disponível
+e confirmado como Previous após a publicação; não executado. Nenhum RSVP,
+troca de senha ou alteração de backend/monitores. QA e roadmap locais preservados
+fora do candidato, restaurados e consolidados sem novo commit naquele ciclo de
+promoção. O fechamento documental posterior é separado, somente na feature.
+Inspeção de árvore
+não equivale a leitor de tela ou zoom real; sem novo aceite humano PRD ou
+declaração integral WCAG. [Registro PRD e limites](qa-final-evidence.md#publicação-e-conferência-prd-da-correção-de-acessibilidade--26102026).
+
 Não há bloqueio técnico relevante identificado no encerramento. CI, integridade
 de dados, isolamento, credenciais e publicação continuam requisitos essenciais.
 
@@ -795,7 +826,7 @@ de dados, isolamento, credenciais e publicação continuam requisitos essenciais
 | --- | --- | --- |
 | Melhoria importante | Recuperação administrativa e homologação preservando UUID | DEV concluído. `ed5f7c9` publicado em UAT; callback e e-mail do administrador configurados, UUID preservado. Solicitação/recebimento/callback, troca humana, sucesso persistente, retorno, UUID e bloqueio de reuso reais aprovados; rejeição da senha antiga, nova autenticando e painel UAT aberto confirmados pelo responsável. Validação funcional dessa versão UAT concluída. Refinamento visual `bf35bc2` publicado em UAT; CI e 75 arquivos conferidos. Sucesso simplificado coberto automaticamente, sem outra troca real ou novo aceite visual desse estado. Publicação e limites no registro UAT. PRD recebeu bf35bc2, com CI/READY/runtime aprovados e ajustes mínimos de Site URL/callback. Troca real, resultado da etapa de sucesso e testes das duas senhas confirmados pelo responsável; identidade preservada e reuso bloqueado conferidos pelo agente. Painel PRD aberto e lista carregada após o novo login confirmados pelo responsável; aceite funcional PRD concluído. Contingência manual permanece não validada. [DEV](password-recovery-dev-validation.md) / [UAT](password-recovery-uat-validation.md) / [PRD](password-recovery-prd-validation.md) |
 | Melhoria operacional concluída | Cobertura do monitor do frontend PRD, distinta do monitor Pages/UAT | Em 25/10/2026, consulta autenticada confirmou somente dois monitores anteriores, sem URL Vercel PRD. Criado Frontend PRD — Bruna e Diego, ID 804420580, HEAD a cada cinco minutos no plano Free 50, sem contratação. Configuração salva e estado Up conferidos; teste nativo ao contato primário do responsável, com mensagens TEST DOWN/UP efetivamente recebidas via Gmail. Pages/UAT preservado Paused e health Supabase Up. HTTP não comprova JavaScript/RSVP; Up é estado datado. [Evidências e limites](health-check.md#conferência-do-frontend-prd--25102026) |
-| Cobertura evolutiva parcial | Detalhamento da matriz de navegadores/dispositivos e tecnologias assistivas/zoom | Ciclo DEV de 26/10/2026 sobre 76bf55f: teclado, RSVP sintético, login/recuperação e reset sem troca exercitados no IAB 1280 × 720. Cartão coberto indevidamente exposto na árvore acessível corrigido e reverificado; 414 Node aprovados. Responsável confirmou testes manuais de todos os recursos em Firefox e Safari, sem problemas relatados; versões, dispositivo, sistema operacional e ambiente acessado não informados. Zoom real 200%, leitor de tela e execução específica em iOS não informados. Agente não executou esses testes específicos: Firefox/NVDA ausentes do inventário local consultado, Edge nativo recusado pela ferramenta e Narrador sem teste de voz. Sem declaração de conformidade integral com WCAG. [Evidências e roteiro complementar](qa-final-evidence.md#cobertura-evolutiva-dev--26102026). Priorizar por público e alterações, sem exigir matriz universal |
+| Cobertura evolutiva parcial | Detalhamento da matriz de navegadores/dispositivos e tecnologias assistivas/zoom | DEV sobre 76bf55f: teclado, RSVP sintético, login/recuperação e reset sem troca exercitados no IAB 1280 × 720. Cartão coberto indevidamente exposto na árvore acessível corrigido e reverificado; 414 Node aprovados. Candidato c25e2cd publicado em UAT e PRD em 26/10/2026, com CI/Pages e CI/Vercel READY aprovados, 75 recursos conferidos em cada ambiente e conferência focada dos três estados do cartão, teclado/foco e aparência concluída no IAB (UAT 794 × 884; PRD 1280 × 720). Rollback PRD bf35bc2 confirmado elegível, sem execução. Responsável confirmou testes manuais de todos os recursos em Firefox e Safari, sem problemas relatados; versões, dispositivo, sistema operacional e ambiente acessado não informados, sem reatribuir esse relato às novas publicações. Zoom real 200%, leitor de tela e execução específica em iOS não informados. Agente não executou esses testes específicos: Firefox/NVDA ausentes do inventário local consultado, Edge nativo recusado pela ferramenta e Narrador sem teste de voz. Sem declaração de conformidade integral com WCAG. [DEV e roteiro](qa-final-evidence.md#cobertura-evolutiva-dev--26102026) / [UAT](qa-final-evidence.md#publicação-uat-da-correção-de-acessibilidade--26102026) / [PRD](qa-final-evidence.md#publicação-e-conferência-prd-da-correção-de-acessibilidade--26102026). Priorizar por público e alterações, sem exigir matriz universal |
 | Funcionalidade opcional | MFA, CAPTCHA se necessário, domínio próprio e observabilidade adicional | Avaliar benefício/risco/custo antes de adotar |
 
 Recuperação de senha não é recuperação de RSVPs Sheets. Procedimento e limites:
