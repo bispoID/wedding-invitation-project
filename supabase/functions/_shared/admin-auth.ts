@@ -44,3 +44,28 @@ export function isAuthorizedAdmin(
   return UUID_PATTERN.test(normalizedUserId) &&
     adminUserIds.has(normalizedUserId);
 }
+
+/** Superfície mínima de Auth; não concede autorização administrativa. */
+interface AdminAuthClient {
+  auth: {
+    getUser(token: string): Promise<{
+      data: { user?: { id: string } | null };
+      error: unknown;
+    }>;
+  };
+}
+
+/** Autentica o Bearer sem alterar erros lançados; o handler decide a resposta. */
+export function createAdminAuthenticator(client: AdminAuthClient) {
+  return async (request: Request): Promise<string | null> => {
+    const authorization = request.headers.get("authorization");
+    const match = authorization?.match(/^Bearer\s+(.+)$/i);
+
+    if (!match) {
+      return null;
+    }
+
+    const { data, error } = await client.auth.getUser(match[1]);
+    return error ? null : data.user?.id ?? null;
+  };
+}

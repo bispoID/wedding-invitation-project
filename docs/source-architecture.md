@@ -69,6 +69,16 @@ Cada pasta de função separa o entrypoint (`index.ts`) das regras testáveis em
 5. executar a dependência injetada (RPC, provider ou banco);
 6. devolver um contrato HTTP sem detalhes sensíveis.
 
+`_shared/admin-runtime.ts` reúne leitura obrigatória de configuração, validação
+CSV de origins, fetch com timeout de 12 segundos combinado com `init.signal` e
+opções de clientes sem persistência de sessão. Não lê variáveis nem cria clientes
+na importação; ambiente e transporte podem ser injetados nos testes.
+`_shared/admin-auth.ts` autentica o Bearer usando o cliente recebido e mantém os
+utilitários de allowlist. Autenticação não concede autorização: cada handler
+preserva sua ordem de verificações, CORS e respostas. Os entrypoints mantêm a
+criação do cliente público no startup e dos clientes privilegiados dentro das
+operações autorizadas, sem centralizar consultas ou regras em um executor.
+
 `_shared/admin-auth.ts`, `event-validation.ts` e `guest-validation.ts` são
 contratos reutilizados por várias funções. `contingency.ts` seleciona o
 provider: Google Sheets nos ambientes publicados e sidecar JSON somente no
