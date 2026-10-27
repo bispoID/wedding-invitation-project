@@ -1,3 +1,4 @@
+import { callAdminFunction } from './functions.js';
 import { getSupabaseClient } from "./supabase.js";
 
 export const DEFAULT_GUEST_PAGE_SIZE = 10;
@@ -33,4 +34,16 @@ export async function getGuests({ page = 1, pageSize = DEFAULT_GUEST_PAGE_SIZE, 
     total: data.pagination.total,
     metrics: data.metrics,
   };
+}
+
+/** Executa create/update/delete e valida a confirmação explícita da API. */
+export async function manageGuest(action, id, guest) {
+  const result = await callAdminFunction('admin-manage-guests', {
+    body: { action, ...(action !== 'create' ? { id } : {}), ...(['create', 'update'].includes(action) ? { guest } : {}) },
+  });
+  const expected = { create: 'created', update: 'updated', delete: 'deleted' }[action];
+  if (result?.success !== true || result.action !== expected || typeof result.id !== 'string') {
+    throw new Error('A operação não foi confirmada pelo backend.');
+  }
+  return result;
 }

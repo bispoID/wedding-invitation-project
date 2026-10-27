@@ -625,25 +625,22 @@ test('guest create/update UI uses shared dialog and confirms backend before clos
   };
   globalThis.FormData = class { constructor(target) { this.form = target; } get(name) { return this.form.elements[name].value; } };
   try {
-    await load('invite-app/admin/scripts/main.js', [
+    const guestsUI = await load('invite-app/admin/scripts/guests-ui.js', [
       timestampImport,
-      ["import { getCurrentSession, signIn, signOut } from './auth.js';", "const getCurrentSession = async () => ({user:{email:'admin@example.invalid'}}); const signIn = async()=>{}; const signOut=async()=>{};"],
-      ["import { getSupabaseClient, getRecoveryState } from './supabase.js';", 'const getRecoveryState = () => null;'],
-      ["import { initializeRecoveryRequest } from './recovery-request.js';", 'const initializeRecoveryRequest = () => {};'],
-      ["import { getPendingContingency, manageGuest, recoverContingency } from './contingency.js';", "const getPendingContingency=async()=>[]; const manageGuest=(...args)=>globalThis.__block3.manage(...args); const recoverContingency=async()=>{};"],
-      ["import { getGuests } from './guests.js';", "const getGuests=async()=>({ records: [globalThis.__block3.guest], total: 1, metrics: { totalGuests: 1, confirmedGuests: 1, declinedGuests: 0, totalCompanions: 0, confirmedPeople: 1 } });"],
+      ["import { getGuests, manageGuest } from './guests.js';", "const manageGuest=(...args)=>globalThis.__block3.manage(...args); const getGuests=async()=>({ records: [globalThis.__block3.guest], total: 1, metrics: { totalGuests: 1, confirmedGuests: 1, declinedGuests: 0, totalCompanions: 0, confirmedPeople: 1 } });"],
       ["import { createGuestListController, GUEST_PAGE_SIZES } from './guest-list-controller.js';", "const GUEST_PAGE_SIZES=[10,20,50]; const createGuestListController=({ fetchGuests, onStateChange }) => ({ getState: () => ({ page: 1 }), reload: async () => { onStateChange({ page:1, pageSize:10, search:'', records: await fetchGuests({ page:1, pageSize:10, search:'' }).then((result) => result.records), total:1, metrics:{ totalGuests:1, confirmedGuests:1, declinedGuests:0, totalCompanions:0, confirmedPeople:1 }, loading:false, loaded:true, error:null, pagination:{ firstRecord:1,lastRecord:1,page:1,total:1,totalPages:1 } }); }, setSearch() {}, setPage() {}, setPageSize() {} });"],
       ["import { validateGuest } from './guest-validation.js';", 'const validateGuest = ' + validation.validateGuest.toString() + ';'],
-      ["import { initializeEventConfig } from './event-config.js';", "const initializeEventConfig=async()=>{};"],
-      ["import { initializeInvitationLinks } from './navigation.js';", "const initializeInvitationLinks=()=>{};"],
     ]);
-    await new Promise((done) => setImmediate(done));
+    await guestsUI.initializeGuests().reload();
     get('#guest-create').events.click();
     assert.equal(get('#guest-dialog-title').textContent, 'Criar convidado');
     assert.equal(form.dataset.guestId, undefined);
     fields.name.value = 'Nome sintético'; fields.email.value = 'test@example.invalid';
     const saving = form.events.submit({ preventDefault() {} });
     assert.equal(payload[0], 'create');
+    const firstPayload = payload;
+    await form.events.submit({ preventDefault() {} });
+    assert.equal(payload, firstPayload);
     assert.equal(get('#guest-dialog').open, true);
     assert.ok(form.elements.every((control) => control.disabled));
     resolve({ success: true }); await saving;
@@ -677,9 +674,9 @@ test('shared admin helper preserves errors and create/update/delete payloads', a
       ["import { getSupabaseClient } from './supabase.js';", "const getSupabaseClient=async()=>({functions:{invoke:(...args)=>globalThis.__adminInvoke(...args)}});"],
     ]);
     globalThis.__adminCall = helper.callAdminFunction;
-    const api = await load('invite-app/admin/scripts/contingency.js', [
+    const api = await load('invite-app/admin/scripts/guests.js', [
+      ['import { getSupabaseClient } from "./supabase.js";', 'const getSupabaseClient = () => { throw new Error("No network"); };'],
       ["import { callAdminFunction } from './functions.js';", "const callAdminFunction=(...args)=>globalThis.__adminCall(...args);"],
-      ["export { AdminFunctionError } from './functions.js';", ''],
     ]);
     for (const [action, result] of [['create', 'created'], ['update', 'updated'], ['delete', 'deleted']]) {
       outcome = { data: { success: true, action: result, id: 'synthetic-id' }, error: null };
@@ -768,7 +765,7 @@ test('event form has accessible optional reception location and isolated approve
   }
   assert.match(css, /#event-feedback\s*\{\s*margin-bottom:\s*12px;/);
   assert.match(css, /#event-updated\s*\{\s*margin-top:\s*12px;/);
-  const main = await readFile(new URL('../invite-app/admin/scripts/main.js', import.meta.url), 'utf8');
+  const main = await readFile(new URL('../invite-app/admin/scripts/guests-ui.js', import.meta.url), 'utf8') + await readFile(new URL('../invite-app/admin/scripts/contingency-ui.js', import.meta.url), 'utf8');
   assert.match(main, /formatTimestamp\(guest.created_at\)/);
   assert.match(main, /formatTimestamp\(record.created_at\)/);
 });
@@ -821,4 +818,71 @@ test('admin pagination uses a boundary cursor without changing async button feed
 
   assert.match(dashboard, /\.guests-pagination \.button:disabled\s*\{\s*cursor:\s*not-allowed;\s*\}/);
   assert.match(css, /\.button:disabled\s*\{\s*cursor:\s*wait;/);
+});
+
+
+for (const outcome of ['recovered', 'already_persisted', 'unconfirmed', 'DATA_CONFLICT', 'CLEANUP_PENDING', 'LOCK_BUSY']) {
+  test('contingency UI preserves recovery feedback and refresh boundaries: ' + outcome, async () => {
+    const previous = { document: globalThis.document, __contingencyUI: globalThis.__contingencyUI };
+    const elements = {};
+    const get = id => elements[id] ??= new Element();
+    const calls = [];
+    let finish;
+    globalThis.document = { querySelector: get, createElement: () => new Element() };
+    globalThis.__contingencyUI = {
+      list: async () => {
+        calls.push('list');
+        return [{ request_id: 'synthetic-request', name: '<b>Synthetic</b>', email: 'test@example.invalid', attendance: true, companions: 0, status: 'pending' }];
+      },
+      recover: id => { calls.push(id); return new Promise(resolve => { finish = resolve; }).then(() => {
+        if (['DATA_CONFLICT', 'CLEANUP_PENDING', 'LOCK_BUSY'].includes(outcome)) throw Object.assign(new Error('synthetic'), { code: outcome });
+        return { success: true, contingency_removed: outcome !== 'unconfirmed', result: outcome };
+      }); },
+    };
+    try {
+      const module = await load('invite-app/admin/scripts/contingency-ui.js', [timestampImport,
+        ["import { getPendingContingency, recoverContingency } from './contingency.js';", 'const getPendingContingency=()=>globalThis.__contingencyUI.list(); const recoverContingency=id=>globalThis.__contingencyUI.recover(id);'],
+      ]);
+      const ui = module.initializeContingency({ onRecovered: async () => { calls.push('guests-and-metrics'); } });
+      await ui.reload();
+      const row = get('#contingency-table-body').children[0];
+      assert.equal(row.children[1].textContent, '<b>Synthetic</b>');
+      const button = row.children.at(-1).children[0];
+      const recovery = button.events.click();
+      assert.equal(button.disabled, true);
+      assert.equal(button.getAttribute('aria-busy'), 'true');
+      assert.deepEqual(calls, ['list', 'synthetic-request']);
+      finish(); await recovery;
+      const confirmed = ['recovered', 'already_persisted'].includes(outcome);
+      assert.deepEqual(calls, confirmed ? ['list', 'synthetic-request', 'guests-and-metrics', 'list'] : ['list', 'synthetic-request']);
+      assert.equal(button.disabled, false);
+      assert.equal(button.getAttribute('aria-busy'), null);
+      assert.equal(get('#contingency-feedback').hidden, false);
+      const messages = { recovered: /Registro recuperado/, already_persisted: /já persistido/, unconfirmed: /não foi confirmada/, DATA_CONFLICT: /Conflito de dados/, CLEANUP_PENDING: /limpeza da contingência/, LOCK_BUSY: /Outra recuperação/ };
+      assert.match(get('#contingency-feedback').textContent, messages[outcome]);
+    } finally { Object.assign(globalThis, previous); }
+  });
+}
+
+test('dashboard wires recovery to guest refresh without reinitializing event edits', async () => {
+  const previous = { document: globalThis.document, __dashboard: globalThis.__dashboard };
+  const elements = {};
+  let onRecovered, eventInitializations = 0, guestLoads = 0;
+  globalThis.document = { body: { dataset: { page: 'dashboard' } }, querySelector: id => elements[id] ??= new Element() };
+  globalThis.__dashboard = {
+    getCurrentSession: async () => ({ user: { email: 'admin@example.invalid' } }), signOut: async () => {},
+    initializeLogin: () => assert.fail('unexpected login'),
+    initializeGuests: () => ({ reload: async () => { guestLoads++; } }),
+    initializeContingency: options => { onRecovered = options.onRecovered; return { reload: async () => {} }; },
+    initializeEventConfig: async () => { eventInitializations++; }, initializeInvitationLinks() {},
+  };
+  try {
+    let source = await readFile(new URL('../invite-app/admin/scripts/main.js', import.meta.url), 'utf8');
+    source = source.replace(/^import (\{[^;]+\}) from '[^']+';/gm, (_, names) => `const ${names} = globalThis.__dashboard;`)
+      .replace('  initializeDashboard();', '  await initializeDashboard();');
+    await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
+    await onRecovered();
+    assert.equal(guestLoads, 2);
+    assert.equal(eventInitializations, 1);
+  } finally { Object.assign(globalThis, previous); }
 });

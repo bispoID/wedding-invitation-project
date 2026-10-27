@@ -412,9 +412,9 @@ async function withLoginPage({ activeSession = session, search = '', isRecovery 
     initializeRecoveryRequest: (auth, document, options) => requestOptions.push(options),
   };
   try {
-    let code = await readFile(new URL('../invite-app/admin/scripts/main.js', import.meta.url), 'utf8');
-    code = code.replace(/^import (\{[^;]+\}) from '[^']+';/gm, (line, names) => `const ${names} = globalThis.__loginPage;`)
-      .replace('  initializeLogin();', '  await initializeLogin();');
+    let code = await readFile(new URL('../invite-app/admin/scripts/login.js', import.meta.url), 'utf8');
+    code = code.replace(/^import (\{[^;]+\}) from '[^']+';/gm, (line, names) => `const ${names} = globalThis.__loginPage;`);
+    code += '\nawait initializeLogin();';
     await import(`data:text/javascript;base64,${Buffer.from(`${code}\n// run ${moduleRun++}`).toString('base64')}`);
     await run({ get, navigations, requestOptions });
   } finally { Object.assign(globalThis, previous); }

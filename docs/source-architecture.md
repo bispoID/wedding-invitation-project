@@ -38,12 +38,24 @@ As responsabilidades internas ficam separadas assim:
 `data-page`. `auth.js` concentra sessão; `supabase.js` cria o cliente sob
 demanda, com storageKey por ambiente/project ref; `functions.js` normaliza erros das Edge Functions.
 
-No dashboard, `guest-list-controller.js` é a fonte do estado de pesquisa,
-debounce, paginação e descarte de respostas obsoletas. `guests.js` busca a
-API; `guest-validation.js` fornece feedback antecipado mantendo as mesmas
-regras de `_shared/guest-validation.ts`; `main.js` apenas renderiza e conecta
-eventos. `event-config.js` administra o singleton do evento. `contingency.js`
-e as funções correspondentes exibem e recuperam a fila operacional.
+`login.js` inicializa login e solicitação de recuperação de senha. `main.js`
+valida a sessão do dashboard, conecta logout e coordena os módulos independentes.
+`guests-ui.js` reúne renderização, diálogo, validação e ações de convidados;
+encapsula uma instância de `guest-list-controller.js`, que permanece como fonte
+do estado de pesquisa, debounce, paginação e descarte de respostas obsoletas.
+`guests.js` concentra listagem e mutações; `guest-validation.js` fornece feedback
+antecipado mantendo as regras de `_shared/guest-validation.ts`.
+
+`contingency-ui.js` exibe a fila e os resultados da recuperação; `contingency.js`
+contém somente seus serviços. A interface recebe `onRecovered`, conectado por
+`main.js` ao `reload` de convidados: uma recuperação confirmada atualiza lista e
+métricas antes de recarregar a fila, sem reinicializar `event-config.js` nem
+perder suas edições. Cada interface expõe apenas a recarga necessária.
+
+As mutações de convidados, a contingência e Event Config usam `callAdminFunction`.
+A listagem de convidados preserva a chamada direta ao SDK: adotar o helper
+mudaria o erro propagado para `AdminFunctionError` e sua mensagem. Essa
+padronização fica fora da reorganização para manter o tratamento existente.
 
 ## Edge Functions
 

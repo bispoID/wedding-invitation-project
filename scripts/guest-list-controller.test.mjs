@@ -260,7 +260,7 @@ test('guest list controls expose search, page size, pagination and accessible re
 
 test('guest API encodes paginated search parameters and preserves response metadata', async () => {
   const source = await readFile(new URL('../invite-app/admin/scripts/guests.js', import.meta.url), 'utf8');
-  const moduleUrl = 'data:text/javascript;base64,' + Buffer.from(source.replace(
+  const moduleUrl = 'data:text/javascript;base64,' + Buffer.from(source.replace("import { callAdminFunction } from './functions.js';", 'const callAdminFunction = () => { throw new Error("No mutations"); };').replace(
     'import { getSupabaseClient } from "./supabase.js";',
     'const getSupabaseClient = async () => globalThis.__syntheticSupabaseClient;',
   )).toString('base64');

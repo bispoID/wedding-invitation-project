@@ -61,7 +61,7 @@ test('Pages builds and audits a complete traceable artifact using exactly one gu
     calls++; assert.equal(url, `${PAGES_UAT_BACKEND}/functions/v1/event-config`);
     assert.equal(init.method, 'GET'); assert.equal(init.redirect, 'manual'); return Response.json(event());
   } });
-  assert.equal(calls, 1); assert.equal(result.fileCount, 75); assert.ok(result.relativeReferences > 70);
+  assert.equal(calls, 1); assert.equal(result.fileCount, 78); assert.ok(result.relativeReferences > 70);
   assert.equal(result.sessionNamespace, `invitation-v1-uat-${PAGES_UAT_REF}-auth`);
   assert.equal(result.buildId, sha); assert.match(result.manifestSha256, /^[a-f0-9]{64}$/);
   const html = await readFile(join(outputDir, 'index.html'), 'utf8');
