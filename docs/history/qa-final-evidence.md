@@ -4,6 +4,139 @@
 > indicado, sem substituir a operação vigente. [Estado atual](../development_roadmap.md#estado-atual)
 > e [índice de evidências](../README.md#evidências-históricas).
 
+## Validação conjunta das refatorações administrativas — 28/10/2026
+
+SHA validado: `8f49a387f9f1d968c51498e8b155ecf1abedfaaf`, na branch
+`feature/landing-page`. O checkpoint abrange a separação das interfaces do Admin
+em `a08ffcbb` e o runtime compartilhado das Edge Functions em `8f49a38`.
+Branch, HEAD, histórico, working tree e índice foram conferidos; a árvore estava
+limpa no início. Não foi identificada regressão concreta que exigisse alteração
+do código da aplicação. A alteração versionável desta execução restringe-se a
+este registro; não houve staging, commit, push, deploy ou promoção.
+
+### Tipagem dos cinco entrypoints
+
+Ambiente: Windows, Node.js `22.14.0`, Deno `2.9.7` e TypeScript `6.0.3`.
+`deno info --json` identificou caches distintos: o sandbox usava um diretório
+em `%LOCALAPPDATA%/Packages/sandbox.../AC/deno`, enquanto o processo fora do
+sandbox usava `%LOCALAPPDATA%/deno`. Os pacotes do SDK `2.117.2`, Auth e Storage
+estavam presentes no segundo e ausentes no primeiro. A resolução anterior
+encontrava cache incompleto e falhava no DNS ao tentar obter os pacotes; essa
+falha não constituía diagnóstico de incompatibilidade de tipos.
+
+A execução com acesso ao cache do usuário aprovou os cinco `index.ts`:
+`admin-list-guests`, `admin-list-contingency`, `admin-manage-guests`,
+`admin-recover-contingency` e `admin-manage-event-config`.
+
+- Nas quatro Functions com `deno.json`, foram usados seus próprios import maps
+  e lockfiles: `deno check --node-modules-dir=none --frozen-lockfile --config
+  supabase/functions/<function>/deno.json supabase/functions/<function>/index.ts`.
+- `admin-list-guests` foi a primeira checagem e reutilizou o cache sem downloads
+  relatados. As três checagens seguintes também usaram `--cached-only`.
+- `admin-manage-event-config` não possui configuração/lockfile próprios e importa
+  o mesmo SDK por versão exata. Foi checada com `--cached-only
+  --node-modules-dir=none --no-config --lock
+  supabase/functions/admin-list-guests/deno.lock --frozen-lockfile`, reutilizando
+  o lockfile existente, cujo grafo é igual ao das outras três Functions.
+- Não houve atualização de versões, instalação de dependências no projeto,
+  alteração de imports, configuração ou lockfiles, nem introdução de `any`,
+  supressões ou desativação da checagem.
+
+### Testes automatizados e preparação estática
+
+| Camada | Resultado e alcance |
+| --- | --- |
+| Suítes anteriores | Evidências informadas de **421 Node e 165 Deno** reutilizadas para o mesmo código e escopo. Não foram reexecutadas integralmente; não houve correção executável nesta validação. |
+| Seleção executada nesta etapa | **42 testes Node aprovados**, zero falhas: `prepare-static-site.test.mjs` e `environment-isolation.test.mjs`, com `--experimental-test-isolation=none` e preload que rejeita chamadas reais de `fetch`. São parte da cobertura existente, não testes adicionais a somar aos 421. |
+| Preparação portátil | Artefatos root/subpath com configuração e Event Config simuladas, comparação dos assets permitidos e exclusão dos operacionais. Não foi executado build CLI com consulta a Event Config remoto. |
+| Imports e manifesto | **36 módulos JavaScript** no manifesto e **51 imports locais literais** conferidos quanto à existência e inclusão na allowlist. `login.js`, `guests-ui.js` e `contingency-ui.js` presentes. O import externo permanece o SDK declarado `https://esm.sh/@supabase/supabase-js@2.117.2`. |
+| Whitespace e escopo | Diff completo revisado e `git diff --check` aprovado; índice vazio. `.gitignore`, incluindo `*.zip`, e os quatro lockfiles Deno preservados. |
+
+### Backend DEV real e ensaio em navegador
+
+Docker Desktop/Engine `29.8.2` foi iniciado e restaurou os containers e volumes
+existentes; as imagens necessárias já estavam disponíveis. Supabase CLI local
+`2.120.0`, Functions e sidecar foram reutilizados/iniciados sem reset, importação
+produtiva ou instalação de infraestrutura. `npm run dev:health` aprovou API,
+Functions, Event Config e contingência.
+
+O snapshot `.dev/event-config.json` já existia, com os 14 campos e SHA-256
+`D1F6C79819ED22E6166E0AEB1B98540DABF629527E193115452B0268955E7E8F`.
+O singleton local correspondia ao snapshot. `dev:up` não foi executado: além de
+reaplicar Event Config, seu fallback poderia redefinir a senha administrativa
+quando a credencial armazenada fosse rejeitada. A rejeição inicial foi
+`400 invalid_credentials`. O responsável realizou a recuperação da senha no
+Mailpit DEV, informou novo login bem-sucedido e sincronizou o arquivo local.
+Uma autenticação posterior confirmou HTTP 200 e preservação do UUID; nenhuma
+senha foi alterada pelo agente.
+
+Os destinos efetivos foram conferidos antes das operações:
+
+- frontend: `http://127.0.0.1:8000/invite-app/admin/`;
+- Auth e Functions do navegador: `http://127.0.0.1:54321`;
+- Supabase a partir da Edge Runtime: `http://host.docker.internal:54321`;
+- contingência: provider `local`, host `127.0.0.1:54328` e endereço interno
+  `host.docker.internal:54328`, com `APP_ENV=dev`;
+- caixa de e-mail de teste: `http://127.0.0.1:54324/`.
+
+O ensaio no navegador integrado usou os módulos versionados e respostas reais
+do backend DEV. Um servidor temporário em `.dev/qa-refactors-20261028/` limitou
+os assets ao manifesto, restringiu conexões de aplicação aos destinos locais e
+registrou somente métodos, destinos, status e tempos, sem credenciais ou corpos.
+Para observar estados pendentes, a entrega das respostas reais de mutação e
+recuperação recebeu atraso artificial de **700 ms**; status e conteúdo não foram
+substituídos. Essa instrumentação não integra o código da aplicação.
+O atraso foi desativado ao concluir o ensaio, com a versão utilizada preservada
+no diretório de evidências ignorado.
+
+| Fluxo observado | Resultado |
+| --- | --- |
+| Login e recuperação | Campos obrigatórios, credencial sintética inválida e feedback neutro conferidos. Abertura de “Esqueci minha senha” por teclado moveu o foco para o e-mail. Após a sincronização privada, novo login por senha foi executado pelo agente. |
+| Sessão e logout | Dashboard autenticado, sessão preservada após reload, logout e redirecionamento de acesso direto sem sessão para o login. A sessão do ensaio foi encerrada ao final. |
+| Lista, métricas e filtros | Onze fixtures produziram paginação **10+1**, retorno à primeira página e tamanho 20. Pesquisa exata retornou um registro; pesquisa sem resultado preservou as métricas globais. |
+| Criação e edição | Criação HTTP 201, conflito de e-mail HTTP 409 com formulário recuperável e edição HTTP 200. Presença negativa zerou/desabilitou acompanhantes. Lista e métricas refletiram cada mutação. |
+| Validação e concorrência | Campos inválidos não geraram mutação. Cliques duplos na criação e edição produziram uma única requisição por ação, com controles desabilitados e `aria-busy=true` enquanto a resposta estava pendente. |
+| Exclusão | Registro criado pela interface excluído com HTTP 200; feedback, resultado vazio da pesquisa e métricas atualizados. O comando de clique teve timeout da automação no confirm nativo; a inspeção posterior confirmou a exclusão concluída. Cancelamento desse confirm não foi validado. |
+| Contingência | Pendência identificada desta execução recuperada com HTTP 200 e uma única requisição após clique duplo. A fila voltou de quatro para as três pendências anteriores. |
+| Integração após recuperação | Convidado recuperado apareceu na pesquisa preservada. Métricas passaram de **11/6/5/6/12** para **12/7/5/8/15** (total/confirmados/ausentes/acompanhantes/pessoas confirmadas). A edição não salva permaneceu no formulário expandido, com apenas o GET inicial de Event Config e nenhuma escrita. O valor de ensaio foi descartado. |
+| Foco e carregamento | Diálogo de convidado abriu com foco no nome, Tab alcançou o e-mail e Escape devolveu o foco ao botão de criação. Não foram observados erros de carregamento dos módulos nem erros de console nas conferências do dashboard. |
+
+Foram aprovados **30 cenários HTTP reais** nos cinco endpoints administrativos:
+ausência de Bearer (401), Bearer inválido (401), usuário autenticado fora da
+allowlist (403 `ADMIN_ACCESS_DENIED`), Origin não permitida (403
+`INVALID_ORIGIN`), preflight (204) e método não suportado (405).
+O Kong local acrescenta `Access-Control-Allow-Origin: *`, inclusive em rejeições
+e preflights. A expectativa inicial do harness de ausência desse header foi
+corrigida antes da execução completa; não houve alteração no CORS da aplicação.
+Os headers do gateway real não foram atribuídos ao contrato do handler isolado.
+
+### Limpeza, preservação e limites
+
+- Foram removidos os **13 convidados** do ensaio: onze fixtures de paginação,
+  um criado pela interface e um persistido pela recuperação. A exclusão via UI
+  utilizou o identificador do registro; a limpeza complementar filtrou os UUIDs
+  registrados e os e-mails sintéticos exatos. Estado final: zero convidados,
+  correspondente ao baseline anterior ao ensaio.
+- A pendência sintética foi removida pela recuperação. As três pendências
+  preexistentes conservaram seus identificadores e hashes de conteúdo.
+- Os dois usuários Auth sintéticos não administrativos, usados nas execuções
+  inicial e completa das rejeições, foram removidos por UUID; consultas
+  posteriores confirmaram 404. As sessões temporárias foram encerradas.
+- Hashes confirmaram preservação do singleton de Event Config, snapshot,
+  `functions.env` e `.gitignore`. O arquivo administrativo permaneceu igual ao
+  estado sincronizado pelo responsável após sua troca de senha.
+- Evidências operacionais e capturas ficaram no diretório ignorado
+  `.dev/qa-refactors-20261028/`. Docker, Functions, sidecar e servidor DEV
+  permaneceram disponíveis; nenhum dado anterior foi descartado.
+- Não houve nova execução SQL ou do smoke amplo `dev:integration`, que inclui
+  RSVP fora do escopo necessário. A recuperação completa de senha foi informada
+  pelo responsável; o agente validou abertura, novo login e sessão, sem executar
+  outra troca. Não houve ensaio adicional em Firefox/Safari, leitor de tela ou
+  dispositivo físico, nem aceite visual humano atribuído a esta etapa.
+- Respostas simuladas pertencem somente aos testes Node/Deno indicados.
+  Não houve ensaio de aplicação em UAT/PRD, consulta remota de Event Config,
+  alteração de secrets ou operação em serviços de aplicação remotos.
+
 ## Publicação e conferência PRD da correção de acessibilidade — 26/10/2026
 
 **Promoção, publicação e aceite técnico focado PRD concluídos**, no escopo
