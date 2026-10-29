@@ -4,6 +4,469 @@
 > indicado, sem substituir a operação vigente. [Estado atual](../development_roadmap.md#estado-atual)
 > e [índice de evidências](../README.md#evidências-históricas).
 
+## Publicação e conferência PRD das refatorações administrativas — 28/10/2026
+
+**Publicação PRD e conferência administrativa concluídas**, com as restrições
+de cobertura abaixo. Candidato executável exato:
+`59d5ddc59cc6e8e47913d154f68aa1d9416e7a2c`, previamente publicado e homologado
+em UAT. Não houve alteração funcional ou avanço para outro candidato.
+
+### Autorização, Git e isolamento dos artefatos
+
+- Autorização PRD recebida no anexo e confirmada diretamente pelo responsável
+  no chat antes do deploy. A revisão automática rejeitou a primeira solicitação
+  de execução por não aceitar o anexo como autorização direta; o comando não
+  foi executado nessa tentativa. A confirmação posterior liberou o escopo
+  exato, sem efeitos parciais daquele comando bloqueado.
+- Checkout principal em `feature/landing-page`, HEAD inicialmente no candidato,
+  índice vazio e somente este QA modificado. Uma cópia integral do documento
+  foi preservada antes da etapa PRD; suas evidências UAT foram mantidas.
+- Fetch, refs remotas, worktrees e ancestralidade conferidos. Feature e staging
+  remotas estavam no candidato; production em
+  `c25e2cd266540210efc0297697ce54a2e5de9e03`, ancestral, diferença `0 5`.
+- Artefatos extraídos dos blobs do candidato em worktree destacado e isolado,
+  sem incluir o QA não commitado, dados locais ou outros arquivos não versionados.
+  Configuração operacional das cinco Functions preparada fora do checkout,
+  com project-ref PRD explícito, flags JWT/import map preservadas e nenhum
+  override local de duração introduzido.
+- Regra remota Protect Production `25768402` ativa, sem bypass: exclusão e
+  non-fast-forward bloqueados; check exigido `validate / JavaScript and Deno
+  tests`, integração `15368`, aprovado para o SHA exato antes da promoção.
+- Após aprovar os contratos do backend, production avançou por fast-forward
+  com comparação do valor anterior, sem trocar o checkout principal. Push
+  normal exclusivo de production, sem force, reset, rebase ou merge commit.
+
+### Estado anterior real e rollback por camada
+
+- Frontend servido antes das alterações: `appEnv=prd`, ref
+  `bkkienyemqlkueygknzl`, buildId `c25e2cd266540210efc0297697ce54a2e5de9e03`.
+  Foram preservados **75 recursos publicados**, com hashes. Deployment Vercel
+  real anterior `dpl_PaytKBpZHjmVbppUgR22XmawwZrP`, READY, domínio oficial
+  `https://bruna-e-diego.vercel.app/`; não foi inferido somente da branch.
+- Projeto Vercel `prj_ddkuhQTns4qqaGCXtBoq5ilWoteb`, equipe
+  `team_fTI9LQxhX6q7r3XC5gxy8jxl`. Após autorização da equipe, o conector ainda
+  recusou a listagem específica de candidatos a rollback por permissão
+  `deploymentRollback`; CLI Vercel indisponível. O painel autenticado confirmou,
+  antes da substituição, Redeploy do mesmo código-fonte em Production e no
+  domínio oficial. O formulário foi cancelado sem publicar. Após a nova
+  publicação, **Instant Rollback ficou habilitado para o deployment anterior**,
+  com captura preservada; a ação não foi executada.
+- Projeto Supabase confirmado por metadados: `wedding-invitation-project`, ref
+  `bkkienyemqlkueygknzl`, região `sa-east-1`, ACTIVE_HEALTHY e organização PRD
+  distinta da UAT. Fontes e bundles binários reais das cinco Functions foram
+  baixados antes de qualquer substituição, com versões, configurações e hashes.
+- Os cinco backups tiveram integridade conferida e cópias de restauração
+  aprovadas por `deno check --cached-only`, sem instalação. Locks preservados
+  do mesmo SDK exato `2.117.2`, cuja resolução foi confirmada independentemente
+  em cada bundle implantado. Não se presumiu correspondência com o Git.
+- Em `admin-list-guests`, a API de fontes e o unbundle local omitiram o import
+  map, embora o metadado fosse verdadeiro. Seu único alias bare foi reconstruído
+  usando o único SDK resolvido no bundle real. Essa reconstrução está explícita
+  no manifesto; não se atribui identidade de bytes ao import map original
+  ausente. Os outros três mapas foram preservados das fontes remotas. A extração
+  local usou imagem Edge Runtime já instalada, sem rede, pull ou volumes DEV.
+- Procedimentos por camada em `.dev/prd-refactors-20261028/ROLLBACK.md`: redeploy
+  individual das cópias anteriores com project-ref explícito; retorno Vercel ao
+  deployment salvo por Instant Rollback ou Redeploy, com reconferência de
+  domínio, buildId e recursos. Rollback não reescreve Git, banco, Auth ou Sheets.
+  Não foi necessário executar rollback nesta publicação.
+
+### Functions PRD publicadas e contratos conferidos
+
+| Function | Versão anterior → resultante | Resultado |
+| --- | --- | --- |
+| `admin-list-guests` | 8 → 9 | ACTIVE, `verify_jwt=true`, import map preservado |
+| `admin-list-contingency` | 7 → 8 | ACTIVE, `verify_jwt=true`, import map preservado |
+| `admin-manage-event-config` | 4 → 5 | ACTIVE, `verify_jwt=true`, sem import map, como antes |
+| `admin-manage-guests` | 9 → 10 | ACTIVE, `verify_jwt=true`, import map preservado |
+| `admin-recover-contingency` | 12 → 13 | ACTIVE, `verify_jwt=true`, import map preservado |
+
+- Publicações individuais, somente dessas cinco Functions. As fontes posteriores
+  foram novamente baixadas e comparadas ao candidato; todos os artefatos incluem
+  `_shared/admin-auth.ts` e `_shared/admin-runtime.ts`. `_shared` não foi publicado
+  como Function. Os cinco hashes EZBR novos coincidem com os artefatos UAT.
+- **25 cenários HTTP reais PRD** aprovados: Bearer ausente/inválido (401), Origin
+  não permitida (403), preflight (204) e método não suportado (405), nas cinco
+  Functions. Foram requisições rejeitadas antes de operações de dados; nenhum
+  usuário Auth foi criado para os testes. Usuário autenticado fora da allowlist
+  não foi ensaiado novamente em PRD; a evidência UAT desse caso permanece separada.
+- A conta PRD existente foi autenticada privadamente pelo responsável. Antes da
+  promoção do frontend, as leituras autorizadas de convidados, contingência e
+  Event Config responderam 200 com issuer e namespace PRD conferidos. A asserção
+  inicial do executor ocorreu enquanto a resposta de contingência ainda estava
+  pendente; sua conclusão com 200 foi observada, sem mudança da aplicação.
+- `rsvp` permaneceu na versão **20**, `health` na **3** e `event-config` público
+  na **4**, com metadados/hashes preservados. Todos os digests de secrets foram
+  mantidos, assim como timestamps dos quatro secrets customizados. Nenhuma
+  alteração de origins, allowlist, secrets, import maps de dependências, banco,
+  migrations, SMTP, templates, redirects ou limites foi executada.
+
+### Frontend, CI e conferência funcional PRD
+
+- Deployment publicado:
+  [dpl_86kRh9L2BsL2k2GyE2omadCRcy4c](https://vercel.com/d7-af27/wedding-invitation-project/86kRh9L2BsL2k2GyE2omadCRcy4c),
+  READY, target `production`, SHA exato do candidato, domínio oficial
+  [bruna-e-diego.vercel.app](https://bruna-e-diego.vercel.app/).
+- Runtime servido: `buildId` igual a `59d5ddc59cc6e8e47913d154f68aa1d9416e7a2c`,
+  `appEnv=prd`, ref `bkkienyemqlkueygknzl`, URL Supabase PRD e base root exatas.
+  **78 recursos** comparados byte a byte ao artefato esperado, preparado dos
+  blobs do candidato com um GET real de Event Config público PRD. Os três módulos
+  novos estão presentes e carregaram no navegador.
+- [CI de production 40802255961](https://github.com/bispoID/wedding-invitation-project/actions/runs/40802255961)
+  aprovado, job `123212849154`. Logs conferidos: **421 testes Node e 165 Deno**,
+  sem falhas. São execuções da cobertura existente; não são somadas aos testes
+  UAT como casos distintos. Nenhuma suíte local completa foi repetida.
+- Sessão privada nova no Edge instalado, sem importar cookies ou storage de
+  DEV/UAT. Login, manutenção da sessão após reload, lista, pesquisa com um
+  registro existente, pesquisa vazia, limpeza do filtro, métricas globais,
+  próxima/anterior e tamanho de página 20 foram conferidos no frontend novo.
+- Interfaces de convidados, Event Config e contingência carregadas; Event Config
+  foi aberto e recolhido sem edição, com hash da resposta preservado antes/depois.
+  Nenhum registro de contingência foi recuperado ou inserido.
+- Logout pela interface aprovado, storage de sessão removido e retorno ao login.
+  A asserção imediata de foco na abertura de recuperação não foi satisfeita pelo
+  executor. Uma conferência isolada, sem sessão, com espera explícita do DOM,
+  aprovou abertura por teclado, foco no e-mail e botão de envio disponível.
+  **Nenhum e-mail de recuperação foi enviado em PRD.**
+- Nenhum erro de página/carregamento ou conexão bloqueada foi observado nos
+  ensaios concluídos. Os contextos privados foram fechados. Capturas do dashboard
+  ocultam conta, linhas de convidados e contingência; não se atribui aceite visual
+  humano à inspeção automatizada.
+
+### Preservação, cobertura e fechamento documental
+
+- Conferência PRD somente de leitura de aplicação: **zero convidados sintéticos**,
+  zero escritas administrativas e nenhuma limpeza de convidados necessária.
+  Convidados reais, Event Config, senhas, cadastros Auth e planilha PRD não foram
+  alterados pelo ensaio. CRUD e recuperação de pendências aprovados em UAT não
+  são apresentados como executados em PRD.
+- Abertura do formulário de recuperação PRD é distinta do callback UAT validado
+  posteriormente. Não houve nova troca manual de senha nem login posterior com
+  nova credencial nesta publicação. Nenhum teste RSVP, health funcional, falha
+  provocada, leitor de tela, Firefox/Safari ou dispositivo físico foi executado.
+- Onze fingerprints do vínculo CLI principal e `.gitignore`, incluindo `*.zip`,
+  foram preservados. A evidência UAT local anterior foi conferida por hash antes
+  desta inclusão. O worktree temporário forneceu somente o candidato commitado
+  e foi removido após conferir HEAD e árvore limpa; os backups foram preservados.
+- Staging permaneceu no candidato e não houve nova publicação Pages decorrente
+  da promoção de production. O único deployment Vercel do candidato identificado
+  nesta etapa é Production; domínios atribuídos pertencem ao projeto PRD esperado.
+- Este fechamento é documental: commit posterior somente deste arquivo, na
+  feature, com mensagem `docs(qa): record UAT and production validation of admin
+  refactors`. Seu push e CI são acompanhados após criar o commit. Staging e
+  production não são repromovidas para incluir essa evidência. Portanto, o SHA
+  documental posterior da feature difere do SHA executável publicado, embora a
+  diferença se restrinja ao QA. O hash e o resultado desse CI constam do relatório
+  final, sem tentar incluir o hash de um commit em seu próprio conteúdo.
+- Evidências operacionais, manifestos, backups e capturas preservados no diretório
+  ignorado `.dev/prd-refactors-20261028/`, sem credenciais ou conteúdo de sessão.
+
+## Publicação e homologação UAT das refatorações administrativas — 28/10/2026
+
+Candidato autorizado: `59d5ddc59cc6e8e47913d154f68aa1d9416e7a2c`.
+O código executável corresponde ao checkpoint DEV
+`8f49a387f9f1d968c51498e8b155ecf1abedfaaf`; o commit posterior registra QA.
+Frontend e cinco Functions administrativas foram publicados exclusivamente em
+UAT. A pendência do callback de recuperação foi resolvida pela tentativa
+controlada descrita abaixo, sem alteração de código, configuração ou senha.
+O aceite atual abrange solicitação, verificação, inicialização, formulário
+habilitado e encerramento da sessão de recuperação; não inclui uma nova troca
+manual de senha nem login posterior com nova credencial.
+
+### Git, CI e frontend efetivamente publicado
+
+- Checkout inicial e final em `feature/landing-page`, HEAD no candidato. Árvore
+  e índice estavam limpos antes da execução. Referências e ancestralidade foram
+  conferidas com atualização remota antes de cada push.
+- Push normal exclusivo de `feature/landing-page`; CI do SHA exato aprovado:
+  [40761499936](https://github.com/bispoID/wedding-invitation-project/actions/runs/40761499936).
+  Somente após essa aprovação, staging avançou por fast-forward do SHA anterior
+  `c25e2cd266540210efc0297697ce54a2e5de9e03` ao candidato, seguido de push
+  normal exclusivo. A atualização local de staging preservou o checkout DEV.
+- CI de staging aprovado:
+  [40764122547](https://github.com/bispoID/wedding-invitation-project/actions/runs/40764122547).
+  Pages aprovado:
+  [40764123089](https://github.com/bispoID/wedding-invitation-project/actions/runs/40764123089),
+  com validação do mesmo SHA e deploy dependente da aprovação.
+- Logs dos jobs conferidos: **421 testes Node, 165 Deno e sintaxe de 36 módulos
+  JavaScript** por execução da validação. O job Pages também aprovou sua seleção
+  portátil de **102 testes Node**. Execuções e subconjuntos sobrepostos não são
+  somados como testes distintos. As suítes completas não foram repetidas
+  localmente; tipagem dos backups e comparação dos artefatos têm outro alcance.
+- Publicação real em
+  [GitHub Pages UAT](https://bispoid.github.io/wedding-invitation-project/):
+  `buildId` igual ao candidato, `appEnv=uat`, ref `eugvobtvjicvocttnkka`,
+  backend `https://eugvobtvjicvocttnkka.supabase.co` e base/subpath exatos.
+  **78 recursos HTTP 200** comparados byte a byte ao artefato preparado a partir
+  dos blobs Git, incluindo `login.js`, `guests-ui.js` e `contingency-ui.js`.
+  Manifesto SHA-256:
+  `a7aa1830cc3c5b353542e169b1811cc87d4faff4696a7a5f099f3071f8ee297f`.
+- A preparação de comparação usou um GET real de Event Config UAT. Não houve
+  seleção de backend por sessão DEV nem fallback para outro ambiente.
+- Conferência remota posterior: feature e staging no candidato; production
+  permanece em `c25e2cd266540210efc0297697ce54a2e5de9e03`. A API pública GitHub
+  listou para o candidato somente o deployment `7396625190`, ambiente
+  `github-pages`. Não houve operação Vercel nem consulta funcional PRD.
+
+### Backend UAT, configuração e restauração preparada
+
+O projeto foi conferido por metadados: `wedding-invitation-project-uat`,
+ref `eugvobtvjicvocttnkka`, região `sa-east-1`, estado `ACTIVE_HEALTHY` e
+organização esperada. Antes de qualquer substituição, fontes efetivamente
+implantadas foram baixadas separadamente para as cinco Functions; versões,
+hashes EZBR, import maps e `verify_jwt` foram registrados.
+
+| Function | Antes → depois | Configuração conferida |
+| --- | --- | --- |
+| `admin-list-guests` | 1 → 2, ACTIVE | `verify_jwt=true`, import map preservado |
+| `admin-list-contingency` | 1 → 2, ACTIVE | `verify_jwt=true`, import map preservado |
+| `admin-manage-event-config` | 1 → 2, ACTIVE | `verify_jwt=true`, sem import map, como anteriormente |
+| `admin-manage-guests` | 1 → 2, ACTIVE | `verify_jwt=true`, import map preservado |
+| `admin-recover-contingency` | 1 → 2, ACTIVE | `verify_jwt=true`, import map preservado |
+
+- Deploys individuais em diretório isolado, com project-ref UAT explícito e
+  configuração correspondente aos deployments anteriores. Cada fonte remota
+  posterior foi novamente baixada e comparada ao candidato; os cinco artefatos
+  incluem `_shared/admin-auth.ts` e `_shared/admin-runtime.ts`. `_shared` não foi
+  publicado como Function independente.
+- `rsvp`, `health` e `event-config` público conservaram versão 1, hashes e
+  metadados anteriores. Não houve migrations, db push, reset ou mudança de
+  configuração raiz, origins, allowlist ou secrets.
+- Todos os digests de secrets permaneceram iguais. Os seis secrets customizados
+  também preservaram timestamps; timestamps de `SUPABASE_*` foram atualizados
+  pela plataforma durante deploy sem mudança dos digests. A primeira parada do
+  harness decorreu dessa comparação excessiva de timestamps; a Function já
+  publicada foi reconciliada por fonte e metadados, sem redeploy duplicado.
+- Restauração por fontes anteriores disponível em diretórios separados por
+  Function. A CLI omite lockfiles no download; as cópias de restauração receberam
+  os locks versionados do mesmo SDK exato, com proveniência registrada. Os cinco
+  entrypoints de restauração passaram na tipagem com cache, sem instalação.
+  Isso valida a preparação para rebuild, não identidade binária de um redeploy.
+- Frontend anterior preservado: **75 recursos** publicados, hashes e buildId
+  `c25e2cd266540210efc0297697ce54a2e5de9e03`. Procedimento Pages preparado:
+  reexecutar o job deploy `121593993089`, execução `40329203374`, cujo checkout
+  usa o SHA original. O artefato antigo não está mais listado; o rerun depende
+  da elegibilidade/permissão vigente. O snapshot preservado permite preparar
+  uma alternativa aprovada se necessário, sem reescrever branches.
+- Backups, manifestos, configurações isoladas e instruções de restauração ficam
+  em `.dev/uat-refactors-20261028/`, ignorado pelo Git. Rollback não executado;
+  não foi necessário restaurar a operação dos fluxos administrativos aprovados.
+
+### Contratos HTTP e navegador com backend UAT real
+
+Antes de avançar o frontend, **30 cenários HTTP reais** foram aprovados nas cinco
+Functions: Bearer ausente e inválido (401), usuário autenticado fora da allowlist
+(403 `ADMIN_ACCESS_DENIED`), Origin não permitida (403 `INVALID_ORIGIN`),
+preflight (204) e método não suportado (405). CORS para a origem autorizada foi
+conferido. O usuário Auth não administrativo era sintético e foi removido por
+UUID, com 404 posterior. Leituras administrativas autenticadas foram conferidas
+com a conta UAT autorizada antes da promoção do frontend.
+
+O responsável realizou o login privado. Após limitações do navegador integrado,
+foi autorizado Playwright já disponível (`1.62.1`) com Edge instalado
+(`156.0.4314.42`). O ensaio utilizou contexto novo e não persistente, storage
+inicial vazio e namespace UAT; nenhuma sessão DEV/PRD foi transportada. A
+instrumentação permitiu somente destinos UAT e os recursos públicos necessários,
+bloqueou atualizações de senha e limitou mutações aos identificadores sintéticos
+acompanhados. Não houve respostas simuladas, substituição de conteúdo ou atraso
+artificial no ensaio UAT.
+
+| Fluxo observado | Resultado real |
+| --- | --- |
+| Login e sessão | Autenticação HTTP 200, UUID e issuer UAT conferidos, dashboard e lista após reload. Uma asserção inicial do harness ocorreu antes de a lista terminar de carregar; a espera explícita posterior confirmou a sessão. |
+| Lista, pesquisa e métricas | Onze fixtures, paginação 10+1, navegação anterior/próxima, tamanho 20, pesquisa exata e limpeza do filtro. Métricas globais preservadas durante pesquisa. |
+| CRUD e foco | Criação 201 e edição 200; ausência zerou/desabilitou acompanhantes. Foco inicial no nome, Tab para e-mail e Escape com retorno ao botão de criação. |
+| Cancelamento de exclusão | No Edge privado, confirmação nativa dispensada: **zero requisições de exclusão**, registro e total preservados. Captura `edge-cancel-preserved.png`. |
+| Exclusão confirmada | Confirmação aceita em etapa separada, uma requisição real, HTTP 200, feedback e métricas atualizados. |
+| Contingência e integração | Pendência sintética recuperada por uma requisição real, feedback de sucesso, linha removida da planilha e convidado encontrado na pesquisa preservada. Métricas de **11/6/5/6/12** para **12/7/5/8/15**. |
+| Event Config durante recuperação | Formulário expandido manteve edição não salva; nenhuma reinicialização adicional de Event Config nem PUT de atualização no navegador. Valor de ensaio descartado, singleton preservado por hash. |
+| Módulos e encerramento normal | Três módulos novos carregados, sem erros de página nem destinos bloqueados nas conferências do dashboard. Logout normal pela interface, remoção da sessão UAT do storage e retorno ao login. |
+| Solicitação de recuperação | Interface enviou `/auth/v1/recover`, HTTP 200, com callback UAT exato. Nenhuma senha preexistente foi alterada. |
+| Callback de recuperação — tentativas iniciais | Primeira abertura manual exibiu “Não foi possível validar o link de recuperação”; outra captura apresentou link inválido ou expirado. Aberturas fora da aba instrumentada não tiveram resposta de verificação capturada. No segundo contexto privado, envios foram aceitos com HTTP 200, mas não houve GET `/auth/v1/verify` observado; a captura posterior mostrou novamente o formulário de solicitação, com HTTP **429 `over_email_send_rate_limit`** confirmado no envio. Os envios foram interrompidos. A investigação posterior e o callback controlado bem-sucedido estão registrados na seção complementar, sem atribuir causa às rejeições anteriores além da evidência disponível. |
+
+A tentativa inicial de cancelamento no navegador integrado ficou inconclusiva:
+o comando teve timeout no diálogo nativo, o responsável informou Cancelar, mas
+a inspeção posterior encontrou o registro excluído. Esse resultado não foi
+usado como aprovação nem classificado isoladamente como regressão. A repetição
+controlada em Edge distinguiu dispensar/aceitar e comprovou zero/uma requisição,
+respectivamente. Nenhuma correção de código foi introduzida para esse ensaio.
+
+`reset-password.html`, `reset-password.js`, `password-recovery.js` e `supabase.js`
+publicados conservaram os mesmos bytes do frontend anterior. Isso não comprova
+o callback funcional nem identifica a causa da falha apresentada. A nova aba de
+diagnóstico registra somente status e indicadores sanitizados, sem tokens.
+Tentativas de navegação para um mecanismo de busca foram bloqueadas pelo
+executor; parâmetros de busca não foram registrados. O HTTP 429 foi retornado
+pelo Auth UAT na solicitação de e-mail e não comprova uma resposta do callback.
+Não foi presumido prazo de liberação da cota nem alterada configuração do Auth.
+
+### Diagnóstico complementar da recuperação UAT — 28/10/2026
+
+Esta etapa preservou o candidato, a publicação e os demais ensaios aprovados.
+O estado local inicial continuava em `feature/landing-page`, HEAD `59d5ddc`,
+índice vazio e somente este documento modificado. Antes da complementação foi
+preservada uma cópia integral do registro em diretório ignorado.
+
+**Fatos confirmados por leitura do Auth UAT:** configuração obtida pela
+Management API do ref `eugvobtvjicvocttnkka`, sem alteração remota. Site URL
+`https://bispoid.github.io/wedding-invitation-project/` e allowlist com somente
+`https://bispoid.github.io/wedding-invitation-project/admin/reset-password.html`.
+Email habilitado, signup desabilitado, SMTP customizado e Send Email hook
+desabilitados. Serviço padrão Supabase, `rate_limit_email_sent=2`,
+`smtp_max_frequency=60` segundos e `mailer_otp_exp=3600` segundos.
+O limite de e-mails é por projeto/hora, conforme a
+[documentação oficial de limites Auth](https://supabase.com/docs/guides/auth/rate-limits).
+O único link do template configurado de recuperação usa `{{ .ConfirmationURL }}`, sem
+`.Token`, `.TokenHash`, `.SiteURL` ou `.RedirectTo`; foram registrados somente
+indicadores e hash, sem HTML ou credenciais SMTP. Não foi demonstrado ajuste
+necessário de Site URL, redirects ou template.
+
+A leitura Auth Admin confirmou a existência do mesmo UUID autorizado, e-mail
+correspondente ao hash previamente conferido, conta confirmada e provider
+`email`. `recovery_sent_at` correspondia a 20h33min09s e `last_sign_in_at` a
+17h58min20s. Não houve enumeração de outras contas ou alteração da conta usada.
+
+Os logs foram consultados em janela explícita, com seleção sanitizada e sem
+persistir eventos brutos, IPs, conteúdo de sessão, tokens ou links completos.
+Os caminhos abaixo foram extraídos do JSON do evento; o campo normalizado
+`log_attributes.path` apresentava `/`. Horários de Brasília (UTC−3), em
+28/10/2026:
+
+| Horário | Evidência Auth UAT |
+| --- | --- |
+| 17:57:13 | POST `/recover`, 200, `user_recovery_requested`, conta autorizada. |
+| 17:58:20 | GET `/verify`, 303, evento `login` da conta autorizada, sem erro; horário igual ao `last_sign_in_at`. Evidência de verificação aceita pelo Auth, sem provar liberação do formulário nesse navegador. |
+| 17:58:56 e 17:59:13 | GET `/verify`, erro estático `One-time token not found`, seguido de 303. |
+| 18:06:51 | POST `/recover`, 200, conta autorizada. |
+| 20:30:09 | POST `/recover`, 200, conta autorizada. |
+| 20:31:20 | GET `/verify`, erro `One-time token not found`, seguido de 303. |
+| 20:33:11 | POST `/recover`, 200, conta autorizada. |
+| 20:37:47 | POST `/recover`, 429, `over_email_send_rate_limit`, `email rate limit exceeded`. |
+
+O 404 `user_not_found` às 18h07min43s refere-se ao UUID sintético removido no
+ensaio anterior, não ao administrador autorizado. O 403 `session_not_found` às
+18h14min01s ocorreu em `/logout`; não foi atribuído ao callback. Os logs confirmam
+acessos a `/verify` fora da aba instrumentada: a ausência de GET nessa aba não
+constitui ausência de acesso ao serviço.
+
+**Causas e hipóteses:** o bloqueio de envio por cota foi confirmado pelo 429 e
+pela configuração de dois e-mails/hora. As rejeições de verificação confirmam
+que o token apresentado não foi encontrado naquele momento. Reutilização após
+consumo, mensagem antiga, substituição por novo envio, expiração e consumo por
+outra ferramenta/scanner continuam hipóteses; os dados sanitizados não permitem
+vincular cada tentativa a uma mensagem específica nem identificar quem abriu
+o link. O 303 isolado não foi tratado como sucesso, pois também acompanha erros.
+
+**Comparação de código:** seis arquivos são idênticos byte a byte entre o
+frontend anterior `c25e2cd` e o candidato: `reset-password.html`,
+`reset-password.js`, `password-recovery.js`, `recovery-request.js`, `supabase.js`
+e `shared/app-config.js`. O corpo de `initializeLogin`, extraído de `main.js`
+para `login.js`, também permaneceu idêntico. `APP_BASE_URL` deriva da base real
+do módulo e produz o callback exato com subpath; o cliente mantém Promise
+compartilhada, SDK `2.117.2`, `flowType: implicit` e `detectSessionInUrl: true`.
+`observeRecovery` é registrado antes de aguardar inicialização/sessão; seu
+callback é síncrono e exige `PASSWORD_RECOVERY` com o token esperado. A página
+aguarda a inicialização e um turno de evento antes de conferir a continuidade
+da sessão; a URL é limpa no `finally`. Nenhuma dessas proteções foi contornada.
+Não há defeito de código demonstrado nem atribuição causal à refatoração.
+
+**Tentativa controlada:** uma nova solicitação realizada pela interface UAT às
+21h47min41s de 28/10/2026, aceita pelo Auth com HTTP 200. E-mail correspondente
+ao hash autorizado e `redirect_to` exato conferidos antes da transmissão;
+requisição sem PKCE, consistente com `flowType: implicit`. Contexto privado novo,
+sem cookies/sessão importados, com observação
+anterior à navegação. Verificação e callback não recebem GET/HEAD preliminar
+nem interceptação de navegação; são observados status, destinos sanitizados dos
+redirects, indicadores do fragmento e resultado do SDK, sem persistir tokens.
+Há orçamento de uma única requisição `/recover`, validação do e-mail por hash
+e callback exato, bloqueio de destinos externos e de alterações de senha.
+O envio foi executado após a margem conservadora de 21h34, sem sondagem da cota.
+O orçamento está consumido e novos envios permanecem bloqueados; não haverá
+reenvio automático. Nenhum 429 ocorreu nesta solicitação única.
+Uma tentativa de POST anterior a essa janela foi bloqueada localmente pelo
+executor; não foi transmitida ao Auth nem contabilizada como novo envio.
+
+O responsável confirmou disponibilidade com a caixa UAT aberta e forneceu o
+endereço do link após a solicitação identificada pelo horário. O endereço foi
+validado sintaticamente em memória e aberto uma única vez no navegador privado
+instrumentado, por canal local transitório, sem GET/HEAD preliminar ou gravação
+do link em arquivo de evidência. Não foi gerado link por API administrativa.
+
+| Horário de Brasília | Resultado da tentativa controlada |
+| --- | --- |
+| 21:47:41 | Uma solicitação real pela interface, POST `/auth/v1/recover`, HTTP 200, e-mail e callback exatos conferidos. |
+| 21:50:45 | Navegação real GET `/auth/v1/verify`, HTTP 303, `type=recovery`; Location apontou à origem e ao caminho exatos do callback UAT. Somente indicadores do fragmento foram registrados. |
+| Após o redirect | Callback HTTP 200. O fragmento inicial indicava sessão de recuperação; o SDK executou GET `/auth/v1/user`, HTTP 200, e inicializou sem erro. A sessão pertencia ao UUID autorizado, com `recovery.allows(session)=true`. |
+| Formulário | Feedback “Link validado. Defina sua nova senha.”, formulário visível e não inerte, foco no primeiro campo e URL sem query/hash. Captura preservada com os campos vazios. |
+| 21:51:23 | `signOut({scope:'local'})`, HTTP 204, sem erro. Retorno ao login conferido e contexto privado fechado. |
+
+Contagem final desta etapa: **uma nova solicitação transmitida ao Auth**, aceita
+com 200. Duas tentativas adicionais de POST, uma antes da janela prevista e
+outra após consumir o orçamento, foram bloqueadas localmente, sem chegar ao
+Auth. Não houve sondagem da liberação da cota por reenvios. **Zero requisições
+PUT/PATCH de atualização de senha** foram observadas. O agente não preencheu
+ou submeteu nova credencial. A troca manual e o login posterior com nova senha
+não foram executados nem classificados como aprovados nesta etapa.
+
+A leitura posterior Auth Admin confirmou o mesmo UUID/e-mail autorizado,
+`recovery_sent_at` às 21h47min41s e `last_sign_in_at` às 21h50min44s, coerentes
+com a navegação observada. A primeira consulta da janela final no stream Auth
+retornou sem linhas; essa limitação de consulta não foi tratada como ausência de
+acesso. A prova desta tentativa usa as respostas de rede do navegador, o estado
+do SDK e os metadados Auth Admin, distintos dos logs históricos anteriores.
+
+**Conclusão:** a limitação de envio e as rejeições históricas de token não
+encontrado estão confirmadas; o motivo de cada token ter deixado de ser válido
+continua não identificado. A tentativa controlada demonstrou o funcionamento
+atual do link, redirect, inicialização, observador de recuperação, liberação do
+formulário e limpeza da URL. Não foi reproduzido defeito de código ou configuração;
+não há correção proposta, reprodução DEV necessária ou novo candidato.
+O impedimento específico do callback para a próxima etapa PRD foi removido,
+mantidos os limites de cobertura descritos. Isso não representa aprovação de
+uma nova troca completa de senha, aceite visual humano ou ensaio PRD.
+Não houve commit, push, deploy, promoção, alteração de SMTP/template/redirects,
+limites ou secrets; os demais ensaios UAT não foram repetidos.
+Evidências complementares: `.dev/uat-recovery-diagnosis-20261028/`, ignorado,
+incluindo `callback-proof.json` e `controlled-callback.png`.
+
+### Isolamento, limpeza e limites do aceite
+
+- Planilha conferida antes da inserção: “Wedding Invitation — RSVP Contingency
+  UAT”, ID `1nNFUDLfoqXPWBTIsYbtkE-iRmYzC8YS2dmhRS1jG_Bs`, aba `RSVP`,
+  sheetId `2008120883`, service account de escrita identificada como UAT.
+  Digest de `GOOGLE_SPREADSHEET_ID` correspondente ao destino exato; sem acesso
+  público/domain. Baseline sem pendências; cabeçalhos e tipos de nove colunas
+  conferidos. Foi inserida somente a linha sintética desta execução, sem
+  modificar formatação ou configuração. Não se provocou falha de serviço.
+- **14 convidados criados e removidos**: onze fixtures de paginação, um criado
+  no navegador integrado, um no Edge privado e um pela recuperação. Exclusões
+  da interface foram acompanhadas pelos UUIDs; a limpeza complementar removeu
+  somente os doze UUIDs ainda existentes. Estado final: zero convidados, igual
+  ao baseline UAT. Nenhum registro anterior foi removido.
+- Uma pendência sintética removida pela própria recuperação; leitura final de
+  `RSVP!A1:I997` encontrou somente os nove cabeçalhos. A exclusão da linha pela
+  Function reduziu a grade de 998 para 997 linhas. Inspeção visual automatizada
+  da planilha confirmou cabeçalhos e ausência da linha de teste.
+- Um usuário Auth sintético removido; UUID/e-mail da conta administrativa e
+  singleton Event Config preservados. Dados de senha, tokens e links de
+  recuperação não integram os arquivos de evidência.
+- Onze fingerprints de arquivos de vínculo Supabase preservados. `.gitignore`,
+  incluindo `*.zip`, snapshot DEV, `functions.env` e credencial local sincronizada
+  anteriormente pelo responsável conservaram hashes. As três pendências DEV
+  anteriores conservaram IDs e hashes. Serviços DEV não foram encerrados.
+- A sessão UAT inicial no navegador integrado também foi encerrada pela
+  interface; o retorno ao login foi conferido. O primeiro contexto privado Edge
+  foi fechado após o logout normal. O segundo foi fechado antes do ensaio
+  controlado final, após conferir ausência de storage Auth. O contexto final
+  também foi fechado após encerrar sua sessão de recuperação; nenhuma sessão
+  foi importada entre contextos ou ambientes.
+- Cobertura funcional UAT em Edge automatizado, sem aceite visual humano
+  atribuído, sem Firefox/Safari, leitor de tela ou dispositivo físico. Contratos
+  negativos e navegador real são distintos das suítes Node/Deno simuladas.
+- Não houve promoção, deploy, teste funcional ou alteração de serviço PRD, nem
+  publicação Vercel. O candidato permanece inalterado; somente este registro
+  fica modificado, sem staging ou commit adicional das evidências.
+
 ## Validação conjunta das refatorações administrativas — 28/10/2026
 
 SHA validado: `8f49a387f9f1d968c51498e8b155ecf1abedfaaf`, na branch
