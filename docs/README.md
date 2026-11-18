@@ -11,6 +11,7 @@ os resultados citados são checkpoints, sem consulta de disponibilidade atual.
 | Objetivos, requisitos, regras de negócio e decisões estáveis | [Contexto do projeto](project_context.md) | Define o produto e suas fronteiras; não mantém backlog ou histórico de release. |
 | Estado, trabalho restante e riscos aceitos | [Roadmap](development_roadmap.md) | Resume entregas e aponta para as evidências, sem reproduzir procedimentos. |
 | Ambientes, contrato público, publicação e rollback | [Ambientes](environments.md) | Guia operacional DEV/UAT/PRD e fluxo Git. |
+| Versionamento | [Versões e tags Git](versioning.md) | Critérios SemVer, histórico e procedimento de publicação de tags estáveis. |
 | Configuração e operação local | [Desenvolvimento local](local-development.md) | Pré-requisitos, snapshot, inicialização, Auth, contingência, testes SQL e parada. |
 | Camadas, seleção e comandos de testes | [Estratégia de testes](testing-strategy.md) | Define o alcance de cada verificação, sem transformar teste estático em aceite visual. |
 | Módulos e compatibilidade | [Arquitetura do código](source-architecture.md) | Entradas, fachadas, dependências e critérios para limpeza. |
