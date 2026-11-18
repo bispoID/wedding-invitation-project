@@ -1,7 +1,7 @@
 import { readFile, readdir, lstat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
-import { validateBuildConfig, prepareStaticSite } from './prepare-static-site.mjs';
+import { validateBuildConfig, prepareStaticSite, versionStaticReferences } from './prepare-static-site.mjs';
 import { sessionStorageKey } from '../invite-app/scripts/shared/environment-config.js';
 
 export const PAGES_UAT_REF = 'eugvobtvjicvocttnkka';
@@ -86,7 +86,9 @@ export async function auditPagesUatArtifact(outputDir, config, options) {
       }
       if (path !== 'index.html' && path !== 'runtime-config.json') {
         const source = await readFile(new URL(`invite-app/${path}`, root));
-        if (!bytes.equals(source)) throw new Error('Artifact asset differs from reviewed source.');
+        const expected = /\.(?:html|js|css)$/.test(path)
+          ? Buffer.from(versionStaticReferences(source.toString('utf8'), path, selected.buildId)) : source;
+        if (!bytes.equals(expected)) throw new Error('Artifact asset differs from reviewed source.');
       }
       files.push({ path, sha256: createHash('sha256').update(bytes).digest('hex') });
     }
@@ -116,6 +118,9 @@ export async function auditPagesUatArtifact(outputDir, config, options) {
       let asset = decodeURIComponent(target.pathname.slice(basePath.length));
       if (!asset || asset.endsWith('/')) asset += 'index.html';
       if (!target.pathname.startsWith(basePath) || !allowed.has(asset)) throw new Error(`Broken or escaping artifact reference in ${path}.`);
+      if (/\.(?:js|css)$/.test(asset) && target.searchParams.get('v') !== selected.buildId) {
+        throw new Error(`Missing static revision in ${path}: ${ref}`);
+      }
       relativeReferences++;
     }
   }

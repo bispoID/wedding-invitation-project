@@ -94,6 +94,9 @@ valida o contrato e o manifesto de destinos antes de qualquer GET externo,
 deriva Event Config e resolve metadados. Copia somente public-assets.json e
 gera runtime-config.json do ambiente selecionado. O helper de título puro
 fica em shared/invitation-title.js, sem importar configuração do navegador.
+Na saída, referências JS/CSS usam o BUILD_ID da publicação, inclusive imports
+transitivos e CSS em cascata, sem introduzir bundler nem mudar DEV. A auditoria
+UAT compara a transformação versionada com os arquivos aprovados na allowlist.
 
 Os testes Node modelam DOM, timers e filesystem; os testes Deno exercitam
 handlers e módulos compartilhados com dependências sintéticas; `block3.sql`

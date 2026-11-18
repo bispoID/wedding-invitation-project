@@ -101,6 +101,24 @@ test('Pages artifact audit rejects private material, active PRD, escaping links 
   await assert.rejects(auditPagesUatArtifact(outputDir, config(), options), /differs from reviewed source/);
 });
 
+test('Pages audit rejects stale module references and keeps the approved revision', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'pages-version-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const outputDir = join(dir, 'site');
+  await preparePagesUatSite({ config: config(), outputDir, ...options,
+    fetchImpl: async () => Response.json(event()) });
+  const entry = join(outputDir, 'scripts/main.js');
+  const original = await readFile(entry, 'utf8');
+  assert.match(original, /letter\/countdown\.js\?v=a{40}/);
+  await writeFile(entry, original.replace(`countdown.js?v=${sha}`, 'countdown.js'));
+  await assert.rejects(auditPagesUatArtifact(outputDir, config(), options), /differs from reviewed source/);
+  await writeFile(entry, original);
+  const index = join(outputDir, 'index.html');
+  const html = await readFile(index, 'utf8');
+  await writeFile(index, html.replace(`bootstrap.js?v=${sha}`, 'bootstrap.js'));
+  await assert.rejects(auditPagesUatArtifact(outputDir, config(), options), /Missing static revision/);
+});
+
 test('Pages workflow gates deploy on full reusable CI from the same SHA without expanded validation permissions', async () => {
   const pages = await readFile(new URL('../.github/workflows/deploy-pages.yml', import.meta.url), 'utf8');
   const baseline = await readFile(new URL('../.github/workflows/test.yml', import.meta.url), 'utf8');

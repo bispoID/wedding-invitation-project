@@ -1,4 +1,5 @@
 import { cp, readFile, lstat, realpath, writeFile, readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { buildInvitationTitle, DEFAULT_INVITATION_TITLE } from '../invite-app/scripts/shared/invitation-title.js';
@@ -8,8 +9,8 @@ const environmentPolicy = JSON.parse(await readFile(new URL('../config/environme
 
 /**
  * Prepara um artefato portátil do frontend para publicação.
- * O diretório de origem nunca é sobrescrito; metadados públicos são resolvidos
- * no clone de saída e o título pode ser enriquecido por Event Config sem
+ * O diretório de origem nunca é sobrescrito; metadados e URLs versionadas são
+ * resolvidos no clone de saída e o título pode ser enriquecido por Event Config sem
  * tornar a falha do endpoint um bloqueio de publicação.
  */
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
@@ -110,6 +111,47 @@ function isWithin(parent, child) {
   return path === '' || (!isAbsolute(path) && path !== '..' && !path.startsWith(`..${sep}`));
 }
 
+/** A revisão muda as URLs locais JS/CSS no artefato, inclusive imports transitivos.
+ * As fontes continuam intactas para DEV; um caminho fora da allowlist bloqueia o build.
+ */
+export function versionStaticReferences(content, path, buildId) {
+  if (!/^[\w.-]{1,128}$/.test(buildId)) throw new Error('Invalid static asset build ID.');
+  const version = reference => {
+    if (!/^\.\.?\//.test(reference)) return reference;
+    const parsed = new URL(reference, new URL(path, 'https://static.invalid/'));
+    if (!/\.(?:js|css)$/i.test(parsed.pathname)) return reference;
+    const asset = decodeURIComponent(parsed.pathname.slice(1));
+    if (!publicAssets.has(asset)) throw new Error(`Unreviewed static reference in ${path}: ${reference}`);
+    parsed.searchParams.set('v', buildId);
+    return reference.split(/[?#]/, 1)[0] + parsed.search + parsed.hash;
+  };
+  if (path.endsWith('.html')) {
+    return content.replace(/\b(src|href)=(['"])([^'"]+)\2/g, (match, attribute, quote, value) =>
+      `${attribute}=${quote}${version(value)}${quote}`);
+  }
+  if (path.endsWith('.css')) {
+    return content.replace(/url\(\s*(['"]?)([^'"\s)]+)\1\s*\)/g, (match, quote, value) =>
+      `url(${quote}${version(value)}${quote})`)
+      .replace(/(@import\s+)(['"])([^'"]+)\2/g, (match, prefix, quote, value) =>
+        `${prefix}${quote}${version(value)}${quote}`);
+  }
+  if (path.endsWith('.js')) {
+    return content.replace(/\b(from\s*|import\s*(?:\(\s*)?)(['"])([^'"]+)\2/g, (match, prefix, quote, value) =>
+      `${prefix}${quote}${version(value)}${quote}`);
+  }
+  return content;
+}
+
+/** Sem BUILD_ID explícito, a revisão é determinística para a mesma árvore pública. */
+async function staticBuildId(source) {
+  const digest = createHash('sha256');
+  for (const asset of [...publicAssets].filter(path => /\.(?:html|js|css)$/.test(path)).sort()) {
+    digest.update(asset); digest.update('\0');
+    digest.update(await readFile(resolve(source, asset)));
+  }
+  return digest.digest('hex').slice(0,16);
+}
+
 /** Copia a árvore para saída nova após validar sobreposição e metadados. */
 export async function prepareStaticSite({
   config,
@@ -144,6 +186,8 @@ export async function prepareStaticSite({
   for (const asset of publicAssets) {
     if (!(await lstat(resolve(source, asset))).isFile()) throw new Error('Recurso público ausente ou inválido: ' + asset);
   }
+  const buildId = selected.buildId ?? await staticBuildId(source);
+  const publishedConfig = { ...selected, buildId };
   const invitationTitle = await resolveInvitationTitle(eventConfigUrl, fetchImpl);
   let preparedHtml = resolveMetadata(originalHtml, siteUrl,
     selected.appEnv === 'uat' ? '[Homologação] ' + invitationTitle : invitationTitle);
@@ -159,8 +203,13 @@ export async function prepareStaticSite({
     force: false,
     filter: (entry) => isPublicPath(relative(source, entry).replaceAll('\\', '/')),
   });
-  await writeFile(resolve(output, 'index.html'), preparedHtml, 'utf8');
-  await writeFile(resolve(output, 'runtime-config.json'), JSON.stringify(selected, null, 2) + '\n', 'utf8');
+  for (const asset of publicAssets) {
+    if (!/\.(?:html|js|css)$/.test(asset)) continue;
+    const file = resolve(output, asset);
+    const content = asset === 'index.html' ? preparedHtml : await readFile(file, 'utf8');
+    await writeFile(file, versionStaticReferences(content, asset, buildId), 'utf8');
+  }
+  await writeFile(resolve(output, 'runtime-config.json'), JSON.stringify(publishedConfig, null, 2) + '\n', 'utf8');
   await inspectPublicTree(output);
   return { siteUrl, outputDir: output };
 }

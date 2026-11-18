@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { resolve, sep, extname } from 'node:path';
-import { prepareStaticSite } from './prepare-static-site.mjs';
+import { prepareStaticSite, versionStaticReferences } from './prepare-static-site.mjs';
 
 const require = createRequire(import.meta.url);
 // Dependência opcional fornecida pelo executor, nunca instalada automaticamente.
@@ -38,7 +38,10 @@ const files = [];
 for (const path of [...allowed].sort()) {
   const bytes = await readFile(resolve(artifact, path));
   if (!['index.html', 'runtime-config.json'].includes(path)) {
-    assert.ok(bytes.equals(await readFile(resolve(root, 'invite-app', path))), 'Artifact differs from local source: ' + path);
+    const source = await readFile(resolve(root, 'invite-app', path));
+    const expected = /\.(?:html|js|css)$/.test(path)
+      ? Buffer.from(versionStaticReferences(source.toString('utf8'), path, config.buildId)) : source;
+    assert.ok(bytes.equals(expected), 'Artifact differs from local source: ' + path);
   }
   if (/\.(?:js|json|html|css|svg)$/.test(path)) {
     assert.doesNotMatch(bytes.toString(), /sb_secret_[\w-]+|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|"private_key"\s*:/);
@@ -46,7 +49,7 @@ for (const path of [...allowed].sort()) {
   }
   files.push({ path, sha256: hash(bytes) });
 }
-assert.equal(files.length, 71);
+assert.equal(files.length, allowed.size);
 const report = { startedAt: new Date().toISOString(), source: 'local working-tree artifact; NOT published Pages',
   buildId: config.buildId, fileCount: files.length, manifestSha256: hash(JSON.stringify(files)), files,
   configKey: 'synthetic, not a real credential', realNetworkRequests: 0, backendFixtureGets: 0,

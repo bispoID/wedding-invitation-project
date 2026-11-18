@@ -40,7 +40,9 @@ export async function bootstrap({ baseUrl, entryUrl, fetchImpl, importModule = u
     publish(config);
     document.documentElement.dataset.appEnv = config.appEnv;
     for (const form of document.querySelectorAll('form')) form.inert = false;
-    await importModule(entryUrl);
+    const moduleUrl = config.buildId ? new URL(entryUrl) : null;
+    if (moduleUrl) moduleUrl.searchParams.set('v', config.buildId);
+    await importModule(moduleUrl ? moduleUrl.href : entryUrl);
     document.documentElement.dataset.configurationState = 'ready';
     return true;
   } catch {

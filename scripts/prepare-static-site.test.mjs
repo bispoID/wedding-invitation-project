@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { validateBuildConfig, configFromEnvironment, isPublicPath, normalizePublicSiteUrl, prepareStaticSite, resolveBuildEventConfigUrl, resolveInvitationTitle, resolveMetadata } from './prepare-static-site.mjs';
+import { validateBuildConfig, configFromEnvironment, isPublicPath, normalizePublicSiteUrl, prepareStaticSite, resolveBuildEventConfigUrl, resolveInvitationTitle, resolveMetadata, versionStaticReferences } from './prepare-static-site.mjs';
 
 import { fixture, policy } from './environment-fixtures.mjs';
 
@@ -67,6 +67,23 @@ test('build-time Event Config title falls back without blocking publication', as
   assert.doesNotMatch(resolveMetadata(originalHtml, 'https://example.com/', invitationTitle), /NOME_FIXTURE/);
 });
 
+test('static revision covers HTML, nested CSS and local JavaScript module references only', () => {
+  const version = 'a'.repeat(40);
+  const html = '<script src="./scripts/shared/bootstrap.js"></script><link href="./styles/main.css">';
+  assert.equal(versionStaticReferences(html, 'index.html', version),
+    `<script src="./scripts/shared/bootstrap.js?v=${version}"></script><link href="./styles/main.css?v=${version}">`);
+  assert.equal(versionStaticReferences('@import url("./base/fonts.css");', 'styles/main.css', version),
+    `@import url("./base/fonts.css?v=${version}");`);
+  assert.equal(versionStaticReferences("@import './base/fonts.css';", 'styles/main.css', version),
+    `@import './base/fonts.css?v=${version}';`);
+  assert.equal(versionStaticReferences("import { x } from './letter/countdown.js';\nexport { y } from './letter/rsvp.js';", 'scripts/main.js', version),
+    `import { x } from './letter/countdown.js?v=${version}';\nexport { y } from './letter/rsvp.js?v=${version}';`);
+  assert.equal(versionStaticReferences("import('https://esm.sh/example.js')", 'admin/scripts/supabase.js', version),
+    "import('https://esm.sh/example.js')");
+  assert.throws(() => versionStaticReferences("import './unreviewed.js'", 'scripts/main.js', version), /Unreviewed/);
+  assert.throws(() => versionStaticReferences(html, 'index.html', '../invalid'), /Invalid static asset/);
+});
+
 
 for (const env of ['uat','prd']) for (const subpath of ['', 'invite/']) test(`${env} artifact root/subpath ${subpath}`, async t => {
   const temporary = await mkdtemp(join(tmpdir(), 'wedding-uat-'));
@@ -77,7 +94,8 @@ for (const env of ['uat','prd']) for (const subpath of ['', 'invite/']) test(`${
   }
   await mkdir(join(source,'.dev')); await writeFile(join(source,'.dev','snapshot.json'),'SENSITIVE_SYNTHETIC');
   const output = join(temporary,'site');
-  const config = fixture(env, { publicSiteUrl: `https://synthetic.${env === 'uat' ? 'github.io' : 'example'}/${subpath}` });
+  const config = fixture(env, { publicSiteUrl: `https://synthetic.${env === 'uat' ? 'github.io' : 'example'}/${subpath}`,
+    buildId: 'f'.repeat(40) });
   let calls=0;
   await prepareStaticSite({ config, policy, sourceDir: source, outputDir: output,
     fetchImpl: async (url, options) => {
@@ -92,11 +110,40 @@ for (const env of ['uat','prd']) for (const subpath of ['', 'invite/']) test(`${
   assert.equal(html.includes('[Homologação]'),env==='uat');
   assert.equal(html.includes('noindex, nofollow'),env==='uat');
   assert.equal((html.match(/Ambiente de homologação — convite fictício para testes\./g) ?? []).length, env === 'uat' ? 3 : 0);
+  assert.match(html, /shared\/bootstrap\.js\?v=f{40}/);
+  const login = await readFile(join(output, 'admin/login.html'), 'utf8');
+  assert.match(login, /shared\/bootstrap\.js\?v=f{40}/);
+  const mainJs = await readFile(join(output, 'scripts/main.js'), 'utf8');
+  assert.match(mainJs, /letter\/countdown\.js\?v=f{40}/);
+  const mainCss = await readFile(join(output, 'styles/main.css'), 'utf8');
+  assert.match(mainCss, /base\/fonts\.css\?v=f{40}/);
   for (const name of ['dev-config.json','.env','secrets.json','snapshot.json','provision.js','scripts/fixture.js','scripts/credentials.js','.dev','admin/scripts/guest-metrics.test.ts']) await assert.rejects(access(join(output,name)));
-  // Todos os recursos permitidos, inclusive fontes e imagens, são preservados byte a byte.
+  // JS/CSS e HTML recebem somente referências versionadas; mídias continuam byte a byte.
   const assets = JSON.parse(await readFile(new URL('../config/public-assets.json',import.meta.url),'utf8'));
-  for (const asset of assets) if (asset !== 'index.html') assert.deepEqual(await readFile(join(output,asset)),await readFile(join(source,asset)),asset);
+  for (const asset of assets) if (asset !== 'index.html') {
+    const original = await readFile(join(source, asset));
+    const expected = /\.(?:html|js|css)$/.test(asset)
+      ? Buffer.from(versionStaticReferences(original.toString('utf8'), asset, config.buildId)) : original;
+    assert.deepEqual(await readFile(join(output, asset)), expected, asset);
+  }
   await assert.rejects(prepareStaticSite({ config, policy, sourceDir: source, outputDir: output }),/already exists/);
+});
+
+test('missing BUILD_ID derives a stable revision that changes when source JavaScript changes', async t => {
+  const dir = await mkdtemp(join(tmpdir(), 'static-version-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const source = join(dir, 'source'); await cp(sourceDir, source, { recursive: true });
+  const config = fixture('prd');
+  const run = async name => {
+    const outputDir = join(dir, name);
+    await prepareStaticSite({ config, policy, sourceDir: source, outputDir, fetchImpl: async () => Response.json({ config: {} }) });
+    return JSON.parse(await readFile(join(outputDir, 'runtime-config.json'), 'utf8')).buildId;
+  };
+  const first = await run('first');
+  assert.match(first, /^[a-f0-9]{16}$/);
+  assert.equal(await run('second'), first);
+  await writeFile(join(source, 'scripts/main.js'), (await readFile(join(source, 'scripts/main.js'), 'utf8')) + '\n// revision test\n');
+  assert.notEqual(await run('changed'), first);
 });
 for (const config of [undefined, {}, fixture('uat',{projectRef:fixture('prd').projectRef}),
   fixture('uat',{supabaseUrl:fixture('prd').supabaseUrl}), fixture('prd',{supabaseUrl:fixture().supabaseUrl}),

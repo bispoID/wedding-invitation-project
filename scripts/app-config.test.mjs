@@ -89,6 +89,18 @@ test('bootstrap validates before publishing config and importing application', a
   assert.equal(document.documentElement.dataset.configurationState, 'ready');
   assert.equal(document.form.inert, false);
 });
+test('published BUILD_ID versions the dynamically selected module without changing DEV imports', async () => {
+  const imported = [];
+  for (const buildId of ['release-1', 'release-2']) {
+    const config = fixture('prd', { buildId });
+    assert.equal(await bootstrap({ baseUrl: config.publicSiteUrl,
+      entryUrl: config.publicSiteUrl + 'admin/scripts/main.js', document: fakeDocument(),
+      fetchImpl: async () => Response.json(config), importModule: async url => imported.push(url),
+    }), true);
+  }
+  assert.deepEqual(imported, ['release-1', 'release-2'].map(id =>
+    fixture('prd').publicSiteUrl + `admin/scripts/main.js?v=${id}`));
+});
 for (const input of [undefined, fixture('prd'), { ...fixture(), supabaseAnonKey: 'sb_secret_invalid' }]) test('invalid bootstrap never initializes Supabase, displays accessible error', async () => {
   const document = fakeDocument(); let imports=0; let publishes=0; let prevented=false;
   assert.equal(await bootstrap({ baseUrl: fixture().publicSiteUrl, entryUrl: 'app.js', document,

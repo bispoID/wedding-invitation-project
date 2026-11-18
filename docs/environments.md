@@ -104,7 +104,19 @@ de segredos. Novos recursos precisam ser incluídos e revisados na lista.
 DEV, .env, snapshots, testes, fixtures, seeds, scripts operacionais e o manifesto
 de destinos não são copiados. Menções textuais ao ref PRD na regra de bloqueio
 ou a dev-config.json no carregador não são dependências operacionais desses
-destinos. CSS, JS, fontes e imagens revisados são preservados byte a byte.
+destinos. Fontes e imagens revisadas são preservadas byte a byte. Na saída de
+publicação, referências locais de JS/CSS em HTML, imports ES e `@import` do
+CSS recebem `?v=<BUILD_ID>`, sem modificar os arquivos-fonte DEV. O bootstrap
+também usa essa revisão no import dinâmico principal. A auditoria UAT compara
+os bytes publicados com a transformação determinística das fontes revisadas;
+ela não libera arquivos fora da allowlist. O runtime-config.json é lido com
+`cache: no-store`. Sem BUILD_ID, builds portáteis recebem uma revisão calculada
+dos HTML/JS/CSS; os pipelines oficiais seguem exigindo o SHA do commit.
+
+O HTML precisa ser revalidado pelo navegador antes de apontar para a nova
+revisão. Em uma aba já aberta, não há substituição automática de módulos. No
+GitHub Pages, o cache do próprio serviço pode atrasar a disponibilidade do
+HTML atualizado; o mecanismo não promete atualização instantânea no UAT.
 
 Canonical, OG, Twitter, descrição e imagem mantêm root/subpath. UAT recebe
 título de homologação e noindex/nofollow. PRD mantém a identidade existente.

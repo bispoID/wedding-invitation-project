@@ -95,6 +95,16 @@ Event Config deriva do projeto validado; redirects são recusados. Falha de rede
 preserva título genérico sem trocar backend. UAT recebe homologação/noindex.
 O arquivo DEV, testes, snapshots e arquivos operacionais nunca são publicados.
 
+Na preparação, o build acrescenta `?v=<BUILD_ID>` às URLs locais JS/CSS do
+artefato, inclusive imports de módulos e `@import` do CSS. O bootstrap valida
+`runtime-config.json` com `cache: no-store` e aplica a mesma revisão ao import
+dinâmico principal. Se BUILD_ID não foi informado no uso portátil, o preparador
+calcula um identificador determinístico a partir dos HTML/JS/CSS públicos; os
+pipelines UAT/PRD continuam exigindo o SHA completo. A fonte DEV não é alterada.
+O versionamento age quando o navegador carrega/recarrega uma página atualizada:
+não força atualização de uma aba já aberta. O prazo para receber HTML novo
+depende das políticas de cache da hospedagem, inclusive GitHub Pages.
+
 O build pode consultar Event Config do ambiente selecionado; nos testes, todas
 as consultas são mocks. Não executar build PRD como teste sem autorização.
 Sirva invite-app diretamente em DEV; produção requer o artefato preparado.
