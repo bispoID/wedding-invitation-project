@@ -48,6 +48,7 @@ Não são instruções para repetir uma operação nem backlog vigente.
 | [Recuperação de senha DEV](history/password-recovery-dev-validation.md) | Reprodução, correção, testes automatizados e troca humana, 25/10/2026. |
 | [Recuperação de senha UAT](history/password-recovery-uat-validation.md) | Publicação, callback e aceite funcional, 25/10/2026. |
 | [Recuperação de senha PRD](history/password-recovery-prd-validation.md) | Publicação e aceite funcional com atribuição das observações, 25/10/2026. |
+| [Contagem regressiva do casamento](history/countdown-release.md) | Validação DEV, homologação UAT, publicação PRD e aceite funcional informado em 18/11/2026. |
 
 Conferências históricas específicas de um guia permanecem junto ao assunto
 quando separá-las criaria documentos pequenos: [monitor PRD](health-check.md#conferência-do-frontend-prd--25102026)

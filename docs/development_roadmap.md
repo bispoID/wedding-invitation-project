@@ -7,7 +7,7 @@ procedimentos e evidências estão no [índice documental](README.md).
 ## Estado atual
 
 As 13 fases estão concluídas nos escopos homologados. As conclusões abaixo
-resumem registros até 26/10/2026; não afirmam disponibilidade em tempo real.
+resumem os registros de entrega até 18/11/2026.
 Melhorias opcionais não reabrem fases encerradas.
 
 | Entrega concluída | Referência principal |
@@ -18,6 +18,7 @@ Melhorias opcionais não reabrem fases encerradas.
 | Recuperação administrativa concluída em DEV/UAT/PRD em 25/10/2026; PRD em `bf35bc2` | [DEV](history/password-recovery-dev-validation.md), [UAT](history/password-recovery-uat-validation.md), [PRD](history/password-recovery-prd-validation.md) |
 | Monitor do frontend PRD configurado e teste de alerta recebido em 25/10/2026 | [Monitoramento](health-check.md#conferência-do-frontend-prd--25102026) |
 | Correção da exposição acessível do cartão coberto, `c25e2cd`, publicada em UAT e PRD em 26/10/2026 | [QA PRD](history/qa-final-evidence.md#publicação-e-conferência-prd-da-correção-de-acessibilidade--26102026) |
+| Contagem regressiva publicada em UAT e PRD, `1aa8ac1`, com aceite funcional em 18/11/2026 | [Validação e aceite](history/countdown-release.md) |
 
 No registro PRD de 26/10, CI aprovou 414 Node e 150 Deno; deployment READY,
 runtime e integridade de 75 recursos foram conferidos. A inspeção focada no
