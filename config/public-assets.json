@@ -47,6 +47,7 @@
   "scripts/envelope.js",
   "scripts/event-config.js",
   "scripts/letter.js",
+  "scripts/letter/countdown.js",
   "scripts/letter/letter.js",
   "scripts/letter/rsvp.js",
   "scripts/main.js",

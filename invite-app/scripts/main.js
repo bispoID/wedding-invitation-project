@@ -1,3 +1,4 @@
+import { initCountdown } from './letter/countdown.js';
 import { initEventConfig } from './event-config.js';
 import { initInvitationNames } from './shared/invitation-names.js';
 
@@ -58,4 +59,4 @@ initEnvelope({
 initWelcomeTypography();
 initInvitationNames();
 initRsvp();
-void initEventConfig();
+void initEventConfig().then(config => initCountdown(config));

@@ -149,6 +149,7 @@ export async function initEventConfig(root = document) {
     applyEventConfig(root, config);
     updateDocumentMetadata(root, config);
     setState('ready', '');
+    return config;
   } catch {
     setState('error', 'Não foi possível carregar as informações do evento.');
   }

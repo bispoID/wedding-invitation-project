@@ -244,3 +244,52 @@
   font-size:
     4cqw;
 }
+
+.countdown {
+  width: min(80%, 93cqw);
+  margin: 7cqw auto 15cqw;
+  text-align: center;
+  color: var(--color-heading);
+  font-family: var(--font-serif);
+}
+
+.countdown h3, .countdown [role="status"] {
+  margin: 0;
+  font-size: 5.5cqw;
+  font-weight: 400;
+}
+
+.countdown__units {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(min-content, 1fr));
+  margin: 3cqw 0 0;
+}
+
+.countdown__units > div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.countdown__units > div + div {
+  border-left: 1px solid var(--color-accent-light);
+}
+
+.countdown dt {
+  font: 400 clamp(0.65rem, 3cqw, 1rem) var(--font-sans);
+  color: var(--color-text-secondary);
+}
+
+.countdown dd {
+  margin: 0;
+  font-size: 6cqw;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.countdown [role="status"]:not(:empty) {
+  margin-top: 3cqw;
+}
+
+.countdown:not([hidden]) + .location-card {
+  margin-top: 7cqw;
+}

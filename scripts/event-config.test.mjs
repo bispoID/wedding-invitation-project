@@ -77,7 +77,7 @@ test('event config loading precedes response; ready uses textContent and dispatc
     const dom = root(); const pending = api.initEventConfig(dom);
     assert.equal(dom.state.dataset.eventState, 'loading'); assert.equal(dom.state.attrs['aria-busy'], 'true');
     assert.equal(dom.fields.bride_name.textContent, '');
-    resolve(valid()); await pending;
+    resolve(valid()); assert.deepEqual(await pending, fixture);
     assert.equal(dom.state.dataset.eventState, 'ready'); assert.equal(dom.status.hidden, true);
     assert.equal(dom.fields.bride_name.textContent, fixture.bride_name);
     assert.deepEqual(dom.events, ['invitation:content-updated']);
@@ -143,7 +143,7 @@ test('event config timeout aborts its only request and clears timer', async () =
 for (const payload of [null, {}, { success: false, config: fixture }, { success: true, config: [] }, { success: true, config: { bride_name: 'A' } }]) {
   test('event config invalid payload ' + JSON.stringify(payload).slice(0, 40), async () => {
     await withFetch(async () => Response.json(payload), async (api) => {
-      const dom = root(); await api.initEventConfig(dom); assert.equal(dom.state.dataset.eventState, 'error');
+      const dom = root(); assert.equal(await api.initEventConfig(dom), undefined); assert.equal(dom.state.dataset.eventState, 'error');
     });
   });
 }
@@ -191,7 +191,7 @@ test('civil date is arithmetic, no timezone shift; valid leap years and HH:mm pr
 test('integration preserves devmode and independent RSVP; generic metadata and no personal fallback', async () => {
   const main = await readFile(new URL('../invite-app/scripts/main.js', import.meta.url), 'utf8');
   const html = await readFile(new URL('../invite-app/index.html', import.meta.url), 'utf8');
-  assert.match(main, /initRsvp\(\);/); assert.match(main, /void initEventConfig\(\);/);
+  assert.match(main, /initRsvp\(\);/); assert.match(main, /initEventConfig\(\)\.then\(config => initCountdown\(config\)\)/);
   assert.match(main, /\['cover', 'envelope-card', 'letter'\]/);
   assert.match(html, /Um convite especial/);
   assert.doesNotMatch(html, /NOME_FIXTURE_A|NOME_FIXTURE_B|CIDADE_FIXTURE|LOCAL_FIXTURE|ENDERECO_FIXTURE/);
