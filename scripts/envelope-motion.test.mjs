@@ -35,7 +35,17 @@ async function withEnvelopeMotion(reduced, run, options = {}) {
       setAttribute(name, value) { this.attrs[name] = value; },
       getAttribute(name) { return this.attrs[name]; },
       removeAttribute(name) { delete this.attrs[name]; },
-      addEventListener(type, listener) { this.events[type] = listener; },
+      addEventListener(type, listener, options) {
+        this.events[type] = listener;
+        options?.signal.addEventListener('abort', () => delete this.events[type]);
+      },
+      getBoundingClientRect() {
+        return { left: parseFloat(this.style.left) || 20, top: parseFloat(this.style.top) || 20,
+          width: 260, height: 48 };
+      },
+      setPointerCapture(id) { this.capture = id; },
+      hasPointerCapture(id) { return this.capture === id; },
+      releasePointerCapture() { delete this.capture; },
       focus(options) { this.focusCalls.push(options); },
       appendChild(child) { this.children.push(child); },
       querySelectorAll() { return this.children.filter(child => child.attrs['data-preview']); },
@@ -59,10 +69,11 @@ async function withEnvelopeMotion(reduced, run, options = {}) {
     animations.push(animation);
     return animation;
   };
-  globalThis.document = { documentElement: {}, querySelector: (selector) => selectors[selector] ?? null,
+  globalThis.document = { documentElement: { clientWidth: 400, clientHeight: 300 }, querySelector: (selector) => selectors[selector] ?? null,
     getElementById: () => null, createElement: () => element(), body: { appendChild: panel => panels.push(panel) } };
   globalThis.getComputedStyle = () => ({ getPropertyValue: (name) => tokens[name] ?? '' });
   globalThis.window = {
+    ...element(),
     location: { href: 'https://synthetic.github.io/invite/' },
     history: { replaceState() {} },
     matchMedia(query) {
@@ -115,6 +126,7 @@ async function withEnvelopeMotion(reduced, run, options = {}) {
 
 for (const reduced of [false, true]) test(`Envelope ${reduced ? 'reduce' : 'normal'} conceals card text until presentation and after return`, async () => {
   await withEnvelopeMotion(reduced, async (ui) => {
+    assert.equal(ui.panels.length, 0);
     assert.equal(ui.card.attrs['aria-hidden'], 'true');
     ui.seal.events.click();
     if (!reduced) {
@@ -139,7 +151,7 @@ for (const reduced of [false, true]) test(`Envelope ${reduced ? 'reduce' : 'norm
 test('Envelope preview exposes card text only in the card preview', async () => {
   await withEnvelopeMotion(false, async (ui) => {
     const panel = ui.panels[0];
-    const select = mode => panel.children.find(button => button.attrs['data-preview'] === mode).events.click();
+    const select = mode => panel.children[1].children.find(button => button.attrs['data-preview'] === mode).events.click();
     assert.equal(ui.card.attrs['aria-hidden'], 'true');
     select('envelope-card');
     assert.equal(ui.card.attrs['aria-hidden'], 'false');
@@ -429,7 +441,7 @@ test('Envelope reduced continue before the zero-duration completion step reveals
 
 for (const reduced of [false, true]) test(`Envelope ${reduced ? 'reduce' : 'normal'} preview reset rejects stale callbacks before a new opening`, async () => {
   await withEnvelopeMotion(reduced, async (ui) => {
-    const coverButton = ui.panels[0].children.find(button => button.attrs['data-preview'] === 'cover');
+    const coverButton = ui.panels[0].children[1].children.find(button => button.attrs['data-preview'] === 'cover');
     ui.seal.events.click();
     const obsolete = [...ui.timers.values()].map(timer => timer.callback);
     if (!reduced) {
@@ -503,4 +515,36 @@ test('Envelope seal and flowers use static WebP assets and retain native keyboar
       offset += 8 + size + (size % 2);
     }
   }
+});
+
+for (const pointerType of ['mouse', 'touch']) test(`DevMode moves by ${pointerType} and keyboard`, async () => {
+  await withEnvelopeMotion(false, async ({ panels }) => {
+    const [panel] = panels;
+    const [handle, controls] = panel.children;
+    assert.equal(handle.attrs['aria-label'], 'Mover painel de desenvolvimento');
+    assert.equal(handle.children.length, 6);
+    assert.ok(handle.children.every(dot => dot.attrs['aria-hidden'] === 'true'));
+    const pointer = { pointerType, pointerId: 1, isPrimary: true, button: 0, clientX: 22, clientY: 22 };
+    handle.events.pointerdown({ ...pointer, button: 2 });
+    assert.equal(handle.capture, undefined);
+    handle.events.pointerdown(pointer);
+    handle.events.pointermove({ ...pointer, pointerId: 2, clientX: 99 });
+    assert.equal(panel.style.left, '');
+    handle.events.pointermove({ ...pointer, clientX: 999, clientY: 999 });
+    assert.deepEqual([panel.style.left, panel.style.top], ['132px', '244px']);
+    document.documentElement.clientWidth = 320;
+    window.events.resize();
+    assert.equal(panel.style.left, '52px');
+    handle.events.pointermove({ ...pointer, clientX: -99, clientY: -99 });
+    assert.deepEqual([panel.style.left, panel.style.top], ['8px', '8px']);
+    handle.events.pointercancel(pointer);
+    handle.events.pointermove(pointer);
+    assert.equal(panel.style.left, '8px');
+    handle.events.keydown({ key: 'ArrowRight', preventDefault() {} });
+    assert.equal(panel.style.left, '24px');
+    assert.equal(controls.children[0].attrs['aria-pressed'], 'true');
+    controls.children.at(-1).events.click();
+    assert.equal(window.events.resize, undefined);
+    assert.equal(handle.events.pointerdown, undefined);
+  }, { devPreview: 'cover' });
 });

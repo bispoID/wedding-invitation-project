@@ -3,9 +3,16 @@
 ========================================================= */
 
 #dev-preview-panel {
+  --left-gap: env(safe-area-inset-left, 0px);
+  --right-gap: env(safe-area-inset-right, 0px);
+  --top-gap: env(safe-area-inset-top, 0px);
+  --bottom-gap: env(safe-area-inset-bottom, 0px);
   position: fixed;
-  right: 1rem;
-  bottom: 1rem;
+  box-sizing: border-box;
+  width: max-content;
+  align-items: center;
+  right: max(1rem, var(--right-gap));
+  bottom: max(1rem, var(--bottom-gap));
   z-index: 9999;
 
   display: flex;
@@ -46,13 +53,51 @@
   background: rgb(255 255 255 / 6%);
 }
 
+#dev-preview-panel .dev-preview-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+  max-height: inherit;
+  align-self: stretch;
+  overflow: auto;
+}
+
+#dev-preview-panel .dev-preview-handle {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(2, 3px);
+  gap: 3px;
+  place-content: center;
+  width: 28px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+
+.dev-preview-handle span {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+#dev-preview-panel .dev-preview-handle[data-dragging] {
+  cursor: grabbing;
+}
+
+#dev-preview-panel .dev-preview-handle:focus-visible {
+  outline: 2px solid currentColor;
+}
+
 @media (max-width: 699px) {
   #dev-preview-panel {
-    right: 0.75rem;
-    top: 0.75rem;
+    right: max(0.75rem, var(--right-gap));
+    top: max(0.75rem, var(--top-gap));
     bottom: auto;
-    max-width: calc(100vw - 1.5rem);
-    flex-wrap: wrap;
-    justify-content: center;
+    border-radius: 1.5rem;
   }
 }
